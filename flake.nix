@@ -10,7 +10,11 @@
     };
   };
 
-  outputs = { self, nixpkgs, comin }: {
+  outputs = {
+    self,
+    nixpkgs,
+    comin,
+  }: {
     nixosConfigurations = {
       # Home Assistant server (Intel N100)
       homelab = nixpkgs.lib.nixosSystem {
@@ -20,6 +24,12 @@
           ./hosts/homelab
         ];
       };
+    };
+
+    # Formatter for `nix fmt`
+    formatter = {
+      x86_64-linux = nixpkgs.legacyPackages.x86_64-linux.alejandra;
+      aarch64-darwin = nixpkgs.legacyPackages.aarch64-darwin.alejandra;
     };
   };
 }

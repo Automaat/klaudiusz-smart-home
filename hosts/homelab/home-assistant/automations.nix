@@ -1,6 +1,9 @@
-{ config, pkgs, lib, ... }:
-
 {
+  config,
+  pkgs,
+  lib,
+  ...
+}: {
   services.home-assistant.config = {
     # ===========================================
     # Core Automations (managed in Nix)
@@ -14,17 +17,21 @@
       {
         id = "startup_notification";
         alias = "System - Startup notification";
-        trigger = [{
-          platform = "homeassistant";
-          event = "start";
-        }];
-        action = [{
-          service = "persistent_notification.create";
-          data = {
-            title = "Home Assistant";
-            message = "System uruchomiony o {{ now().strftime('%H:%M') }}";
-          };
-        }];
+        trigger = [
+          {
+            platform = "homeassistant";
+            event = "start";
+          }
+        ];
+        action = [
+          {
+            service = "persistent_notification.create";
+            data = {
+              title = "Home Assistant";
+              message = "System uruchomiony o {{ now().strftime('%H:%M') }}";
+            };
+          }
+        ];
       }
 
       # -----------------------------------------
@@ -115,20 +122,22 @@
     # ===========================================
     # Template Sensors
     # ===========================================
-    template = [{
-      sensor = [
-        {
-          name = "Czas działania";
-          state = ''
-            {% set uptime = as_timestamp(now()) - as_timestamp(states('sensor.last_boot')) %}
-            {% set days = (uptime / 86400) | int %}
-            {% set hours = ((uptime % 86400) / 3600) | int %}
-            {{ days }}d {{ hours }}h
-          '';
-          icon = "mdi:clock-outline";
-        }
-      ];
-    }];
+    template = [
+      {
+        sensor = [
+          {
+            name = "Czas działania";
+            state = ''
+              {% set uptime = as_timestamp(now()) - as_timestamp(states('sensor.last_boot')) %}
+              {% set days = (uptime / 86400) | int %}
+              {% set hours = ((uptime % 86400) / 3600) | int %}
+              {{ days }}d {{ hours }}h
+            '';
+            icon = "mdi:clock-outline";
+          }
+        ];
+      }
+    ];
 
     # ===========================================
     # Scripts (callable from automations/voice)
@@ -137,9 +146,19 @@
       movie_mode = {
         alias = "Tryb filmowy";
         sequence = [
-          { service = "light.turn_off"; target.entity_id = "light.salon"; }
-          { service = "light.turn_on"; target.entity_id = "light.tv_backlight"; data.brightness_pct = 20; }
-          { service = "cover.close_cover"; target.entity_id = "cover.salon"; }
+          {
+            service = "light.turn_off";
+            target.entity_id = "light.salon";
+          }
+          {
+            service = "light.turn_on";
+            target.entity_id = "light.tv_backlight";
+            data.brightness_pct = 20;
+          }
+          {
+            service = "cover.close_cover";
+            target.entity_id = "cover.salon";
+          }
         ];
         icon = "mdi:movie-open";
       };
@@ -147,9 +166,18 @@
       all_off = {
         alias = "Wyłącz wszystko";
         sequence = [
-          { service = "light.turn_off"; target.entity_id = "all"; }
-          { service = "media_player.turn_off"; target.entity_id = "all"; }
-          { service = "fan.turn_off"; target.entity_id = "all"; }
+          {
+            service = "light.turn_off";
+            target.entity_id = "all";
+          }
+          {
+            service = "media_player.turn_off";
+            target.entity_id = "all";
+          }
+          {
+            service = "fan.turn_off";
+            target.entity_id = "all";
+          }
         ];
         icon = "mdi:power";
       };

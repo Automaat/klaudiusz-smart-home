@@ -1,6 +1,9 @@
-{ config, pkgs, lib, ... }:
-
-let
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}: let
   # ===========================================
   # HACS (Home Assistant Community Store)
   # ===========================================
@@ -10,8 +13,7 @@ let
     rev = "2.0.1";
     hash = "sha256-VIz77S23CW/82VRn1q41BfPdMpGmJq02Jil5H4mXJlU=";
   };
-in
-{
+in {
   imports = [
     ./intents.nix
     ./automations.nix
@@ -26,8 +28,8 @@ in
     extraComponents = [
       # Core
       "default_config"
-      "met"              # Weather
-      "radio_browser"    # Internet radio
+      "met" # Weather
+      "radio_browser" # Internet radio
 
       # Voice
       "conversation"
@@ -95,8 +97,8 @@ in
   # ===========================================
   services.wyoming.faster-whisper.servers.default = {
     enable = true;
-    model = "small";      # Good Polish accuracy
-    language = "pl";      # Force Polish
+    model = "small"; # Good Polish accuracy
+    language = "pl"; # Force Polish
     device = "cpu";
     uri = "tcp://0.0.0.0:10300";
   };

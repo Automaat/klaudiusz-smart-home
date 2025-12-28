@@ -1,6 +1,9 @@
-{ config, pkgs, lib, ... }:
-
 {
+  config,
+  pkgs,
+  lib,
+  ...
+}: {
   imports = [
     ./hardware-configuration.nix
     ./home-assistant
@@ -11,7 +14,7 @@
   # ===========================================
   system.stateVersion = "24.11";
   nixpkgs.config.allowUnfree = true;
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  nix.settings.experimental-features = ["nix-command" "flakes"];
 
   # ===========================================
   # Boot (adjust for your hardware)
@@ -28,10 +31,10 @@
     firewall = {
       enable = true;
       allowedTCPPorts = [
-        22     # SSH
-        8123   # Home Assistant
-        10200  # Piper TTS
-        10300  # Whisper STT
+        22 # SSH
+        8123 # Home Assistant
+        10200 # Piper TTS
+        10300 # Whisper STT
       ];
     };
   };
@@ -48,7 +51,7 @@
   # ===========================================
   users.users.admin = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "networkmanager" "dialout" ]; # dialout for Zigbee USB
+    extraGroups = ["wheel" "networkmanager" "dialout"]; # dialout for Zigbee USB
     openssh.authorizedKeys.keys = [
       # Add your SSH public key here
       # "ssh-ed25519 AAAA..."
@@ -71,11 +74,13 @@
   # ===========================================
   services.comin = {
     enable = true;
-    remotes = [{
-      name = "origin";
-      url = "https://github.com/YOUR_USERNAME/klaudiusz-smart-home.git";
-      branches.main.name = "main";
-    }];
+    remotes = [
+      {
+        name = "origin";
+        url = "https://github.com/YOUR_USERNAME/klaudiusz-smart-home.git";
+        branches.main.name = "main";
+      }
+    ];
   };
 
   # ===========================================
