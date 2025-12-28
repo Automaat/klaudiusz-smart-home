@@ -31,6 +31,8 @@ jobs:
           extra_nix_config: |
             experimental-features = nix-command flakes
             accept-flake-config = true
+            substituters = https://cache.nixos.org https://nix-community.cachix.org
+            trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=
 
       - name: Setup Nix cache
         if: steps.changes.outputs.nix == 'true'
@@ -38,11 +40,11 @@ jobs:
 
       - name: Flake Check
         if: steps.changes.outputs.nix == 'true'
-        run: nix flake check --show-trace
+        run: nix flake check --show-trace --max-jobs auto
 
       - name: Build homelab system
-        if: steps.changes.outputs.nix == 'true'
-        run: nix build .#nixosConfigurations.homelab.config.system.build.toplevel --show-trace
+        if: steps.changes.outputs.nix == 'true' && github.event_name == 'push'
+        run: nix build .#nixosConfigurations.homelab.config.system.build.toplevel --show-trace --max-jobs auto
 
   format-check:
     name: Nix Format Check
@@ -68,6 +70,8 @@ jobs:
           nix_path: nixpkgs=channel:nixos-unstable
           extra_nix_config: |
             experimental-features = nix-command flakes
+            substituters = https://cache.nixos.org https://nix-community.cachix.org
+            trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=
 
       - name: Setup Nix cache
         if: steps.changes.outputs.nix == 'true'
