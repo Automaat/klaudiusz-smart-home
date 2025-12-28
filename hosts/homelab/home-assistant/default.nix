@@ -1,5 +1,16 @@
 { config, pkgs, lib, ... }:
 
+let
+  # ===========================================
+  # HACS (Home Assistant Community Store)
+  # ===========================================
+  hacsSource = pkgs.fetchFromGitHub {
+    owner = "hacs";
+    repo = "integration";
+    rev = "2.0.1";
+    hash = "sha256-VIz77S23CW/82VRn1q41BfPdMpGmJq02Jil5H4mXJlU=";
+  };
+in
 {
   imports = [
     ./intents.nix
@@ -71,6 +82,13 @@
     configWritable = true;
     lovelaceConfigWritable = true;
   };
+
+  # ===========================================
+  # HACS Installation
+  # ===========================================
+  systemd.tmpfiles.rules = [
+    "L+ /var/lib/hass/custom_components/hacs - - - - ${hacsSource}/custom_components/hacs"
+  ];
 
   # ===========================================
   # Polish Speech-to-Text (Whisper)
