@@ -35,6 +35,7 @@
         8123 # Home Assistant
         10200 # Piper TTS
         10300 # Whisper STT
+        3000 # Grafana
       ];
     };
   };
@@ -81,6 +82,72 @@
         branches.main.name = "main";
       }
     ];
+  };
+
+  # ===========================================
+  # Monitoring - Prometheus
+  # ===========================================
+  services.prometheus = {
+    enable = true;
+    port = 9090;
+    retentionTime = "15d";
+
+    exporters.node = {
+      enable = true;
+      port = 9100;
+      enabledCollectors = ["systemd"];
+      openFirewall = false;
+    };
+
+    scrapeConfigs = [
+      {
+        job_name = "node";
+        static_configs = [{targets = ["localhost:9100"];}];
+      }
+      {
+        job_name = "homeassistant";
+        static_configs = [{targets = ["localhost:8123"];}];
+        metrics_path = "/api/prometheus";
+        bearer_token_file = "/var/lib/prometheus2/ha-token";
+      }
+    ];
+  };
+
+  # ===========================================
+  # Monitoring - Grafana
+  # ===========================================
+  services.grafana = {
+    enable = true;
+    settings = {
+      server = {
+        http_addr = "0.0.0.0";
+        http_port = 3000;
+      };
+    };
+    provision = {
+      enable = true;
+      datasources.settings.datasources = [
+        {
+          name = "Prometheus";
+          type = "prometheus";
+          url = "http://localhost:9090";
+          isDefault = true;
+        }
+      ];
+    };
+  };
+
+  # ===========================================
+  # Systemd Service Hardening
+  # ===========================================
+  systemd.services = {
+    home-assistant.serviceConfig = {
+      Restart = "on-failure";
+      RestartSec = "10";
+      WatchdogSec = "300";
+    };
+    wyoming-faster-whisper-default.serviceConfig.Restart = "on-failure";
+    wyoming-piper-default.serviceConfig.Restart = "on-failure";
   };
 
   # ===========================================

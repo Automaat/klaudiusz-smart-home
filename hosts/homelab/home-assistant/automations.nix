@@ -120,26 +120,6 @@
     };
 
     # ===========================================
-    # Template Sensors
-    # ===========================================
-    template = [
-      {
-        sensor = [
-          {
-            name = "Czas działania";
-            state = ''
-              {% set uptime = as_timestamp(now()) - as_timestamp(states('sensor.last_boot')) %}
-              {% set days = (uptime / 86400) | int %}
-              {% set hours = ((uptime % 86400) / 3600) | int %}
-              {{ days }}d {{ hours }}h
-            '';
-            icon = "mdi:clock-outline";
-          }
-        ];
-      }
-    ];
-
-    # ===========================================
     # Scripts (callable from automations/voice)
     # ===========================================
     script = {

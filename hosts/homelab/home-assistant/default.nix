@@ -36,6 +36,9 @@ in {
       "intent_script"
       "wyoming"
 
+      # Monitoring
+      "prometheus" # Metrics export for Grafana
+
       # Devices (uncomment as needed)
       # "zha"            # Zigbee Home Automation
       # "mqtt"           # MQTT
