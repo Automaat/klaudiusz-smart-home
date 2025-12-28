@@ -1,0 +1,21 @@
+# Secrets
+secrets.yaml
+*.secret
+*.key
+
+# NixOS generated
+result
+*.qcow2
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# macOS
+.DS_Store
+
+# Misc
+*.log

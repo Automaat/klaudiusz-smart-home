@@ -1,0 +1,156 @@
+# Polish custom sentences for Home Assistant
+# Copy this to /var/lib/hass/custom_sentences/pl/ after installation
+
+language: "pl"
+
+# Skip words - will be ignored during matching
+lists:
+  skip_words:
+    values:
+      - "proszę"
+      - "może"
+      - "czy"
+      - "możesz"
+      - "mi"
+      - "to"
+
+intents:
+  # =========================================
+  # Lights
+  # =========================================
+  TurnOnLight:
+    data:
+      - sentences:
+          - "(włącz|zapal|odpal|uruchom) [światło] [w] {name}"
+          - "(włącz|zapal) [światło] [w] {area}"
+          - "[niech] (będzie|zrobi się) jasno [w] {area}"
+
+  TurnOffLight:
+    data:
+      - sentences:
+          - "(wyłącz|zgaś|wygas|ugaś) [światło] [w] {name}"
+          - "(wyłącz|zgaś) [światło] [w] {area}"
+
+  TurnOffAllLights:
+    data:
+      - sentences:
+          - "(wyłącz|zgaś) wszystkie światła"
+          - "(wyłącz|zgaś) wszystko"
+          - "ciemno"
+
+  SetBrightness:
+    data:
+      - sentences:
+          - "ustaw jasność {name} na {brightness} [procent]"
+          - "{name} na {brightness} procent"
+          - "jasność {brightness} [procent] [w] {name}"
+
+  # =========================================
+  # Scenes / Routines
+  # =========================================
+  GoodMorning:
+    data:
+      - sentences:
+          - "dzień dobry"
+          - "poranek"
+          - "pobudka"
+          - "wstaję"
+
+  GoodNight:
+    data:
+      - sentences:
+          - "dobranoc"
+          - "idę spać"
+          - "czas spać"
+          - "śpię"
+
+  LeavingHome:
+    data:
+      - sentences:
+          - "wychodzę"
+          - "wychodzimy"
+          - "do widzenia"
+          - "pa"
+
+  ComingHome:
+    data:
+      - sentences:
+          - "jestem w domu"
+          - "wróciłem"
+          - "wróciłam"
+          - "jesteśmy w domu"
+
+  # =========================================
+  # Climate
+  # =========================================
+  SetTemperature:
+    data:
+      - sentences:
+          - "ustaw temperaturę [na] {temperature} [stopni]"
+          - "temperatura {temperature} [stopni]"
+          - "ogrzewanie [na] {temperature} [stopni]"
+
+  GetTemperature:
+    data:
+      - sentences:
+          - "jaka [jest] temperatura [w] {area}"
+          - "ile [jest] stopni [w] {area}"
+          - "temperatura [w] {area}"
+
+  # =========================================
+  # Covers / Blinds
+  # =========================================
+  OpenCover:
+    data:
+      - sentences:
+          - "(otwórz|podnieś|odsłoń) {name}"
+          - "(otwórz|podnieś) (rolety|żaluzje|zasłony) [w] {area}"
+
+  CloseCover:
+    data:
+      - sentences:
+          - "(zamknij|opuść|zasłoń) {name}"
+          - "(zamknij|opuść) (rolety|żaluzje|zasłony) [w] {area}"
+
+  # =========================================
+  # Media
+  # =========================================
+  PauseMedia:
+    data:
+      - sentences:
+          - "(pauza|zatrzymaj|stop)"
+          - "wstrzymaj"
+
+  PlayMedia:
+    data:
+      - sentences:
+          - "(graj|odtwarzaj|wznów)"
+          - "kontynuuj"
+
+  # =========================================
+  # Info
+  # =========================================
+  WhatTime:
+    data:
+      - sentences:
+          - "która [jest] godzina"
+          - "która godzina"
+          - "ile [jest] godzin[a]"
+
+  WhatDate:
+    data:
+      - sentences:
+          - "jaka [jest] data"
+          - "który [jest] (dzień|dziś)"
+          - "jaki [jest] dzień"
+
+  # =========================================
+  # Scripts
+  # =========================================
+  MovieMode:
+    data:
+      - sentences:
+          - "tryb filmowy"
+          - "tryb kino"
+          - "film"
+          - "oglądamy film"
