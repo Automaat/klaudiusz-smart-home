@@ -10,7 +10,7 @@ NixOS-based smart home with Home Assistant, Polish voice commands (Whisper/Piper
 
 ## Project Structure
 
-```
+```text
 flake.nix                           # Entry point, Comin GitOps
 hosts/homelab/
 ├── default.nix                     # System config
@@ -26,7 +26,7 @@ custom_sentences/pl/                # Polish voice patterns
 
 ### GitOps Flow
 
-```
+```text
 Edit locally → git push → Comin pulls (~60s) → NixOS rebuilds
 ```
 
@@ -60,14 +60,14 @@ services.example = {
 };
 ```
 
-### NEVER
+### NixOS NEVER
 
 - Hardcode secrets (use sops-nix or agenix)
 - Modify hardware-configuration.nix manually
 - Use `with pkgs;` in module scope
 - Add unused extraComponents
 
-### ALWAYS
+### NixOS ALWAYS
 
 - Pin nixpkgs via flake.lock
 - Use `lib.mkDefault` for overridable values
@@ -116,14 +116,14 @@ IntentName = {
 - Template: `"(verb1|verb2) [optional] {slot}"`
 - Test with: "Która godzina", "Włącz salon"
 
-### NEVER
+### Home Assistant NEVER
 
 - Duplicate intents between Nix and GUI
 - Hardcode entity IDs that don't exist
 - Create automations without unique `id`
 - Use complex Jinja2 in speech.text
 
-### ALWAYS
+### Home Assistant ALWAYS
 
 - Use Polish responses in speech.text
 - Normalize entity names: `lower | replace(' ', '_')`
@@ -155,14 +155,14 @@ IntentName = {
 
 ## Code Generation Rules
 
-### ALWAYS
+### Code Generation ALWAYS
 
 - Read existing patterns before writing
 - Incremental changes (one intent/automation at a time)
 - Complete, working code (no placeholders)
 - Test rebuild after each change
 
-### NEVER
+### Code Generation NEVER
 
 - Generate entire files from scratch
 - Add services without enabling them
