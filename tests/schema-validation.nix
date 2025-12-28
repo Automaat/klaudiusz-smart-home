@@ -171,7 +171,7 @@
       if builtins.isInt v
       then v
       else lib.toInt v)
-    (lib.filter builtins.isInt staticValues);
+    staticValues;
     invalid = lib.filter (v: v < 0 || v > 100) intValues;
   in
     if invalid != []
@@ -215,14 +215,23 @@
       # Extract YAML intent names
       yaml_intents=$(yq eval '.intents | keys' -o=json ${../custom_sentences/pl/intents.yaml})
 
+      # Use temp file to track failures
+      error_file=$(mktemp)
+
       # Compare with Nix intents
       echo "$yaml_intents" | jq -r '.[]' | while read intent; do
         if ! echo "$nixIntents" | jq -e --arg i "$intent" 'index($i)' > /dev/null; then
           echo "ERROR: Intent '$intent' defined in YAML but missing in intents.nix"
-          exit 1
+          echo "1" > "$error_file"
         fi
       done
 
+      if [ -f "$error_file" ] && [ "$(cat "$error_file")" = "1" ]; then
+        rm "$error_file"
+        exit 1
+      fi
+
+      rm -f "$error_file"
       echo "PASS: All YAML intents exist in Nix" > $out
     '';
 

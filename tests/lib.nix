@@ -35,10 +35,26 @@
   normalizeEntityName = name:
     lib.toLower (builtins.replaceStrings [" "] ["_"] name);
 
-  # Test if Jinja2 template is valid (basic check for balanced braces)
+  # Test if Jinja2 template is valid (basic check for balanced Jinja2 delimiters)
   isValidJinja2 = template: let
-    openCount = lib.count (c: c == "{") (lib.stringToCharacters template);
-    closeCount = lib.count (c: c == "}") (lib.stringToCharacters template);
+    # Count occurrences of a substring in a string
+    countSubstring = pattern: str:
+      let
+        patLen = builtins.stringLength pattern;
+        strLen = builtins.stringLength str;
+        go = i:
+          if patLen == 0 || i > (strLen - patLen) then
+            0
+          else
+            (if builtins.substring i patLen str == pattern then 1 else 0)
+            + go (i + 1);
+      in
+        if patLen == 0 then 0 else go 0;
+
+    varOpen = countSubstring "{{" template;
+    varClose = countSubstring "}}" template;
+    blockOpen = countSubstring "{%" template;
+    blockClose = countSubstring "%}" template;
   in
-    openCount == closeCount;
+    (varOpen == varClose) && (blockOpen == blockClose);
 }

@@ -31,18 +31,20 @@
 
   # Collect all entity_id targets from intents and automations
   collectEntityIds = config: let
+    extractEntityIds = entityId:
+      if builtins.isString entityId
+      then [entityId]
+      else if builtins.isList entityId
+      then entityId
+      else [];
+
     intentEntities = lib.flatten (
       lib.mapAttrsToList (_: intent:
         if intent ? action
         then
           lib.flatten (builtins.map (a:
             if a ? target && a.target ? entity_id
-            then
-              (
-                if builtins.isString a.target.entity_id
-                then [a.target.entity_id]
-                else []
-              )
+            then extractEntityIds a.target.entity_id
             else [])
           intent.action)
         else [])
@@ -52,12 +54,7 @@
       builtins.map (auto:
         lib.flatten (builtins.map (a:
           if a ? target && a.target ? entity_id
-          then
-            (
-              if builtins.isString a.target.entity_id
-              then [a.target.entity_id]
-              else []
-            )
+          then extractEntityIds a.target.entity_id
           else [])
         auto.action))
       config.automation
@@ -108,6 +105,7 @@
 
   # Test 4: Service domains match entity domains (where static)
   # This is a basic check - only for non-templated entity IDs
+  # Note: homeassistant.* services work across all entity domains
   incompatibleCalls = let
     checkAction = action:
       if action ? service && action ? target && action.target ? entity_id
@@ -121,7 +119,8 @@
         then let
           entityDomain = testLib.getDomain entityId;
         in
-          if serviceDomain != entityDomain
+          # Skip domain-agnostic services like homeassistant.turn_on/turn_off
+          if serviceDomain != entityDomain && serviceDomain != "homeassistant"
           then [
             {
               inherit serviceDomain entityDomain;
