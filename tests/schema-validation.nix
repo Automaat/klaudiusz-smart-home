@@ -253,17 +253,12 @@ in {
   # Build-time summary test (combines all derivations)
   all =
     pkgs.runCommand "all-schema-validation-tests" {
-      buildInputs = [
-        yamlSyntaxCheck
-        yamlLanguageCheck
-        yamlIntentMatchCheck
-      ];
       evalResult = evalTests;
     } ''
       echo "Running all schema validation tests..."
-      echo "YAML Syntax: $(cat ${yamlSyntaxCheck})"
-      echo "YAML Language: $(cat ${yamlLanguageCheck})"
-      echo "YAML Intent Match: $(cat ${yamlIntentMatchCheck})"
+      cat ${yamlSyntaxCheck}
+      cat ${yamlLanguageCheck}
+      cat ${yamlIntentMatchCheck}
       echo "$evalResult"
       echo "PASS: All schema validation tests passed" > $out
     '';
