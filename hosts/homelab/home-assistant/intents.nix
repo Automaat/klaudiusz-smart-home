@@ -205,6 +205,19 @@
       WhatDate = {
         speech.text = "Dzisiaj jest {{ now().strftime('%A, %d %B %Y') }}";
       };
+
+      # -----------------------------------------
+      # Scripts
+      # -----------------------------------------
+      MovieMode = {
+        speech.text = "Włączam tryb filmowy";
+        action = [
+          {
+            service = "script.turn_on";
+            target.entity_id = "script.movie_mode";
+          }
+        ];
+      };
     };
 
     # ===========================================

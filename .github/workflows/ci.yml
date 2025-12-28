@@ -20,6 +20,8 @@ jobs:
             nix:
               - '**/*.nix'
               - 'flake.lock'
+              - 'custom_sentences/**/*.yaml'
+              - 'tests/**'
 
       - name: Install Nix
         if: steps.changes.outputs.nix == 'true'
@@ -56,6 +58,8 @@ jobs:
             nix:
               - '**/*.nix'
               - 'flake.lock'
+              - 'custom_sentences/**/*.yaml'
+              - 'tests/**'
 
       - name: Install Nix
         if: steps.changes.outputs.nix == 'true'
