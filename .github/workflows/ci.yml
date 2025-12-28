@@ -32,7 +32,7 @@ jobs:
 
       - name: Setup Nix cache
         if: steps.changes.outputs.nix == 'true'
-        uses: DeterminateSystems/magic-nix-cache-action@eeabdb06718ac63a7021c6132129679a8e22d0c7 # v3
+        uses: DeterminateSystems/magic-nix-cache-action@565684385bcd71bad329742eefe8d12f2e765b39 # v13
 
       - name: Flake Check
         if: steps.changes.outputs.nix == 'true'
@@ -67,7 +67,7 @@ jobs:
 
       - name: Setup Nix cache
         if: steps.changes.outputs.nix == 'true'
-        uses: DeterminateSystems/magic-nix-cache-action@eeabdb06718ac63a7021c6132129679a8e22d0c7 # v3
+        uses: DeterminateSystems/magic-nix-cache-action@565684385bcd71bad329742eefe8d12f2e765b39 # v13
 
       - name: Check Nix formatting
         if: steps.changes.outputs.nix == 'true'
