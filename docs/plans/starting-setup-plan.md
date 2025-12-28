@@ -22,7 +22,7 @@
 - [ ] Scripts reference missing entities (`light.salon`, `cover.salon`)
 - [ ] Input helpers unused (need automations)
 - [ ] SSH keys placeholder
-- [ ] Comin repo URL placeholder
+- [x] Comin repo URL placeholder
 
 ## Priority 1: Critical Gaps
 

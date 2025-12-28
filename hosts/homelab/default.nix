@@ -77,7 +77,7 @@
     remotes = [
       {
         name = "origin";
-        url = "https://github.com/YOUR_USERNAME/klaudiusz-smart-home.git";
+        url = "https://github.com/Automaat/klaudiusz-smart-home.git";
         branches.main.name = "main";
       }
     ];
