@@ -12,7 +12,7 @@ NixOS-based smart home configuration with Home Assistant and Polish voice comman
 ## 🖥️ Hardware Requirements
 
 | Component | Recommended | Minimum |
-|-----------|-------------|---------|
+| --------- | ----------- | ------- |
 | CPU | Intel N100/N305 | Any x86_64 |
 | RAM | 16GB | 8GB |
 | Storage | 256GB NVMe | 64GB SSD |
@@ -31,7 +31,7 @@ NixOS-based smart home configuration with Home Assistant and Polish voice comman
 wget https://channels.nixos.org/nixos-24.11/latest-nixos-minimal-x86_64-linux.iso
 ```
 
-Or download from: https://nixos.org/download/
+Or download from: <https://nixos.org/download/>
 
 ### Step 2: Create Bootable USB
 
@@ -153,7 +153,7 @@ git push -u origin main
 
 ### 3. Setup Voice Assistant in HA
 
-1. Open http://homelab.local:8123
+1. Open <http://homelab.local:8123>
 2. Create admin account
 3. Go to **Settings → Voice Assistants → Add Assistant**
 4. Configure:
@@ -177,7 +177,7 @@ sudo systemctl restart home-assistant
 ## 🗣️ Polish Voice Commands
 
 | Command | Action |
-|---------|--------|
+| ------- | ------ |
 | "Włącz światło w salonie" | Turn on living room light |
 | "Zgaś wszystkie światła" | Turn off all lights |
 | "Ustaw temperaturę na 22 stopnie" | Set thermostat to 22°C |
@@ -191,7 +191,7 @@ sudo systemctl restart home-assistant
 
 After initial setup, all changes are deployed automatically:
 
-```
+```text
 Edit locally → git push → Comin pulls (~60s) → NixOS rebuilds
 ```
 
@@ -206,7 +206,7 @@ sudo nixos-rebuild switch --flake /etc/nixos#homelab
 
 ## 📁 Project Structure
 
-```
+```text
 klaudiusz-smart-home/
 ├── flake.nix                 # Nix flake entry point
 ├── hosts/
