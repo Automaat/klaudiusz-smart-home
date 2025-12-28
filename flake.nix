@@ -64,14 +64,13 @@
       '';
 
       # All tests
-      all-tests =
-        pkgs.runCommand "all-tests" {} ''
-          echo "Running all tests..."
-          echo "Config validation result: $(cat ${self.checks.${system}.config-validation})"
-          echo "Schema validation result: $(cat ${self.checks.${system}.schema-validation})"
-          echo "All tests passed!"
-          touch $out
-        '';
+      all-tests = pkgs.runCommand "all-tests" {} ''
+        echo "Running all tests..."
+        echo "Config validation result: $(cat ${self.checks.${system}.config-validation})"
+        echo "Schema validation result: $(cat ${self.checks.${system}.schema-validation})"
+        echo "All tests passed!"
+        touch $out
+      '';
     };
   };
 }

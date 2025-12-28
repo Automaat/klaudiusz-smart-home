@@ -38,18 +38,23 @@
   # Test if Jinja2 template is valid (basic check for balanced Jinja2 delimiters)
   isValidJinja2 = template: let
     # Count occurrences of a substring in a string
-    countSubstring = pattern: str:
-      let
-        patLen = builtins.stringLength pattern;
-        strLen = builtins.stringLength str;
-        go = i:
-          if patLen == 0 || i > (strLen - patLen) then
-            0
-          else
-            (if builtins.substring i patLen str == pattern then 1 else 0)
-            + go (i + 1);
-      in
-        if patLen == 0 then 0 else go 0;
+    countSubstring = pattern: str: let
+      patLen = builtins.stringLength pattern;
+      strLen = builtins.stringLength str;
+      go = i:
+        if patLen == 0 || i > (strLen - patLen)
+        then 0
+        else
+          (
+            if builtins.substring i patLen str == pattern
+            then 1
+            else 0
+          )
+          + go (i + 1);
+    in
+      if patLen == 0
+      then 0
+      else go 0;
 
     varOpen = countSubstring "{{" template;
     varClose = countSubstring "}}" template;
