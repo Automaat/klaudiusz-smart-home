@@ -26,7 +26,7 @@
       "pinDigests": true
     }
   ],
-  "schedule": ["before 6am on monday"],
+  "schedule": ["at any time"],
   "timezone": "Europe/Warsaw",
   "dependencyDashboard": true,
   "prConcurrentLimit": 3,
