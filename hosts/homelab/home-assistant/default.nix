@@ -11,7 +11,7 @@
     owner = "hacs";
     repo = "integration";
     rev = "2.0.1";
-    hash = "sha256-VIz77S23CW/82VRn1q41BfPdMpGmJq02Jil5H4mXJlU=";
+    hash = "sha256-MENOK7tnblBKmCFncS0EFiA1oqQeK4OtQpEmjYF9gWQ=";
   };
 in {
   imports = [
