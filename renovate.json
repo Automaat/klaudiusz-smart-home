@@ -12,14 +12,12 @@
   "packageRules": [
     {
       "matchManagers": ["nix"],
-      "groupName": "nix dependencies",
       "automerge": true,
       "automergeType": "pr",
       "platformAutomerge": true
     },
     {
       "matchManagers": ["github-actions"],
-      "groupName": "github actions",
       "automerge": true,
       "automergeType": "pr",
       "platformAutomerge": true,
@@ -29,6 +27,6 @@
   "schedule": ["at any time"],
   "timezone": "Europe/Warsaw",
   "dependencyDashboard": true,
-  "prConcurrentLimit": 3,
-  "prHourlyLimit": 2
+  "prConcurrentLimit": 10,
+  "prHourlyLimit": 10
 }
