@@ -128,7 +128,7 @@
         trigger = [
           {
             platform = "numeric_state";
-            entity_id = "sensor.disk_use_percent";
+            entity_id = "sensor.disk_use_percent_";
             above = 90;
           }
         ];
@@ -137,7 +137,7 @@
             service = "persistent_notification.create";
             data = {
               title = "⚠️ Krytyczny poziom dysku";
-              message = "Użycie dysku: {{ states('sensor.disk_use_percent') }}%";
+              message = "Użycie dysku: {{ states('sensor.disk_use_percent_') }}%";
             };
           }
         ];
@@ -152,7 +152,7 @@
         trigger = [
           {
             platform = "numeric_state";
-            entity_id = "sensor.disk_use_percent";
+            entity_id = "sensor.disk_use_percent_";
             above = 80;
           }
         ];
@@ -161,7 +161,7 @@
             service = "persistent_notification.create";
             data = {
               title = "⚠️ Ostrzeżenie - Dysk";
-              message = "Użycie dysku: {{ states('sensor.disk_use_percent') }}%";
+              message = "Użycie dysku: {{ states('sensor.disk_use_percent_') }}%";
             };
           }
         ];
@@ -202,7 +202,7 @@
           {
             platform = "state";
             entity_id = "sensor.wyoming_whisper_health";
-            to = "false";
+            to = "False";
             for.minutes = 2;
           }
         ];
@@ -224,7 +224,7 @@
           {
             platform = "state";
             entity_id = "sensor.wyoming_piper_health";
-            to = "false";
+            to = "False";
             for.minutes = 2;
           }
         ];
@@ -246,7 +246,7 @@
           {
             platform = "state";
             entity_id = "sensor.tailscale_health";
-            to = "false";
+            to = "False";
             for.minutes = 2;
           }
         ];
