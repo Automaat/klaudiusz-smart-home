@@ -10,9 +10,8 @@ On the homelab server, generate the age encryption key:
 
 ```bash
 sudo mkdir -p /var/lib/sops-nix
-nix run nixpkgs#age -- -generate -o /tmp/age-key.txt
-sudo mv /tmp/age-key.txt /var/lib/sops-nix/key.txt
-sudo chmod 600 /var/lib/sops-nix/key.txt
+sudo sh -c 'umask 077; nix run nixpkgs#age -- -generate -o /var/lib/sops-nix/key.txt'
+sudo chown root:root /var/lib/sops-nix/key.txt
 ```
 
 ### 2. Get Public Key

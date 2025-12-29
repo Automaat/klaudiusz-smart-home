@@ -15,13 +15,14 @@
     "grafana-admin-password" = {
       owner = "grafana";
       mode = "0400";
+      restartUnits = ["grafana.service"];
     };
 
     # Home Assistant Prometheus token
     "home-assistant-prometheus-token" = {
       owner = "prometheus";
       mode = "0400";
-      path = "/var/lib/prometheus2/ha-token";
+      restartUnits = ["prometheus.service"];
     };
   };
 }

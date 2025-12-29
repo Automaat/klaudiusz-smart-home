@@ -111,7 +111,7 @@
         metrics_path = "/api/prometheus";
         # Token managed by sops-nix (secrets/secrets.yaml: home-assistant-prometheus-token)
         # Create token in HA: Settings > People > Admin > Security > Long-lived access tokens
-        bearer_token_file = "/var/lib/prometheus2/ha-token";
+        bearer_token_file = config.sops.secrets."home-assistant-prometheus-token".path;
       }
     ];
   };
@@ -129,7 +129,7 @@
       };
       security = {
         admin_user = "admin";
-        admin_password = "$__file{${config.sops.secrets."grafana-admin-password".path}}";
+        admin_password = config.sops.secrets."grafana-admin-password".path;
       };
     };
     provision = {
