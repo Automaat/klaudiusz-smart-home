@@ -35,59 +35,99 @@
       }
 
       # -----------------------------------------
-      # Motion Lights (example)
+      # Mode Management
       # -----------------------------------------
-      # {
-      #   id = "motion_hallway_light";
-      #   alias = "Światło - Korytarz przy ruchu";
-      #   trigger = [{
-      #     platform = "state";
-      #     entity_id = "binary_sensor.motion_korytarz";
-      #     to = "on";
-      #   }];
-      #   condition = [{
-      #     condition = "sun";
-      #     after = "sunset";
-      #     before = "sunrise";
-      #   }];
-      #   action = [
-      #     {
-      #       service = "light.turn_on";
-      #       target.entity_id = "light.korytarz";
-      #       data.brightness_pct = 50;
-      #     }
-      #     { delay.minutes = 5; }
-      #     {
-      #       service = "light.turn_off";
-      #       target.entity_id = "light.korytarz";
-      #     }
-      #   ];
-      # }
+      {
+        id = "disable_sleep_mode_morning";
+        alias = "Tryb nocny - Wyłącz rano";
+        trigger = [
+          {
+            platform = "time";
+            at = "07:00:00";
+          }
+        ];
+        condition = [
+          {
+            condition = "state";
+            entity_id = "input_boolean.sleep_mode";
+            state = "on";
+          }
+        ];
+        action = [
+          {
+            service = "input_boolean.turn_off";
+            target.entity_id = "input_boolean.sleep_mode";
+          }
+          {
+            service = "persistent_notification.create";
+            data = {
+              title = "Tryb nocny";
+              message = "Tryb nocny został wyłączony automatycznie";
+            };
+          }
+        ];
+      }
 
-      # -----------------------------------------
-      # Security (example)
-      # -----------------------------------------
-      # {
-      #   id = "security_motion_when_away";
-      #   alias = "Bezpieczeństwo - Ruch gdy poza domem";
-      #   trigger = [{
-      #     platform = "state";
-      #     entity_id = "binary_sensor.motion_salon";
-      #     to = "on";
-      #   }];
-      #   condition = [{
-      #     condition = "state";
-      #     entity_id = "input_boolean.away_mode";
-      #     state = "on";
-      #   }];
-      #   action = [{
-      #     service = "notify.mobile_app";
-      #     data = {
-      #       title = "⚠️ Alert!";
-      #       message = "Wykryto ruch w salonie!";
-      #     };
-      #   }];
-      # }
+      {
+        id = "guest_mode_disable_automations";
+        alias = "Tryb gościa - Wyłącz automatykę";
+        description = "Przykład: tryb gościa może zmieniać zachowanie automatyzacji";
+        trigger = [
+          {
+            platform = "state";
+            entity_id = "input_boolean.guest_mode";
+            to = "on";
+          }
+        ];
+        action = [
+          {
+            service = "persistent_notification.create";
+            data = {
+              title = "Tryb gościa";
+              message = "Tryb gościa włączony - niektóre automatyzacje mogą być ograniczone";
+            };
+          }
+        ];
+      }
+
+      {
+        id = "guest_mode_notify_off";
+        alias = "Tryb gościa - Powiadomienie wyłączenia";
+        trigger = [
+          {
+            platform = "state";
+            entity_id = "input_boolean.guest_mode";
+            to = "off";
+          }
+        ];
+        action = [
+          {
+            service = "persistent_notification.create";
+            data = {
+              title = "Tryb gościa";
+              message = "Tryb gościa wyłączony - przywrócono normalną automatykę";
+            };
+          }
+        ];
+      }
+
+      {
+        id = "set_default_brightness";
+        alias = "Jasność - Ustaw domyślną przy starcie";
+        trigger = [
+          {
+            platform = "homeassistant";
+            event = "start";
+          }
+        ];
+        action = [
+          {
+            service = "input_number.set_value";
+            target.entity_id = "input_number.default_brightness";
+            data.value = 80;
+          }
+        ];
+      }
     ];
 
     # ===========================================
@@ -128,16 +168,11 @@
         sequence = [
           {
             service = "light.turn_off";
-            target.entity_id = "light.salon";
-          }
-          {
-            service = "light.turn_on";
-            target.entity_id = "light.tv_backlight";
-            data.brightness_pct = 20;
+            target.entity_id = "all";
           }
           {
             service = "cover.close_cover";
-            target.entity_id = "cover.salon";
+            target.entity_id = "all";
           }
         ];
         icon = "mdi:movie-open";

@@ -61,13 +61,16 @@
         action = [
           {
             service = "light.turn_on";
-            target.entity_id = "light.salon";
+            target.entity_id = "all";
             data = {
-              brightness_pct = 80;
+              brightness_pct = "{{ states('input_number.default_brightness') | int }}";
               color_temp_kelvin = 4000;
             };
           }
-          # Add more actions as needed
+          {
+            service = "input_boolean.turn_off";
+            target.entity_id = "input_boolean.sleep_mode";
+          }
         ];
       };
 
@@ -79,7 +82,7 @@
             target.entity_id = "all";
           }
           {
-            service = "cover.close";
+            service = "cover.close_cover";
             target.entity_id = "all";
           }
           {
@@ -89,6 +92,10 @@
           {
             service = "media_player.turn_off";
             target.entity_id = "all";
+          }
+          {
+            service = "input_boolean.turn_on";
+            target.entity_id = "input_boolean.sleep_mode";
           }
         ];
       };
@@ -101,7 +108,7 @@
             target.entity_id = "all";
           }
           {
-            service = "cover.close";
+            service = "cover.close_cover";
             target.entity_id = "all";
           }
           {
@@ -113,6 +120,10 @@
             target.entity_id = "all";
             data.preset_mode = "away";
           }
+          {
+            service = "input_boolean.turn_on";
+            target.entity_id = "input_boolean.away_mode";
+          }
         ];
       };
 
@@ -121,12 +132,17 @@
         action = [
           {
             service = "light.turn_on";
-            target.entity_id = "light.przedpokoj";
+            target.entity_id = "all";
+            data.brightness_pct = "{{ states('input_number.default_brightness') | int }}";
           }
           {
             service = "climate.set_preset_mode";
             target.entity_id = "all";
             data.preset_mode = "home";
+          }
+          {
+            service = "input_boolean.turn_off";
+            target.entity_id = "input_boolean.away_mode";
           }
         ];
       };
@@ -139,7 +155,7 @@
         action = [
           {
             service = "climate.set_temperature";
-            target.entity_id = "climate.thermostat";
+            target.entity_id = "all";
             data.temperature = "{{ slots.temperature }}";
           }
         ];
