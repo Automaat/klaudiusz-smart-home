@@ -23,24 +23,32 @@
 
   # Extract username from recorder.db_url
   # Format: postgresql://@/dbname (socket, no user) or postgresql://user@host/dbname
-  extractDbUser = url: let
-    withoutScheme = lib.removePrefix "postgresql://" url;
-    # If starts with @, it's socket auth (use service user)
-    if lib.hasPrefix "@" withoutScheme
-    then "hass" # Assumes service runs as hass user
+  extractDbUser = url:
+    if url == null
+    then null
     else let
-      # Split by @ to get user part
-      userPart = lib.head (lib.splitString "@" withoutScheme);
-      # Remove password if present (user:pass)
-      userName = lib.head (lib.splitString ":" userPart);
+      withoutScheme = lib.removePrefix "postgresql://" url;
     in
-      userName;
-  in
-    if url == null then null else extractDbUser url;
+      # If starts with @, it's socket auth (use service user)
+      if lib.hasPrefix "@" withoutScheme
+      then "hass" # Assumes service runs as hass user
+      else let
+        # Split by @ to get user part
+        userPart = lib.head (lib.splitString "@" withoutScheme);
+        # Remove password if present (user:pass)
+        userName = lib.head (lib.splitString ":" userPart);
+      in
+        userName;
 
   recorderDbUrl = haConfig.recorder.db_url or null;
-  recorderDbName = if recorderDbUrl != null then extractDbName recorderDbUrl else null;
-  recorderDbUser = if recorderDbUrl != null then extractDbUser recorderDbUrl else null;
+  recorderDbName =
+    if recorderDbUrl != null
+    then extractDbName recorderDbUrl
+    else null;
+  recorderDbUser =
+    if recorderDbUrl != null
+    then extractDbUser recorderDbUrl
+    else null;
 
   # Test 1: If recorder uses PostgreSQL, service must be enabled
   postgresqlServiceEnabled =
