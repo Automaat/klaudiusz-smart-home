@@ -8,12 +8,18 @@
       url = "github:nlewo/comin";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = {
     self,
     nixpkgs,
     comin,
+    sops-nix,
   }: let
     system = "x86_64-linux";
     pkgs = nixpkgs.legacyPackages.${system};
@@ -25,6 +31,7 @@
         inherit system;
         modules = [
           comin.nixosModules.comin
+          sops-nix.nixosModules.sops
           ./hosts/homelab
         ];
       };

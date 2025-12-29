@@ -7,6 +7,7 @@
   imports = [
     ./hardware-configuration.nix
     ./home-assistant
+    ./secrets.nix
   ];
 
   # ===========================================
@@ -54,8 +55,8 @@
     isNormalUser = true;
     extraGroups = ["wheel" "networkmanager" "dialout"]; # dialout for Zigbee USB
     openssh.authorizedKeys.keys = [
-      # Add your SSH public key here
-      # "ssh-ed25519 AAAA..."
+      # TODO: Add your SSH public key here
+      # "ssh-ed25519 AAAA... your-email@example.com"
     ];
   };
 
@@ -108,10 +109,8 @@
         job_name = "homeassistant";
         static_configs = [{targets = ["localhost:8123"];}];
         metrics_path = "/api/prometheus";
-        # NOTE: Requires manual setup after first boot:
-        #   1. Create long-lived access token in HA: Settings > People > Admin > Security > Long-lived access tokens
-        #   2. Save to: sudo mkdir -p /var/lib/prometheus2 && echo "TOKEN" | sudo tee /var/lib/prometheus2/ha-token
-        #   3. Restart: sudo systemctl restart prometheus2
+        # Token managed by sops-nix (secrets/secrets.yaml: home-assistant-prometheus-token)
+        # Create token in HA: Settings > People > Admin > Security > Long-lived access tokens
         bearer_token_file = "/var/lib/prometheus2/ha-token";
       }
     ];
@@ -120,7 +119,6 @@
   # ===========================================
   # Monitoring - Grafana
   # ===========================================
-  # WARNING: Currently exposed on network with default admin/admin credentials.
   # TODO Phase 2 (Security): Switch to Tailscale-only access (bind to 127.0.0.1, remove port 3000 from firewall)
   services.grafana = {
     enable = true;
@@ -131,8 +129,7 @@
       };
       security = {
         admin_user = "admin";
-        # IMPORTANT: Change default password on first login!
-        # Better: Configure adminPasswordFile with secrets management (sops-nix/agenix)
+        admin_password = "$__file{${config.sops.secrets."grafana-admin-password".path}}";
       };
     };
     provision = {

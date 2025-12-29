@@ -46,10 +46,10 @@
 ### 2. Monitoring & Health
 **Status:** ❌ No system monitoring
 
-- [ ] System resource tracking (CPU, RAM, disk)
-- [ ] Service health checks (HA, Whisper, Piper)
-- [ ] Disk space alerts (warn 80%, critical 90%)
-- [ ] Availability monitoring
+- [x] System resource tracking (CPU, RAM, disk)
+- [x] Service health checks (HA, Whisper, Piper)
+- [x] Disk space alerts (warn 80%, critical 90%)
+- [x] Availability monitoring
 
 **Implementation:**
 - HA System Monitor integration
@@ -116,7 +116,7 @@
 ## Priority 5: Nice-to-Have Improvements
 
 ### High Value
-- [ ] Secrets management (sops-nix or agenix)
+- [x] Secrets management (sops-nix for Grafana password + HA Prometheus token)
 - [ ] Recorder limits (exclude noisy sensors)
 - [ ] Low battery alerts automation
 - [ ] Unavailable device detection automation
