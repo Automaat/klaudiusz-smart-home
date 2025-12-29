@@ -182,16 +182,13 @@
     ];
   };
 
-  # Allow home-assistant user to connect via socket
-  systemd.services.home-assistant.serviceConfig = {
-    SupplementaryGroups = ["postgres"];
-  };
-
   # ===========================================
   # Systemd Service Hardening
   # ===========================================
   systemd.services = {
     home-assistant.serviceConfig = {
+      # Allow connecting to PostgreSQL via socket
+      SupplementaryGroups = ["postgres"];
       Restart = "on-failure";
       RestartSec = "10";
       WatchdogSec = "300";

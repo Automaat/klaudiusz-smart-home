@@ -55,6 +55,10 @@
       schemaValidation = import ./tests/schema-validation.nix {
         inherit lib pkgs nixosConfig;
       };
+
+      serviceValidation = import ./tests/service-validation.nix {
+        inherit lib pkgs nixosConfig;
+      };
     in {
       # Configuration validation tests
       config-validation = pkgs.runCommand "config-validation-tests" {} ''
@@ -70,11 +74,19 @@
         touch $out
       '';
 
+      # Service validation tests
+      service-validation = pkgs.runCommand "service-validation-tests" {} ''
+        echo "Running service validation tests..."
+        echo "${serviceValidation.all}"
+        touch $out
+      '';
+
       # All tests
       all-tests = pkgs.runCommand "all-tests" {} ''
         echo "Running all tests..."
         echo "Config validation result: $(cat ${self.checks.${system}.config-validation})"
         echo "Schema validation result: $(cat ${self.checks.${system}.schema-validation})"
+        echo "Service validation result: $(cat ${self.checks.${system}.service-validation})"
         echo "All tests passed!"
         touch $out
       '';
