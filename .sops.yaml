@@ -1,0 +1,11 @@
+keys:
+  # System age key (temporary for CI - replace with real key on target machine)
+  # On target: mkdir -p /var/lib/sops-nix && nix shell nixpkgs#age -c age-keygen -o /var/lib/sops-nix/key.txt
+  # Then update this public key and re-encrypt: sops updatekeys secrets/secrets.yaml
+  - &homelab age1l6h3824duhdmxvyx82wr4k2hcc8auh73ls2ca4q0dr5mnqw92c6qxxae9g
+
+creation_rules:
+  - path_regex: secrets/[^/]+\.yaml$
+    key_groups:
+      - age:
+          - *homelab

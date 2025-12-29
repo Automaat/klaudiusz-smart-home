@@ -1,7 +1,11 @@
-# Secrets
-secrets.yaml
+# Secrets (unencrypted)
 *.secret
 *.key
+
+# SOPS encrypted secrets are OK to commit
+# Only exclude unencrypted copies
+secrets.yaml.dec
+*.yaml.dec
 
 # NixOS generated
 result
