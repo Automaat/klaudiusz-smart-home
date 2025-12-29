@@ -34,10 +34,11 @@
       allowedTCPPorts = [
         22 # SSH
         8123 # Home Assistant
-        10200 # Piper TTS
-        10300 # Whisper STT
-        3000 # Grafana (TODO: Remove after Tailscale setup in Phase 2)
       ];
+      # Allow Tailscale traffic
+      trustedInterfaces = ["tailscale0"];
+      # Allow Tailscale UDP port
+      allowedUDPPorts = [config.services.tailscale.port];
     };
   };
 
@@ -69,6 +70,27 @@
       PasswordAuthentication = false;
       PermitRootLogin = "no";
     };
+  };
+
+  # ===========================================
+  # fail2ban - SSH Protection
+  # ===========================================
+  services.fail2ban = {
+    enable = true;
+    maxretry = 5;
+    ignoreIP = [
+      "127.0.0.0/8"
+      "::1"
+      "100.64.0.0/10" # Tailscale subnet
+    ];
+  };
+
+  # ===========================================
+  # Tailscale - Secure Remote Access
+  # ===========================================
+  services.tailscale = {
+    enable = true;
+    useRoutingFeatures = "server";
   };
 
   # ===========================================
@@ -119,12 +141,12 @@
   # ===========================================
   # Monitoring - Grafana
   # ===========================================
-  # TODO Phase 2 (Security): Switch to Tailscale-only access (bind to 127.0.0.1, remove port 3000 from firewall)
+  # Accessible via Tailscale only (not exposed on public network)
   services.grafana = {
     enable = true;
     settings = {
       server = {
-        http_addr = "0.0.0.0";
+        http_addr = "0.0.0.0"; # Bind to all interfaces (Tailscale can access)
         http_port = 3000;
       };
       security = {
