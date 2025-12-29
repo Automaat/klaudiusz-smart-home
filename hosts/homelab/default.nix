@@ -168,10 +168,27 @@
   };
 
   # ===========================================
+  # PostgreSQL Database
+  # ===========================================
+  services.postgresql = {
+    enable = true;
+    package = pkgs.postgresql_16;
+    ensureDatabases = ["hass"];
+    ensureUsers = [
+      {
+        name = "hass";
+        ensureDBOwnership = true;
+      }
+    ];
+  };
+
+  # ===========================================
   # Systemd Service Hardening
   # ===========================================
   systemd.services = {
     home-assistant.serviceConfig = {
+      # Allow connecting to PostgreSQL via socket
+      SupplementaryGroups = ["postgres"];
       Restart = "on-failure";
       RestartSec = "10";
       WatchdogSec = "300";

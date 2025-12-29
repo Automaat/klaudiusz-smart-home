@@ -32,6 +32,9 @@ in {
       "met" # Weather
       "radio_browser" # Internet radio
 
+      # Database
+      "recorder" # PostgreSQL database
+
       # Voice
       "conversation"
       "intent_script"
@@ -68,6 +71,31 @@ in {
 
       # Enable conversation for voice commands
       conversation = {};
+
+      # Database recorder (PostgreSQL)
+      recorder = {
+        db_url = "postgresql://@/hass";
+        purge_keep_days = 30;
+        commit_interval = 1;
+
+        exclude = {
+          domains = [
+            "updater"
+          ];
+          entities = [
+            "sensor.last_boot"
+            "sensor.date"
+            "sensor.time"
+          ];
+          entity_globs = [
+            "sensor.uptime"
+            "sensor.*_latest_version"
+          ];
+          event_types = [
+            "call_service"
+          ];
+        };
+      };
 
       # HTTP config (for reverse proxy if needed)
       http = {
