@@ -36,6 +36,7 @@ nix run nixpkgs#sops -- secrets/secrets.yaml
 ```
 
 Fill in your actual secrets:
+
 - `grafana-admin-password`: Secure password for Grafana admin
 - `home-assistant-prometheus-token`: Long-lived token from HA
 
@@ -55,6 +56,7 @@ nix run nixpkgs#sops -- secrets/secrets.yaml
 ## Secret Locations
 
 After NixOS activation, secrets are available at:
+
 - Grafana password: `/run/secrets/grafana-admin-password`
 - HA Prometheus token: `/var/lib/prometheus2/ha-token` (custom path)
 
