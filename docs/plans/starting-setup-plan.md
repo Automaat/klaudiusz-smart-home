@@ -15,10 +15,12 @@
 - GitOps via Comin
 - 19 voice intents, 2 scripts, basic automations
 - NixOS 24.11, CI pipeline with tests
-- Firewall configured (ports 22, 8123, 10200, 10300)
+- Firewall configured (ports 22, 8123, 10200, 10300, 3000)
+- Prometheus + Grafana monitoring (15d retention, node_exporter, HA metrics)
+- Service auto-restart on failure (HA, Whisper, Piper) + HA watchdog
 
 ### ⚠️ Broken/Incomplete
-- [ ] Template sensor references non-existent `sensor.last_boot`
+- [x] Template sensor references non-existent `sensor.last_boot` (fixed in PR #11)
 - [ ] Scripts reference missing entities (`light.salon`, `cover.salon`)
 - [ ] Input helpers unused (need automations)
 - [ ] SSH keys placeholder
@@ -73,12 +75,12 @@
 - services.tailscale.enable = true
 
 ### 4. Maintenance Automation
-**Status:** ❌ Manual only
+**Status:** ⚠️ Partially complete
 
-- [ ] Auto-restart on service failure
+- [x] Auto-restart on service failure (HA, Whisper, Piper)
 - [ ] Old generation cleanup (weekly)
 - [ ] Log rotation (journald limits)
-- [ ] HA watchdog (restart on hang)
+- [x] HA watchdog (restart on hang) (5min timeout, 10s restart delay)
 - [ ] Auto-reboot notification on kernel updates
 
 **Implementation:**
@@ -89,7 +91,7 @@
 
 ## Priority 2: Fix Broken References
 
-- [ ] Fix `sensor.uptime` (remove `sensor.last_boot` reference)
+- [x] Fix `sensor.uptime` (remove `sensor.last_boot` reference)
 - [ ] Update scripts to use actual entity IDs or make generic
 - [ ] Implement automations using input helpers (away_mode, guest_mode, sleep_mode)
 - [ ] Verify all intents reference valid services/entities
@@ -128,7 +130,7 @@
 - [ ] MQTT broker (when adding ESP devices)
 
 ### Low Priority
-- [ ] Prometheus + Grafana monitoring
+- [x] Prometheus + Grafana monitoring (⚠️ Grafana exposed on network with default credentials - change on first login, migrate to Tailscale in Phase 2)
 - [ ] Network isolation (IoT VLAN)
 - [ ] VM-based local testing
 - [ ] Example device configurations
@@ -145,7 +147,7 @@
 5. [ ] Enable fail2ban for SSH
 6. [ ] Setup Tailscale
 7. [ ] Add service health checks
-8. [ ] Configure automated restarts
+8. [x] Configure automated restarts (HA, Whisper, Piper + watchdog)
 
 ### Phase 3: Maintenance
 9. [ ] Set up log rotation
