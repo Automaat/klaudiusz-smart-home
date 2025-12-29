@@ -17,6 +17,7 @@ in {
   imports = [
     ./intents.nix
     ./automations.nix
+    ./monitoring.nix
   ];
 
   # ===========================================
@@ -38,6 +39,8 @@ in {
 
       # Monitoring
       "prometheus" # Metrics export for Grafana
+      "systemmonitor" # System resource monitoring
+      "command_line" # Service health checks
 
       # Devices (uncomment as needed)
       # "zha"            # Zigbee Home Automation
@@ -103,7 +106,7 @@ in {
     model = "small"; # Good Polish accuracy
     language = "pl"; # Force Polish
     device = "cpu";
-    uri = "tcp://0.0.0.0:10300";
+    uri = "tcp://127.0.0.1:10300"; # Localhost only for security
   };
 
   # ===========================================
@@ -112,7 +115,7 @@ in {
   services.wyoming.piper.servers.default = {
     enable = true;
     voice = "pl_PL-darkman-medium";
-    uri = "tcp://0.0.0.0:10200";
+    uri = "tcp://127.0.0.1:10200"; # Localhost only for security
   };
 
   # ===========================================
