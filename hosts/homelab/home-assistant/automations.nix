@@ -60,7 +60,7 @@
         condition = [
           {
             condition = "template";
-            value_template = "{{ (as_timestamp(now()) - as_timestamp(state_attr('automation.health_high_cpu_usage', 'last_triggered') | default(0))) > 300 }}";
+            value_template = "{{ (as_timestamp(now()) - as_timestamp(state_attr('automation.alert_high_cpu', 'last_triggered') | default(0))) > 300 }}";
           }
         ];
         action = [
@@ -90,7 +90,7 @@
         condition = [
           {
             condition = "template";
-            value_template = "{{ (as_timestamp(now()) - as_timestamp(state_attr('automation.health_high_memory_usage', 'last_triggered') | default(0))) > 300 }}";
+            value_template = "{{ (as_timestamp(now()) - as_timestamp(state_attr('automation.alert_high_memory', 'last_triggered') | default(0))) > 300 }}";
           }
         ];
         action = [
@@ -110,7 +110,7 @@
         trigger = [
           {
             platform = "numeric_state";
-            entity_id = "sensor.disk_use_percent";
+            entity_id = "sensor.disk_use_percent_";
             above = 85;
             "for" = {
               minutes = 5;
@@ -120,14 +120,14 @@
         condition = [
           {
             condition = "template";
-            value_template = "{{ (as_timestamp(now()) - as_timestamp(state_attr('automation.health_disk_space_low', 'last_triggered') | default(0))) > 1800 }}";
+            value_template = "{{ (as_timestamp(now()) - as_timestamp(state_attr('automation.alert_disk_full', 'last_triggered') | default(0))) > 1800 }}";
           }
         ];
         action = [
           {
             service = "notify.telegram";
             data = {
-              message = "💾 Low disk space: {{ states('sensor.disk_use_percent') }}% used ({{ states('sensor.disk_free') }} GB free)";
+              message = "💾 Low disk space: {{ states('sensor.disk_use_percent_') }}% used";
             };
           }
         ];
@@ -150,7 +150,7 @@
         condition = [
           {
             condition = "template";
-            value_template = "{{ (as_timestamp(now()) - as_timestamp(state_attr('automation.health_high_cpu_temperature', 'last_triggered') | default(0))) > 300 }}";
+            value_template = "{{ (as_timestamp(now()) - as_timestamp(state_attr('automation.alert_high_temperature', 'last_triggered') | default(0))) > 300 }}";
           }
         ];
         action = [
