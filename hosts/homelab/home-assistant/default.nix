@@ -13,6 +13,16 @@
     rev = "2.0.1";
     hash = "sha256-MENOK7tnblBKmCFncS0EFiA1oqQeK4OtQpEmjYF9gWQ=";
   };
+
+  # ===========================================
+  # Catppuccin Theme
+  # ===========================================
+  catppuccinTheme = pkgs.fetchFromGitHub {
+    owner = "catppuccin";
+    repo = "home-assistant";
+    rev = "v2.1.2";
+    hash = "sha256-4knJI+3Bo+uRL+NAVt5JrI3PcsZjANozyXvRRR5aNjM=";
+  };
 in {
   imports = [
     ./intents.nix
@@ -72,6 +82,9 @@ in {
       # Enable conversation for voice commands
       conversation = {};
 
+      # Frontend with themes
+      frontend.themes = "!include_dir_merge_named themes/";
+
       # Database recorder (PostgreSQL)
       recorder = {
         db_url = "postgresql://@/hass";
@@ -124,6 +137,7 @@ in {
   # ===========================================
   systemd.tmpfiles.rules = [
     "L+ /var/lib/hass/custom_components/hacs - - - - ${hacsSource}/custom_components/hacs"
+    "L+ /var/lib/hass/themes - - - - ${catppuccinTheme}/themes"
   ];
 
   # ===========================================
