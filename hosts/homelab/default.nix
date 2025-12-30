@@ -62,8 +62,7 @@
     isNormalUser = true;
     extraGroups = ["wheel" "networkmanager" "dialout"]; # dialout for Zigbee USB
     openssh.authorizedKeys.keys = [
-      # TODO: Add your SSH public key here
-      # "ssh-ed25519 AAAA... your-email@example.com"
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINWvJJYnZUGjjsz4AucVipikJcvDxtthgcG/DWL0OXwv"
     ];
   };
 
