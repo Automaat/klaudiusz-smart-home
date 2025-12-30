@@ -24,5 +24,19 @@
       mode = "0400";
       restartUnits = ["prometheus.service"];
     };
+
+    # Telegram bot token
+    "telegram-bot-token" = {
+      owner = "hass";
+      mode = "0400";
+      restartUnits = ["home-assistant.service"];
+    };
+
+    # Telegram chat ID
+    "telegram-chat-id" = {
+      owner = "hass";
+      mode = "0400";
+      restartUnits = ["home-assistant.service"];
+    };
   };
 }

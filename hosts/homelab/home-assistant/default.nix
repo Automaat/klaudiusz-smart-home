@@ -55,6 +55,9 @@ in {
       "systemmonitor" # System resource monitoring
       "command_line" # Service health checks
 
+      # Notifications
+      "telegram_bot" # Telegram notifications
+
       # Devices (uncomment as needed)
       # "zha"            # Zigbee Home Automation
       # "mqtt"           # MQTT
@@ -125,6 +128,24 @@ in {
           "homeassistant.components.intent_script" = "debug";
         };
       };
+
+      # Telegram Bot
+      telegram_bot = [
+        {
+          platform = "polling";
+          api_key = "!secret telegram_bot_token";
+          allowed_chat_ids = ["!secret telegram_chat_id"];
+        }
+      ];
+
+      # Telegram Notify
+      notify = [
+        {
+          platform = "telegram";
+          name = "telegram";
+          chat_id = "!secret telegram_chat_id";
+        }
+      ];
     };
 
     # Allow GUI automations and dashboard edits
@@ -139,6 +160,19 @@ in {
     "L+ /var/lib/hass/custom_components/hacs - - - - ${hacsSource}/custom_components/hacs"
     "L+ /var/lib/hass/themes - - - - ${catppuccinTheme}/themes"
   ];
+
+  # ===========================================
+  # Home Assistant Secrets
+  # ===========================================
+  # Write secrets.yaml before HA starts
+  systemd.services.home-assistant.preStart = lib.mkAfter ''
+    cat > /var/lib/hass/secrets.yaml <<EOF
+    telegram_bot_token: $(cat ${config.sops.secrets."telegram-bot-token".path})
+    telegram_chat_id: $(cat ${config.sops.secrets."telegram-chat-id".path})
+    EOF
+    chmod 600 /var/lib/hass/secrets.yaml
+    chown hass:hass /var/lib/hass/secrets.yaml
+  '';
 
   # ===========================================
   # Polish Speech-to-Text (Whisper)
