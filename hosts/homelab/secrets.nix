@@ -1,12 +1,16 @@
-{config, lib, ...}: {
+{
+  config,
+  lib,
+  ...
+}: {
   # ===========================================
   # SOPS Secrets Management
   # ===========================================
 
-  # Age key location
-  # Using test key from repo for out-of-box setup
-  # For production: generate machine key, update .sops.yaml, re-encrypt, change this path
-  sops.age.keyFile = ../../tests/age-key.txt;
+  # Age key auto-generation (VM tests override with lib.mkForce)
+  # First install: run scripts/setup-secrets.sh to generate key + encrypt secrets
+  sops.age.keyFile = "/var/lib/sops-nix/key.txt";
+  sops.age.generateKey = true;
 
   # Default secrets file
   sops.defaultSopsFile = ../../secrets/secrets.yaml;

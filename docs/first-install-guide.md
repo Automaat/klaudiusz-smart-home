@@ -323,49 +323,52 @@ From now on, changes pushed to GitHub will auto-deploy via Comin (~60 seconds).
 
 ## 12. Setup Secrets (sops-nix)
 
+The system uses SOPS for secret management. Run the automated setup script:
+
 **On homelab (via SSH):**
 
 ```bash
-# Generate age encryption key
-sudo mkdir -p /var/lib/sops-nix
-sudo sh -c 'umask 077; nix shell nixpkgs#age -c age-keygen -o /var/lib/sops-nix/key.txt'
-sudo chown root:root /var/lib/sops-nix/key.txt
-
-# Get public key
-sudo nix shell nixpkgs#age -c age-keygen -y /var/lib/sops-nix/key.txt
-# Copy the output (starts with "age1...")
+cd /etc/nixos
+sudo nix-shell -p age sops --run "bash scripts/setup-secrets.sh"
 ```
 
-**On your local machine:**
+This script will:
+1. Generate age key at `/var/lib/sops-nix/key.txt`
+2. Update `.sops.yaml` with new public key
+3. Create `secrets/secrets.yaml` with dummy values
+4. Encrypt the secrets file
+
+**Review and update secrets:**
 
 ```bash
-cd ~/path/to/klaudiusz-smart-home
-
-# Update .sops.yaml with the public key from above
-nano .sops.yaml
-# Replace the existing age key with yours
-
-# Edit secrets (will encrypt on save)
-nix run nixpkgs#sops -- secrets/secrets.yaml
+# Edit encrypted secrets (opens in editor)
+sudo nix-shell -p sops --run "sops /etc/nixos/secrets/secrets.yaml"
 ```
 
-Fill in:
-
+Replace dummy values:
 ```yaml
 grafana-admin-password: your-secure-password
-home-assistant-prometheus-token: will-set-this-later-in-ha-ui
+home-assistant-prometheus-token: will-set-later-in-ha-ui
+telegram-bot-token: your-bot-token  # or leave dummy
+telegram-chat-id: your-chat-id      # or leave dummy
 ```
 
-Save and exit sops editor (Ctrl+X, Y, Enter for nano)
+Save and exit (Ctrl+X, Y, Enter)
+
+**Commit changes:**
 
 ```bash
-# Commit and push
+cd /etc/nixos
 git add .sops.yaml secrets/secrets.yaml
-git commit -s -S -m "chore: update sops keys and secrets"
+git commit -s -S -m "chore: setup secrets for homelab"
 git push
 ```
 
-Wait ~60 seconds for Comin to pull and rebuild.
+Wait ~60 seconds for Comin to pull and rebuild, or rebuild immediately:
+
+```bash
+sudo nixos-rebuild switch --flake /etc/nixos#homelab
+```
 
 ## 13. Setup Home Assistant
 
