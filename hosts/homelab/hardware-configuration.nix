@@ -20,16 +20,18 @@
 
   # Filesystems - REPLACE with your actual UUIDs from nixos-generate-config
   fileSystems."/" = {
-    device = "/dev/disk/by-uuid/REPLACE-WITH-YOUR-UUID";
+    device = "/dev/disk/by-uuid/be8a2e74-67aa-453c-8495-54f065e2bf30";
     fsType = "ext4";
   };
 
   fileSystems."/boot" = {
-    device = "/dev/disk/by-uuid/REPLACE-WITH-YOUR-UUID";
+    device = "/dev/disk/by-uuid/7D3C-643D";
     fsType = "vfat";
   };
 
-  swapDevices = [];
+  swapDevices = [
+    {device = "/dev/disk/by-uuid/08a8e3bc-5368-4dd1-9a32-7edaae2872be";}
+  ];
 
   # Intel N100 hardware
   hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
