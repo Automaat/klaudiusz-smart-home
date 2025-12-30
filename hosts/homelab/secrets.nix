@@ -4,9 +4,9 @@
   # ===========================================
 
   # Age key location
-  # For initial setup, using test key from repo (bootstrap mode)
-  # TODO: Generate machine-specific key and update .sops.yaml
-  sops.age.keyFile = lib.mkDefault "/var/lib/sops-nix/key.txt";
+  # Using test key from repo for out-of-box setup
+  # For production: generate machine key, update .sops.yaml, re-encrypt, change this path
+  sops.age.keyFile = ../../tests/age-key.txt;
 
   # Default secrets file
   sops.defaultSopsFile = ../../secrets/secrets.yaml;
