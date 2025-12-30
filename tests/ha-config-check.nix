@@ -14,52 +14,53 @@
 
   # Generate Home Assistant configuration for validation
   # This converts the Nix config structure to what HA expects
-  haConfigDir = pkgs.runCommand "ha-config-for-validation" {
-    buildInputs = [pkgs.home-assistant];
-  } ''
-    mkdir -p $out
+  haConfigDir =
+    pkgs.runCommand "ha-config-for-validation" {
+      buildInputs = [pkgs.home-assistant];
+    } ''
+      mkdir -p $out
 
-    # Create a minimal configuration.yaml that includes our generated config
-    # HA will validate the structure when we run check_config
-    cat > $out/configuration.yaml <<EOF
-    # Generated from NixOS configuration for validation
+      # Create a minimal configuration.yaml that includes our generated config
+      # HA will validate the structure when we run check_config
+      cat > $out/configuration.yaml <<EOF
+      # Generated from NixOS configuration for validation
 
-    homeassistant:
-      name: ${haConfig.homeassistant.name}
-      unit_system: ${haConfig.homeassistant.unit_system}
-      currency: ${haConfig.homeassistant.currency}
-      country: ${haConfig.homeassistant.country}
-      language: ${haConfig.homeassistant.language}
-      time_zone: ${haConfig.homeassistant.time_zone}
-      latitude: ${toString haConfig.homeassistant.latitude}
-      longitude: ${toString haConfig.homeassistant.longitude}
-      elevation: ${toString haConfig.homeassistant.elevation}
+      homeassistant:
+        name: ${haConfig.homeassistant.name}
+        unit_system: ${haConfig.homeassistant.unit_system}
+        currency: ${haConfig.homeassistant.currency}
+        country: ${haConfig.homeassistant.country}
+        language: ${haConfig.homeassistant.language}
+        time_zone: ${haConfig.homeassistant.time_zone}
+        latitude: ${toString haConfig.homeassistant.latitude}
+        longitude: ${toString haConfig.homeassistant.longitude}
+        elevation: ${toString haConfig.homeassistant.elevation}
 
-    # Core components
-    conversation: {}
-    frontend: {}
-    http:
-      server_port: ${toString haConfig.http.server_port}
+      # Core components
+      conversation: {}
+      frontend: {}
+      http:
+        server_port: ${toString haConfig.http.server_port}
 
-    # Logger
-    logger:
-      default: ${haConfig.logger.default}
+      # Logger
+      logger:
+        default: ${haConfig.logger.default}
 
-    # Recorder (PostgreSQL)
-    recorder:
-      db_url: ${haConfig.recorder.db_url}
-      purge_keep_days: ${toString haConfig.recorder.purge_keep_days}
-      commit_interval: ${toString haConfig.recorder.commit_interval}
-    EOF
+      # Recorder (PostgreSQL)
+      recorder:
+        db_url: ${haConfig.recorder.db_url}
+        purge_keep_days: ${toString haConfig.recorder.purge_keep_days}
+        commit_interval: ${toString haConfig.recorder.commit_interval}
+      EOF
 
-    # Create empty directories HA expects
-    mkdir -p $out/.storage
-    mkdir -p $out/custom_components
-    mkdir -p $out/themes
+      # Create empty directories HA expects
+      mkdir -p $out/.storage
+      mkdir -p $out/custom_components
+      mkdir -p $out/themes
 
-    # Create minimal core config
-    echo '{"version": 1}' > $out/.storage/core
-  '';
+      # Create minimal core config
+      echo '{"version": 1}' > $out/.storage/core
+    '';
 
   # Validation tests that don't require running HA
   structureValidation = let
@@ -91,12 +92,12 @@
 
   # Test 3: Validate recorder configuration
   recorderValidation = let
-    rec = haConfig.recorder;
-    hasDbUrl = rec ? db_url && rec.db_url != null;
+    recorderCfg = haConfig.recorder;
+    hasDbUrl = recorderCfg ? db_url && recorderCfg.db_url != null;
   in
     if !hasDbUrl
     then throw "FAIL: recorder.db_url must be configured"
-    else if !(lib.hasPrefix "postgresql://" rec.db_url)
+    else if !(lib.hasPrefix "postgresql://" recorderCfg.db_url)
     then throw "FAIL: recorder.db_url must use PostgreSQL"
     else "PASS: Recorder configuration valid";
 

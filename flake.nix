@@ -107,14 +107,15 @@
       '';
 
       # All integration tests (slow - run on main only)
-      all-integration-tests = pkgs.runCommand "all-integration-tests" {
-        vmTestResult = vmTest;
-      } ''
-        echo "Running all integration tests..."
-        echo "VM test completed successfully"
-        echo "All integration tests passed!"
-        touch $out
-      '';
+      all-integration-tests =
+        pkgs.runCommand "all-integration-tests" {
+          vmTestResult = vmTest;
+        } ''
+          echo "Running all integration tests..."
+          echo "VM test completed successfully"
+          echo "All integration tests passed!"
+          touch $out
+        '';
 
       # All tests (static + integration)
       all-tests = pkgs.runCommand "all-tests" {} ''
