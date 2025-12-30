@@ -4,7 +4,8 @@ Complete installation guide for Klaudiusz Smart Home on fresh hardware.
 
 ## Prerequisites
 
-- Intel N100/N305 mini PC (or any x86_64, 8GB+ RAM, 64GB+ storage)
+- Blackview MP60 mini PC (Intel N5095, 16GB RAM, 512GB SSD)
+  - Or any x86_64 machine with 8GB+ RAM, 64GB+ storage
 - USB drive (4GB+)
 - Network connection (ethernet recommended)
 - SSH public key (`~/.ssh/id_ed25519.pub` or `~/.ssh/id_rsa.pub`)
@@ -38,8 +39,11 @@ Or use [Balena Etcher](https://etcher.balena.io/) (GUI, cross-platform)
 
 1. Insert USB into mini PC
 2. Power on, press F2/F7/F12/DEL (depends on BIOS) to enter boot menu
+   - Blackview MP60: typically F7 or F12 for boot menu
 3. Select USB drive to boot
 4. Wait for NixOS installer to load (you'll see a shell prompt)
+
+**Note:** This will replace Windows 11 Pro with NixOS. Back up any data first.
 
 ## 4. Connect to Network
 
@@ -71,6 +75,7 @@ ping -c 3 nixos.org
 ```bash
 # List disks to identify your drive
 lsblk
+# Blackview MP60: should show 512GB drive (nvme0n1 or sda)
 
 # Partition (assuming /dev/nvme0n1 - adjust if different)
 sudo parted /dev/nvme0n1 -- mklabel gpt
