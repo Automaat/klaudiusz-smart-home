@@ -4,8 +4,15 @@ keys:
   # Then update this public key and re-encrypt: sops updatekeys secrets/secrets.yaml
   - &homelab age1l6h3824duhdmxvyx82wr4k2hcc8auh73ls2ca4q0dr5mnqw92c6qxxae9g
 
+  # Test key (for CI/VM tests - private key committed in tests/age-key.txt)
+  - &test age1u5wcrsntpnqs4ldtm7hnjfumm4p0f5pazh9e95kqxn4m3uzp6pts2t7hhz
+
 creation_rules:
   - path_regex: secrets/[^/]+\.yaml$
     key_groups:
       - age:
           - *homelab
+  - path_regex: tests/[^/]+\.yaml$
+    key_groups:
+      - age:
+          - *test
