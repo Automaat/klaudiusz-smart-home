@@ -121,7 +121,7 @@ sudo rm -rf /mnt/etc/nixos/*
 
 # Clone your fork
 cd /mnt/etc/nixos
-sudo git clone https://github.com/YOUR_USERNAME/klaudiusz-smart-home.git .
+sudo git clone https://github.com/Automaat/klaudiusz-smart-home.git .
 
 # Copy hardware config to correct location
 sudo cp /tmp/hardware-configuration.nix \
@@ -164,7 +164,7 @@ sudo nano /mnt/etc/nixos/hosts/homelab/default.nix
      remotes = [
        {
          name = "origin";
-         url = "https://github.com/YOUR_USERNAME/klaudiusz-smart-home.git";  # ← Update this
+         url = "https://github.com/Automaat/klaudiusz-smart-home.git";  # ← Update this
          branches.main.name = "main";
        }
      ];
@@ -248,7 +248,7 @@ git config --global user.name "Your Name"
 git config --global user.email "your-email@example.com"
 
 # Setup SSH remote (for push access)
-git remote set-url origin git@github.com:YOUR_USERNAME/klaudiusz-smart-home.git
+git remote set-url origin git@github.com:Automaat/klaudiusz-smart-home.git
 
 # Push to verify
 git push -u origin main

@@ -97,7 +97,7 @@ nix-shell -p git
 
 # Clone
 cd /mnt/etc/nixos
-sudo git clone https://github.com/YOUR_USERNAME/klaudiusz-smart-home.git .
+sudo git clone https://github.com/Automaat/klaudiusz-smart-home.git .
 
 # Copy hardware config
 sudo cp /mnt/etc/nixos/hardware-configuration.nix \
@@ -147,7 +147,7 @@ ssh admin@<IP_ADDRESS>
 
 ```bash
 cd /etc/nixos
-git remote set-url origin git@github.com:YOUR_USERNAME/klaudiusz-smart-home.git
+git remote set-url origin git@github.com:Automaat/klaudiusz-smart-home.git
 git push -u origin main
 ```
 
