@@ -12,6 +12,7 @@ creation_rules:
     key_groups:
       - age:
           - *homelab
+          - *test
   - path_regex: tests/[^/]+\.yaml$
     key_groups:
       - age:
