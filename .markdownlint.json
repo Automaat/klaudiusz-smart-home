@@ -5,6 +5,9 @@
     "code_blocks": false,
     "tables": false
   },
+  "MD029": {
+    "style": "ordered"
+  },
   "MD033": false,
   "MD041": false
 }

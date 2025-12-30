@@ -140,38 +140,38 @@ sudo nano /mnt/etc/nixos/hosts/homelab/default.nix
 
 1. **SSH public key** (around line 50-60):
 
-```nix
-users.users.admin = {
-  openssh.authorizedKeys.keys = [
-    "ssh-ed25519 AAAAC3... your-email@example.com"  # ← Paste your public key here
-  ];
-};
-```
+   ```nix
+   users.users.admin = {
+     openssh.authorizedKeys.keys = [
+       "ssh-ed25519 AAAAC3... your-email@example.com"  # ← Paste your public key here
+     ];
+   };
+   ```
 
-To get your public key on local machine:
+   To get your public key on local machine:
 
-```bash
-cat ~/.ssh/id_ed25519.pub
-# or
-cat ~/.ssh/id_rsa.pub
-```
+   ```bash
+   cat ~/.ssh/id_ed25519.pub
+   # or
+   cat ~/.ssh/id_rsa.pub
+   ```
 
-1. **Comin git URL** (around line 100-105):
+2. **Comin git URL** (around line 100-105):
 
-```nix
-services.comin = {
-  enable = true;
-  remotes = [
-    {
-      name = "origin";
-      url = "https://github.com/YOUR_USERNAME/klaudiusz-smart-home.git";  # ← Update this
-      branches.main.name = "main";
-    }
-  ];
-};
-```
+   ```nix
+   services.comin = {
+     enable = true;
+     remotes = [
+       {
+         name = "origin";
+         url = "https://github.com/YOUR_USERNAME/klaudiusz-smart-home.git";  # ← Update this
+         branches.main.name = "main";
+       }
+     ];
+   };
+   ```
 
-Save (Ctrl+X, Y, Enter)
+   Save (Ctrl+X, Y, Enter)
 
 ## 9. Install NixOS
 
