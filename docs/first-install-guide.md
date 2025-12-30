@@ -18,6 +18,58 @@ Complete installation guide for Klaudiusz Smart Home on fresh hardware using Nix
 - SSH public key (`~/.ssh/id_ed25519.pub` or `~/.ssh/id_rsa.pub`)
 - GitHub account with fork of this repo
 
+## Already Installed NixOS with GUI Installer?
+
+If you've already installed NixOS using the graphical installer and just need to switch to this repo's
+configuration, follow steps 1-5 below, then continue from step 11 in the main guide.
+
+**On your installed homelab system:**
+
+1. **Backup hardware config:**
+
+   ```bash
+   sudo cp /etc/nixos/hardware-configuration.nix /tmp/hardware-configuration.nix
+   ```
+
+2. **Replace default config with repo:**
+
+   ```bash
+   sudo rm -rf /etc/nixos/*
+   cd /etc/nixos
+   sudo git clone https://github.com/Automaat/klaudiusz-smart-home.git .
+   sudo cp /tmp/hardware-configuration.nix hosts/homelab/hardware-configuration.nix
+   ```
+
+3. **Configure SSH key and git URL:**
+
+   ```bash
+   sudo nano hosts/homelab/default.nix
+   ```
+
+   Update:
+   - **SSH key** (~line 50-60): Paste your public key in `openssh.authorizedKeys.keys`
+   - **Git URL** (~line 100-105): Update `services.comin.remotes[0].url` to your fork
+
+   Save (Ctrl+X, Y, Enter)
+
+4. **Rebuild system:**
+
+   ```bash
+   sudo nixos-rebuild switch --flake /etc/nixos#homelab
+   ```
+
+   Takes 10-30 minutes. Downloads and configures Home Assistant, Wyoming voice, etc.
+
+5. **Reboot:**
+
+   ```bash
+   sudo reboot
+   ```
+
+**After reboot:** Continue from **step 11** (Setup Git Push) in the main guide below.
+
+---
+
 ## 1. Download NixOS ISO
 
 **On your local machine:**
