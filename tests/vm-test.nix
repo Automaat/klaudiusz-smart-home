@@ -6,7 +6,7 @@
   # Import the homelab configuration
   homelabSystem = self.nixosConfigurations.homelab;
 in
-  pkgs.nixosTest {
+  pkgs.testers.nixosTest {
     name = "homelab-integration-test";
 
     nodes.homelab = {
