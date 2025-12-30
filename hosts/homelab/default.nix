@@ -62,7 +62,7 @@
     isNormalUser = true;
     extraGroups = ["wheel" "networkmanager" "dialout"]; # dialout for Zigbee USB
     openssh.authorizedKeys.keys = [
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINWvJJYnZUGjjsz4AucVipikJcvDxtthgcG/DWL0OXwv"
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINWvJJYnZUGjjsz4AucVipikJcvDxtthgcG/DWL0OXwv skalskimarcin33@gmail.com"
     ];
   };
 
