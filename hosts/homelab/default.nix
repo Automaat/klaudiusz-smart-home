@@ -119,6 +119,7 @@
     enable = true;
     port = 9090;
     retentionTime = "15d";
+    checkConfig = false; # Disable check - bearer_token_file unavailable at build time
 
     exporters.node = {
       enable = true;
