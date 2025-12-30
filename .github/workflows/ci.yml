@@ -146,3 +146,47 @@ jobs:
       - name: Lint GitHub Actions workflows
         if: steps.changes.outputs.workflows == 'true'
         run: actionlint
+
+  integration-tests:
+    name: Integration Tests (Main Only)
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
+
+      - name: Check for Nix changes
+        uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # v3
+        id: changes
+        with:
+          filters: |
+            nix:
+              - '**/*.nix'
+              - 'flake.lock'
+              - 'custom_sentences/**/*.yaml'
+              - 'tests/**'
+
+      - name: Install Nix
+        if: steps.changes.outputs.nix == 'true'
+        uses: cachix/install-nix-action@4e002c8ec80594ecd40e759629461e26c8abed15 # v31
+        with:
+          nix_path: nixpkgs=channel:nixos-unstable
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+            accept-flake-config = true
+            substituters = https://cache.nixos.org https://nix-community.cachix.org
+            trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=
+
+      - name: Setup Nix cache
+        if: steps.changes.outputs.nix == 'true'
+        uses: DeterminateSystems/magic-nix-cache-action@565684385bcd71bad329742eefe8d12f2e765b39 # v13
+
+      - name: Enable KVM (for VM tests)
+        if: steps.changes.outputs.nix == 'true'
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Run integration tests
+        if: steps.changes.outputs.nix == 'true'
+        run: nix build .#checks.x86_64-linux.all-integration-tests --show-trace --max-jobs auto
