@@ -1,6 +1,13 @@
 # First Install Guide
 
-Complete installation guide for Klaudiusz Smart Home on fresh hardware.
+Complete installation guide for Klaudiusz Smart Home on fresh hardware using NixOS GNOME live environment.
+
+**Why GNOME ISO?**
+
+- Easier network setup (GUI)
+- Browse documentation during installation
+- Use GUI text editor for config files
+- More user-friendly for first-time NixOS users
 
 ## Prerequisites
 
@@ -16,10 +23,10 @@ Complete installation guide for Klaudiusz Smart Home on fresh hardware.
 **On your local machine:**
 
 ```bash
-wget https://channels.nixos.org/nixos-24.11/latest-nixos-minimal-x86_64-linux.iso
+wget https://channels.nixos.org/nixos-24.11/latest-nixos-gnome-x86_64-linux.iso
 ```
 
-Or download from: <https://nixos.org/download/> (select minimal ISO)
+Or download from: <https://nixos.org/download/> (select GNOME ISO for graphical installer)
 
 ## 2. Create Bootable USB
 
@@ -27,13 +34,13 @@ Or download from: <https://nixos.org/download/> (select minimal ISO)
 
 ```bash
 # Linux/macOS
-sudo dd if=nixos-minimal-*.iso of=/dev/sdX bs=4M status=progress
+sudo dd if=nixos-gnome-*.iso of=/dev/sdX bs=4M status=progress
 
 # Replace /dev/sdX with your USB drive (check with lsblk)
 # WARNING: This will erase the USB drive!
 ```
 
-Or use [Balena Etcher](https://etcher.balena.io/) (GUI, cross-platform)
+Or use [Balena Etcher](https://etcher.balena.io/) (GUI, cross-platform, recommended)
 
 ## 3. Boot from USB
 
@@ -41,36 +48,35 @@ Or use [Balena Etcher](https://etcher.balena.io/) (GUI, cross-platform)
 2. Power on, press F2/F7/F12/DEL (depends on BIOS) to enter boot menu
    - Blackview MP60: typically F7 or F12 for boot menu
 3. Select USB drive to boot
-4. Wait for NixOS installer to load (you'll see a shell prompt)
+4. Wait for NixOS GNOME live environment to load (~1-2 minutes)
+5. GNOME desktop will appear with "Install NixOS" icon on desktop
 
 **Note:** This will replace Windows 11 Pro with NixOS. Back up any data first.
 
+**Tip:** Firefox is preinstalled in live environment - use it to read this guide online during installation.
+
 ## 4. Connect to Network
 
-**On the mini PC (via keyboard/monitor):**
+**On the mini PC (GNOME desktop):**
+
+1. **Ethernet (recommended):** Usually auto-connects, check network icon in top-right
+2. **WiFi (if needed):**
+   - Click network icon in top-right corner
+   - Select your WiFi network
+   - Enter password
+   - Wait for connection
+
+**Verify connection:** Open terminal (Activities → Terminal) and run:
 
 ```bash
-# Ethernet (recommended) - usually works automatically
-# Check connection
-ping -c 3 nixos.org
-
-# WiFi (if needed)
-sudo systemctl start wpa_supplicant
-wpa_cli
-# In wpa_cli:
-> add_network
-> set_network 0 ssid "YOUR_WIFI_NAME"
-> set_network 0 psk "YOUR_WIFI_PASSWORD"
-> enable_network 0
-> quit
-
-# Verify connection
 ping -c 3 nixos.org
 ```
 
 ## 5. Partition Disk
 
-**On the mini PC:**
+**Don't use the graphical installer** - we'll install using our flake configuration instead.
+
+**On the mini PC:** Open terminal (Activities → Terminal)
 
 ```bash
 # List disks to identify your drive
@@ -95,9 +101,11 @@ sudo mount /dev/disk/by-label/boot /mnt/boot
 
 **For SATA SSD:** Replace `/dev/nvme0n1` with `/dev/sda` (and `p1`/`p2` with `1`/`2`)
 
+**Note:** The GNOME desktop is available if you need to browse documentation or look up commands during installation.
+
 ## 6. Generate Hardware Config
 
-**On the mini PC:**
+**In terminal:**
 
 ```bash
 sudo nixos-generate-config --root /mnt
@@ -107,7 +115,7 @@ This creates `/mnt/etc/nixos/hardware-configuration.nix` with your hardware deta
 
 ## 7. Clone Repository
 
-**On the mini PC:**
+**In terminal:**
 
 ```bash
 # Install git
@@ -130,11 +138,15 @@ sudo cp /tmp/hardware-configuration.nix \
 
 ## 8. Configure
 
-**On the mini PC:**
+### Option A: Terminal editor (nano)
 
 ```bash
 sudo nano /mnt/etc/nixos/hosts/homelab/default.nix
 ```
+
+### Option B: GUI editor
+
+Open Files app, navigate to `/mnt/etc/nixos/hosts/homelab/`, open `default.nix` in Text Editor
 
 ### Update these lines
 
@@ -148,13 +160,9 @@ sudo nano /mnt/etc/nixos/hosts/homelab/default.nix
    };
    ```
 
-   To get your public key on local machine:
-
-   ```bash
-   cat ~/.ssh/id_ed25519.pub
-   # or
-   cat ~/.ssh/id_rsa.pub
-   ```
+   To get your public key:
+   - **On local machine:** `cat ~/.ssh/id_ed25519.pub` (or `id_rsa.pub`)
+   - **Or use GNOME:** Open Firefox in live environment, check email/GitHub settings where you saved your key
 
 2. **Comin git URL** (around line 100-105):
 
@@ -171,11 +179,14 @@ sudo nano /mnt/etc/nixos/hosts/homelab/default.nix
    };
    ```
 
-   Save (Ctrl+X, Y, Enter)
+**Save:**
+
+- nano: Ctrl+X, Y, Enter
+- GUI editor: Ctrl+S, close window
 
 ## 9. Install NixOS
 
-**On the mini PC:**
+**In terminal:**
 
 ```bash
 sudo nixos-install --flake /mnt/etc/nixos#homelab
@@ -189,6 +200,8 @@ This will:
 
 **Note:** Grafana and Prometheus services won't start until you configure secrets in step 12.
 Other services (Home Assistant, Wyoming voice) will work immediately.
+
+**You can use GNOME during installation** - browser, file manager, etc. Installation runs in background.
 
 When done:
 
@@ -291,7 +304,7 @@ grafana-admin-password: your-secure-password
 home-assistant-prometheus-token: will-set-this-later-in-ha-ui
 ```
 
-Save (Ctrl+X, Y, Enter)
+Save and exit sops editor (Ctrl+X, Y, Enter for nano)
 
 ```bash
 # Commit and push
