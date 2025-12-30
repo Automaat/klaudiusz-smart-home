@@ -23,6 +23,12 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
+  # Network optimization (BBR for better Tailscale performance)
+  boot.kernel.sysctl = {
+    "net.core.default_qdisc" = "fq";
+    "net.ipv4.tcp_congestion_control" = "bbr";
+  };
+
   # ===========================================
   # Networking
   # ===========================================
@@ -180,6 +186,20 @@
         ensureDBOwnership = true;
       }
     ];
+    # Tuned for 16GB RAM, SSD, Intel Celeron N5095
+    settings = {
+      shared_buffers = "2GB"; # 25% of RAM for small systems
+      effective_cache_size = "8GB"; # 50% of RAM
+      maintenance_work_mem = "512MB"; # For VACUUM, etc.
+      checkpoint_completion_target = 0.9;
+      wal_buffers = "16MB";
+      default_statistics_target = 100;
+      random_page_cost = 1.1; # SSD optimization
+      effective_io_concurrency = 200; # SSD
+      work_mem = "32MB"; # Per operation
+      min_wal_size = "1GB";
+      max_wal_size = "4GB";
+    };
   };
 
   # ===========================================
@@ -218,6 +238,19 @@
   nix.settings.auto-optimise-store = true;
 
   # ===========================================
+  # SSD Optimization
+  # ===========================================
+  services.fstrim.enable = true; # Weekly TRIM for SSD health
+
+  # ===========================================
+  # zram - Compressed RAM swap
+  # ===========================================
+  zramSwap = {
+    enable = true;
+    memoryPercent = 25; # 4GB compressed swap from 16GB RAM
+  };
+
+  # ===========================================
   # USB devices (Zigbee dongle, etc.)
   # ===========================================
   services.udev.extraRules = ''
@@ -237,5 +270,6 @@
     htop
     curl
     jq
+    lm_sensors # Temperature monitoring
   ];
 }
