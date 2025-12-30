@@ -18,7 +18,7 @@ Complete installation guide for Klaudiusz Smart Home on fresh hardware.
 wget https://channels.nixos.org/nixos-24.11/latest-nixos-minimal-x86_64-linux.iso
 ```
 
-Or download from: https://nixos.org/download/ (select minimal ISO)
+Or download from: <https://nixos.org/download/> (select minimal ISO)
 
 ## 2. Create Bootable USB
 
@@ -131,7 +131,7 @@ sudo rm /mnt/etc/nixos/hardware-configuration.nix
 sudo nano /mnt/etc/nixos/hosts/homelab/default.nix
 ```
 
-### Update these lines:
+### Update these lines
 
 1. **SSH public key** (around line 50-60):
 
@@ -151,7 +151,7 @@ cat ~/.ssh/id_ed25519.pub
 cat ~/.ssh/id_rsa.pub
 ```
 
-2. **Comin git URL** (around line 100-105):
+1. **Comin git URL** (around line 100-105):
 
 ```nix
 services.comin = {
@@ -277,7 +277,7 @@ Wait ~60 seconds for Comin to pull and rebuild.
 
 **On your local machine:**
 
-Open http://homelab.local:8123 (or http://192.168.1.XXX:8123)
+Open <http://homelab.local:8123> (or <http://192.168.1.XXX:8123>)
 
 1. Create admin account
 2. Complete onboarding wizard
@@ -347,9 +347,9 @@ Follow the login URL in your browser.
 
 Now you can access:
 
-- Home Assistant: http://homelab:8123 (from anywhere)
-- Grafana: http://homelab:3000 (only on Tailscale)
-- Prometheus: http://homelab:9090 (only on Tailscale)
+- Home Assistant: <http://homelab:8123> (from anywhere)
+- Grafana: <http://homelab:3000> (only on Tailscale)
+- Prometheus: <http://homelab:9090> (only on Tailscale)
 
 ## 15. Verify Everything Works
 
@@ -375,8 +375,8 @@ ls -l /run/secrets/
 
 **On your local machine:**
 
-- Home Assistant: http://homelab.local:8123
-- Grafana: http://homelab:3000 (via Tailscale)
+- Home Assistant: <http://homelab.local:8123>
+- Grafana: <http://homelab:3000> (via Tailscale)
 - Test voice command in HA UI
 
 ## Next Steps
