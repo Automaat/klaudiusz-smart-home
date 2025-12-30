@@ -189,6 +189,7 @@
 ## Recent Changes
 
 **Merged PRs:**
+
 - **PR #17** (2025-12-30): Implemented Phase 3 - maintenance automation (log rotation, Nix GC)
 - **PR #16** (2025-12-30): Fixed broken entity references, commented out placeholders for future devices
 - **PR #15** (2025-12-29): Migrated Home Assistant to PostgreSQL
@@ -199,13 +200,16 @@
 ## Summary
 
 ### ✅ Completed Phases
+
 - **Phase 2:** Security & Remote Access (PR #14)
 
 ### ✅ Completed Priorities
+
 - **Priority 2:** Fix Broken References (PR #16)
 - **Priority 3:** Database Migration (PR #15)
 
 ### ⚠️ In Progress
+
 - **Phase 1:** Foundation (3/4 done - SSH keys pending)
 - **Phase 3:** Maintenance (3/4 done - log rotation, GC, disk monitoring complete; backup pending)
 - **Phase 4:** Database & Voice (2/4 done - database complete, voice pending)
@@ -213,16 +217,20 @@
 ### 🔴 Remaining Priority Tasks
 
 **Priority 1 - Critical:**
+
 - Backup/Recovery (entire section - most critical gap)
 - Configure SSH authorized_keys
 
 **Priority 3 - Maintenance:**
+
 - Backup automation (local Restic - deferred pending backup destination)
 
 **Priority 4 - Voice:**
+
 - Add openwakeword service
 
 **Priority 5 - Nice-to-Have:**
+
 - Low battery alerts
 - Unavailable device detection
 - Custom sentences auto-sync
@@ -234,6 +242,7 @@
 ## Next Steps
 
 **Recommended priority:**
+
 1. **Backup/Recovery** (Priority 1 - most critical missing piece - no data protection currently)
 2. **Configure SSH keys** (Priority 1 - security hardening incomplete)
 3. **Maintenance automation** (Phase 3 - log rotation + generation cleanup)

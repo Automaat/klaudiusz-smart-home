@@ -10,7 +10,7 @@ On the homelab server, generate the age encryption key:
 
 ```bash
 sudo mkdir -p /var/lib/sops-nix
-sudo sh -c 'umask 077; nix run nixpkgs#age -- -generate -o /var/lib/sops-nix/key.txt'
+sudo sh -c 'umask 077; nix shell nixpkgs#age -c age-keygen -o /var/lib/sops-nix/key.txt'
 sudo chown root:root /var/lib/sops-nix/key.txt
 ```
 
@@ -19,7 +19,7 @@ sudo chown root:root /var/lib/sops-nix/key.txt
 Extract the public key:
 
 ```bash
-nix run nixpkgs#age -- -y /var/lib/sops-nix/key.txt
+sudo nix shell nixpkgs#age -c age-keygen -y /var/lib/sops-nix/key.txt
 ```
 
 ### 3. Update .sops.yaml
@@ -73,7 +73,7 @@ After NixOS activation, secrets are available at:
 
 - Verify `/var/lib/sops-nix/key.txt` exists and is readable
 - Check that public key in `.sops.yaml` matches the private key
-- Re-encrypt secrets after key change: `sops updatekeys secrets/secrets.yaml`
+- Re-encrypt secrets after key change: `nix run nixpkgs#sops -- updatekeys secrets/secrets.yaml`
 
 ### Permission denied on secret files
 
