@@ -54,116 +54,45 @@
       };
 
       # -----------------------------------------
-      # Scenes / Routines
+      # Scenes / Routines (Placeholder - no devices yet)
       # -----------------------------------------
-      GoodMorning = {
-        speech.text = "Dzień dobry! Włączam poranny scenariusz.";
-        action = [
-          {
-            service = "light.turn_on";
-            target.entity_id = "all";
-            data = {
-              brightness_pct = "{{ states('input_number.default_brightness') | int }}";
-              color_temp_kelvin = 4000;
-            };
-          }
-          {
-            service = "input_boolean.turn_off";
-            target.entity_id = "input_boolean.sleep_mode";
-          }
-        ];
-      };
-
-      GoodNight = {
-        speech.text = "Dobranoc! Wyłączam wszystko.";
-        action = [
-          {
-            service = "light.turn_off";
-            target.entity_id = "all";
-          }
-          {
-            service = "cover.close_cover";
-            target.entity_id = "all";
-          }
-          {
-            service = "lock.lock";
-            target.entity_id = "all";
-          }
-          {
-            service = "media_player.turn_off";
-            target.entity_id = "all";
-          }
-          {
-            service = "input_boolean.turn_on";
-            target.entity_id = "input_boolean.sleep_mode";
-          }
-        ];
-      };
-
-      LeavingHome = {
-        speech.text = "Do zobaczenia! Zabezpieczam dom.";
-        action = [
-          {
-            service = "light.turn_off";
-            target.entity_id = "all";
-          }
-          {
-            service = "cover.close_cover";
-            target.entity_id = "all";
-          }
-          {
-            service = "lock.lock";
-            target.entity_id = "all";
-          }
-          {
-            service = "climate.set_preset_mode";
-            target.entity_id = "all";
-            data.preset_mode = "away";
-          }
-          {
-            service = "input_boolean.turn_on";
-            target.entity_id = "input_boolean.away_mode";
-          }
-        ];
-      };
-
-      ComingHome = {
-        speech.text = "Witaj w domu!";
-        action = [
-          {
-            service = "light.turn_on";
-            target.entity_id = "all";
-            data.brightness_pct = "{{ states('input_number.default_brightness') | int }}";
-          }
-          {
-            service = "climate.set_preset_mode";
-            target.entity_id = "all";
-            data.preset_mode = "home";
-          }
-          {
-            service = "input_boolean.turn_off";
-            target.entity_id = "input_boolean.away_mode";
-          }
-        ];
-      };
+      # GoodMorning = {
+      #   speech.text = "Dzień dobry! Włączam poranny scenariusz.";
+      #   action = [];
+      # };
+      #
+      # GoodNight = {
+      #   speech.text = "Dobranoc! Wyłączam wszystko.";
+      #   action = [];
+      # };
+      #
+      # LeavingHome = {
+      #   speech.text = "Do zobaczenia! Zabezpieczam dom.";
+      #   action = [];
+      # };
+      #
+      # ComingHome = {
+      #   speech.text = "Witaj w domu!";
+      #   action = [];
+      # };
 
       # -----------------------------------------
-      # Climate
+      # Climate (Placeholder - configure after device setup)
       # -----------------------------------------
-      SetTemperature = {
-        speech.text = "Ustawiam temperaturę na {{ slots.temperature }} stopni";
-        action = [
-          {
-            service = "climate.set_temperature";
-            target.entity_id = "all";
-            data.temperature = "{{ slots.temperature }}";
-          }
-        ];
-      };
-
-      GetTemperature = {
-        speech.text = "Temperatura w {{ slots.area }} wynosi {{ states('sensor.temperature_' + slots.area | lower | replace(' ', '_')) }} stopni";
-      };
+      # SetTemperature = {
+      #   speech.text = "Ustawiam temperaturę na {{ slots.temperature }} stopni";
+      #   action = [
+      #     {
+      #       service = "climate.set_temperature";
+      #       target.entity_id = "climate.your_thermostat_here";
+      #       data.temperature = "{{ slots.temperature }}";
+      #     }
+      #   ];
+      # };
+      #
+      # GetTemperature = {
+      #   speech.text = "Temperatura w {{ slots.area }} wynosi {{ states('sensor.temperature_' + slots.area | lower | replace(' ', '_')) }} stopni";
+      # };
 
       # -----------------------------------------
       # Covers / Blinds
@@ -223,17 +152,12 @@
       };
 
       # -----------------------------------------
-      # Scripts
+      # Scripts (Placeholder - no devices yet)
       # -----------------------------------------
-      MovieMode = {
-        speech.text = "Włączam tryb filmowy";
-        action = [
-          {
-            service = "script.turn_on";
-            target.entity_id = "script.movie_mode";
-          }
-        ];
-      };
+      # MovieMode = {
+      #   speech.text = "Włączam tryb filmowy";
+      #   action = [];
+      # };
     };
 
     # ===========================================
