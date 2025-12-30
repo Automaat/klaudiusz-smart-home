@@ -5,53 +5,45 @@
 }: let
   haConfig = nixosConfig.services.home-assistant.config;
 
-  # Mock secrets for config validation
-  mockSecrets = pkgs.runCommand "mock-secrets" {} ''
-    mkdir -p $out
-    echo "mock-prometheus-token-12345" > $out/home-assistant-prometheus-token
-    echo "mock-grafana-password-12345" > $out/grafana-admin-password
-  '';
-
   # Generate Home Assistant configuration for validation
   # This converts the Nix config structure to what HA expects
+  haConfigYaml = lib.generators.toYAML {} {
+    homeassistant = {
+      name = haConfig.homeassistant.name;
+      unit_system = haConfig.homeassistant.unit_system;
+      currency = haConfig.homeassistant.currency;
+      country = haConfig.homeassistant.country;
+      language = haConfig.homeassistant.language;
+      time_zone = haConfig.homeassistant.time_zone;
+      latitude = haConfig.homeassistant.latitude;
+      longitude = haConfig.homeassistant.longitude;
+      elevation = haConfig.homeassistant.elevation;
+    };
+    conversation = {};
+    frontend = {};
+    http = {
+      server_port = haConfig.http.server_port;
+    };
+    logger = {
+      default = haConfig.logger.default;
+    };
+    recorder = {
+      db_url = haConfig.recorder.db_url;
+      purge_keep_days = haConfig.recorder.purge_keep_days;
+      commit_interval = haConfig.recorder.commit_interval;
+    };
+  };
+
   haConfigDir =
     pkgs.runCommand "ha-config-for-validation" {
       buildInputs = [pkgs.home-assistant];
     } ''
       mkdir -p $out
 
-      # Create a minimal configuration.yaml that includes our generated config
-      # HA will validate the structure when we run check_config
-      cat > $out/configuration.yaml <<EOF
-      # Generated from NixOS configuration for validation
-
-      homeassistant:
-        name: ${haConfig.homeassistant.name}
-        unit_system: ${haConfig.homeassistant.unit_system}
-        currency: ${haConfig.homeassistant.currency}
-        country: ${haConfig.homeassistant.country}
-        language: ${haConfig.homeassistant.language}
-        time_zone: ${haConfig.homeassistant.time_zone}
-        latitude: ${toString haConfig.homeassistant.latitude}
-        longitude: ${toString haConfig.homeassistant.longitude}
-        elevation: ${toString haConfig.homeassistant.elevation}
-
-      # Core components
-      conversation: {}
-      frontend: {}
-      http:
-        server_port: ${toString haConfig.http.server_port}
-
-      # Logger
-      logger:
-        default: ${haConfig.logger.default}
-
-      # Recorder (PostgreSQL)
-      recorder:
-        db_url: ${haConfig.recorder.db_url}
-        purge_keep_days: ${toString haConfig.recorder.purge_keep_days}
-        commit_interval: ${toString haConfig.recorder.commit_interval}
-      EOF
+      # Create configuration.yaml using generated YAML
+      cat > $out/configuration.yaml <<'EOF'
+${haConfigYaml}
+EOF
 
       # Create empty directories HA expects
       mkdir -p $out/.storage
@@ -162,9 +154,10 @@
         exit 1
       fi
 
-      # Check no obvious YAML errors
-      if yq eval '.' ${haConfigDir}/configuration.yaml | grep -qi 'null:'; then
-        echo "FAIL: Config contains null keys" >&2
+      # Check for explicit null values that may indicate misconfigured YAML
+      null_count=$(yq eval '.. | select(. == null and tag == "!!null")' ${haConfigDir}/configuration.yaml 2>/dev/null | wc -l)
+      if [ "''${null_count:-0}" -gt 0 ]; then
+        echo "FAIL: Config contains ''${null_count} explicit null values" >&2
         exit 1
       fi
 

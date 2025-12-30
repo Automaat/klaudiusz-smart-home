@@ -247,7 +247,7 @@ klaudiusz-smart-home/
 
 ```bash
 # Quick check (before commit)
-nix flake check
+nix build .#checks.x86_64-linux.all-static-tests
 
 # Static tests only (fast)
 ./scripts/test-integration.sh --static-only

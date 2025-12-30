@@ -37,7 +37,7 @@ pkgs.testers.nixosTest {
     # Home Assistant
     homelab.wait_for_unit("home-assistant.service")
     homelab.wait_for_open_port(8123)
-    homelab.succeed("curl -f http://localhost:8123 || curl -f http://localhost:8123/manifest.json")
+    homelab.succeed("curl -f http://localhost:8123/manifest.json")
 
     # PostgreSQL (for HA recorder)
     homelab.wait_for_unit("postgresql.service")
@@ -68,7 +68,7 @@ pkgs.testers.nixosTest {
     # =============================================
 
     # Check no failed units
-    homelab.succeed("! systemctl --failed | grep -q 'failed'")
+    homelab.succeed("[ $(systemctl list-units --state=failed --no-legend | wc -l) -eq 0 ]")
 
     # Check home-assistant can access PostgreSQL
     homelab.succeed("sudo -u hass psql -d hass -c 'SELECT 1' > /dev/null")
