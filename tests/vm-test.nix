@@ -37,6 +37,10 @@ pkgs.testers.nixosTest {
       max_wal_size = "1GB";
       jit = "off"; # Disable JIT in VMs to reduce resource usage
     };
+
+    # Disable Wyoming services (require external model downloads, no network in VM)
+    services.wyoming.faster-whisper.servers.default.enable = lib.mkForce false;
+    services.wyoming.piper.servers.default.enable = lib.mkForce false;
   };
 
   testScript = ''
@@ -57,14 +61,6 @@ pkgs.testers.nixosTest {
 
     # PostgreSQL (for HA recorder)
     homelab.wait_for_unit("postgresql.service")
-
-    # Wyoming Faster Whisper (Polish voice input)
-    homelab.wait_for_unit("wyoming-faster-whisper-default.service")
-    homelab.wait_for_open_port(10300)
-
-    # Wyoming Piper (Polish voice output)
-    homelab.wait_for_unit("wyoming-piper-default.service")
-    homelab.wait_for_open_port(10200)
 
     # Prometheus
     homelab.wait_for_unit("prometheus.service")
@@ -88,14 +84,6 @@ pkgs.testers.nixosTest {
 
     # Check home-assistant can access PostgreSQL
     homelab.succeed("sudo -u hass psql -d hass -c 'SELECT 1' > /dev/null")
-
-    # =============================================
-    # Network and Port Checks
-    # =============================================
-
-    # Verify Wyoming services are actually listening (not just port open)
-    homelab.succeed("timeout 5 nc -zv localhost 10300")  # Whisper
-    homelab.succeed("timeout 5 nc -zv localhost 10200")  # Piper
 
     print("✅ All integration tests passed!")
   '';
