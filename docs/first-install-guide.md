@@ -108,6 +108,9 @@ This creates `/mnt/etc/nixos/hardware-configuration.nix` with your hardware deta
 # Install git
 nix-shell -p git
 
+# Save hardware config before removing default config
+sudo cp /mnt/etc/nixos/hardware-configuration.nix /tmp/hardware-configuration.nix
+
 # Remove default config
 sudo rm -rf /mnt/etc/nixos/*
 
@@ -116,11 +119,8 @@ cd /mnt/etc/nixos
 sudo git clone https://github.com/YOUR_USERNAME/klaudiusz-smart-home.git .
 
 # Copy hardware config to correct location
-sudo cp /mnt/etc/nixos/hardware-configuration.nix \
+sudo cp /tmp/hardware-configuration.nix \
         /mnt/etc/nixos/hosts/homelab/hardware-configuration.nix
-
-# Remove the temporary hardware config
-sudo rm /mnt/etc/nixos/hardware-configuration.nix
 ```
 
 ## 8. Configure
@@ -182,6 +182,8 @@ This will:
 - Build the system
 - Ask for root password (set a strong one)
 
+**Note:** Grafana and Prometheus services won't start until you configure secrets in step 12. Other services (Home Assistant, Wyoming voice) will work immediately.
+
 When done:
 
 ```bash
@@ -211,6 +213,27 @@ systemctl status comin
 
 **On homelab (via SSH):**
 
+First, setup GitHub authentication. Choose one:
+
+**Option A: SSH key (recommended)**
+
+```bash
+# Generate SSH key on homelab
+ssh-keygen -t ed25519 -C "your-email@example.com"
+
+# Display public key
+cat ~/.ssh/id_ed25519.pub
+# Copy output and add to GitHub: Settings → SSH and GPG keys → New SSH key
+```
+
+**Option B: Personal Access Token**
+
+- Create token at: GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic)
+- Scopes: `repo` (full control)
+- Use HTTPS URL with token in step below
+
+Now configure git:
+
 ```bash
 cd /etc/nixos
 
@@ -234,11 +257,11 @@ From now on, changes pushed to GitHub will auto-deploy via Comin (~60 seconds).
 ```bash
 # Generate age encryption key
 sudo mkdir -p /var/lib/sops-nix
-sudo sh -c 'umask 077; nix run nixpkgs#age -- -generate -o /var/lib/sops-nix/key.txt'
+sudo sh -c 'umask 077; nix shell nixpkgs#age -c age-keygen -o /var/lib/sops-nix/key.txt'
 sudo chown root:root /var/lib/sops-nix/key.txt
 
 # Get public key
-sudo nix run nixpkgs#age -- -y /var/lib/sops-nix/key.txt
+sudo nix shell nixpkgs#age -c age-keygen -y /var/lib/sops-nix/key.txt
 # Copy the output (starts with "age1...")
 ```
 
@@ -439,11 +462,11 @@ ss -tlnp | grep 10200  # Piper
 sudo ls -l /var/lib/sops-nix/key.txt
 
 # Check public key matches
-sudo nix run nixpkgs#age -- -y /var/lib/sops-nix/key.txt
+sudo nix shell nixpkgs#age -c age-keygen -y /var/lib/sops-nix/key.txt
 # Compare with .sops.yaml in repo
 
 # Re-encrypt if needed (on local machine)
-sops updatekeys secrets/secrets.yaml
+nix run nixpkgs#sops -- updatekeys secrets/secrets.yaml
 ```
 
 ## GitOps Workflow
