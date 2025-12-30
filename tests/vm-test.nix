@@ -10,13 +10,15 @@ pkgs.testers.nixosTest {
 
   nodes.homelab = {
     # Import the homelab configuration with required modules
-    # Note: We can't import the full nixosConfiguration because it has
-    # an external nixpkgs instance with config.allowUnfree
     imports = [
       comin.nixosModules.comin
       sops-nix.nixosModules.sops
       ../hosts/homelab
     ];
+
+    # Override nixpkgs.config to use the test's pkgs instance
+    # This prevents conflicts with the externally-created nixpkgs
+    nixpkgs.pkgs = pkgs;
   };
 
   testScript = ''
