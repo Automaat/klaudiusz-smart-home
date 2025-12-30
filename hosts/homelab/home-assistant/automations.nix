@@ -28,13 +28,13 @@
             service = "persistent_notification.create";
             data = {
               title = "Home Assistant";
-              message = "System uruchomiony o {{ now().strftime('%H:%M') }}";
+              message = "System started at {{ now().strftime('%H:%M') }}";
             };
           }
           {
             service = "notify.telegram";
             data = {
-              message = "🟢 Home Assistant uruchomiony o {{ now().strftime('%H:%M') }}";
+              message = "✅ Home Assistant started at {{ now().strftime('%H:%M') }}";
             };
           }
         ];
@@ -67,7 +67,7 @@
           {
             service = "notify.telegram";
             data = {
-              message = "⚠️ Wysokie użycie CPU: {{ states('sensor.processor_use') }}%";
+              message = "🔴 High CPU usage: {{ states('sensor.processor_use') }}%";
             };
           }
         ];
@@ -97,7 +97,7 @@
           {
             service = "notify.telegram";
             data = {
-              message = "⚠️ Wysokie użycie pamięci: {{ states('sensor.memory_use_percent') }}%";
+              message = "🟠 High memory usage: {{ states('sensor.memory_use_percent') }}%";
             };
           }
         ];
@@ -127,7 +127,7 @@
           {
             service = "notify.telegram";
             data = {
-              message = "⚠️ Mało miejsca na dysku: {{ states('sensor.disk_use_percent') }}% ({{ states('sensor.disk_free') }} GB wolne)";
+              message = "💾 Low disk space: {{ states('sensor.disk_use_percent') }}% used ({{ states('sensor.disk_free') }} GB free)";
             };
           }
         ];
@@ -157,7 +157,7 @@
           {
             service = "notify.telegram";
             data = {
-              message = "🔥 Wysoka temperatura CPU: {{ states('sensor.processor_temperature') }}°C";
+              message = "🔥 High CPU temperature: {{ states('sensor.processor_temperature') }}°C";
             };
           }
         ];
