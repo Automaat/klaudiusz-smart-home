@@ -25,7 +25,7 @@
 - [x] Template sensor references non-existent `sensor.last_boot` (fixed in PR #11)
 - [x] Scripts reference missing entities - fixed by removing/commenting placeholders (PR #16)
 - [x] Input helpers - kept for future use, automations commented out (PR #16)
-- [ ] SSH keys placeholder
+- [x] SSH keys configured (PR #20)
 - [x] Comin repo URL configured
 
 ## Priority 1: Critical Gaps
@@ -65,9 +65,9 @@
 
 ### 3. Security Hardening
 
-**Status:** ✅ Complete (SSH keys still placeholder)
+**Status:** ✅ Complete
 
-- [ ] Configure SSH authorized_keys
+- [x] Configure SSH authorized_keys (PR #20)
 - [x] Configure Comin repository URL
 - [x] fail2ban for SSH
 - [x] Bind Wyoming services to localhost (currently 0.0.0.0)
@@ -151,9 +151,9 @@
 
 ## Implementation Order
 
-### Phase 1: Foundation ⚠️ Partial (3/4 done)
+### Phase 1: Foundation ✅ COMPLETE
 
-1. ⚠️ Configure SSH keys and Comin repo URL (Comin done PR #14, SSH keys still pending)
+1. [x] Configure SSH keys and Comin repo URL (PR #14, PR #20)
 2. [x] Fix broken entity references (PR #16)
 3. [x] Add system monitoring sensors (PR #11)
 4. [x] Bind Wyoming to localhost (PR #14)
@@ -190,6 +190,7 @@
 
 **Merged PRs:**
 
+- **PR #20** (2025-12-30): Configured SSH authorized key for admin user (Phase 1 complete)
 - **PR #17** (2025-12-30): Implemented Phase 3 - maintenance automation (log rotation, Nix GC)
 - **PR #16** (2025-12-30): Fixed broken entity references, commented out placeholders for future devices
 - **PR #15** (2025-12-29): Migrated Home Assistant to PostgreSQL
@@ -201,6 +202,7 @@
 
 ### ✅ Completed Phases
 
+- **Phase 1:** Foundation (PR #11, #14, #16, #20)
 - **Phase 2:** Security & Remote Access (PR #14)
 
 ### ✅ Completed Priorities
@@ -210,7 +212,6 @@
 
 ### ⚠️ In Progress
 
-- **Phase 1:** Foundation (3/4 done - SSH keys pending)
 - **Phase 3:** Maintenance (3/4 done - log rotation, GC, disk monitoring complete; backup pending)
 - **Phase 4:** Database & Voice (2/4 done - database complete, voice pending)
 
@@ -219,7 +220,6 @@
 **Priority 1 - Critical:**
 
 - Backup/Recovery (entire section - most critical gap)
-- Configure SSH authorized_keys
 
 **Priority 3 - Maintenance:**
 
@@ -244,5 +244,5 @@
 **Recommended priority:**
 
 1. **Backup/Recovery** (Priority 1 - most critical missing piece - no data protection currently)
-2. **Configure SSH keys** (Priority 1 - security hardening incomplete)
-3. **Maintenance automation** (Phase 3 - log rotation + generation cleanup)
+2. **Openwakeword service** (Priority 4 - enable hands-free voice activation)
+3. **Low battery alerts** (Priority 5 - device maintenance automation)
