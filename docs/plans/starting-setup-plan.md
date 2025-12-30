@@ -84,19 +84,19 @@
 
 ### 4. Maintenance Automation
 
-**Status:** ⚠️ Partially complete
+**Status:** ✅ Complete (except backup & reboot notifications)
 
 - [x] Auto-restart on service failure (HA, Whisper, Piper)
-- [ ] Old generation cleanup (weekly)
-- [ ] Log rotation (journald limits)
+- [x] Old generation cleanup (weekly, delete >30d, auto-optimize)
+- [x] Log rotation (1G max, 100M/file, 30d retention)
 - [x] HA watchdog (restart on hang) (5min timeout, 10s restart delay)
 - [ ] Auto-reboot notification on kernel updates
 
 **Implementation:**
 
 - systemd Restart=on-failure
-- nix-collect-garbage timer (weekly, keep 5 generations)
-- journald maxRetentionSec + maxFileSize
+- nix.gc (weekly, --delete-older-than 30d)
+- journald SystemMaxUse/MaxFileSize/MaxRetentionSec
 - systemd watchdog for HA
 
 ## Priority 2: Fix Broken References ✅ COMPLETE
@@ -165,12 +165,12 @@
 3. [x] Add service health checks
 4. [x] Configure automated restarts (HA, Whisper, Piper + watchdog)
 
-### Phase 3: Maintenance
+### Phase 3: Maintenance ⚠️ Partial (3/4 done)
 
-1. [ ] Set up log rotation
-2. [ ] Configure generation cleanup
+1. [x] Set up log rotation
+2. [x] Configure generation cleanup
 3. [x] Add disk space monitoring
-4. [ ] Add backup automation (local)
+4. [ ] Add backup automation (local - deferred pending backup destination)
 
 ### Phase 4: Database & Voice ⚠️ Partial (2/4 done)
 
@@ -189,6 +189,7 @@
 ## Recent Changes
 
 **Merged PRs:**
+- **PR #17** (2025-12-30): Implemented Phase 3 - maintenance automation (log rotation, Nix GC)
 - **PR #16** (2025-12-30): Fixed broken entity references, commented out placeholders for future devices
 - **PR #15** (2025-12-29): Migrated Home Assistant to PostgreSQL
 - **PR #14** (2025-12-29): Implemented Phase 2 - security & remote access
@@ -206,7 +207,7 @@
 
 ### ⚠️ In Progress
 - **Phase 1:** Foundation (3/4 done - SSH keys pending)
-- **Phase 3:** Maintenance (1/4 done - disk monitoring complete)
+- **Phase 3:** Maintenance (3/4 done - log rotation, GC, disk monitoring complete; backup pending)
 - **Phase 4:** Database & Voice (2/4 done - database complete, voice pending)
 
 ### 🔴 Remaining Priority Tasks
@@ -216,9 +217,7 @@
 - Configure SSH authorized_keys
 
 **Priority 3 - Maintenance:**
-- Log rotation (journald limits)
-- Old generation cleanup (weekly)
-- Backup automation (local Restic)
+- Backup automation (local Restic - deferred pending backup destination)
 
 **Priority 4 - Voice:**
 - Add openwakeword service
