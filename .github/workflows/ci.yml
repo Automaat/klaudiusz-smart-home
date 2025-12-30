@@ -40,7 +40,7 @@ jobs:
 
       - name: Flake Check
         if: steps.changes.outputs.nix == 'true'
-        run: nix flake check --show-trace --max-jobs auto
+        run: nix build .#checks.x86_64-linux.all-static-tests --show-trace --max-jobs auto
 
       - name: Build homelab system
         if: steps.changes.outputs.nix == 'true' && github.event_name == 'push'
