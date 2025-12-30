@@ -35,6 +35,7 @@ pkgs.testers.nixosTest {
       work_mem = "4MB";
       min_wal_size = "80MB";
       max_wal_size = "1GB";
+      jit = "off"; # Disable JIT in VMs to reduce resource usage
     };
   };
 
