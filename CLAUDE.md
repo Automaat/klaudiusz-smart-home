@@ -4,9 +4,32 @@
 
 NixOS-based smart home with Home Assistant, Polish voice commands (Whisper/Piper), GitOps via Comin.
 
-- **Hardware:** Intel N100 mini PC
+- **Hardware:** Blackview MP60 mini PC
 - **Stack:** NixOS, Flakes, Home Assistant, Wyoming (faster-whisper, piper)
 - **Language:** Polish (pl)
+
+## Hardware Specifications
+
+**Model:** Blackview MP60 mini PC
+
+- **CPU:** Intel Celeron N5095 (quad-core, up to 2.9 GHz)
+- **RAM:** 16GB DDR4
+- **Storage:** 512GB M.2 SSD (expandable to 2TB)
+- **Network:**
+  - Gigabit Ethernet (1000Mbps)
+  - Dual-band WiFi (2.4G + 5G, 802.11ac)
+  - Bluetooth 4.2
+- **Ports:** 2x USB 3.0, 2x USB 2.0, 2x HDMI
+- **Graphics:** Intel UHD (4K support)
+- **Boot:** F7/F12 for boot menu
+- **Original OS:** Windows 11 Pro (replaced with NixOS)
+
+### Hardware Considerations
+
+- Disk device: likely `/dev/nvme0n1` (M.2 SSD) or `/dev/sda` (check with `lsblk`)
+- WiFi/Bluetooth available but ethernet recommended for stability
+- 16GB RAM sufficient for HA + Whisper + Piper + Grafana + Prometheus
+- 512GB ample for OS + Docker volumes + backups
 
 ## Project Structure
 
