@@ -234,9 +234,10 @@ services.home-assistant.config.zha = {
 # Device access
 users.users.hass.extraGroups = ["dialout"];
 
-# Persistent symlink
+# Persistent symlink + auto-start Home Assistant when dongle appears
 services.udev.extraRules = ''
-  SUBSYSTEM=="tty", ATTRS{idVendor}=="XXXX", ATTRS{idProduct}=="XXXX", SYMLINK+="zigbee"
+  SUBSYSTEM=="tty", ATTRS{idVendor}=="XXXX", ATTRS{idProduct}=="XXXX", \
+    SYMLINK+="zigbee", TAG+="systemd", ENV{SYSTEMD_WANTS}="home-assistant.service"
 '';
 ```
 

@@ -4,13 +4,14 @@ Complete guide for adding Zigbee devices using Home Assistant Connect ZBT-2.
 
 ## Hardware
 
-**Home Assistant Connect ZBT-2**
+### Home Assistant Connect ZBT-2
+
 - Silicon Labs EFR32MG21 chip
 - Zigbee 3.0 + Thread/Matter support
 - USB-C connector
 - CP2102N USB-to-UART bridge (idVendor: 10c4, idProduct: ea60)
 
-Product page: https://www.home-assistant.io/connect/zbt-2/
+Product page: <https://www.home-assistant.io/connect/zbt-2/>
 
 ## Prerequisites
 
@@ -77,9 +78,9 @@ services.home-assistant.config.zha = {
 # User permissions
 users.users.hass.extraGroups = ["dialout"];
 
-# Persistent device symlink
+# Persistent device symlink + auto-start Home Assistant when dongle appears
 services.udev.extraRules = ''
-  SUBSYSTEM=="tty", ATTRS{idVendor}=="10c4", ATTRS{idProduct}=="ea60", SYMLINK+="zigbee"
+  SUBSYSTEM=="tty", ATTRS{idVendor}=="10c4", ATTRS{idProduct}=="ea60", SYMLINK+="zigbee", TAG+="systemd", ENV{SYSTEMD_WANTS}="home-assistant.service"
 '';
 ```
 
@@ -120,7 +121,7 @@ INFO (MainThread) [homeassistant.components.zha.core.gateway] Radio type: EZSP
 
 ### 6. Configure ZHA in Home Assistant UI
 
-**Open Home Assistant:** http://homelab.local:8123
+**Open Home Assistant:** <http://homelab.local:8123>
 
 1. Go to **Settings → Devices & Services**
 2. ZHA should auto-discover and show "Discovered" badge
@@ -174,12 +175,12 @@ Follow device-specific pairing instructions:
 
 ### Tested & Working
 
-| Type | Brand | Model | Notes |
-|------|-------|-------|-------|
-| Bulb | IKEA | TRÅDFRI E27 | Affordable, reliable |
-| Switch | IKEA | TRÅDFRI remote | 5 buttons, battery |
-| Sensor | Aqara | Motion sensor | Fast response |
-| Plug | IKEA | TRÅDFRI outlet | EU plug |
+| Type   | Brand | Model          | Notes                |
+| ------ | ----- | -------------- | -------------------- |
+| Bulb   | IKEA  | TRÅDFRI E27    | Affordable, reliable |
+| Switch | IKEA  | TRÅDFRI remote | 5 buttons, battery   |
+| Sensor | Aqara | Motion sensor  | Fast response        |
+| Plug   | IKEA  | TRÅDFRI outlet | EU plug              |
 
 ### Brands Compatible with Zigbee 3.0
 
@@ -204,6 +205,7 @@ journalctl -u home-assistant | grep -i zha
 **Common issues:**
 
 1. **Device not accessible**
+
    ```bash
    # Check device exists
    ls -la /dev/zigbee
@@ -214,6 +216,7 @@ journalctl -u home-assistant | grep -i zha
    ```
 
 2. **Wrong device path**
+
    ```bash
    # Find correct device
    ls -la /dev/ttyUSB* /dev/ttyACM*
@@ -222,6 +225,7 @@ journalctl -u home-assistant | grep -i zha
    ```
 
 3. **USB not recognized**
+
    ```bash
    # Check USB connection
    lsusb | grep 10c4:ea60
@@ -237,6 +241,7 @@ journalctl -u home-assistant | grep -i zha
 3. **Remove existing pairing** - reset device completely
 4. **Check battery** - replace if low
 5. **Extend timeout**:
+
    ```bash
    # In HA Developer Tools → Services:
    # Service: zha.permit
@@ -246,11 +251,13 @@ journalctl -u home-assistant | grep -i zha
 ### Devices Randomly Offline
 
 **Build mesh network:**
+
 - Add powered devices (plugs, bulbs) as routers
 - Place routers between coordinator and battery devices
 - Minimum 3-5 powered devices for stable mesh
 
 **Check coordinator:**
+
 ```bash
 # ZHA should be at /dev/zigbee
 ls -la /dev/zigbee
@@ -324,6 +331,7 @@ services.home-assistant.config.zha = {
 ### Backup Zigbee Network
 
 **Zigbee network config stored in:**
+
 - `/var/lib/hass/zigbee.db` - device database
 - `/var/lib/hass/.storage/core.config_entries` - ZHA config
 
@@ -346,7 +354,7 @@ sudo systemctl start home-assistant
 
 **From ConBee/RaspBee:**
 
-1. Stop Deconz/ZHA
+1. Stop deCONZ/ZHA
 2. Backup network
 3. Plug in ZBT-2
 4. Configure ZHA with `/dev/zigbee`
