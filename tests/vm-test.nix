@@ -2,15 +2,17 @@
   pkgs,
   self,
   ...
-}: let
-  # Import the homelab configuration
-  homelabSystem = self.nixosConfigurations.homelab;
-in
+}:
   pkgs.testers.nixosTest {
     name = "homelab-integration-test";
 
     nodes.homelab = {
-      imports = homelabSystem._module.args.modules;
+      # Import the homelab configuration directly
+      # Note: We can't import the full nixosConfiguration because it has
+      # an external nixpkgs instance with config.allowUnfree
+      imports = [
+        ../hosts/homelab
+      ];
     };
 
     testScript = ''
