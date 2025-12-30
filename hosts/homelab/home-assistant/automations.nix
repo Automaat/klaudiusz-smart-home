@@ -31,6 +31,135 @@
               message = "System uruchomiony o {{ now().strftime('%H:%M') }}";
             };
           }
+          {
+            service = "notify.telegram";
+            data = {
+              message = "🟢 Home Assistant uruchomiony o {{ now().strftime('%H:%M') }}";
+            };
+          }
+        ];
+      }
+
+      # -----------------------------------------
+      # System Health Monitoring
+      # -----------------------------------------
+      {
+        id = "alert_high_cpu";
+        alias = "Health - High CPU usage";
+        mode = "single";
+        trigger = [
+          {
+            platform = "numeric_state";
+            entity_id = "sensor.processor_use";
+            above = 80;
+            "for" = {
+              minutes = 2;
+            };
+          }
+        ];
+        condition = [
+          {
+            condition = "template";
+            value_template = "{{ (as_timestamp(now()) - as_timestamp(state_attr('automation.health_high_cpu_usage', 'last_triggered') | default(0))) > 300 }}";
+          }
+        ];
+        action = [
+          {
+            service = "notify.telegram";
+            data = {
+              message = "⚠️ Wysokie użycie CPU: {{ states('sensor.processor_use') }}%";
+            };
+          }
+        ];
+      }
+
+      {
+        id = "alert_high_memory";
+        alias = "Health - High memory usage";
+        mode = "single";
+        trigger = [
+          {
+            platform = "numeric_state";
+            entity_id = "sensor.memory_use_percent";
+            above = 85;
+            "for" = {
+              minutes = 2;
+            };
+          }
+        ];
+        condition = [
+          {
+            condition = "template";
+            value_template = "{{ (as_timestamp(now()) - as_timestamp(state_attr('automation.health_high_memory_usage', 'last_triggered') | default(0))) > 300 }}";
+          }
+        ];
+        action = [
+          {
+            service = "notify.telegram";
+            data = {
+              message = "⚠️ Wysokie użycie pamięci: {{ states('sensor.memory_use_percent') }}%";
+            };
+          }
+        ];
+      }
+
+      {
+        id = "alert_disk_full";
+        alias = "Health - Disk space low";
+        mode = "single";
+        trigger = [
+          {
+            platform = "numeric_state";
+            entity_id = "sensor.disk_use_percent";
+            above = 85;
+            "for" = {
+              minutes = 5;
+            };
+          }
+        ];
+        condition = [
+          {
+            condition = "template";
+            value_template = "{{ (as_timestamp(now()) - as_timestamp(state_attr('automation.health_disk_space_low', 'last_triggered') | default(0))) > 1800 }}";
+          }
+        ];
+        action = [
+          {
+            service = "notify.telegram";
+            data = {
+              message = "⚠️ Mało miejsca na dysku: {{ states('sensor.disk_use_percent') }}% ({{ states('sensor.disk_free') }} GB wolne)";
+            };
+          }
+        ];
+      }
+
+      {
+        id = "alert_high_temperature";
+        alias = "Health - High CPU temperature";
+        mode = "single";
+        trigger = [
+          {
+            platform = "numeric_state";
+            entity_id = "sensor.processor_temperature";
+            above = 75;
+            "for" = {
+              minutes = 2;
+            };
+          }
+        ];
+        condition = [
+          {
+            condition = "template";
+            value_template = "{{ (as_timestamp(now()) - as_timestamp(state_attr('automation.health_high_cpu_temperature', 'last_triggered') | default(0))) > 300 }}";
+          }
+        ];
+        action = [
+          {
+            service = "notify.telegram";
+            data = {
+              message = "🔥 Wysoka temperatura CPU: {{ states('sensor.processor_temperature') }}°C";
+            };
+          }
         ];
       }
 
