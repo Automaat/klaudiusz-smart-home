@@ -38,20 +38,20 @@
     pkgs.runCommand "ha-config-for-validation" {
       buildInputs = [pkgs.home-assistant];
     } ''
-      mkdir -p $out
+            mkdir -p $out
 
-      # Create configuration.yaml using generated YAML
-      cat > $out/configuration.yaml <<'EOF'
-${haConfigYaml}
-EOF
+            # Create configuration.yaml using generated YAML
+            cat > $out/configuration.yaml <<'EOF'
+      ${haConfigYaml}
+      EOF
 
-      # Create empty directories HA expects
-      mkdir -p $out/.storage
-      mkdir -p $out/custom_components
-      mkdir -p $out/themes
+            # Create empty directories HA expects
+            mkdir -p $out/.storage
+            mkdir -p $out/custom_components
+            mkdir -p $out/themes
 
-      # Create minimal core config
-      echo '{"version": 1}' > $out/.storage/core
+            # Create minimal core config
+            echo '{"version": 1}' > $out/.storage/core
     '';
 
   # Validation tests that don't require running HA
