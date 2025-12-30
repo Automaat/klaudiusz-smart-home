@@ -1,10 +1,12 @@
-{config, ...}: {
+{config, lib, ...}: {
   # ===========================================
   # SOPS Secrets Management
   # ===========================================
 
-  # Age key location (must be created manually on target machine)
-  sops.age.keyFile = "/var/lib/sops-nix/key.txt";
+  # Age key location
+  # For initial setup, using test key from repo (bootstrap mode)
+  # TODO: Generate machine-specific key and update .sops.yaml
+  sops.age.keyFile = lib.mkDefault "/var/lib/sops-nix/key.txt";
 
   # Default secrets file
   sops.defaultSopsFile = ../../secrets/secrets.yaml;
