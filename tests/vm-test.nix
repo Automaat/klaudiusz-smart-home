@@ -22,6 +22,10 @@ pkgs.testers.nixosTest {
     nixpkgs.pkgs = lib.mkForce pkgs;
     nixpkgs.config = lib.mkForce {};
 
+    # Use dummy secrets for testing (not encrypted)
+    sops.defaultSopsFile = lib.mkForce ./secrets.yaml;
+    sops.age.keyFile = lib.mkForce null;
+
     # Override PostgreSQL settings for VM test (limited memory)
     services.postgresql.settings = lib.mkForce {
       shared_buffers = "128MB";
