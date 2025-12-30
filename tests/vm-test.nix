@@ -8,7 +8,7 @@
 pkgs.testers.nixosTest {
   name = "homelab-integration-test";
 
-  nodes.homelab = {
+  nodes.homelab = {lib, ...}: {
     # Import the homelab configuration with required modules
     imports = [
       comin.nixosModules.comin
@@ -16,9 +16,9 @@ pkgs.testers.nixosTest {
       ../hosts/homelab
     ];
 
-    # Override nixpkgs.config to use the test's pkgs instance
-    # This prevents conflicts with the externally-created nixpkgs
-    nixpkgs.pkgs = pkgs;
+    # Override nixpkgs settings to use the test's pkgs instance
+    # nixosTest creates its own nixpkgs instance, so we must use it
+    nixpkgs.pkgs = lib.mkForce pkgs;
   };
 
   testScript = ''
