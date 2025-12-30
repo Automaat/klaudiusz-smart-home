@@ -46,56 +46,56 @@ intents:
           - "jasność {brightness} [procent] [w] {name}"
 
   # =========================================
-  # Scenes / Routines
+  # Scenes / Routines (Placeholder - no devices yet)
   # =========================================
-  GoodMorning:
-    data:
-      - sentences:
-          - "dzień dobry"
-          - "poranek"
-          - "pobudka"
-          - "wstaję"
-
-  GoodNight:
-    data:
-      - sentences:
-          - "dobranoc"
-          - "idę spać"
-          - "czas spać"
-          - "śpię"
-
-  LeavingHome:
-    data:
-      - sentences:
-          - "wychodzę"
-          - "wychodzimy"
-          - "do widzenia"
-          - "pa"
-
-  ComingHome:
-    data:
-      - sentences:
-          - "jestem w domu"
-          - "wróciłem"
-          - "wróciłam"
-          - "jesteśmy w domu"
+  # GoodMorning:
+  #   data:
+  #     - sentences:
+  #         - "dzień dobry"
+  #         - "poranek"
+  #         - "pobudka"
+  #         - "wstaję"
+  #
+  # GoodNight:
+  #   data:
+  #     - sentences:
+  #         - "dobranoc"
+  #         - "idę spać"
+  #         - "czas spać"
+  #         - "śpię"
+  #
+  # LeavingHome:
+  #   data:
+  #     - sentences:
+  #         - "wychodzę"
+  #         - "wychodzimy"
+  #         - "do widzenia"
+  #         - "pa"
+  #
+  # ComingHome:
+  #   data:
+  #     - sentences:
+  #         - "jestem w domu"
+  #         - "wróciłem"
+  #         - "wróciłam"
+  #         - "jesteśmy w domu"
 
   # =========================================
-  # Climate
+  # Climate (Placeholder - configure after device setup)
   # =========================================
-  SetTemperature:
-    data:
-      - sentences:
-          - "ustaw temperaturę [na] {temperature} [stopni]"
-          - "temperatura {temperature} [stopni]"
-          - "ogrzewanie [na] {temperature} [stopni]"
-
-  GetTemperature:
-    data:
-      - sentences:
-          - "jaka [jest] temperatura [w] {area}"
-          - "ile [jest] stopni [w] {area}"
-          - "temperatura [w] {area}"
+  # SetTemperature:
+  #   data:
+  #     - sentences:
+  #         - "ustaw temperaturę [na] {temperature} [stopni]"
+  #         - "temperatura {temperature} [stopni]"
+  #         - "ogrzewanie [na] {temperature} [stopni]"
+  #
+  # GetTemperature:
+  #   data:
+  #     - sentences:
+  #         - "jaka [jest] temperatura [w] {area}"
+  #         - "ile [jest] stopni [w] {area}"
+  #         - "temperatura [w] {area}"
 
   # =========================================
   # Covers / Blinds
@@ -145,12 +145,12 @@ intents:
           - "jaki [jest] dzień"
 
   # =========================================
-  # Scripts
+  # Scripts (Placeholder - no devices yet)
   # =========================================
-  MovieMode:
-    data:
-      - sentences:
-          - "tryb filmowy"
-          - "tryb kino"
-          - "film"
-          - "oglądamy film"
+  # MovieMode:
+  #   data:
+  #     - sentences:
+  #         - "tryb filmowy"
+  #         - "tryb kino"
+  #         - "film"
+  #         - "oglądamy film"
