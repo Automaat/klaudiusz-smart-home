@@ -182,7 +182,8 @@ This will:
 - Build the system
 - Ask for root password (set a strong one)
 
-**Note:** Grafana and Prometheus services won't start until you configure secrets in step 12. Other services (Home Assistant, Wyoming voice) will work immediately.
+**Note:** Grafana and Prometheus services won't start until you configure secrets in step 12.
+Other services (Home Assistant, Wyoming voice) will work immediately.
 
 When done:
 
@@ -215,7 +216,7 @@ systemctl status comin
 
 First, setup GitHub authentication. Choose one:
 
-**Option A: SSH key (recommended)**
+### Option A: SSH key (recommended)
 
 ```bash
 # Generate SSH key on homelab
@@ -226,7 +227,7 @@ cat ~/.ssh/id_ed25519.pub
 # Copy output and add to GitHub: Settings → SSH and GPG keys → New SSH key
 ```
 
-**Option B: Personal Access Token**
+### Option B: Personal Access Token
 
 - Create token at: GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic)
 - Scopes: `repo` (full control)
