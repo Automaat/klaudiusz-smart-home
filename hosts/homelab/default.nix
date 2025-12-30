@@ -272,5 +272,6 @@
     curl
     jq
     lm_sensors # Temperature monitoring
+    age # Age encryption for sops
   ];
 }
