@@ -228,14 +228,16 @@ klaudiusz-smart-home/
 
 ### Test Levels
 
-**Static Tests (Fast - PRs)**
+#### Static Tests (Fast - PRs)
+
 - Config validation (automation IDs, service calls, entity IDs)
 - Schema validation (YAML syntax, intents, Jinja2 templates)
 - Service validation (PostgreSQL config)
 - HA config structure validation
 - Runs on: All PRs via CI
 
-**Integration Tests (Slow - Main Only)**
+#### Integration Tests (Slow - Main Only)
+
 - NixOS VM boot test (~5-10 min)
 - Service health checks (HA, PostgreSQL, Grafana, Prometheus, Wyoming)
 - HTTP endpoint validation
@@ -263,11 +265,13 @@ nix flake check
 ### CI/CD Pipeline
 
 **On PRs:**
+
 - Static checks (fast feedback)
 - Format validation
 - YAML/Markdown lint
 
 **On Main:**
+
 - All PR checks
 - Full system build
 - VM integration tests (boots system, verifies services)
