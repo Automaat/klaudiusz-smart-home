@@ -224,6 +224,74 @@ klaudiusz-smart-home/
 
 ---
 
+## 🧪 Testing
+
+### Test Levels
+
+#### Static Tests (Fast - PRs)
+
+- Config validation (automation IDs, service calls, entity IDs)
+- Schema validation (YAML syntax, intents, Jinja2 templates)
+- Service validation (PostgreSQL config)
+- HA config structure validation
+- Runs on: All PRs via CI
+
+#### Integration Tests (Slow - Main Only)
+
+- NixOS VM boot test (~5-10 min)
+- Service health checks (HA, PostgreSQL, Grafana, Prometheus, Wyoming)
+- HTTP endpoint validation
+- Runs on: Main branch pushes via CI
+
+### Local Testing
+
+```bash
+# Quick check (before commit)
+nix build .#checks.x86_64-linux.all-static-tests
+
+# Static tests only (fast)
+./scripts/test-integration.sh --static-only
+
+# Integration tests (slow, boots VM)
+./scripts/test-integration.sh --integration-only
+
+# All tests (comprehensive)
+./scripts/test-integration.sh
+
+# Verbose output
+./scripts/test-integration.sh --verbose
+```
+
+### CI/CD Pipeline
+
+**On PRs:**
+
+- Static checks (fast feedback)
+- Format validation
+- YAML/Markdown lint
+
+**On Main:**
+
+- All PR checks
+- Full system build
+- VM integration tests (boots system, verifies services)
+- **Blocks Comin deployment if tests fail**
+
+### Available Checks
+
+```bash
+# List all checks
+nix eval .#checks.x86_64-linux --apply builtins.attrNames
+
+# Run specific check
+nix build .#checks.x86_64-linux.vm-integration-test
+nix build .#checks.x86_64-linux.ha-config-validation
+nix build .#checks.x86_64-linux.all-static-tests
+nix build .#checks.x86_64-linux.all-integration-tests
+```
+
+---
+
 ## 🔧 Configuration Tips
 
 ### Add Zigbee Support

@@ -59,6 +59,14 @@
       serviceValidation = import ./tests/service-validation.nix {
         inherit lib pkgs nixosConfig;
       };
+
+      haConfigCheck = import ./tests/ha-config-check.nix {
+        inherit lib pkgs nixosConfig;
+      };
+
+      vmTest = import ./tests/vm-test.nix {
+        inherit pkgs self comin sops-nix;
+      };
     in {
       # Configuration validation tests
       config-validation = pkgs.runCommand "config-validation-tests" {} ''
@@ -81,12 +89,36 @@
         touch $out
       '';
 
-      # All tests
-      all-tests = pkgs.runCommand "all-tests" {} ''
-        echo "Running all tests..."
+      # Home Assistant config validation
+      ha-config-validation = haConfigCheck.all;
+
+      # NixOS VM integration test
+      vm-integration-test = vmTest;
+
+      # All static tests (fast - run on PRs)
+      all-static-tests = pkgs.runCommand "all-static-tests" {} ''
+        echo "Running all static tests..."
         echo "Config validation result: $(cat ${self.checks.${system}.config-validation})"
         echo "Schema validation result: $(cat ${self.checks.${system}.schema-validation})"
         echo "Service validation result: $(cat ${self.checks.${system}.service-validation})"
+        echo "HA config validation result: $(cat ${self.checks.${system}.ha-config-validation})"
+        echo "All static tests passed!"
+        touch $out
+      '';
+
+      # All integration tests (slow - run on main only)
+      all-integration-tests = pkgs.runCommand "all-integration-tests" {} ''
+        echo "Running all integration tests..."
+        echo "VM test result: ${vmTest}"
+        echo "All integration tests passed!"
+        touch $out
+      '';
+
+      # All tests (static + integration)
+      all-tests = pkgs.runCommand "all-tests" {} ''
+        echo "Running all tests..."
+        cat ${self.checks.${system}.all-static-tests}
+        cat ${self.checks.${system}.all-integration-tests}
         echo "All tests passed!"
         touch $out
       '';
