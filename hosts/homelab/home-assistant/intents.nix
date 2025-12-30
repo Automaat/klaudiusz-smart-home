@@ -54,100 +54,45 @@
       };
 
       # -----------------------------------------
-      # Scenes / Routines
+      # Scenes / Routines (Placeholder - no devices yet)
       # -----------------------------------------
-      GoodMorning = {
-        speech.text = "Dzień dobry! Włączam poranny scenariusz.";
-        action = [
-          {
-            service = "light.turn_on";
-            target.entity_id = "light.salon";
-            data = {
-              brightness_pct = 80;
-              color_temp_kelvin = 4000;
-            };
-          }
-          # Add more actions as needed
-        ];
-      };
-
-      GoodNight = {
-        speech.text = "Dobranoc! Wyłączam wszystko.";
-        action = [
-          {
-            service = "light.turn_off";
-            target.entity_id = "all";
-          }
-          {
-            service = "cover.close";
-            target.entity_id = "all";
-          }
-          {
-            service = "lock.lock";
-            target.entity_id = "all";
-          }
-          {
-            service = "media_player.turn_off";
-            target.entity_id = "all";
-          }
-        ];
-      };
-
-      LeavingHome = {
-        speech.text = "Do zobaczenia! Zabezpieczam dom.";
-        action = [
-          {
-            service = "light.turn_off";
-            target.entity_id = "all";
-          }
-          {
-            service = "cover.close";
-            target.entity_id = "all";
-          }
-          {
-            service = "lock.lock";
-            target.entity_id = "all";
-          }
-          {
-            service = "climate.set_preset_mode";
-            target.entity_id = "all";
-            data.preset_mode = "away";
-          }
-        ];
-      };
-
-      ComingHome = {
-        speech.text = "Witaj w domu!";
-        action = [
-          {
-            service = "light.turn_on";
-            target.entity_id = "light.przedpokoj";
-          }
-          {
-            service = "climate.set_preset_mode";
-            target.entity_id = "all";
-            data.preset_mode = "home";
-          }
-        ];
-      };
+      # GoodMorning = {
+      #   speech.text = "Dzień dobry! Włączam poranny scenariusz.";
+      #   action = [];
+      # };
+      #
+      # GoodNight = {
+      #   speech.text = "Dobranoc! Wyłączam wszystko.";
+      #   action = [];
+      # };
+      #
+      # LeavingHome = {
+      #   speech.text = "Do zobaczenia! Zabezpieczam dom.";
+      #   action = [];
+      # };
+      #
+      # ComingHome = {
+      #   speech.text = "Witaj w domu!";
+      #   action = [];
+      # };
 
       # -----------------------------------------
-      # Climate
+      # Climate (Placeholder - configure after device setup)
       # -----------------------------------------
-      SetTemperature = {
-        speech.text = "Ustawiam temperaturę na {{ slots.temperature }} stopni";
-        action = [
-          {
-            service = "climate.set_temperature";
-            target.entity_id = "climate.thermostat";
-            data.temperature = "{{ slots.temperature }}";
-          }
-        ];
-      };
-
-      GetTemperature = {
-        speech.text = "Temperatura w {{ slots.area }} wynosi {{ states('sensor.temperature_' + slots.area | lower | replace(' ', '_')) }} stopni";
-      };
+      # SetTemperature = {
+      #   speech.text = "Ustawiam temperaturę na {{ slots.temperature }} stopni";
+      #   action = [
+      #     {
+      #       service = "climate.set_temperature";
+      #       target.entity_id = "climate.your_thermostat_here";
+      #       data.temperature = "{{ slots.temperature }}";
+      #     }
+      #   ];
+      # };
+      #
+      # GetTemperature = {
+      #   speech.text = "Temperatura w {{ slots.area }} wynosi {{ states('sensor.temperature_' + slots.area | lower | replace(' ', '_')) }} stopni";
+      # };
 
       # -----------------------------------------
       # Covers / Blinds
@@ -207,17 +152,12 @@
       };
 
       # -----------------------------------------
-      # Scripts
+      # Scripts (Placeholder - no devices yet)
       # -----------------------------------------
-      MovieMode = {
-        speech.text = "Włączam tryb filmowy";
-        action = [
-          {
-            service = "script.turn_on";
-            target.entity_id = "script.movie_mode";
-          }
-        ];
-      };
+      # MovieMode = {
+      #   speech.text = "Włączam tryb filmowy";
+      #   action = [];
+      # };
     };
 
     # ===========================================

@@ -35,57 +35,23 @@
       }
 
       # -----------------------------------------
-      # Motion Lights (example)
+      # Mode Management (Placeholder - no devices yet)
       # -----------------------------------------
       # {
-      #   id = "motion_hallway_light";
-      #   alias = "Światło - Korytarz przy ruchu";
+      #   id = "disable_sleep_mode_morning";
+      #   alias = "Tryb nocny - Wyłącz rano";
       #   trigger = [{
-      #     platform = "state";
-      #     entity_id = "binary_sensor.motion_korytarz";
-      #     to = "on";
-      #   }];
-      #   condition = [{
-      #     condition = "sun";
-      #     after = "sunset";
-      #     before = "sunrise";
-      #   }];
-      #   action = [
-      #     {
-      #       service = "light.turn_on";
-      #       target.entity_id = "light.korytarz";
-      #       data.brightness_pct = 50;
-      #     }
-      #     { delay.minutes = 5; }
-      #     {
-      #       service = "light.turn_off";
-      #       target.entity_id = "light.korytarz";
-      #     }
-      #   ];
-      # }
-
-      # -----------------------------------------
-      # Security (example)
-      # -----------------------------------------
-      # {
-      #   id = "security_motion_when_away";
-      #   alias = "Bezpieczeństwo - Ruch gdy poza domem";
-      #   trigger = [{
-      #     platform = "state";
-      #     entity_id = "binary_sensor.motion_salon";
-      #     to = "on";
+      #     platform = "time";
+      #     at = "07:00:00";
       #   }];
       #   condition = [{
       #     condition = "state";
-      #     entity_id = "input_boolean.away_mode";
+      #     entity_id = "input_boolean.sleep_mode";
       #     state = "on";
       #   }];
       #   action = [{
-      #     service = "notify.mobile_app";
-      #     data = {
-      #       title = "⚠️ Alert!";
-      #       message = "Wykryto ruch w salonie!";
-      #     };
+      #     service = "input_boolean.turn_off";
+      #     target.entity_id = "input_boolean.sleep_mode";
       #   }];
       # }
     ];
@@ -123,26 +89,6 @@
     # Scripts (callable from automations/voice)
     # ===========================================
     script = {
-      movie_mode = {
-        alias = "Tryb filmowy";
-        sequence = [
-          {
-            service = "light.turn_off";
-            target.entity_id = "light.salon";
-          }
-          {
-            service = "light.turn_on";
-            target.entity_id = "light.tv_backlight";
-            data.brightness_pct = 20;
-          }
-          {
-            service = "cover.close_cover";
-            target.entity_id = "cover.salon";
-          }
-        ];
-        icon = "mdi:movie-open";
-      };
-
       all_off = {
         alias = "Wyłącz wszystko";
         sequence = [
