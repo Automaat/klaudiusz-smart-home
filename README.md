@@ -6,6 +6,7 @@ NixOS-based smart home configuration with Home Assistant and Polish voice comman
 
 - ✅ **Home Assistant** - smart home hub
 - ✅ **Polish voice commands** - Whisper STT + Piper TTS
+- ✅ **Zigbee support** - Connect ZBT-2 dongle (ZHA)
 - ✅ **GitOps** - auto-deploy via Comin
 - ✅ **Declarative config** - everything in Nix
 
@@ -16,7 +17,7 @@ NixOS-based smart home configuration with Home Assistant and Polish voice comman
 | CPU | Intel N100/N305 | Any x86_64 |
 | RAM | 16GB | 8GB |
 | Storage | 256GB NVMe | 64GB SSD |
-| Optional | Zigbee USB dongle | - |
+| Zigbee | Connect ZBT-2 | Any Zigbee 3.0 USB |
 
 **Tested on:** Beelink Mini S12 Pro (N100, 16GB, 500GB)
 
@@ -294,17 +295,7 @@ nix build .#checks.x86_64-linux.all-integration-tests
 
 ## 🔧 Configuration Tips
 
-### Add Zigbee Support
-
-Uncomment in `hosts/homelab/home-assistant/default.nix`:
-
-```nix
-extraComponents = [
-  "zha"  # or use zigbee2mqtt
-];
-```
-
-### Add More Devices
+### Add More Device Integrations
 
 ```nix
 extraComponents = [
@@ -364,7 +355,23 @@ journalctl -u comin -f
 
 ---
 
-## 📚 Resources
+## 📚 Documentation
+
+### Setup Guides
+
+- [First Install Guide](docs/first-install-guide.md) - Complete NixOS installation walkthrough
+- [Zigbee Setup Guide](docs/zigbee-setup.md) - Connect ZBT-2 dongle and pair Zigbee devices
+- [Custom Voice Commands](docs/custom-voice.md) - Add Polish voice patterns
+- [Wake Word Training](docs/wake-word-training.md) - Train custom wake words
+
+### Quick Links
+
+- [Project Plan](docs/plans/starting-setup-plan.md)
+- [CLAUDE.md](CLAUDE.md) - Project-specific AI instructions
+
+---
+
+## 📚 External Resources
 
 - [NixOS Manual](https://nixos.org/manual/nixos/stable/)
 - [Home Assistant Docs](https://www.home-assistant.io/docs/)

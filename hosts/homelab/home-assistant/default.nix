@@ -57,8 +57,10 @@ in {
       # Notifications
       # "telegram_bot" # Telegram notifications (disabled)
 
+      # Zigbee
+      "zha" # Zigbee Home Automation (Connect ZBT-2)
+
       # Devices (uncomment as needed)
-      # "zha"            # Zigbee Home Automation
       # "mqtt"           # MQTT
       # "esphome"        # ESPHome devices
       # "hue"            # Philips Hue
@@ -152,6 +154,11 @@ in {
       #     chat_id = "!secret telegram_chat_id";
       #   }
       # ];
+
+      # Zigbee Home Automation
+      zha = {
+        database_path = "/var/lib/hass/zigbee.db";
+      };
     };
 
     # Allow GUI automations and dashboard edits
@@ -184,6 +191,18 @@ in {
 
     # Create HACS symlink (release zip extracts to root)
     ln -sfn ${hacsSource} /var/lib/hass/custom_components/hacs
+  '';
+
+  # ===========================================
+  # Zigbee USB Device
+  # ===========================================
+  # Add hass user to dialout group for serial port access
+  users.users.hass.extraGroups = ["dialout"];
+
+  # Create persistent /dev/zigbee symlink for Connect ZBT-2
+  # Silicon Labs CP2102N USB-to-UART bridge
+  services.udev.extraRules = ''
+    SUBSYSTEM=="tty", ATTRS{idVendor}=="10c4", ATTRS{idProduct}=="ea60", SYMLINK+="zigbee", TAG+="systemd", ENV{SYSTEMD_WANTS}="home-assistant.service"
   '';
 
   # ===========================================

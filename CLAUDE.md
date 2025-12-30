@@ -139,6 +139,22 @@ IntentName = {
 - Template: `"(verb1|verb2) [optional] {slot}"`
 - Test with: "Która godzina", "Włącz salon"
 
+### Zigbee Configuration
+
+**Device Setup:**
+
+- ZHA enabled by default (Connect ZBT-2)
+- Persistent device: `/dev/zigbee` via udev
+- Database: `/var/lib/hass/zigbee.db`
+- User: hass in dialout group
+
+**Device Naming:**
+
+- Use Polish area names
+- Format: `{area} - {function}`
+- Example: `Salon - Główne światło`
+- Areas auto-work with voice commands
+
 ### Home Assistant NEVER
 
 - Duplicate intents between Nix and GUI
@@ -200,6 +216,49 @@ IntentName = {
 4. Test voice command
 5. Commit
 
+## Hardware Integrations
+
+### Zigbee (ZHA)
+
+**Setup pattern:**
+
+```nix
+# Enable component
+extraComponents = [ "zha" ];
+
+# Configure
+services.home-assistant.config.zha = {
+  database_path = "/var/lib/hass/zigbee.db";
+};
+
+# Device access
+users.users.hass.extraGroups = ["dialout"];
+
+# Persistent symlink
+services.udev.extraRules = ''
+  SUBSYSTEM=="tty", ATTRS{idVendor}=="XXXX", ATTRS{idProduct}=="XXXX", SYMLINK+="zigbee"
+'';
+```
+
+**Connect ZBT-2 IDs:**
+
+- idVendor: `10c4`
+- idProduct: `ea60`
+
+**Device Naming:**
+
+- Use Polish area names
+- Format: `{area} - {function}`
+- Example: `Salon - Główne światło`
+- Areas auto-work with voice commands
+
+**Troubleshooting:**
+
+1. Check device: `ls -la /dev/zigbee`
+2. Check USB: `lsusb | grep 10c4:ea60`
+3. Check logs: `journalctl -u home-assistant | grep -i zha`
+4. Verify permissions: user in dialout group
+
 ## Remote Access
 
 ### SSH to Homelab
@@ -213,7 +272,6 @@ ssh homelab
 # - User: admin
 # - Key: ~/.ssh/id_ed25519_homelab
 ```
-
 ## Common Commands
 
 ### NixOS
