@@ -199,6 +199,7 @@
       work_mem = "32MB"; # Per operation
       min_wal_size = "1GB";
       max_wal_size = "4GB";
+      jit = "on"; # Enable JIT compilation for complex queries
     };
   };
 
