@@ -17,8 +17,10 @@ pkgs.testers.nixosTest {
     ];
 
     # Override nixpkgs settings to use the test's pkgs instance
-    # nixosTest creates its own nixpkgs instance, so we must use it
+    # The test framework provides its own nixpkgs, so we force-override
+    # both pkgs and config to avoid conflicts
     nixpkgs.pkgs = lib.mkForce pkgs;
+    nixpkgs.config = lib.mkForce {};
   };
 
   testScript = ''
