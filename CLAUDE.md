@@ -139,6 +139,22 @@ IntentName = {
 - Template: `"(verb1|verb2) [optional] {slot}"`
 - Test with: "Która godzina", "Włącz salon"
 
+### Zigbee Configuration
+
+**Device Setup:**
+
+- ZHA enabled by default (Connect ZBT-2)
+- Persistent device: `/dev/zigbee` via udev
+- Database: `/var/lib/hass/zigbee.db`
+- User: hass in dialout group
+
+**Device Naming:**
+
+- Use Polish area names
+- Format: `{area} - {function}`
+- Example: `Salon - Główne światło`
+- Areas auto-work with voice commands
+
 ### Home Assistant NEVER
 
 - Duplicate intents between Nix and GUI
@@ -199,6 +215,50 @@ IntentName = {
 3. Add Polish sentences
 4. Test voice command
 5. Commit
+
+## Hardware Integrations
+
+### Zigbee (ZHA)
+
+**Setup pattern:**
+
+```nix
+# Enable component
+extraComponents = [ "zha" ];
+
+# Configure
+services.home-assistant.config.zha = {
+  database_path = "/var/lib/hass/zigbee.db";
+};
+
+# Device access
+users.users.hass.extraGroups = ["dialout"];
+
+# Persistent symlink + auto-start Home Assistant when dongle appears
+services.udev.extraRules = ''
+  SUBSYSTEM=="tty", ATTRS{idVendor}=="303a", ATTRS{idProduct}=="831a", \
+    SYMLINK+="zigbee", TAG+="systemd", ENV{SYSTEMD_WANTS}="home-assistant.service"
+'';
+```
+
+**Connect ZBT-2 IDs:**
+
+- idVendor: `303a` (Espressif ESP32)
+- idProduct: `831a`
+
+**Device Naming:**
+
+- Use Polish area names
+- Format: `{area} - {function}`
+- Example: `Salon - Główne światło`
+- Areas auto-work with voice commands
+
+**Troubleshooting:**
+
+1. Check device: `ls -la /dev/zigbee`
+2. Check USB: `lsusb | grep 303a:831a`
+3. Check logs: `journalctl -u home-assistant | grep -i zha`
+4. Verify permissions: user in dialout group
 
 ## Remote Access
 
