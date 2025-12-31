@@ -156,7 +156,12 @@ in {
       # ];
 
       # MQTT (for Zigbee2MQTT)
-      mqtt = {};
+      mqtt = {
+        broker = "127.0.0.1";
+        port = 1883;
+        username = "homeassistant";
+        password = "!secret mqtt_password";
+      };
     };
 
     # Allow GUI automations and dashboard edits
@@ -185,6 +190,7 @@ in {
     cat > /var/lib/hass/secrets.yaml <<EOF
     telegram_bot_token: "123456789:ABCdefGHIjklMNOpqrsTUVwxyz-DUMMY"
     telegram_chat_id: "123456789"
+    mqtt_password: $(cat ${config.sops.secrets."mosquitto-ha-password".path})
     EOF
 
     # Create HACS symlink (release zip extracts to root)
@@ -248,17 +254,45 @@ in {
   services.zigbee2mqtt = {
     enable = true;
     settings = {
+      homeassistant.enabled = true; # Enable auto-discovery
       permit_join = false;
       serial.port = "/dev/zigbee";
       mqtt = {
         server = "mqtt://localhost:1883";
         user = "homeassistant";
-        password = "!${config.sops.secrets."mosquitto-ha-password".path}";
+        # Password injected via environment variable
       };
       frontend = {
         port = 8080;
-        host = "0.0.0.0";
+        host = "0.0.0.0"; # Local network access
+        auth_token = "!secret zigbee2mqtt_frontend_token";
       };
+    };
+  };
+
+  # Zigbee2MQTT systemd service configuration
+  systemd.services.zigbee2mqtt = {
+    # Ensure proper startup order
+    after = ["mosquitto.service"];
+    requires = ["mosquitto.service"];
+
+    # Inject MQTT password via environment variable at runtime
+    # Create secret.yaml for frontend auth token
+    preStart = lib.mkBefore ''
+      mkdir -p /run/zigbee2mqtt
+      echo "ZIGBEE2MQTT_CONFIG_MQTT_PASSWORD=$(cat ${config.sops.secrets."mosquitto-ha-password".path})" > /run/zigbee2mqtt/env
+
+      # Create secret.yaml in data directory for frontend auth
+      cat > ${config.services.zigbee2mqtt.dataDir}/secret.yaml <<EOF
+      zigbee2mqtt_frontend_token: $(cat ${config.sops.secrets."zigbee2mqtt-frontend-token".path})
+      EOF
+      chown zigbee2mqtt:zigbee2mqtt ${config.services.zigbee2mqtt.dataDir}/secret.yaml
+      chmod 600 ${config.services.zigbee2mqtt.dataDir}/secret.yaml
+    '';
+
+    serviceConfig = {
+      RuntimeDirectory = "zigbee2mqtt";
+      EnvironmentFile = "/run/zigbee2mqtt/env";
     };
   };
 }
