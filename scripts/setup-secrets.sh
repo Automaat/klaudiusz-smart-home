@@ -117,8 +117,62 @@ echo -e "\n${GREEN}=== Setup Complete ===${NC}"
 echo -e "\n${YELLOW}IMPORTANT:${NC}"
 echo "1. Age key location: $KEY_FILE"
 echo "2. Public key: $PUBKEY"
-echo "3. Secrets file encrypted with dummy values"
-echo "4. Replace dummy values with real secrets:"
+
+# Step 5: Git workflow
+echo -e "\nStep 5: Git commit workflow..."
+cd "$REPO_ROOT"
+
+# Check if files changed
+if git diff --quiet .sops.yaml secrets/secrets.yaml 2>/dev/null; then
+  echo "No changes to commit"
+else
+  echo -e "${YELLOW}Files modified:${NC}"
+  git status --short .sops.yaml secrets/secrets.yaml 2>/dev/null || true
+
+  echo -e "\nStaging changes..."
+  git add .sops.yaml secrets/secrets.yaml
+
+  echo -e "${YELLOW}Ready to commit. Choose action:${NC}"
+  echo "1) Commit automatically"
+  echo "2) Show diff and exit (manual commit)"
+  echo "3) Skip commit (not recommended - rebuild will fail)"
+  read -p "Choice (1/2/3): " -n 1 -r
+  echo
+
+  case $REPLY in
+    1)
+      # Check git config
+      if ! git config user.email >/dev/null 2>&1; then
+        echo -e "${RED}Git user.email not configured${NC}"
+        echo "Run: git config --global user.email 'you@example.com'"
+        exit 1
+      fi
+
+      git commit -s -S -m "fix: update sops keys and encrypt secrets for homelab" || {
+        echo -e "${YELLOW}Commit failed. Commit manually:${NC}"
+        echo "  git commit -s -S -m 'fix: update sops keys and encrypt secrets'"
+      }
+      echo -e "${GREEN}✓ Committed${NC}"
+      ;;
+    2)
+      echo -e "\n${YELLOW}Showing diff:${NC}"
+      git diff --cached .sops.yaml secrets/secrets.yaml | head -30
+      echo -e "\n${YELLOW}Commit manually:${NC}"
+      echo "  git commit -s -S -m 'fix: update sops keys and encrypt secrets'"
+      exit 0
+      ;;
+    3)
+      git restore --staged .sops.yaml secrets/secrets.yaml
+      echo -e "${RED}⚠ Changes unstaged - rebuild will fail with plain secrets${NC}"
+      exit 1
+      ;;
+  esac
+fi
+
+echo -e "\n${GREEN}Next steps:${NC}"
+echo "1. Edit secrets with real values:"
 echo "   sops $SECRETS_FILE"
-echo ""
-echo "You can now run: nixos-rebuild switch --flake $REPO_ROOT#homelab"
+echo "2. Rebuild system:"
+echo "   nixos-rebuild switch --flake $REPO_ROOT#homelab"
+echo "3. Push changes:"
+echo "   git push"
