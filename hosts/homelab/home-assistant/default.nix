@@ -171,15 +171,19 @@ in {
   ];
 
   # ===========================================
-  # Home Assistant Secrets
+  # Home Assistant Secrets & HACS
   # ===========================================
-  # Write secrets.yaml before HA starts
+  # Write secrets.yaml and create HACS symlink before HA starts
   # File ownership set by tmpfiles.rules above (avoids chown in VM tests)
+  # HACS symlink created after Nix-managed preStart removes /nix/store symlinks
   systemd.services.home-assistant.preStart = lib.mkAfter ''
     cat > /var/lib/hass/secrets.yaml <<EOF
     telegram_bot_token: "123456789:ABCdefGHIjklMNOpqrsTUVwxyz-DUMMY"
     telegram_chat_id: "123456789"
     EOF
+
+    # Create HACS symlink
+    ln -sfn ${hacsSource}/custom_components/hacs /var/lib/hass/custom_components/hacs
   '';
 
   # ===========================================
@@ -235,12 +239,4 @@ in {
   #     frontend.port = 8080;
   #   };
   # };
-
-  # ===========================================
-  # HACS Symlink (after Nix cleanup)
-  # ===========================================
-  systemd.services.home-assistant.preStart = lib.mkAfter ''
-    # Create HACS symlink after Nix-managed preStart removes it
-    ln -sfn ${hacsSource}/custom_components/hacs /var/lib/hass/custom_components/hacs
-  '';
 }
