@@ -182,8 +182,8 @@ in {
     telegram_chat_id: "123456789"
     EOF
 
-    # Create HACS symlink (release zip contains hacs/ directly)
-    ln -sfn ${hacsSource}/hacs /var/lib/hass/custom_components/hacs
+    # Create HACS symlink (release zip extracts to root)
+    ln -sfn ${hacsSource} /var/lib/hass/custom_components/hacs
   '';
 
   # ===========================================
