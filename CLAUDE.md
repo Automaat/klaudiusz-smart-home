@@ -236,15 +236,15 @@ users.users.hass.extraGroups = ["dialout"];
 
 # Persistent symlink + auto-start Home Assistant when dongle appears
 services.udev.extraRules = ''
-  SUBSYSTEM=="tty", ATTRS{idVendor}=="XXXX", ATTRS{idProduct}=="XXXX", \
+  SUBSYSTEM=="tty", ATTRS{idVendor}=="303a", ATTRS{idProduct}=="831a", \
     SYMLINK+="zigbee", TAG+="systemd", ENV{SYSTEMD_WANTS}="home-assistant.service"
 '';
 ```
 
 **Connect ZBT-2 IDs:**
 
-- idVendor: `10c4`
-- idProduct: `ea60`
+- idVendor: `303a` (Espressif ESP32)
+- idProduct: `831a`
 
 **Device Naming:**
 
@@ -256,7 +256,7 @@ services.udev.extraRules = ''
 **Troubleshooting:**
 
 1. Check device: `ls -la /dev/zigbee`
-2. Check USB: `lsusb | grep 10c4:ea60`
+2. Check USB: `lsusb | grep 303a:831a`
 3. Check logs: `journalctl -u home-assistant | grep -i zha`
 4. Verify permissions: user in dialout group
 

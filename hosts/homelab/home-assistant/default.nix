@@ -200,9 +200,9 @@ in {
   users.users.hass.extraGroups = ["dialout"];
 
   # Create persistent /dev/zigbee symlink for Connect ZBT-2
-  # Silicon Labs CP2102N USB-to-UART bridge
+  # Espressif ESP32 (Nabu Casa ZBT-2: 303a:831a)
   services.udev.extraRules = ''
-    SUBSYSTEM=="tty", ATTRS{idVendor}=="10c4", ATTRS{idProduct}=="ea60", SYMLINK+="zigbee", TAG+="systemd", ENV{SYSTEMD_WANTS}="home-assistant.service"
+    SUBSYSTEM=="tty", ATTRS{idVendor}=="303a", ATTRS{idProduct}=="831a", SYMLINK+="zigbee", TAG+="systemd", ENV{SYSTEMD_WANTS}="home-assistant.service"
   '';
 
   # ===========================================

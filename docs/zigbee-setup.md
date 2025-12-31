@@ -9,7 +9,7 @@ Complete guide for adding Zigbee devices using Home Assistant Connect ZBT-2.
 - Silicon Labs EFR32MG21 chip
 - Zigbee 3.0 + Thread/Matter support
 - USB-C connector
-- CP2102N USB-to-UART bridge (idVendor: 10c4, idProduct: ea60)
+- Espressif ESP32 USB bridge (idVendor: 303a, idProduct: 831a)
 
 Product page: <https://www.home-assistant.io/connect/zbt-2/>
 
@@ -36,26 +36,25 @@ ssh admin@homelab.local
 **Check USB device:**
 
 ```bash
-# List USB devices
-lsusb | grep 10c4:ea60
+# Check serial device by-id
+ls -la /dev/serial/by-id/
 
 # Expected output:
-# Bus 001 Device 003: ID 10c4:ea60 Silicon Labs CP210x UART Bridge
+# lrwxrwxrwx ... usb-Nabu_Casa_ZBT-2_XXXXXXXXXXXX-if00 -> ../../ttyACM0
 
 # Check serial device
-ls -la /dev/tty* | grep -E "(USB|ACM)"
+ls -la /dev/ttyACM*
 
-# Expected output (one of):
-# /dev/ttyUSB0
-# /dev/ttyACM0
+# Expected output:
+# crw-rw---- 1 root dialout ... /dev/ttyACM0
 
-# View kernel messages
-dmesg | tail -20
+# View device attributes
+udevadm info -a /dev/ttyACM0 | grep -E 'idVendor|idProduct|manufacturer'
 
-# Expected output includes:
-# usb 1-1: New USB device found, idVendor=10c4, idProduct=ea60
-# cp210x 1-1:1.0: cp210x converter detected
-# usb 1-1: cp210x converter now attached to ttyUSB0
+# Expected output:
+# ATTRS{idVendor}=="303a"
+# ATTRS{idProduct}=="831a"
+# ATTRS{manufacturer}=="Nabu Casa"
 ```
 
 ### 3. Configuration Already Applied
@@ -99,7 +98,7 @@ sudo nixos-rebuild switch --flake /etc/nixos#homelab
 ls -la /dev/zigbee
 
 # Expected output:
-# lrwxrwxrwx 1 root root 7 Dec 30 10:00 /dev/zigbee -> ttyUSB0
+# lrwxrwxrwx 1 root root 7 Dec 31 17:04 /dev/zigbee -> ttyACM0
 ```
 
 ### 5. Restart Home Assistant
@@ -228,7 +227,10 @@ journalctl -u home-assistant | grep -i zha
 
    ```bash
    # Check USB connection
-   lsusb | grep 10c4:ea60
+   ls -la /dev/serial/by-id/ | grep -i nabu
+
+   # Check device attributes
+   udevadm info -a /dev/ttyACM0 | grep -E 'idVendor|idProduct'
 
    # Try different USB port
    # Reconnect dongle
