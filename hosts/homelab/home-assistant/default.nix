@@ -159,6 +159,7 @@ in {
   systemd.tmpfiles.rules = [
     "L+ /var/lib/hass/custom_components/hacs - - - - ${hacsSource}/custom_components/hacs"
     "L+ /var/lib/hass/themes - - - - ${catppuccinTheme}/themes"
+    "d /var/lib/hass/blueprints 0755 hass hass -"
   ];
 
   # ===========================================
