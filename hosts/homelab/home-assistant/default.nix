@@ -69,6 +69,7 @@ in {
     extraPackages = ps:
       with ps; [
         psycopg2 # PostgreSQL adapter for recorder
+        aiogithubapi # Required by HACS
       ];
 
     config = {
