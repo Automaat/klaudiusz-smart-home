@@ -31,12 +31,12 @@
               message = "System started at {{ now().strftime('%H:%M') }}";
             };
           }
-          {
-            service = "notify.telegram";
-            data = {
-              message = "✅ Home Assistant started at {{ now().strftime('%H:%M') }}";
-            };
-          }
+          # {
+          #   service = "notify.telegram";
+          #   data = {
+          #     message = "✅ Home Assistant started at {{ now().strftime('%H:%M') }}";
+          #   };
+          # }
         ];
       }
 
@@ -64,12 +64,12 @@
           }
         ];
         action = [
-          {
-            service = "notify.telegram";
-            data = {
-              message = "🔴 High CPU usage: {{ states('sensor.processor_use') }}%";
-            };
-          }
+          # {
+          #   service = "notify.telegram";
+          #   data = {
+          #     message = "🔴 High CPU usage: {{ states('sensor.processor_use') }}%";
+          #   };
+          # }
         ];
       }
 
@@ -94,12 +94,12 @@
           }
         ];
         action = [
-          {
-            service = "notify.telegram";
-            data = {
-              message = "🟠 High memory usage: {{ states('sensor.memory_use_percent') }}%";
-            };
-          }
+          # {
+          #   service = "notify.telegram";
+          #   data = {
+          #     message = "🟠 High memory usage: {{ states('sensor.memory_use_percent') }}%";
+          #   };
+          # }
         ];
       }
 
@@ -124,12 +124,12 @@
           }
         ];
         action = [
-          {
-            service = "notify.telegram";
-            data = {
-              message = "💾 Low disk space: {{ states('sensor.disk_use_percent_') }}% used";
-            };
-          }
+          # {
+          #   service = "notify.telegram";
+          #   data = {
+          #     message = "💾 Low disk space: {{ states('sensor.disk_use_percent_') }}% used";
+          #   };
+          # }
         ];
       }
 
@@ -154,12 +154,12 @@
           }
         ];
         action = [
-          {
-            service = "notify.telegram";
-            data = {
-              message = "🔥 High CPU temperature: {{ states('sensor.processor_temperature') }}°C";
-            };
-          }
+          # {
+          #   service = "notify.telegram";
+          #   data = {
+          #     message = "🔥 High CPU temperature: {{ states('sensor.processor_temperature') }}°C";
+          #   };
+          # }
         ];
       }
 

@@ -56,7 +56,7 @@ in {
       "command_line" # Service health checks
 
       # Notifications
-      "telegram_bot" # Telegram notifications
+      # "telegram_bot" # Telegram notifications (disabled)
 
       # Devices (uncomment as needed)
       # "zha"            # Zigbee Home Automation
@@ -134,23 +134,23 @@ in {
         };
       };
 
-      # Telegram Bot
-      telegram_bot = [
-        {
-          platform = "polling";
-          api_key = "!secret telegram_bot_token";
-          allowed_chat_ids = ["!secret telegram_chat_id"];
-        }
-      ];
+      # Telegram Bot (disabled)
+      # telegram_bot = [
+      #   {
+      #     platform = "polling";
+      #     api_key = "!secret telegram_bot_token";
+      #     allowed_chat_ids = ["!secret telegram_chat_id"];
+      #   }
+      # ];
 
-      # Telegram Notify
-      notify = [
-        {
-          platform = "telegram";
-          name = "telegram";
-          chat_id = "!secret telegram_chat_id";
-        }
-      ];
+      # Telegram Notify (disabled)
+      # notify = [
+      #   {
+      #     platform = "telegram";
+      #     name = "telegram";
+      #     chat_id = "!secret telegram_chat_id";
+      #   }
+      # ];
     };
 
     # Allow GUI automations and dashboard edits
