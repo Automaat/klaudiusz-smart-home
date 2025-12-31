@@ -12,7 +12,7 @@ This project uses sops-nix with age encryption for secrets management. Three age
 
 ### Public Keys (safe to share)
 
-- Homelab: `age1gadh9f6axhd44wp4j6yqutsfcta6dtdcjuzhu77wefamtzcrdvtstlnqk7`
+- Homelab: `age1y3s65jxg6llqp8qkey37jpewgsqhvppg6hhyraqw0xcntttdsv3sw3x75q`
 - Local: `age10nm6ar2haj797ycemkp640xs0sc4juym57ll5zxh7uupg8rkhy5szt58tc`
 - Test: `age1u5wcrsntpnqs4ldtm7hnjfumm4p0f5pazh9e95kqxn4m3uzp6pts2t7hhz` (private key in `tests/age-key.txt`)
 
@@ -45,7 +45,7 @@ sudo chown root:root /var/lib/sops-nix/key.txt
 ### 2. Verify Key
 
 ```bash
-# Public key should match: age1gadh9f6axhd44wp4j6yqutsfcta6dtdcjuzhu77wefamtzcrdvtstlnqk7
+# Public key should match: age1y3s65jxg6llqp8qkey37jpewgsqhvppg6hhyraqw0xcntttdsv3sw3x75q
 nix shell nixpkgs#age -c age-keygen -y /var/lib/sops-nix/key.txt
 ```
 

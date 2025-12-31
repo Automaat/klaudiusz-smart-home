@@ -1,6 +1,6 @@
 keys:
   # Homelab age key (private key: /var/lib/sops-nix/key.txt on homelab)
-  - &homelab age1gadh9f6axhd44wp4j6yqutsfcta6dtdcjuzhu77wefamtzcrdvtstlnqk7
+  - &homelab age1y3s65jxg6llqp8qkey37jpewgsqhvppg6hhyraqw0xcntttdsv3sw3x75q
 
   # Local machine key (private key: ~/.config/sops/age/keys.txt on local machine)
   - &local age10nm6ar2haj797ycemkp640xs0sc4juym57ll5zxh7uupg8rkhy5szt58tc
