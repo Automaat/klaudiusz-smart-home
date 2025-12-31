@@ -273,6 +273,7 @@ ssh homelab
 # - User: admin
 # - Key: ~/.ssh/id_ed25519_homelab
 ```
+
 ## Common Commands
 
 ### NixOS
