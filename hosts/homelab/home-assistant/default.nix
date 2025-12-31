@@ -36,10 +36,6 @@ in {
   services.home-assistant = {
     enable = true;
 
-    customComponents = [
-      (hacsSource + "/custom_components/hacs")
-    ];
-
     extraComponents = [
       # Core
       "default_config"
@@ -239,4 +235,12 @@ in {
   #     frontend.port = 8080;
   #   };
   # };
+
+  # ===========================================
+  # HACS Symlink (after Nix cleanup)
+  # ===========================================
+  systemd.services.home-assistant.preStart = lib.mkAfter ''
+    # Create HACS symlink after Nix-managed preStart removes it
+    ln -sfn ${hacsSource}/custom_components/hacs /var/lib/hass/custom_components/hacs
+  '';
 }
