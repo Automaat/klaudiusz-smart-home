@@ -53,8 +53,8 @@
   # Locale & Time
   # ===========================================
   time.timeZone = "Europe/Warsaw";
-  i18n.defaultLocale = "pl_PL.UTF-8";
-  console.keyMap = "pl";
+  i18n.defaultLocale = "en_US.UTF-8";
+  console.keyMap = "pl"; # Keep Polish keyboard layout
 
   # ===========================================
   # Users
