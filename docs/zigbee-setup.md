@@ -6,10 +6,10 @@ Complete guide for adding Zigbee devices using Home Assistant Connect ZBT-2.
 
 ### Home Assistant Connect ZBT-2
 
-- Silicon Labs EFR32MG21 chip
+- Main Zigbee radio: Silicon Labs EFR32MG21 chip
+- USB-to-serial bridge: Espressif ESP32 (idVendor: 303a, idProduct: 831a — these USB IDs are used in udev rules)
 - Zigbee 3.0 + Thread/Matter support
 - USB-C connector
-- Espressif ESP32 USB bridge (idVendor: 303a, idProduct: 831a)
 
 Product page: <https://www.home-assistant.io/connect/zbt-2/>
 
