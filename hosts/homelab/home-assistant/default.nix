@@ -36,6 +36,10 @@ in {
   services.home-assistant = {
     enable = true;
 
+    customComponents = [
+      hacsSource
+    ];
+
     extraComponents = [
       # Core
       "default_config"
@@ -160,12 +164,10 @@ in {
   };
 
   # ===========================================
-  # HACS Installation
+  # Additional Themes & Directories
   # ===========================================
   systemd.tmpfiles.rules = [
-    # Create parent directories first with correct ownership
-    "d /var/lib/hass/custom_components 0755 hass hass -"
-    "L+ /var/lib/hass/custom_components/hacs - - - - ${hacsSource}/custom_components/hacs"
+    # HACS symlink managed by customComponents above
     "L+ /var/lib/hass/themes - - - - ${catppuccinTheme}/themes"
     "d /var/lib/hass/blueprints 0755 hass hass -"
     # Create secrets.yaml with correct ownership (written by preStart)
