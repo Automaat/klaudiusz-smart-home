@@ -64,20 +64,39 @@ echo -e "\nStep 3: Updating .sops.yaml..."
 sed -i.bak "s/- &homelab age[a-z0-9]*/- \&homelab $PUBKEY/" "$SOPS_CONFIG"
 echo -e "${GREEN}✓ Updated .sops.yaml with new homelab key${NC}"
 
-# Step 4: Create secrets.yaml from template
-echo -e "\nStep 4: Creating secrets.yaml from template..."
+# Step 4: Handle existing or create new secrets.yaml
+echo -e "\nStep 4: Managing secrets.yaml..."
 if [ -f "$SECRETS_FILE" ]; then
-  echo -e "${YELLOW}Warning: $SECRETS_FILE already exists${NC}"
-  read -p "Overwrite? (y/N): " -n 1 -r
-  echo
-  if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-    echo "Skipping secrets.yaml creation"
-    exit 0
+  # Check if file is already encrypted (contains "sops:" metadata)
+  if grep -q "^sops:" "$SECRETS_FILE"; then
+    echo -e "${YELLOW}Encrypted secrets.yaml exists${NC}"
+    read -p "Re-encrypt with updated keys? (Y/n): " -n 1 -r
+    echo
+    if [[ ! $REPLY =~ ^[Nn]$ ]]; then
+      echo "Re-encrypting with updated keys..."
+      cd "$REPO_ROOT"
+      sops updatekeys -y "$SECRETS_FILE"
+      echo -e "${GREEN}✓ Re-encrypted $SECRETS_FILE${NC}"
+    else
+      echo "Skipping re-encryption"
+    fi
+  else
+    # Unencrypted file exists
+    echo -e "${YELLOW}Unencrypted secrets.yaml exists${NC}"
+    read -p "Encrypt it now? (Y/n): " -n 1 -r
+    echo
+    if [[ ! $REPLY =~ ^[Nn]$ ]]; then
+      cd "$REPO_ROOT"
+      sops -e -i "$SECRETS_FILE"
+      echo -e "${GREEN}✓ Encrypted $SECRETS_FILE${NC}"
+    else
+      echo "Skipping encryption"
+    fi
   fi
-fi
-
-# Create secrets.yaml with dummy values
-cat > "$SECRETS_FILE" <<EOF
+else
+  # Create new secrets.yaml from template
+  echo "Creating secrets.yaml from template..."
+  cat > "$SECRETS_FILE" <<EOF
 # Auto-generated dummy secrets
 # Replace with real values after installation
 
@@ -86,14 +105,13 @@ home-assistant-prometheus-token: "dummy-token-change-me"
 telegram-bot-token: "123456789:ABCdefGHIjklMNOpqrsTUVwxyz-CHANGE-ME"
 telegram-chat-id: "123456789"
 EOF
+  echo -e "${GREEN}✓ Created $SECRETS_FILE${NC}"
 
-echo -e "${GREEN}✓ Created $SECRETS_FILE${NC}"
-
-# Step 5: Encrypt secrets.yaml
-echo -e "\nStep 5: Encrypting secrets.yaml with SOPS..."
-cd "$REPO_ROOT"
-sops -e -i "$SECRETS_FILE"
-echo -e "${GREEN}✓ Encrypted $SECRETS_FILE${NC}"
+  echo "Encrypting secrets.yaml..."
+  cd "$REPO_ROOT"
+  sops -e -i "$SECRETS_FILE"
+  echo -e "${GREEN}✓ Encrypted $SECRETS_FILE${NC}"
+fi
 
 echo -e "\n${GREEN}=== Setup Complete ===${NC}"
 echo -e "\n${YELLOW}IMPORTANT:${NC}"
