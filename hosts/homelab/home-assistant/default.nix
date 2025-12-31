@@ -160,20 +160,20 @@ in {
     "L+ /var/lib/hass/custom_components/hacs - - - - ${hacsSource}/custom_components/hacs"
     "L+ /var/lib/hass/themes - - - - ${catppuccinTheme}/themes"
     "d /var/lib/hass/blueprints 0755 hass hass -"
+    # Create secrets.yaml with correct ownership (written by preStart)
+    "f /var/lib/hass/secrets.yaml 0600 hass hass -"
   ];
 
   # ===========================================
   # Home Assistant Secrets
   # ===========================================
   # Write secrets.yaml before HA starts
-  # TODO: Use sops secrets after secrets are set up
+  # File ownership set by tmpfiles.rules above (avoids chown in VM tests)
   systemd.services.home-assistant.preStart = lib.mkAfter ''
     cat > /var/lib/hass/secrets.yaml <<EOF
     telegram_bot_token: "123456789:ABCdefGHIjklMNOpqrsTUVwxyz-DUMMY"
     telegram_chat_id: "123456789"
     EOF
-    chmod 600 /var/lib/hass/secrets.yaml
-    chown hass:hass /var/lib/hass/secrets.yaml
   '';
 
   # ===========================================
