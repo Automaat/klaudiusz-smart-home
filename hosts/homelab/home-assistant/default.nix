@@ -58,10 +58,10 @@ in {
       # "telegram_bot" # Telegram notifications (disabled)
 
       # Zigbee
-      "zha" # Zigbee Home Automation (Connect ZBT-2)
+      # "zha" # Zigbee Home Automation (disabled - using Zigbee2MQTT)
 
-      # Devices (uncomment as needed)
-      # "mqtt"           # MQTT
+      # Devices
+      "mqtt" # MQTT for Zigbee2MQTT
       # "esphome"        # ESPHome devices
       # "hue"            # Philips Hue
       # "cast"           # Google Cast
@@ -155,10 +155,8 @@ in {
       #   }
       # ];
 
-      # Zigbee Home Automation
-      zha = {
-        database_path = "/var/lib/hass/zigbee.db";
-      };
+      # MQTT (for Zigbee2MQTT)
+      mqtt = {};
     };
 
     # Allow GUI automations and dashboard edits
@@ -196,13 +194,14 @@ in {
   # ===========================================
   # Zigbee USB Device
   # ===========================================
-  # Add hass user to dialout group for serial port access
-  users.users.hass.extraGroups = ["dialout"];
+  # Add zigbee2mqtt user to dialout group for serial port access
+  users.users.zigbee2mqtt.extraGroups = ["dialout"];
 
   # Create persistent /dev/zigbee symlink for Connect ZBT-2
   # Espressif ESP32 (Nabu Casa ZBT-2: 303a:831a)
+  # Auto-start Zigbee2MQTT when dongle appears
   services.udev.extraRules = ''
-    SUBSYSTEM=="tty", ATTRS{idVendor}=="303a", ATTRS{idProduct}=="831a", SYMLINK+="zigbee", TAG+="systemd", ENV{SYSTEMD_WANTS}="home-assistant.service"
+    SUBSYSTEM=="tty", ATTRS{idVendor}=="303a", ATTRS{idProduct}=="831a", SYMLINK+="zigbee", TAG+="systemd", ENV{SYSTEMD_WANTS}="zigbee2mqtt.service"
   '';
 
   # ===========================================
@@ -226,36 +225,40 @@ in {
   };
 
   # ===========================================
-  # MQTT Broker (optional - uncomment if needed)
+  # MQTT Broker (Mosquitto)
   # ===========================================
-  # services.mosquitto = {
-  #   enable = true;
-  #   listeners = [{
-  #     port = 1883;
-  #     users = {
-  #       homeassistant = {
-  #         acl = [ "readwrite #" ];
-  #         hashedPasswordFile = "/run/secrets/mosquitto-ha-password";
-  #       };
-  #     };
-  #   }];
-  # };
+  services.mosquitto = {
+    enable = true;
+    listeners = [
+      {
+        port = 1883;
+        users = {
+          homeassistant = {
+            acl = ["readwrite #"];
+            hashedPasswordFile = config.sops.secrets."mosquitto-ha-password".path;
+          };
+        };
+      }
+    ];
+  };
 
   # ===========================================
-  # Zigbee2MQTT (optional - uncomment if needed)
+  # Zigbee2MQTT
   # ===========================================
-  # services.zigbee2mqtt = {
-  #   enable = true;
-  #   settings = {
-  #     homeassistant = true;
-  #     permit_join = false;
-  #     serial.port = "/dev/zigbee";
-  #     mqtt = {
-  #       server = "mqtt://localhost:1883";
-  #       user = "homeassistant";
-  #       password = "!secret mqtt_password";
-  #     };
-  #     frontend.port = 8080;
-  #   };
-  # };
+  services.zigbee2mqtt = {
+    enable = true;
+    settings = {
+      permit_join = false;
+      serial.port = "/dev/zigbee";
+      mqtt = {
+        server = "mqtt://localhost:1883";
+        user = "homeassistant";
+        password = "!${config.sops.secrets."mosquitto-ha-password".path}";
+      };
+      frontend = {
+        port = 8080;
+        host = "0.0.0.0";
+      };
+    };
+  };
 }

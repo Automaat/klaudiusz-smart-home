@@ -40,6 +40,7 @@
       allowedTCPPorts = [
         22 # SSH
         8123 # Home Assistant
+        8080 # Zigbee2MQTT frontend
       ];
       # Allow Tailscale traffic
       trustedInterfaces = ["tailscale0"];

@@ -44,5 +44,12 @@
       mode = "0400";
       restartUnits = ["home-assistant.service"];
     };
+
+    # MQTT password for Home Assistant
+    "mosquitto-ha-password" = {
+      owner = "mosquitto";
+      mode = "0400";
+      restartUnits = ["mosquitto.service"];
+    };
   };
 }
