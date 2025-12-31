@@ -20,19 +20,19 @@
 
   # Filesystems - REPLACE with your actual UUIDs from nixos-generate-config
   fileSystems."/" = {
-    device = "/dev/disk/by-uuid/be8a2e74-67aa-453c-8495-54f065e2bf30";
+    device = "/dev/disk/by-uuid/b8c07bea-3db2-4091-b475-e9cba4c473c5";
     fsType = "ext4";
   };
 
   fileSystems."/boot" = {
-    device = "/dev/disk/by-uuid/7D3C-643D";
+    device = "/dev/disk/by-uuid/5838-45D1";
     fsType = "vfat";
     options = ["nofail"];
   };
 
   swapDevices = [
     {
-      device = "/dev/disk/by-uuid/08a8e3bc-5368-4dd1-9a32-7edaae2872be";
+      device = "/dev/disk/by-uuid/a5c0802b-f608-454a-94a7-a7ce42d5914a";
       options = ["nofail"];
     }
   ];
