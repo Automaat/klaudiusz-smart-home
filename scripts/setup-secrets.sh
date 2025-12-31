@@ -58,6 +58,10 @@ echo -e "\nStep 2: Extracting public key..."
 PUBKEY=$(age-keygen -y "$KEY_FILE")
 echo -e "${GREEN}✓ Public key: $PUBKEY${NC}"
 
+# Export age key location for SOPS
+export SOPS_AGE_KEY_FILE="$KEY_FILE"
+echo -e "✓ SOPS_AGE_KEY_FILE=$SOPS_AGE_KEY_FILE"
+
 # Step 3: Update .sops.yaml
 echo -e "\nStep 3: Updating .sops.yaml..."
 # Replace the homelab public key with new one
