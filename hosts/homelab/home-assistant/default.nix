@@ -163,6 +163,8 @@ in {
   # HACS Installation
   # ===========================================
   systemd.tmpfiles.rules = [
+    # Create parent directories first with correct ownership
+    "d /var/lib/hass/custom_components 0755 hass hass -"
     "L+ /var/lib/hass/custom_components/hacs - - - - ${hacsSource}/custom_components/hacs"
     "L+ /var/lib/hass/themes - - - - ${catppuccinTheme}/themes"
     "d /var/lib/hass/blueprints 0755 hass hass -"
