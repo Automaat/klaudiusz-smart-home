@@ -24,7 +24,17 @@ pkgs.testers.nixosTest {
 
     # Use dummy secrets for testing (encrypted with test key)
     sops.defaultSopsFile = lib.mkForce ./secrets.yaml;
-    sops.age.keyFile = lib.mkForce ./age-key.txt;
+    sops.age.keyFile = lib.mkForce "/var/lib/sops-nix/test-key.txt";
+    sops.age.generateKey = lib.mkForce false;
+
+    # Create test key file at boot (before sops activation)
+    system.activationScripts.createTestKey = lib.stringAfter ["etc"] ''
+      mkdir -p /var/lib/sops-nix
+      cat > /var/lib/sops-nix/test-key.txt <<'EOF'
+      ${builtins.readFile ./age-key.txt}
+      EOF
+      chmod 600 /var/lib/sops-nix/test-key.txt
+    '';
 
     # Override PostgreSQL settings for VM test (limited memory)
     services.postgresql.settings = lib.mkForce {

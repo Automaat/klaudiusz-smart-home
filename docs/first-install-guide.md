@@ -333,6 +333,7 @@ sudo nix-shell -p age sops --run "bash scripts/setup-secrets.sh"
 ```
 
 This script will:
+
 1. Generate age key at `/var/lib/sops-nix/key.txt`
 2. Update `.sops.yaml` with new public key
 3. Create `secrets/secrets.yaml` with dummy values
@@ -346,6 +347,7 @@ sudo nix-shell -p sops --run "sops /etc/nixos/secrets/secrets.yaml"
 ```
 
 Replace dummy values:
+
 ```yaml
 grafana-admin-password: your-secure-password
 home-assistant-prometheus-token: will-set-later-in-ha-ui
