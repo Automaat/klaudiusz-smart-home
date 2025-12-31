@@ -17,6 +17,7 @@ This project uses sops-nix with age encryption for secrets management. Two age k
 ### Private Keys (in Bitwarden)
 
 Both private keys are stored in Bitwarden as secure notes:
+
 - `klaudiusz-homelab-age-key`
 - `klaudiusz-local-age-key`
 
