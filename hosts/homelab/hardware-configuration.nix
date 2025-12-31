@@ -27,10 +27,14 @@
   fileSystems."/boot" = {
     device = "/dev/disk/by-uuid/7D3C-643D";
     fsType = "vfat";
+    options = ["nofail"];
   };
 
   swapDevices = [
-    {device = "/dev/disk/by-uuid/08a8e3bc-5368-4dd1-9a32-7edaae2872be";}
+    {
+      device = "/dev/disk/by-uuid/08a8e3bc-5368-4dd1-9a32-7edaae2872be";
+      options = ["nofail"];
+    }
   ];
 
   # Intel N100 hardware
