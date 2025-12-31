@@ -87,6 +87,9 @@
     ignoreIP = [
       "127.0.0.0/8"
       "::1"
+      "10.0.0.0/8" # Private network (Class A)
+      "172.16.0.0/12" # Private network (Class B)
+      "192.168.0.0/16" # Private network (Class C)
       "100.64.0.0/10" # Tailscale subnet
     ];
   };
