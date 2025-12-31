@@ -204,6 +204,16 @@
         ensureDBOwnership = true;
       }
     ];
+    # Explicit authentication - prevents setup hanging
+    # https://nixos.wiki/wiki/PostgreSQL
+    authentication = pkgs.lib.mkOverride 10 ''
+      # Local socket connections (required for setup scripts)
+      local all all trust
+      # IPv4 local connections
+      host all all 127.0.0.1/32 trust
+      # IPv6 local connections
+      host all all ::1/128 trust
+    '';
     # Tuned for 16GB RAM, SSD, Intel Celeron N5095
     settings = {
       shared_buffers = "2GB"; # 25% of RAM for small systems
