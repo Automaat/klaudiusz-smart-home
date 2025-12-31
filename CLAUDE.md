@@ -200,6 +200,20 @@ IntentName = {
 4. Test voice command
 5. Commit
 
+## Remote Access
+
+### SSH to Homelab
+
+```bash
+# Connect to homelab server
+ssh homelab
+
+# Connection details (from ~/.ssh/config):
+# - Hostname: 192.168.0.241
+# - User: admin
+# - Key: ~/.ssh/id_ed25519_homelab
+```
+
 ## Common Commands
 
 ### NixOS
