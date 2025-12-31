@@ -66,9 +66,10 @@ in {
       # "cast"           # Google Cast
     ];
 
-    extraPackages = ps: with ps; [
-      psycopg2 # PostgreSQL adapter for recorder
-    ];
+    extraPackages = ps:
+      with ps; [
+        psycopg2 # PostgreSQL adapter for recorder
+      ];
 
     config = {
       default_config = {};
