@@ -7,11 +7,10 @@
   # ===========================================
   # HACS (Home Assistant Community Store)
   # ===========================================
-  hacsSource = pkgs.fetchFromGitHub {
-    owner = "hacs";
-    repo = "integration";
-    rev = "2.0.1";
-    hash = "sha256-MENOK7tnblBKmCFncS0EFiA1oqQeK4OtQpEmjYF9gWQ=";
+  hacsSource = pkgs.fetchzip {
+    url = "https://github.com/hacs/integration/releases/download/2.0.1/hacs.zip";
+    hash = "sha256-9kUHao6XR5qiSNfHsSlwoKG8ReJW91PTROwYftjOKcI=";
+    stripRoot = false;
   };
 
   # ===========================================
@@ -183,8 +182,8 @@ in {
     telegram_chat_id: "123456789"
     EOF
 
-    # Create HACS symlink
-    ln -sfn ${hacsSource}/custom_components/hacs /var/lib/hass/custom_components/hacs
+    # Create HACS symlink (release zip contains hacs/ directly)
+    ln -sfn ${hacsSource}/hacs /var/lib/hass/custom_components/hacs
   '';
 
   # ===========================================
