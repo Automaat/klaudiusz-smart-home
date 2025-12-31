@@ -53,10 +53,14 @@ nix shell nixpkgs#age -c age-keygen -y /var/lib/sops-nix/key.txt
 
 Once the key is in place, Comin will pull the latest config and sops-nix will automatically decrypt secrets at `/run/secrets/`.
 
-> **Important:** For `hosts/homelab`, `sops.age.generateKey` is set to `true`. If `/var/lib/sops-nix/key.txt` does **not** exist on the first boot, sops-nix will automatically generate a new random key file. This key will not match the Bitwarden-backed homelab key and cannot decrypt existing secrets. If you want to use the Bitwarden-stored key:
+> **Important:** For `hosts/homelab`, `sops.age.generateKey` is set to `true`. If
+> `/var/lib/sops-nix/key.txt` does **not** exist on the first boot, sops-nix will automatically
+> generate a new random key file. This key will not match the Bitwarden-backed homelab key and
+> cannot decrypt existing secrets. If you want to use the Bitwarden-stored key:
 >
 > - Make sure you install `/var/lib/sops-nix/key.txt` from Bitwarden **before the first boot**, or
-> - Disable auto-generation by setting `sops.age.generateKey = false;` in your NixOS config so the system fails instead of silently generating a mismatched key.
+> - Disable auto-generation by setting `sops.age.generateKey = false;` in your NixOS config so the
+>   system fails instead of silently generating a mismatched key.
 
 ## Local Development
 
