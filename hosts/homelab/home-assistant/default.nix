@@ -37,7 +37,7 @@ in {
     enable = true;
 
     customComponents = [
-      hacsSource
+      (hacsSource + "/custom_components/hacs")
     ];
 
     extraComponents = [
