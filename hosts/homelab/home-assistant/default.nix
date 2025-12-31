@@ -165,10 +165,11 @@ in {
   # Home Assistant Secrets
   # ===========================================
   # Write secrets.yaml before HA starts
+  # TODO: Use sops secrets after secrets are set up
   systemd.services.home-assistant.preStart = lib.mkAfter ''
     cat > /var/lib/hass/secrets.yaml <<EOF
-    telegram_bot_token: $(cat ${config.sops.secrets."telegram-bot-token".path})
-    telegram_chat_id: $(cat ${config.sops.secrets."telegram-chat-id".path})
+    telegram_bot_token: "123456789:ABCdefGHIjklMNOpqrsTUVwxyz-DUMMY"
+    telegram_chat_id: "123456789"
     EOF
     chmod 600 /var/lib/hass/secrets.yaml
     chown hass:hass /var/lib/hass/secrets.yaml

@@ -7,7 +7,8 @@
   imports = [
     ./hardware-configuration.nix
     ./home-assistant
-    ./secrets.nix
+    # TODO: Re-enable after system is working
+    # ./secrets.nix
   ];
 
   # ===========================================
@@ -133,14 +134,13 @@
         job_name = "node";
         static_configs = [{targets = ["localhost:9100"];}];
       }
-      {
-        job_name = "homeassistant";
-        static_configs = [{targets = ["localhost:8123"];}];
-        metrics_path = "/api/prometheus";
-        # Token managed by sops-nix (secrets/secrets.yaml: home-assistant-prometheus-token)
-        # Create token in HA: Settings > People > Admin > Security > Long-lived access tokens
-        bearer_token_file = config.sops.secrets."home-assistant-prometheus-token".path;
-      }
+      # TODO: Re-enable HA scraping after setting up secrets
+      # {
+      #   job_name = "homeassistant";
+      #   static_configs = [{targets = ["localhost:8123"];}];
+      #   metrics_path = "/api/prometheus";
+      #   bearer_token_file = config.sops.secrets."home-assistant-prometheus-token".path;
+      # }
     ];
   };
 
@@ -157,7 +157,9 @@
       };
       security = {
         admin_user = "admin";
-        admin_password = config.sops.secrets."grafana-admin-password".path;
+        # TODO: Use sops secret after secrets are set up
+        # INSECURE: Change this password after first login!
+        admin_password = "admin";
       };
     };
     provision = {
