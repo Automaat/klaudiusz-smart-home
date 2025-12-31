@@ -92,6 +92,14 @@
   };
 
   # ===========================================
+  # Bluetooth
+  # ===========================================
+  hardware.bluetooth = {
+    enable = true;
+    powerOnBoot = true;
+  };
+
+  # ===========================================
   # Tailscale - Secure Remote Access
   # ===========================================
   services.tailscale = {
