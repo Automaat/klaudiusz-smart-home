@@ -72,11 +72,8 @@ in {
       ];
 
     config = {
+      # default_config includes bluetooth integration
       default_config = {};
-
-      # Disable bluetooth integration (bluez backend issues)
-      # Re-enable when bluetooth devices are needed
-      bluetooth = {};
 
       homeassistant = {
         name = "Dom";
