@@ -116,14 +116,14 @@
       {
         binary_sensor = {
           name = "comin_deployment_success";
-          command = "journalctl -u comin.service --since '90 seconds ago' --no-pager | grep -q 'Deployment successful' && echo ON || echo OFF";
+          command = "journalctl -u comin.service --since '60 seconds ago' --no-pager | grep -q 'switch successfully terminated' && echo ON || echo OFF";
           scan_interval = 30;
         };
       }
       {
         binary_sensor = {
           name = "comin_deployment_failed";
-          command = "journalctl -u comin.service --since '90 seconds ago' --no-pager | grep -q 'Deployment failed' && echo ON || echo OFF";
+          command = "journalctl -u comin.service --since '60 seconds ago' --no-pager | grep -q 'level=error' && echo ON || echo OFF";
           scan_interval = 30;
         };
       }
@@ -280,11 +280,12 @@
       # -----------------------------------------
       {
         id = "notify_comin_deployment_success";
-        alias = "Notify - Comin deployment successful";
+        alias = "Alert - Comin deployment successful";
         trigger = [
           {
             platform = "state";
             entity_id = "binary_sensor.comin_deployment_success";
+            from = "off";
             to = "on";
           }
         ];
@@ -301,11 +302,12 @@
 
       {
         id = "notify_comin_deployment_failed";
-        alias = "Notify - Comin deployment failed";
+        alias = "Alert - Comin deployment failed";
         trigger = [
           {
             platform = "state";
             entity_id = "binary_sensor.comin_deployment_failed";
+            from = "off";
             to = "on";
           }
         ];
