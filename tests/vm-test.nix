@@ -22,61 +22,11 @@ pkgs.testers.nixosTest {
     nixpkgs.pkgs = lib.mkForce pkgs;
     nixpkgs.config = lib.mkForce {};
 
-    # Use dummy secrets for testing (encrypted with test key)
-    sops.defaultSopsFile = lib.mkForce ./secrets.yaml;
+    # Disable sops-nix for VM tests (use plaintext secrets instead)
     sops.age.generateKey = lib.mkForce false;
 
-    # Provide test age key early in boot process (before sops decryption)
-    environment.etc."sops-age-test-key.txt" = {
-      text = builtins.readFile ./age-key.txt;
-      mode = "0600";
-    };
-    sops.age.keyFile = lib.mkForce "/etc/sops-age-test-key.txt";
-
-    # Override secret ownership for VM tests (service users may not exist during activation)
-    sops.secrets = {
-      grafana-admin-password = {
-        owner = lib.mkForce "root";
-        group = lib.mkForce "root";
-        mode = lib.mkForce "0444";
-        restartUnits = lib.mkForce [];
-      };
-      home-assistant-prometheus-token = {
-        owner = lib.mkForce "root";
-        group = lib.mkForce "root";
-        mode = lib.mkForce "0444";
-        restartUnits = lib.mkForce [];
-      };
-      telegram-bot-token = {
-        owner = lib.mkForce "root";
-        group = lib.mkForce "root";
-        mode = lib.mkForce "0444";
-        restartUnits = lib.mkForce [];
-      };
-      telegram-chat-id = {
-        owner = lib.mkForce "root";
-        group = lib.mkForce "root";
-        mode = lib.mkForce "0444";
-        restartUnits = lib.mkForce [];
-      };
-      mosquitto-ha-password = {
-        owner = lib.mkForce "root";
-        group = lib.mkForce "root";
-        mode = lib.mkForce "0444";
-        restartUnits = lib.mkForce [];
-      };
-      mosquitto-ha-password-plaintext = {
-        owner = lib.mkForce "root";
-        mode = lib.mkForce "0444";
-        restartUnits = lib.mkForce [];
-      };
-      zigbee2mqtt-frontend-token = {
-        owner = lib.mkForce "root";
-        group = lib.mkForce "root";
-        mode = lib.mkForce "0444";
-        restartUnits = lib.mkForce [];
-      };
-    };
+    # Override Grafana to use plaintext password for VM tests
+    services.grafana.settings.security.admin_password = lib.mkForce "test-password";
 
     # Override PostgreSQL settings for VM test (limited memory)
     services.postgresql.settings = lib.mkForce {
