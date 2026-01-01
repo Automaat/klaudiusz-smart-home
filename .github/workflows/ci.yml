@@ -106,7 +106,7 @@ jobs:
         with:
           name: homelab-system
           path: homelab-system.nar.zst
-          retention-days: 7
+          retention-days: 3
 
       - name: Save Nix cache
         if: steps.changes.outputs.nix == 'true'
