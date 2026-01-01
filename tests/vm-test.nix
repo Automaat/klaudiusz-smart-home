@@ -33,12 +33,14 @@ pkgs.testers.nixosTest {
     };
 
     # Override Mosquitto to use plaintext password (hashedPasswordFile requires sops)
-    services.mosquitto.listeners = lib.mkForce [{
-      users.hass = {
-        acl = ["readwrite #"];
-        password = "test-password";
-      };
-    }];
+    services.mosquitto.listeners = lib.mkForce [
+      {
+        users.hass = {
+          acl = ["readwrite #"];
+          password = "test-password";
+        };
+      }
+    ];
 
     # Override PostgreSQL settings for VM test (limited memory)
     services.postgresql.settings = lib.mkForce {
