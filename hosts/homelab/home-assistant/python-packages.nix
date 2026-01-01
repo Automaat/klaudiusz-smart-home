@@ -44,17 +44,12 @@
   ha-silabs-firmware-client = pkgs.python3Packages.buildPythonPackage rec {
     pname = "ha-silabs-firmware-client";
     version = "0.3.0";
-    format = "pyproject";
+    format = "wheel";
 
-    src = pkgs.fetchPypi {
-      inherit pname version;
+    src = pkgs.fetchurl {
+      url = "https://wheels.hass.io/ha_silabs_firmware_client-${version}-py3-none-any.whl";
       hash = "sha256-Lb72Zl7tERq+czHyBKezBbPxkphQa5gfuqzMOqkI0Ps=";
     };
-
-    nativeBuildInputs = with pkgs.python3Packages; [
-      setuptools
-      wheel
-    ];
 
     propagatedBuildInputs = with pkgs.python3Packages; [
       aiohttp
@@ -69,7 +64,7 @@
 
     meta = with lib; {
       description = "Home Assistant Silicon Labs firmware client";
-      homepage = "https://pypi.org/project/ha-silabs-firmware-client/";
+      homepage = "https://github.com/home-assistant/core";
       license = licenses.asl20;
       maintainers = with maintainers; [];
     };
