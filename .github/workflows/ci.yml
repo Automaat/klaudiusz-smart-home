@@ -320,6 +320,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: [static-tests, integration-tests]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    concurrency:
+      group: production-branch-update
+      cancel-in-progress: false
     permissions:
       contents: write
     steps:
