@@ -64,6 +64,19 @@
         inherit lib pkgs nixosConfig;
       };
 
+      # Enhanced validation checks
+      haOfficialCheck = import ./tests/ha-official-check.nix {
+        inherit lib pkgs nixosConfig;
+      };
+
+      jinja2Validation = import ./tests/jinja2-validation.nix {
+        inherit lib pkgs nixosConfig;
+      };
+
+      entityReferences = import ./tests/entity-references.nix {
+        inherit lib pkgs nixosConfig;
+      };
+
       vmTest = import ./tests/vm-test.nix {
         inherit pkgs self comin sops-nix;
       };
@@ -92,12 +105,20 @@
       # Home Assistant config validation
       ha-config-validation = haConfigCheck.all;
 
+      # Enhanced validation checks
+      ha-official-check = haOfficialCheck.all;
+      jinja2-validation = jinja2Validation.all;
+      entity-references = entityReferences.all;
+
       # NixOS VM integration test
       vm-integration-test = vmTest;
 
       # All static tests (fast - run on PRs)
       all-static-tests = pkgs.runCommand "all-static-tests" {} ''
         echo "Running all static tests..."
+        echo "Enhanced validation - HA official: $(cat ${self.checks.${system}.ha-official-check})"
+        echo "Enhanced validation - Jinja2: $(cat ${self.checks.${system}.jinja2-validation})"
+        echo "Enhanced validation - Entity references: $(cat ${self.checks.${system}.entity-references})"
         echo "Config validation result: $(cat ${self.checks.${system}.config-validation})"
         echo "Schema validation result: $(cat ${self.checks.${system}.schema-validation})"
         echo "Service validation result: $(cat ${self.checks.${system}.service-validation})"
