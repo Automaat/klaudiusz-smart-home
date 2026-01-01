@@ -77,7 +77,7 @@ jobs:
         if: steps.changes.outputs.nix == 'true'
         uses: DeterminateSystems/magic-nix-cache-action@565684385bcd71bad329742eefe8d12f2e765b39 # v13
         with:
-          save: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+          use-gha-cache: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
 
       - name: Run Jinja2 Template Validation
         if: steps.changes.outputs.nix == 'true'
@@ -115,7 +115,7 @@ jobs:
         if: steps.changes.outputs.nix == 'true'
         uses: DeterminateSystems/magic-nix-cache-action@565684385bcd71bad329742eefe8d12f2e765b39 # v13
         with:
-          save: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+          use-gha-cache: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
 
       - name: Run Entity Reference Validation
         if: steps.changes.outputs.nix == 'true'
@@ -154,7 +154,7 @@ jobs:
         if: steps.changes.outputs.nix == 'true'
         uses: DeterminateSystems/magic-nix-cache-action@565684385bcd71bad329742eefe8d12f2e765b39 # v13
         with:
-          save: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+          use-gha-cache: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
 
       - name: Flake Check
         if: steps.changes.outputs.nix == 'true'
@@ -195,7 +195,7 @@ jobs:
         if: steps.changes.outputs.nix == 'true'
         uses: DeterminateSystems/magic-nix-cache-action@565684385bcd71bad329742eefe8d12f2e765b39 # v13
         with:
-          save: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+          use-gha-cache: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
 
       - name: Check Nix formatting
         if: steps.changes.outputs.nix == 'true'
@@ -300,7 +300,7 @@ jobs:
         if: steps.changes.outputs.nix == 'true'
         uses: DeterminateSystems/magic-nix-cache-action@565684385bcd71bad329742eefe8d12f2e765b39 # v13
         with:
-          save: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+          use-gha-cache: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
 
       - name: Enable KVM (for VM tests)
         if: steps.changes.outputs.nix == 'true'
