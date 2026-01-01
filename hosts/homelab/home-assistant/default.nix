@@ -19,6 +19,7 @@
   catppuccinTheme = pkgs.fetchFromGitHub {
     owner = "catppuccin";
     repo = "home-assistant";
+    # renovate: datasource=github-tags depName=catppuccin/home-assistant
     rev = "v2.1.2";
     hash = "sha256-4knJI+3Bo+uRL+NAVt5JrI3PcsZjANozyXvRRR5aNjM=";
   };
