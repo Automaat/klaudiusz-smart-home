@@ -278,21 +278,25 @@ in {
 
     # Inject MQTT password via environment variable at runtime
     # Create secret.yaml for frontend auth token
-    preStart = lib.mkBefore ''
-      mkdir -p /run/zigbee2mqtt
-      echo "ZIGBEE2MQTT_CONFIG_MQTT_PASSWORD=$(cat ${config.sops.secrets."mosquitto-ha-password".path})" > /run/zigbee2mqtt/env
-
-      # Create secret.yaml in data directory for frontend auth
-      cat > ${config.services.zigbee2mqtt.dataDir}/secret.yaml <<EOF
-      zigbee2mqtt_frontend_token: $(cat ${config.sops.secrets."zigbee2mqtt-frontend-token".path})
-      EOF
-      chown zigbee2mqtt:zigbee2mqtt ${config.services.zigbee2mqtt.dataDir}/secret.yaml
-      chmod 600 ${config.services.zigbee2mqtt.dataDir}/secret.yaml
-    '';
-
+    # Note: preStart runs as zigbee2mqtt user, use serviceConfig for root access
     serviceConfig = {
       RuntimeDirectory = "zigbee2mqtt";
       EnvironmentFile = "-/run/zigbee2mqtt/env"; # - prefix makes optional
+      # Run preStart as root to read secrets (+ prefix)
+      ExecStartPre = lib.mkBefore [
+        ("+" + (pkgs.writeShellScript "zigbee2mqtt-setup-secrets" ''
+          mkdir -p /run/zigbee2mqtt
+          echo "ZIGBEE2MQTT_CONFIG_MQTT_PASSWORD=$(cat ${config.sops.secrets."mosquitto-ha-password".path})" > /run/zigbee2mqtt/env
+          chown zigbee2mqtt:zigbee2mqtt /run/zigbee2mqtt/env
+
+          # Create secret.yaml in data directory for frontend auth
+          cat > ${config.services.zigbee2mqtt.dataDir}/secret.yaml <<EOF
+          zigbee2mqtt_frontend_token: $(cat ${config.sops.secrets."zigbee2mqtt-frontend-token".path})
+          EOF
+          chown zigbee2mqtt:zigbee2mqtt ${config.services.zigbee2mqtt.dataDir}/secret.yaml
+          chmod 600 ${config.services.zigbee2mqtt.dataDir}/secret.yaml
+        ''))
+      ];
     };
   };
 }
