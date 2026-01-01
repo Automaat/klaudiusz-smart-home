@@ -293,7 +293,7 @@
             service = "persistent_notification.create";
             data = {
               title = "✅ Aktualizacja zakończona";
-              message = "Comin pomyślnie wdrożył zmiany o {{ now().strftime('%H:%M') }}";
+              message = "🚀 Comin pomyślnie wdrożył zmiany o {{ now().strftime('%H:%M') }} 🎉";
             };
           }
         ];
@@ -314,7 +314,7 @@
             service = "persistent_notification.create";
             data = {
               title = "❌ Aktualizacja nieudana";
-              message = "Comin nie mógł wdrożyć zmian. Sprawdź journalctl -u comin";
+              message = "🔥 Comin nie mógł wdrożyć zmian. Sprawdź journalctl -u comin 🔍";
             };
           }
         ];
