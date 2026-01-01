@@ -33,7 +33,7 @@
           else []);
       in
         speechTemplate ++ (lib.filter (t: t != null) dataTemplates))
-      config.intent_script
+      (config.intent_script or {})
     );
 
     # Extract from automation conditions and actions
@@ -65,7 +65,7 @@
           else []);
       in
         conditionTemplates ++ (lib.filter (t: t != null) actionTemplates))
-      config.automation
+      (config.automation or [])
     );
   in
     intentTemplates ++ automationTemplates;
@@ -78,7 +78,7 @@
   validatorScript = pkgs.writeText "validate-jinja2.py" ''
     import sys
     import json
-    from jinja2 import Environment, TemplateSyntaxError, meta
+    from jinja2 import Environment, TemplateSyntaxError
 
     def validate_templates(templates):
         env = Environment()
@@ -132,8 +132,10 @@
   } ''
     echo "Running Jinja2 template validation..."
 
-    # Convert templates to JSON and pass to Python validator
-    echo '${builtins.toJSON templates}' | python3 ${validatorScript} > $TMPDIR/validation_output.txt 2>&1
+    # Convert templates to JSON and pass to Python validator safely via here-doc
+    python3 ${validatorScript} > $TMPDIR/validation_output.txt 2>&1 <<'EOF'
+${builtins.toJSON templates}
+EOF
 
     if [ $? -eq 0 ]; then
       cat $TMPDIR/validation_output.txt

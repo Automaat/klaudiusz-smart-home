@@ -31,11 +31,8 @@
         lib.flatten (builtins.map (t:
           if t ? sensor
           then
-            builtins.map (s:
-              if s ? unique_id
-              then "sensor.${s.unique_id}"
-              else [])
-            t.sensor
+            builtins.map (s: "sensor.${s.unique_id}")
+            (lib.filter (s: s ? unique_id) t.sensor)
           else [])
         haConfig.template)
       else [];
@@ -74,7 +71,7 @@
             else [])
           intent.action)
         else [])
-      config.intent_script
+      (config.intent_script or {})
     );
 
     # From automation triggers
@@ -108,13 +105,16 @@
     # From automation actions
     automationActionEntities = lib.flatten (
       builtins.map (auto:
-        lib.flatten (builtins.map (action:
-          if action ? target && action.target ? entity_id
-          then extractEntityIds action.target.entity_id
-          else if action ? entity_id
-          then extractEntityIds action.entity_id
-          else [])
-        auto.action))
+        if auto ? action
+        then
+          lib.flatten (builtins.map (action:
+            if action ? target && action.target ? entity_id
+            then extractEntityIds action.target.entity_id
+            else if action ? entity_id
+            then extractEntityIds action.entity_id
+            else [])
+          auto.action)
+        else [])
       config.automation
     );
   in
@@ -153,10 +153,10 @@
         echo "WARN: Entity references found that are not defined in Nix config:"
         echo "These may be runtime entities from integrations (normal) or typos (error)."
         echo ""
-        ${lib.concatStringsSep "\n" (builtins.map (e: "echo '  - ${e}'") uniqueDanglingReferences)}
+        ${lib.concatStringsSep "\n" (builtins.map (e: "printf '  - %s\\n' ${lib.escapeShellArg e}") uniqueDanglingReferences)}
         echo ""
         echo "Defined entities (${toString (builtins.length definedEntities)}):"
-        ${lib.concatStringsSep "\n" (builtins.map (e: "echo '  - ${e}'") definedEntities)}
+        ${lib.concatStringsSep "\n" (builtins.map (e: "printf '  - %s\\n' ${lib.escapeShellArg e}") definedEntities)}
         echo ""
         echo "PASS: Entity reference validation complete (warnings only)"
         touch $out

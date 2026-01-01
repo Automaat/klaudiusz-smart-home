@@ -9,9 +9,7 @@
   # Generate Home Assistant Configuration
   # ===========================================
   # Create a complete HA config directory structure
-  haConfigDir = pkgs.runCommand "ha-config-dir" {
-    buildInputs = [pkgs.yq-go];
-  } ''
+  haConfigDir = pkgs.runCommand "ha-config-dir" {} ''
     mkdir -p $out/.storage
     mkdir -p $out/custom_components
 
