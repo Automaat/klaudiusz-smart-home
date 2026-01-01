@@ -189,8 +189,10 @@
   };
 
   # Ensure Grafana waits for secrets to be available
-  systemd.services.grafana.after = ["sops-nix.service"];
-  systemd.services.grafana.wants = ["sops-nix.service"];
+  systemd.services.grafana = {
+    after = ["sops-nix.service"];
+    requires = ["sops-nix.service"];
+  };
 
   # ===========================================
   # PostgreSQL Database
