@@ -55,6 +55,7 @@
       aiohttp
       packaging
       yarl
+      universal-silabs-flasher
     ];
 
     pythonImportsCheck = ["ha_silabs_firmware_client"];

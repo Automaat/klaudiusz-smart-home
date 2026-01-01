@@ -125,14 +125,46 @@ pkgs.testers.nixosTest {
     # Home Assistant Log Validation
     # =============================================
 
-    # Check for missing Python module errors
-    homelab.fail("journalctl -u home-assistant -n 200 | grep -i 'ModuleNotFoundError'")
+    # Check for missing Python module errors (from service start to catch early errors)
+    homelab.fail("journalctl -u home-assistant --since '5 minutes ago' | grep -i 'ModuleNotFoundError'")
 
     # Check for integration loading failures
-    homelab.fail("journalctl -u home-assistant -n 200 | grep -i 'Error occurred loading flow for integration'")
+    homelab.fail("journalctl -u home-assistant --since '5 minutes ago' | grep -i 'Error occurred loading flow for integration'")
 
     # Check for UnknownHandler exceptions (failed integration loads)
-    homelab.fail("journalctl -u home-assistant -n 200 | grep -i 'homeassistant.data_entry_flow.UnknownHandler'")
+    homelab.fail("journalctl -u home-assistant --since '5 minutes ago' | grep -i 'homeassistant.data_entry_flow.UnknownHandler'")
+
+    # =============================================
+    # Python Dependencies Validation
+    # =============================================
+
+    # Test that all custom Python packages can be imported
+    # This catches missing transitive dependencies early
+    homelab.succeed("""
+      sudo -u hass python3 -c '
+import sys
+errors = []
+
+# Test custom packages declared in extraPackages
+packages = [
+    "ibeacon_ble",
+    "ha_silabs_firmware_client",
+]
+
+for pkg in packages:
+    try:
+        __import__(pkg)
+        print(f"✓ {pkg}")
+    except ImportError as e:
+        errors.append(f"✗ {pkg}: {e}")
+        print(f"✗ {pkg}: {e}")
+
+if errors:
+    print(f"\\nFailed to import {len(errors)} package(s)")
+    sys.exit(1)
+print(f"\\n✓ All {len(packages)} packages imported successfully")
+      '
+    """)
 
     print("✅ All integration tests passed!")
   '';
