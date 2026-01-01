@@ -35,6 +35,9 @@ jobs:
           # Generate config from Nix
           nix eval --raw .#nixosConfigurations.homelab.config.services.home-assistant.config --apply 'x: builtins.toJSON x' | \
             nix run nixpkgs#yq-go -- -P > /tmp/ha-config/configuration.yaml
+          # Debug: verify file was created
+          ls -lah /tmp/ha-config/
+          echo "File size: $(wc -c < /tmp/ha-config/configuration.yaml) bytes"
 
       - name: Run Home Assistant Config Check
         if: steps.changes.outputs.ha_config == 'true'
