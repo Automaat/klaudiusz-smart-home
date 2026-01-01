@@ -58,10 +58,10 @@ in {
       # "telegram_bot" # Telegram notifications (disabled)
 
       # Zigbee
-      "zha" # Zigbee Home Automation (Connect ZBT-2)
+      # "zha" # Zigbee Home Automation (disabled - using Zigbee2MQTT)
 
-      # Devices (uncomment as needed)
-      # "mqtt"           # MQTT
+      # Devices
+      "mqtt" # MQTT for Zigbee2MQTT
       # "esphome"        # ESPHome devices
       # "hue"            # Philips Hue
       # "cast"           # Google Cast
@@ -155,9 +155,12 @@ in {
       #   }
       # ];
 
-      # Zigbee Home Automation
-      zha = {
-        database_path = "/var/lib/hass/zigbee.db";
+      # MQTT (for Zigbee2MQTT)
+      mqtt = {
+        broker = "127.0.0.1";
+        port = 1883;
+        username = "homeassistant";
+        password = "!secret mqtt_password";
       };
     };
 
@@ -187,6 +190,7 @@ in {
     cat > /var/lib/hass/secrets.yaml <<EOF
     telegram_bot_token: "123456789:ABCdefGHIjklMNOpqrsTUVwxyz-DUMMY"
     telegram_chat_id: "123456789"
+    mqtt_password: $(cat ${config.sops.secrets."mosquitto-ha-password".path})
     EOF
 
     # Create HACS symlink (release zip extracts to root)
@@ -196,13 +200,14 @@ in {
   # ===========================================
   # Zigbee USB Device
   # ===========================================
-  # Add hass user to dialout group for serial port access
-  users.users.hass.extraGroups = ["dialout"];
+  # Add zigbee2mqtt user to dialout group for serial port access
+  users.users.zigbee2mqtt.extraGroups = ["dialout"];
 
   # Create persistent /dev/zigbee symlink for Connect ZBT-2
   # Espressif ESP32 (Nabu Casa ZBT-2: 303a:831a)
+  # Auto-start Zigbee2MQTT when dongle appears
   services.udev.extraRules = ''
-    SUBSYSTEM=="tty", ATTRS{idVendor}=="303a", ATTRS{idProduct}=="831a", SYMLINK+="zigbee", TAG+="systemd", ENV{SYSTEMD_WANTS}="home-assistant.service"
+    SUBSYSTEM=="tty", ATTRS{idVendor}=="303a", ATTRS{idProduct}=="831a", SYMLINK+="zigbee", TAG+="systemd", ENV{SYSTEMD_WANTS}="zigbee2mqtt.service"
   '';
 
   # ===========================================
@@ -226,36 +231,68 @@ in {
   };
 
   # ===========================================
-  # MQTT Broker (optional - uncomment if needed)
+  # MQTT Broker (Mosquitto)
   # ===========================================
-  # services.mosquitto = {
-  #   enable = true;
-  #   listeners = [{
-  #     port = 1883;
-  #     users = {
-  #       homeassistant = {
-  #         acl = [ "readwrite #" ];
-  #         hashedPasswordFile = "/run/secrets/mosquitto-ha-password";
-  #       };
-  #     };
-  #   }];
-  # };
+  services.mosquitto = {
+    enable = true;
+    listeners = [
+      {
+        port = 1883;
+        users = {
+          homeassistant = {
+            acl = ["readwrite #"];
+            hashedPasswordFile = config.sops.secrets."mosquitto-ha-password".path;
+          };
+        };
+      }
+    ];
+  };
 
   # ===========================================
-  # Zigbee2MQTT (optional - uncomment if needed)
+  # Zigbee2MQTT
   # ===========================================
-  # services.zigbee2mqtt = {
-  #   enable = true;
-  #   settings = {
-  #     homeassistant = true;
-  #     permit_join = false;
-  #     serial.port = "/dev/zigbee";
-  #     mqtt = {
-  #       server = "mqtt://localhost:1883";
-  #       user = "homeassistant";
-  #       password = "!secret mqtt_password";
-  #     };
-  #     frontend.port = 8080;
-  #   };
-  # };
+  services.zigbee2mqtt = {
+    enable = true;
+    settings = {
+      homeassistant.enabled = true; # Enable auto-discovery
+      permit_join = false;
+      serial.port = "/dev/zigbee";
+      mqtt = {
+        server = "mqtt://localhost:1883";
+        user = "homeassistant";
+        # Password injected via environment variable
+      };
+      frontend = {
+        port = 8080;
+        host = "0.0.0.0"; # Local network access
+        auth_token = "!secret zigbee2mqtt_frontend_token";
+      };
+    };
+  };
+
+  # Zigbee2MQTT systemd service configuration
+  systemd.services.zigbee2mqtt = {
+    # Ensure proper startup order
+    after = ["mosquitto.service"];
+    requires = ["mosquitto.service"];
+
+    # Inject MQTT password via environment variable at runtime
+    # Create secret.yaml for frontend auth token
+    preStart = lib.mkBefore ''
+      mkdir -p /run/zigbee2mqtt
+      echo "ZIGBEE2MQTT_CONFIG_MQTT_PASSWORD=$(cat ${config.sops.secrets."mosquitto-ha-password".path})" > /run/zigbee2mqtt/env
+
+      # Create secret.yaml in data directory for frontend auth
+      cat > ${config.services.zigbee2mqtt.dataDir}/secret.yaml <<EOF
+      zigbee2mqtt_frontend_token: $(cat ${config.sops.secrets."zigbee2mqtt-frontend-token".path})
+      EOF
+      chown zigbee2mqtt:zigbee2mqtt ${config.services.zigbee2mqtt.dataDir}/secret.yaml
+      chmod 600 ${config.services.zigbee2mqtt.dataDir}/secret.yaml
+    '';
+
+    serviceConfig = {
+      RuntimeDirectory = "zigbee2mqtt";
+      EnvironmentFile = "/run/zigbee2mqtt/env";
+    };
+  };
 }

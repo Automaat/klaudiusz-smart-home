@@ -44,5 +44,20 @@
       mode = "0400";
       restartUnits = ["home-assistant.service"];
     };
+
+    # MQTT password for Home Assistant/Zigbee2MQTT
+    "mosquitto-ha-password" = {
+      owner = "mosquitto";
+      group = "hass";
+      mode = "0440";
+      restartUnits = ["mosquitto.service" "zigbee2mqtt.service" "home-assistant.service"];
+    };
+
+    # Zigbee2MQTT frontend authentication token
+    "zigbee2mqtt-frontend-token" = {
+      owner = "zigbee2mqtt";
+      mode = "0400";
+      restartUnits = ["zigbee2mqtt.service"];
+    };
   };
 }
