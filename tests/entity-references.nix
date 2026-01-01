@@ -130,7 +130,8 @@
   # ===========================================
   # Filter to only static entity IDs (no templates, no "all")
   staticReferences = lib.filter (e:
-    e != "all"
+    e
+    != "all"
     && !(lib.hasInfix "{{" e)
     && !(lib.hasInfix "{%" e)
     && testLib.isValidEntityId e)

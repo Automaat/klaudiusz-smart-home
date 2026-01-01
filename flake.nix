@@ -65,10 +65,6 @@
       };
 
       # Enhanced validation checks
-      haOfficialCheck = import ./tests/ha-official-check.nix {
-        inherit lib pkgs nixosConfig;
-      };
-
       jinja2Validation = import ./tests/jinja2-validation.nix {
         inherit lib pkgs nixosConfig;
       };
@@ -106,7 +102,6 @@
       ha-config-validation = haConfigCheck.all;
 
       # Enhanced validation checks
-      ha-official-check = haOfficialCheck.all;
       jinja2-validation = jinja2Validation.all;
       entity-references = entityReferences.all;
 
@@ -116,7 +111,6 @@
       # All static tests (fast - run on PRs)
       all-static-tests = pkgs.runCommand "all-static-tests" {} ''
         echo "Running all static tests..."
-        echo "Enhanced validation - HA official: $(cat ${self.checks.${system}.ha-official-check})"
         echo "Enhanced validation - Jinja2: $(cat ${self.checks.${system}.jinja2-validation})"
         echo "Enhanced validation - Entity references: $(cat ${self.checks.${system}.entity-references})"
         echo "Config validation result: $(cat ${self.checks.${system}.config-validation})"

@@ -15,7 +15,12 @@
       lib.mapAttrsToList (name: intent: let
         speechTemplate =
           if intent ? speech && intent.speech ? text
-          then [{source = "intent_script.${name}.speech.text"; template = intent.speech.text;}]
+          then [
+            {
+              source = "intent_script.${name}.speech.text";
+              template = intent.speech.text;
+            }
+          ]
           else [];
         dataTemplates = lib.flatten (
           if intent ? action
@@ -25,12 +30,16 @@
               then
                 lib.mapAttrsToList (key: value:
                   if builtins.isString value && (lib.hasInfix "{{" value || lib.hasInfix "{%" value)
-                  then {source = "intent_script.${name}.action.data.${key}"; template = value;}
+                  then {
+                    source = "intent_script.${name}.action.data.${key}";
+                    template = value;
+                  }
                   else null)
                 action.data
               else [])
             intent.action
-          else []);
+          else []
+        );
       in
         speechTemplate ++ (lib.filter (t: t != null) dataTemplates))
       (config.intent_script or {})
@@ -45,7 +54,12 @@
           then
             lib.flatten (builtins.map (cond:
               if cond ? value_template
-              then [{source = "automation.${autoId}.condition.value_template"; template = cond.value_template;}]
+              then [
+                {
+                  source = "automation.${autoId}.condition.value_template";
+                  template = cond.value_template;
+                }
+              ]
               else [])
             auto.condition)
           else [];
@@ -57,12 +71,16 @@
               then
                 lib.mapAttrsToList (key: value:
                   if builtins.isString value && (lib.hasInfix "{{" value || lib.hasInfix "{%" value)
-                  then {source = "automation.${autoId}.action.data.${key}"; template = value;}
+                  then {
+                    source = "automation.${autoId}.action.data.${key}";
+                    template = value;
+                  }
                   else null)
                 action.data
               else [])
             auto.action
-          else []);
+          else []
+        );
       in
         conditionTemplates ++ (lib.filter (t: t != null) actionTemplates))
       (config.automation or [])
@@ -127,24 +145,25 @@
   # ===========================================
   # Run Jinja2 Validation
   # ===========================================
-  jinja2Check = pkgs.runCommand "jinja2-validation" {
-    buildInputs = [(pkgs.python3.withPackages (ps: [ps.jinja2]))];
-  } ''
-    echo "Running Jinja2 template validation..."
+  jinja2Check =
+    pkgs.runCommand "jinja2-validation" {
+      buildInputs = [(pkgs.python3.withPackages (ps: [ps.jinja2]))];
+    } ''
+          echo "Running Jinja2 template validation..."
 
-    # Convert templates to JSON and pass to Python validator safely via here-doc
-    python3 ${validatorScript} > $TMPDIR/validation_output.txt 2>&1 <<'EOF'
-${builtins.toJSON templates}
-EOF
+          # Convert templates to JSON and pass to Python validator safely via here-doc
+          python3 ${validatorScript} > $TMPDIR/validation_output.txt 2>&1 <<'EOF'
+      ${builtins.toJSON templates}
+      EOF
 
-    if [ $? -eq 0 ]; then
-      cat $TMPDIR/validation_output.txt
-      echo "PASS: Jinja2 template validation passed" > $out
-    else
-      cat $TMPDIR/validation_output.txt
-      exit 1
-    fi
-  '';
+          if [ $? -eq 0 ]; then
+            cat $TMPDIR/validation_output.txt
+            echo "PASS: Jinja2 template validation passed" > $out
+          else
+            cat $TMPDIR/validation_output.txt
+            exit 1
+          fi
+    '';
 in {
   inherit jinja2Check templates;
 
