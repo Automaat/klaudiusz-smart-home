@@ -31,19 +31,16 @@ jobs:
       - name: Extract HA config for validation
         if: steps.changes.outputs.ha_config == 'true'
         run: |
-          mkdir -p /tmp/ha-config
+          mkdir -p .ha-config
           # Generate config from Nix
           nix eval --raw .#nixosConfigurations.homelab.config.services.home-assistant.config --apply 'x: builtins.toJSON x' | \
-            nix run nixpkgs#yq-go -- -P > /tmp/ha-config/configuration.yaml
-          # Debug: verify file was created
-          ls -lah /tmp/ha-config/
-          echo "File size: $(wc -c < /tmp/ha-config/configuration.yaml) bytes"
+            nix run nixpkgs#yq-go -- -P > .ha-config/configuration.yaml
 
       - name: Run Home Assistant Config Check
         if: steps.changes.outputs.ha_config == 'true'
         uses: frenck/action-home-assistant@v1
         with:
-          path: /tmp/ha-config
+          path: .ha-config
           version: stable
 
   enhanced-validation-jinja2:
