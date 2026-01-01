@@ -37,7 +37,7 @@ jobs:
 
       - name: Restore Nix cache
         if: steps.changes.outputs.nix == 'true'
-        uses: nix-community/cache-nix-action@135667ec418502fa5a3598af6fb9eb733888ce6a # v6.1.3
+        uses: nix-community/cache-nix-action@b426b118b6dc86d6952988d396aa7c6b09776d08 # v7.0.0
         with:
           primary-key: nix-flake-check-${{ runner.os }}-${{ hashFiles('flake.lock') }}
           restore-prefixes-first-match: nix-flake-check-${{ runner.os }}-
@@ -49,7 +49,7 @@ jobs:
 
       - name: Save Nix cache
         if: steps.changes.outputs.nix == 'true'
-        uses: nix-community/cache-nix-action@135667ec418502fa5a3598af6fb9eb733888ce6a # v6.1.3
+        uses: nix-community/cache-nix-action@b426b118b6dc86d6952988d396aa7c6b09776d08 # v7.0.0
         with:
           primary-key: nix-flake-check-${{ runner.os }}-${{ hashFiles('flake.lock') }}
           gc-max-store-size: 3221225472
@@ -86,7 +86,7 @@ jobs:
 
       - name: Restore Nix cache
         if: steps.changes.outputs.nix == 'true'
-        uses: nix-community/cache-nix-action@135667ec418502fa5a3598af6fb9eb733888ce6a # v6.1.3
+        uses: nix-community/cache-nix-action@b426b118b6dc86d6952988d396aa7c6b09776d08 # v7.0.0
         with:
           primary-key: nix-build-homelab-${{ runner.os }}-${{ hashFiles('flake.lock') }}
           restore-prefixes-first-match: nix-build-homelab-${{ runner.os }}-
@@ -110,7 +110,7 @@ jobs:
 
       - name: Save Nix cache
         if: steps.changes.outputs.nix == 'true'
-        uses: nix-community/cache-nix-action@135667ec418502fa5a3598af6fb9eb733888ce6a # v6.1.3
+        uses: nix-community/cache-nix-action@b426b118b6dc86d6952988d396aa7c6b09776d08 # v7.0.0
         with:
           primary-key: nix-build-homelab-${{ runner.os }}-${{ hashFiles('flake.lock') }}
           gc-max-store-size: 4294967296
@@ -144,7 +144,7 @@ jobs:
 
       - name: Restore Nix cache
         if: steps.changes.outputs.nix == 'true'
-        uses: nix-community/cache-nix-action@135667ec418502fa5a3598af6fb9eb733888ce6a # v6.1.3
+        uses: nix-community/cache-nix-action@b426b118b6dc86d6952988d396aa7c6b09776d08 # v7.0.0
         with:
           primary-key: nix-format-${{ runner.os }}-${{ hashFiles('flake.lock') }}
           restore-prefixes-first-match: nix-format-${{ runner.os }}-
@@ -157,7 +157,7 @@ jobs:
 
       - name: Save Nix cache
         if: steps.changes.outputs.nix == 'true'
-        uses: nix-community/cache-nix-action@135667ec418502fa5a3598af6fb9eb733888ce6a # v6.1.3
+        uses: nix-community/cache-nix-action@b426b118b6dc86d6952988d396aa7c6b09776d08 # v7.0.0
         with:
           primary-key: nix-format-${{ runner.os }}-${{ hashFiles('flake.lock') }}
           gc-max-store-size: 1073741824
@@ -275,7 +275,7 @@ jobs:
 
       - name: Restore Nix cache
         if: steps.changes.outputs.nix == 'true'
-        uses: nix-community/cache-nix-action@135667ec418502fa5a3598af6fb9eb733888ce6a # v6.1.3
+        uses: nix-community/cache-nix-action@b426b118b6dc86d6952988d396aa7c6b09776d08 # v7.0.0
         with:
           primary-key: nix-integration-tests-${{ runner.os }}-${{ hashFiles('flake.lock') }}
           restore-prefixes-first-match: nix-integration-tests-${{ runner.os }}-
@@ -317,7 +317,7 @@ jobs:
 
       - name: Save Nix cache
         if: steps.changes.outputs.nix == 'true'
-        uses: nix-community/cache-nix-action@135667ec418502fa5a3598af6fb9eb733888ce6a # v6.1.3
+        uses: nix-community/cache-nix-action@b426b118b6dc86d6952988d396aa7c6b09776d08 # v7.0.0
         with:
           primary-key: nix-integration-tests-${{ runner.os }}-${{ hashFiles('flake.lock') }}
           gc-max-store-size: 2147483648
