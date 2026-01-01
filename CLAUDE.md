@@ -54,6 +54,7 @@ Edit locally → Push to main → CI tests → Production branch updates → Com
 ```
 
 **CI Gating:**
+
 - Comin pulls from `production` branch (not `main`)
 - `production` only updates when CI passes (static + integration tests)
 - Workflow auto-pushes main → production on success
