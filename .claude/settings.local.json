@@ -5,7 +5,16 @@
       "Bash(git add:*)",
       "Bash(git commit:*)",
       "Bash(gh repo create:*)",
-      "Bash(gh api:*)"
+      "Bash(gh api:*)",
+      "Bash(gh pr diff:*)",
+      "Bash(git checkout:*)",
+      "Bash(git merge:*)",
+      "Bash(nix flake check:*)",
+      "Bash(git push:*)",
+      "Bash(ssh:*)",
+      "Bash(gh pr create:*)",
+      "Bash(nix search:*)",
+      "Bash(curl:*)"
     ],
     "deny": [],
     "ask": []

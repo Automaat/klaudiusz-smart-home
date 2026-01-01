@@ -23,6 +23,11 @@
     rev = "v2.1.2";
     hash = "sha256-4knJI+3Bo+uRL+NAVt5JrI3PcsZjANozyXvRRR5aNjM=";
   };
+
+  # ===========================================
+  # Custom Python Packages
+  # ===========================================
+  customPythonPackages = import ./python-packages.nix {inherit pkgs lib;};
 in {
   imports = [
     ./intents.nix
@@ -72,6 +77,8 @@ in {
       with ps; [
         psycopg2 # PostgreSQL adapter for recorder
         aiogithubapi # Required by HACS
+        customPythonPackages.ibeacon-ble # iBeacon integration
+        customPythonPackages.ha-silabs-firmware-client # Connect ZBT-2 integration
       ];
 
     config = {
@@ -85,10 +92,9 @@ in {
         country = "PL";
         language = "pl";
         time_zone = "Europe/Warsaw";
-        # Coordinates (Warsaw example - change to your location)
-        latitude = 52.2297;
-        longitude = 21.0122;
-        elevation = 100;
+        latitude = 50.083;
+        longitude = 19.891;
+        elevation = 210;
       };
 
       # Enable conversation for voice commands

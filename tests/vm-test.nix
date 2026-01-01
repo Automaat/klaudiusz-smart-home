@@ -104,6 +104,19 @@ pkgs.testers.nixosTest {
     # Check home-assistant can access PostgreSQL
     homelab.succeed("sudo -u hass psql -d hass -c 'SELECT 1' > /dev/null")
 
+    # =============================================
+    # Home Assistant Log Validation
+    # =============================================
+
+    # Check for missing Python module errors
+    homelab.fail("journalctl -u home-assistant -n 200 | grep -i 'ModuleNotFoundError'")
+
+    # Check for integration loading failures
+    homelab.fail("journalctl -u home-assistant -n 200 | grep -i 'Error occurred loading flow for integration'")
+
+    # Check for UnknownHandler exceptions (failed integration loads)
+    homelab.fail("journalctl -u home-assistant -n 200 | grep -i 'homeassistant.data_entry_flow.UnknownHandler'")
+
     print("✅ All integration tests passed!")
   '';
 }
