@@ -27,18 +27,14 @@ pkgs.testers.nixosTest {
     sops.age.generateKey = lib.mkForce false;
     sops.age.keyFile = lib.mkForce "/var/lib/sops-nix/test-key.txt";
 
-    # Create test key before sops activation
-    system.activationScripts.createTestKey = {
-      deps = [];
-      text = ''
-        mkdir -p /var/lib/sops-nix
-        cat > /var/lib/sops-nix/test-key.txt <<'EOF'
-        ${builtins.readFile ./age-key.txt}
-        EOF
-        chmod 600 /var/lib/sops-nix/test-key.txt
-      '';
-    };
-    system.activationScripts.setupSecrets.deps = lib.mkAfter ["createTestKey"];
+    # Create test key during boot (before activation scripts run)
+    boot.postBootCommands = ''
+      mkdir -p /var/lib/sops-nix
+      cat > /var/lib/sops-nix/test-key.txt <<'EOF'
+      ${builtins.readFile ./age-key.txt}
+      EOF
+      chmod 600 /var/lib/sops-nix/test-key.txt
+    '';
 
     # Override secret ownership for VM tests (service users don't exist during activation)
     sops.secrets = {
