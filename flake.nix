@@ -4,6 +4,11 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
+    # Home Assistant pinned version
+    # renovate: datasource=github-releases depName=home-assistant/core versioning=semver extractVersion=^(?<version>.*)$
+    # Current HA version: 2025.12.4
+    nixpkgs-ha.url = "github:NixOS/nixpkgs/nixos-unstable";
+
     comin = {
       url = "github:nlewo/comin";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -18,6 +23,7 @@
   outputs = {
     self,
     nixpkgs,
+    nixpkgs-ha,
     comin,
     sops-nix,
   }: let
@@ -29,6 +35,9 @@
       # Home Assistant server (Intel N100)
       homelab = nixpkgs.lib.nixosSystem {
         inherit system;
+        specialArgs = {
+          inherit nixpkgs-ha;
+        };
         modules = [
           comin.nixosModules.comin
           sops-nix.nixosModules.sops

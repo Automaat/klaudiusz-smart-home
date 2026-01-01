@@ -8,7 +8,7 @@ on:
 jobs:
   enhanced-validation-ha-official:
     name: Enhanced Validation (HA Official)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
 
@@ -47,7 +47,7 @@ jobs:
 
   enhanced-validation-jinja2:
     name: Enhanced Validation (Jinja2)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
 
@@ -83,7 +83,7 @@ jobs:
 
   enhanced-validation-entity-references:
     name: Enhanced Validation (Entity References)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
 
@@ -119,7 +119,7 @@ jobs:
 
   static-tests:
     name: Static Tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs: [format, yaml-lint, markdown-lint, action-lint, enhanced-validation-ha-official, enhanced-validation-jinja2, enhanced-validation-entity-references]
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
@@ -160,7 +160,7 @@ jobs:
 
   format:
     name: Format Check
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
 
@@ -196,7 +196,7 @@ jobs:
 
   yaml-lint:
     name: YAML Lint
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
 
@@ -219,7 +219,7 @@ jobs:
 
   markdown-lint:
     name: Markdown Lint
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
 
@@ -239,7 +239,7 @@ jobs:
 
   action-lint:
     name: Action Lint
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
 
@@ -261,7 +261,7 @@ jobs:
 
   integration-tests:
     name: Integration Tests (Main Only)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs: [static-tests]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
@@ -319,7 +319,7 @@ jobs:
 
   update-production:
     name: Update Production Branch
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs: [static-tests, integration-tests]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     concurrency:

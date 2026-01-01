@@ -26,6 +26,16 @@
         "# renovate: datasource=github-tags depName=(?<depName>.+?)\\s+rev = \"(?<currentValue>.+?)\";"
       ],
       "datasourceTemplate": "github-tags"
+    },
+    {
+      "customType": "regex",
+      "description": "Track Home Assistant version in flake.nix comment",
+      "fileMatch": ["flake\\.nix$"],
+      "matchStrings": [
+        "# Current HA version: (?<currentValue>\\d+\\.\\d+\\.\\d+)"
+      ],
+      "depNameTemplate": "home-assistant/core",
+      "datasourceTemplate": "github-releases"
     }
   ],
   "packageRules": [
