@@ -100,7 +100,8 @@ pkgs.testers.nixosTest {
     # Service Health Checks
     # =============================================
 
-    # Check no failed units
+    # Check no failed units (print them first for debugging)
+    print(homelab.succeed("systemctl list-units --state=failed --no-legend"))
     homelab.succeed("[ $(systemctl list-units --state=failed --no-legend | wc -l) -eq 0 ]")
 
     # Check home-assistant can access PostgreSQL
