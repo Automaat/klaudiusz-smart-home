@@ -113,6 +113,20 @@
           scan_interval = 60;
         };
       }
+      {
+        binary_sensor = {
+          name = "comin_deployment_success";
+          command = "journalctl -u comin.service --since '90 seconds ago' --no-pager | grep -q 'Deployment successful' && echo ON || echo OFF";
+          scan_interval = 30;
+        };
+      }
+      {
+        binary_sensor = {
+          name = "comin_deployment_failed";
+          command = "journalctl -u comin.service --since '90 seconds ago' --no-pager | grep -q 'Deployment failed' && echo ON || echo OFF";
+          scan_interval = 30;
+        };
+      }
     ];
 
     # ===========================================
@@ -256,6 +270,51 @@
             data = {
               title = "⚠️ Tailscale nie działa";
               message = "Sprawdź systemctl status tailscaled";
+            };
+          }
+        ];
+      }
+
+      # -----------------------------------------
+      # Comin Deployment Notifications
+      # -----------------------------------------
+      {
+        id = "notify_comin_deployment_success";
+        alias = "Notify - Comin deployment successful";
+        trigger = [
+          {
+            platform = "state";
+            entity_id = "binary_sensor.comin_deployment_success";
+            to = "on";
+          }
+        ];
+        action = [
+          {
+            service = "persistent_notification.create";
+            data = {
+              title = "✅ Aktualizacja zakończona";
+              message = "Comin pomyślnie wdrożył zmiany o {{ now().strftime('%H:%M') }}";
+            };
+          }
+        ];
+      }
+
+      {
+        id = "notify_comin_deployment_failed";
+        alias = "Notify - Comin deployment failed";
+        trigger = [
+          {
+            platform = "state";
+            entity_id = "binary_sensor.comin_deployment_failed";
+            to = "on";
+          }
+        ];
+        action = [
+          {
+            service = "persistent_notification.create";
+            data = {
+              title = "❌ Aktualizacja nieudana";
+              message = "Comin nie mógł wdrożyć zmian. Sprawdź journalctl -u comin";
             };
           }
         ];
