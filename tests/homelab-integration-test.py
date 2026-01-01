@@ -56,7 +56,25 @@ homelab.fail("journalctl -u home-assistant --since '5 minutes ago' | grep -i 'Er
 # Check for UnknownHandler exceptions (failed integration loads)
 homelab.fail("journalctl -u home-assistant --since '5 minutes ago' | grep -i 'homeassistant.data_entry_flow.UnknownHandler'")
 
-# The above log checks validate that all Python dependencies are available
-# If HA loaded successfully without ModuleNotFoundError, deps are correct
+# =============================================
+# Explicit Python Dependencies Validation
+# =============================================
+
+# Explicitly test that custom packages can be imported in HA's environment
+# This catches missing transitive dependencies before they cause runtime errors
+print("Testing explicit Python imports in HA environment...")
+homelab.succeed("""
+  # Get the Python executable that HA is using
+  HA_PYTHON=$(systemctl show -p ExecStart home-assistant.service | grep -oP '/nix/store/[^/]+/bin/python[0-9.]*' | head -1)
+  echo "Using Python: $HA_PYTHON"
+
+  # Test each custom package
+  for pkg in ibeacon_ble ha_silabs_firmware_client; do
+    echo "Testing import: $pkg"
+    $HA_PYTHON -c "import $pkg; print('✓ $pkg')" || exit 1
+  done
+
+  echo "✓ All custom packages imported successfully"
+""")
 
 print("✅ All integration tests passed!")
