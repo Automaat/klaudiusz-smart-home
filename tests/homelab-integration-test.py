@@ -1,7 +1,4 @@
-# Start the machine
 homelab.start()
-
-# Wait for systemd to be ready
 homelab.wait_for_unit("multi-user.target")
 
 # =============================================
