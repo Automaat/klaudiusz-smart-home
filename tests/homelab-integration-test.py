@@ -64,17 +64,49 @@ homelab.fail("journalctl -u home-assistant --since '5 minutes ago' | grep -i 'ho
 # This catches missing transitive dependencies before they cause runtime errors
 print("Testing explicit Python imports in HA environment...")
 homelab.succeed("""
+  set -e
+
   # Get the Python executable that HA is using
   HA_PYTHON=$(systemctl show -p ExecStart home-assistant.service | grep -oP '/nix/store/[^/]+/bin/python[0-9.]*' | head -1)
-  echo "Using Python: $HA_PYTHON"
+  echo "=========================================="
+  echo "Python executable: $HA_PYTHON"
+  echo "Python version: $($HA_PYTHON --version)"
+  echo "=========================================="
+  echo ""
 
-  # Test each custom package
+  # Test each custom package with detailed error output
   for pkg in ibeacon_ble ha_silabs_firmware_client; do
-    echo "Testing import: $pkg"
-    $HA_PYTHON -c "import $pkg; print('✓ $pkg')" || exit 1
+    echo "Testing: $pkg"
+    if ! $HA_PYTHON -c "
+import sys
+import traceback
+try:
+    __import__('$pkg')
+    print('  ✓ $pkg imported successfully')
+except Exception as e:
+    print('  ✗ FAILED to import $pkg')
+    print('  Error:', str(e))
+    print('')
+    print('Full traceback:')
+    traceback.print_exc()
+    print('')
+    print('Python path:')
+    for p in sys.path:
+        print('  -', p)
+    sys.exit(1)
+"; then
+      echo ""
+      echo "=========================================="
+      echo "IMPORT TEST FAILED FOR: $pkg"
+      echo "=========================================="
+      exit 1
+    fi
   done
 
+  echo ""
+  echo "=========================================="
   echo "✓ All custom packages imported successfully"
+  echo "=========================================="
 """)
 
 print("✅ All integration tests passed!")
