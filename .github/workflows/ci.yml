@@ -260,10 +260,9 @@ jobs:
         run: actionlint
 
   integration-tests:
-    name: Integration Tests (Main Only)
+    name: Integration Tests
     runs-on: ubuntu-24.04
     needs: [static-tests]
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
 
