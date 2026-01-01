@@ -47,8 +47,8 @@
     format = "wheel";
 
     src = pkgs.fetchurl {
-      url = "https://wheels.hass.io/ha_silabs_firmware_client-${version}-py3-none-any.whl";
-      hash = "sha256-Lb72Zl7tERq+czHyBKezBbPxkphQa5gfuqzMOqkI0Ps=";
+      url = "https://wheels.hass.io/musllinux/ha_silabs_firmware_client-${version}-py3-none-any.whl";
+      hash = "sha256-0i/WGZ1kPCY7LRBYbHZ1p+eQAnJATLckfmWPYDIPOsA=";
     };
 
     propagatedBuildInputs = with pkgs.python3Packages; [
