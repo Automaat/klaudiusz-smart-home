@@ -205,3 +205,14 @@ jobs:
       - name: Run integration tests
         if: steps.changes.outputs.nix == 'true'
         run: nix build .#checks.x86_64-linux.all-integration-tests --show-trace --max-jobs auto
+
+  update-production:
+    name: Update Production Branch
+    runs-on: ubuntu-latest
+    needs: [static-tests, integration-tests]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
+      - run: git push origin HEAD:production

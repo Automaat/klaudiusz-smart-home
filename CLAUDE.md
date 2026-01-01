@@ -50,8 +50,15 @@ custom_sentences/pl/                # Polish voice patterns
 ### GitOps Flow
 
 ```text
-Edit locally → git push → Comin pulls (~60s) → NixOS rebuilds
+Edit locally → Push to main → CI tests → Production branch updates → Comin pulls (~60s) → NixOS rebuilds
 ```
+
+**CI Gating:**
+
+- Comin pulls from `production` branch (not `main`)
+- `production` only updates when CI passes (static + integration tests)
+- Workflow auto-pushes main → production on success
+- Prevents broken configs from deploying to homelab
 
 ### Before Changes
 

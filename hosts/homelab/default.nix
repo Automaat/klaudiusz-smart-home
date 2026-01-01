@@ -124,7 +124,7 @@
       {
         name = "origin";
         url = "https://github.com/Automaat/klaudiusz-smart-home.git";
-        branches.main.name = "main";
+        branches.main.name = "production"; # Only deploys when CI passes
       }
     ];
   };
