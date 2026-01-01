@@ -22,57 +22,12 @@ pkgs.testers.nixosTest {
     nixpkgs.pkgs = lib.mkForce pkgs;
     nixpkgs.config = lib.mkForce {};
 
-    # Use test secrets with sops-nix
-    sops.defaultSopsFile = lib.mkForce ./secrets.yaml;
+    # Disable sops-nix for VM tests - use plaintext configs
+    # Tests validate system builds & services start, not secret management
     sops.age.generateKey = lib.mkForce false;
-    sops.age.keyFile = lib.mkForce "/var/lib/sops-nix/test-key.txt";
 
-    # Create test key during boot (before activation scripts run)
-    boot.postBootCommands = ''
-      mkdir -p /var/lib/sops-nix
-      cat > /var/lib/sops-nix/test-key.txt <<'EOF'
-      ${builtins.readFile ./age-key.txt}
-      EOF
-      chmod 600 /var/lib/sops-nix/test-key.txt
-    '';
-
-    # Override secret ownership for VM tests (service users don't exist during activation)
-    sops.secrets = {
-      grafana-admin-password = {
-        owner = lib.mkForce "root";
-        group = lib.mkForce "root";
-        mode = lib.mkForce "0444";
-      };
-      home-assistant-prometheus-token = {
-        owner = lib.mkForce "root";
-        group = lib.mkForce "root";
-        mode = lib.mkForce "0444";
-      };
-      telegram-bot-token = {
-        owner = lib.mkForce "root";
-        group = lib.mkForce "root";
-        mode = lib.mkForce "0444";
-      };
-      telegram-chat-id = {
-        owner = lib.mkForce "root";
-        group = lib.mkForce "root";
-        mode = lib.mkForce "0444";
-      };
-      mosquitto-ha-password = {
-        owner = lib.mkForce "root";
-        group = lib.mkForce "root";
-        mode = lib.mkForce "0444";
-      };
-      mosquitto-ha-password-plaintext = {
-        owner = lib.mkForce "root";
-        mode = lib.mkForce "0444";
-      };
-      zigbee2mqtt-frontend-token = {
-        owner = lib.mkForce "root";
-        group = lib.mkForce "root";
-        mode = lib.mkForce "0444";
-      };
-    };
+    # Override Grafana to not use sops secret
+    services.grafana.settings.security.admin_password = lib.mkForce "test-password";
 
     # Override PostgreSQL settings for VM test (limited memory)
     services.postgresql.settings = lib.mkForce {
