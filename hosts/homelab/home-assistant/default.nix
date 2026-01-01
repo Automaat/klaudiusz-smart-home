@@ -93,8 +93,8 @@ in {
       # Enable conversation for voice commands
       conversation = {};
 
-      # Frontend
-      frontend = {};
+      # Frontend with themes
+      frontend.themes = "!include_dir_merge_named themes/";
 
       # Database recorder (PostgreSQL)
       recorder = {
