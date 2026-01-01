@@ -190,7 +190,7 @@ in {
     cat > /var/lib/hass/secrets.yaml <<EOF
     telegram_bot_token: "123456789:ABCdefGHIjklMNOpqrsTUVwxyz-DUMMY"
     telegram_chat_id: "123456789"
-    mqtt_password: $(cat ${config.sops.secrets."mosquitto-ha-password".path})
+    mqtt_password: $(cat ${config.sops.secrets."mosquitto-ha-password-plaintext".path})
     EOF
 
     # Create HACS symlink (release zip extracts to root)
@@ -291,7 +291,7 @@ in {
       ExecStartPre = lib.mkBefore [
         ("+" + (pkgs.writeShellScript "zigbee2mqtt-setup-secrets" ''
           mkdir -p /run/zigbee2mqtt
-          echo "ZIGBEE2MQTT_CONFIG_MQTT_PASSWORD=$(cat ${config.sops.secrets."mosquitto-ha-password".path})" > /run/zigbee2mqtt/env
+          echo "ZIGBEE2MQTT_CONFIG_MQTT_PASSWORD=$(cat ${config.sops.secrets."mosquitto-ha-password-plaintext".path})" > /run/zigbee2mqtt/env
           chown zigbee2mqtt:zigbee2mqtt /run/zigbee2mqtt/env
 
           # Create secret.yaml in data directory for frontend auth
