@@ -27,7 +27,10 @@ pkgs.testers.nixosTest {
     sops.age.generateKey = lib.mkForce false;
 
     # Override Grafana to not use sops secret
-    services.grafana.settings.security.admin_password = lib.mkForce "test-password";
+    services.grafana.settings.security = lib.mkForce {
+      admin_user = "admin";
+      admin_password = "test-password";
+    };
 
     # Override Mosquitto to use plaintext password (hashedPasswordFile requires sops)
     services.mosquitto.listeners = lib.mkForce [{
