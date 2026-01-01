@@ -29,6 +29,14 @@ pkgs.testers.nixosTest {
     # Override Grafana to not use sops secret
     services.grafana.settings.security.admin_password = lib.mkForce "test-password";
 
+    # Override Mosquitto to use plaintext password (hashedPasswordFile requires sops)
+    services.mosquitto.listeners = lib.mkForce [{
+      users.hass = {
+        acl = ["readwrite #"];
+        password = "test-password";
+      };
+    }];
+
     # Override PostgreSQL settings for VM test (limited memory)
     services.postgresql.settings = lib.mkForce {
       shared_buffers = "128MB";
@@ -86,12 +94,13 @@ pkgs.testers.nixosTest {
     # Grafana
     try:
         homelab.wait_for_unit("grafana.service")
+        homelab.wait_for_open_port(3000)
+        homelab.succeed("curl -f http://localhost:3000/api/health")
     except Exception as e:
-        print(f"Grafana service failed to start: {e}")
+        print(f"Grafana failed: {e}")
         print(homelab.succeed("journalctl -u grafana.service -n 50 --no-pager"))
+        print(homelab.succeed("systemctl status grafana.service --no-pager"))
         raise
-    homelab.wait_for_open_port(3000)
-    homelab.succeed("curl -f http://localhost:3000/api/health")
 
     # Comin (GitOps)
     homelab.wait_for_unit("comin.service")
