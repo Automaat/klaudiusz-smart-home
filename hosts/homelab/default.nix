@@ -188,10 +188,14 @@
     };
   };
 
-  # Ensure Grafana waits for secrets to be available
+  # Ensure Grafana waits for sops secret file
+  systemd.paths.grafana-secret = {
+    wantedBy = ["grafana.service"];
+    pathConfig.PathExists = config.sops.secrets.grafana-admin-password.path;
+  };
   systemd.services.grafana = {
-    after = ["sops-nix.service"];
-    requires = ["sops-nix.service"];
+    after = ["grafana-secret.path"];
+    requires = ["grafana-secret.path"];
   };
 
   # ===========================================
