@@ -85,16 +85,9 @@ in {
         country = "PL";
         language = "pl";
         time_zone = "Europe/Warsaw";
-        # Coordinates (Warsaw example - change to your location)
-        latitude = 52.2297;
-        longitude = 21.0122;
-        elevation = 100;
-
-        # Disable auto-discovered integrations with missing dependencies
-        ignore_integration = [
-          "ibeacon" # Missing ibeacon_ble package
-          "homeassistant_connect_zbt2" # Missing ha_silabs_firmware_client, not needed with Zigbee2MQTT
-        ];
+        latitude = 50.083;
+        longitude = 19.891;
+        elevation = 210;
       };
 
       # Enable conversation for voice commands

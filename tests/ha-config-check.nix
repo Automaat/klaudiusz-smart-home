@@ -8,21 +8,17 @@
   # Generate Home Assistant configuration for validation
   # This converts the Nix config structure to what HA expects
   haConfigYaml = lib.generators.toYAML {} {
-    homeassistant =
-      {
-        name = haConfig.homeassistant.name;
-        unit_system = haConfig.homeassistant.unit_system;
-        currency = haConfig.homeassistant.currency;
-        country = haConfig.homeassistant.country;
-        language = haConfig.homeassistant.language;
-        time_zone = haConfig.homeassistant.time_zone;
-        latitude = haConfig.homeassistant.latitude;
-        longitude = haConfig.homeassistant.longitude;
-        elevation = haConfig.homeassistant.elevation;
-      }
-      // lib.optionalAttrs (haConfig.homeassistant ? ignore_integration) {
-        ignore_integration = haConfig.homeassistant.ignore_integration;
-      };
+    homeassistant = {
+      name = haConfig.homeassistant.name;
+      unit_system = haConfig.homeassistant.unit_system;
+      currency = haConfig.homeassistant.currency;
+      country = haConfig.homeassistant.country;
+      language = haConfig.homeassistant.language;
+      time_zone = haConfig.homeassistant.time_zone;
+      latitude = haConfig.homeassistant.latitude;
+      longitude = haConfig.homeassistant.longitude;
+      elevation = haConfig.homeassistant.elevation;
+    };
     conversation = {};
     frontend = {};
     http = {
