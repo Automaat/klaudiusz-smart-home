@@ -41,11 +41,11 @@
           whisper_status = {
             friendly_name = "Whisper STT Status";
             value_template = ''
-              {% set status = states('binary_sensor.wyoming_whisper_health') %}
+              {% set status = states('sensor.wyoming_whisper_health') %}
               {{ 'active' if status == 'on' else 'inactive' }}
             '';
             icon_template = ''
-              {% set status = states('binary_sensor.wyoming_whisper_health') %}
+              {% set status = states('sensor.wyoming_whisper_health') %}
               {{ 'mdi:microphone' if status == 'on' else 'mdi:microphone-off' }}
             '';
           };
@@ -53,11 +53,11 @@
           piper_status = {
             friendly_name = "Piper TTS Status";
             value_template = ''
-              {% set status = states('binary_sensor.wyoming_piper_health') %}
+              {% set status = states('sensor.wyoming_piper_health') %}
               {{ 'active' if status == 'on' else 'inactive' }}
             '';
             icon_template = ''
-              {% set status = states('binary_sensor.wyoming_piper_health') %}
+              {% set status = states('sensor.wyoming_piper_health') %}
               {{ 'mdi:speaker' if status == 'on' else 'mdi:speaker-off' }}
             '';
           };
@@ -65,11 +65,11 @@
           tailscale_status = {
             friendly_name = "Tailscale Status";
             value_template = ''
-              {% set status = states('binary_sensor.tailscale_health') %}
+              {% set status = states('sensor.tailscale_health') %}
               {{ 'connected' if status == 'on' else 'disconnected' }}
             '';
             icon_template = ''
-              {% set status = states('binary_sensor.tailscale_health') %}
+              {% set status = states('sensor.tailscale_health') %}
               {{ 'mdi:shield-check' if status == 'on' else 'mdi:shield-off' }}
             '';
           };
@@ -77,11 +77,11 @@
           postgresql_status = {
             friendly_name = "PostgreSQL Status";
             value_template = ''
-              {% set status = states('binary_sensor.postgresql_health') %}
+              {% set status = states('sensor.postgresql_health') %}
               {{ 'active' if status == 'on' else 'inactive' }}
             '';
             icon_template = ''
-              {% set status = states('binary_sensor.postgresql_health') %}
+              {% set status = states('sensor.postgresql_health') %}
               {{ 'mdi:database' if status == 'on' else 'mdi:database-off' }}
             '';
           };
