@@ -6,21 +6,48 @@
   },
   "lockFileMaintenance": {
     "enabled": true,
-    "automerge": true,
     "schedule": ["before 6am on monday"]
   },
-  "packageRules": [
+  "customManagers": [
     {
-      "matchManagers": ["nix"],
-      "automerge": true,
-      "automergeType": "pr",
-      "platformAutomerge": true
+      "customType": "regex",
+      "description": "Update HACS GitHub release download URLs",
+      "fileMatch": ["\\.nix$"],
+      "matchStrings": [
+        "url = \"https://github\\.com/(?<depName>[^/]+/[^/]+)/releases/download/(?<currentValue>[^/]+)"
+      ],
+      "datasourceTemplate": "github-releases"
     },
     {
+      "customType": "regex",
+      "description": "Update fetchFromGitHub rev tags",
+      "fileMatch": ["\\.nix$"],
+      "matchStrings": [
+        "# renovate: datasource=github-tags depName=(?<depName>.+?)\\s+rev = \"(?<currentValue>.+?)\""
+      ],
+      "datasourceTemplate": "github-tags"
+    }
+  ],
+  "packageRules": [
+    {
+      "description": "Separate nixpkgs updates into individual PRs",
+      "matchManagers": ["nix"],
+      "matchDepNames": ["nixpkgs"],
+      "groupName": "nixpkgs"
+    },
+    {
+      "description": "Configure comin dependency updates",
+      "matchManagers": ["nix"],
+      "matchDepNames": ["comin"]
+    },
+    {
+      "description": "Configure sops-nix dependency updates",
+      "matchManagers": ["nix"],
+      "matchDepNames": ["sops-nix"]
+    },
+    {
+      "description": "GitHub Actions with pinned digests",
       "matchManagers": ["github-actions"],
-      "automerge": true,
-      "automergeType": "pr",
-      "platformAutomerge": true,
       "pinDigests": true
     }
   ],

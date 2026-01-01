@@ -133,6 +133,20 @@
           scan_interval = 60;
         };
       }
+      {
+        binary_sensor = {
+          name = "comin_deployment_success";
+          command = "journalctl -u comin.service --since '60 seconds ago' --no-pager | grep -q 'switch successfully terminated' && echo ON || echo OFF";
+          scan_interval = 30;
+        };
+      }
+      {
+        binary_sensor = {
+          name = "comin_deployment_failed";
+          command = "journalctl -u comin.service --since '60 seconds ago' --no-pager | grep -q 'level=error' && echo ON || echo OFF";
+          scan_interval = 30;
+        };
+      }
     ];
 
     # ===========================================
@@ -298,6 +312,53 @@
             data = {
               title = "⚠️ PostgreSQL nie działa";
               message = "Sprawdź systemctl status postgresql";
+            };
+          }
+        ];
+      }
+
+      # -----------------------------------------
+      # Comin Deployment Notifications
+      # -----------------------------------------
+      {
+        id = "notify_comin_deployment_success";
+        alias = "Alert - Comin deployment successful";
+        trigger = [
+          {
+            platform = "state";
+            entity_id = "binary_sensor.comin_deployment_success";
+            from = "off";
+            to = "on";
+          }
+        ];
+        action = [
+          {
+            service = "persistent_notification.create";
+            data = {
+              title = "✅ Aktualizacja zakończona";
+              message = "🚀 Comin pomyślnie wdrożył zmiany o {{ now().strftime('%H:%M') }} 🎉";
+            };
+          }
+        ];
+      }
+
+      {
+        id = "notify_comin_deployment_failed";
+        alias = "Alert - Comin deployment failed";
+        trigger = [
+          {
+            platform = "state";
+            entity_id = "binary_sensor.comin_deployment_failed";
+            from = "off";
+            to = "on";
+          }
+        ];
+        action = [
+          {
+            service = "persistent_notification.create";
+            data = {
+              title = "❌ Aktualizacja nieudana";
+              message = "🔥 Comin nie mógł wdrożyć zmian. Sprawdź journalctl -u comin 🔍";
             };
           }
         ];
