@@ -62,8 +62,8 @@ in {
 
       # Devices
       "mqtt" # MQTT for Zigbee2MQTT
+      "hue" # Philips Hue Bridge
       # "esphome"        # ESPHome devices
-      # "hue"            # Philips Hue
       # "cast"           # Google Cast
     ];
 
