@@ -46,11 +46,11 @@
     } ''
       export HOME=$TMPDIR
       export MISE_DATA_DIR=$TMPDIR/mise
-      export PATH=$TMPDIR/mise/installs/uv/latest/bin:$PATH
+      export PATH=$TMPDIR/mise/installs/uv/0.9.21/bin:$PATH
 
       # Install uv via mise
       echo "Installing uv via mise..."
-      mise install uv@latest
+      mise install uv@0.9.21
 
       # Run official check_config script with fail-on-warnings
       echo "Running official Home Assistant config validation..."
