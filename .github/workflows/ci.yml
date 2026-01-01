@@ -179,7 +179,7 @@ jobs:
 
       - name: Setup pip cache
         if: steps.changes.outputs.yaml == 'true'
-        uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
         with:
           path: ~/.cache/pip
           key: pip-${{ runner.os }}-yamllint
@@ -229,7 +229,7 @@ jobs:
 
       - name: Setup mise cache
         if: steps.changes.outputs.workflows == 'true'
-        uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
         with:
           path: ~/.local/share/mise
           key: mise-${{ runner.os }}-${{ hashFiles('.mise.toml') }}
