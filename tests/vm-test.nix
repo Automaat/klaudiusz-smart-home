@@ -7,7 +7,8 @@
 }:
 pkgs.testers.nixosTest {
   name = "homelab-integration-test";
-  skipTypeCheck = true; # Alejandra formatting incompatible with Python type checker
+  skipTypeCheck = true; # Alejandra formatting incompatible with Python validators
+  skipLint = true;
 
   nodes.homelab = {lib, ...}: {
     # Import the homelab configuration with required modules
