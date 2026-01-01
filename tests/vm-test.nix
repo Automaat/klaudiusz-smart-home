@@ -24,17 +24,22 @@ pkgs.testers.nixosTest {
 
     # Use dummy secrets for testing (encrypted with test key)
     sops.defaultSopsFile = lib.mkForce ./secrets.yaml;
-    sops.age.keyFile = lib.mkForce "/var/lib/sops-nix/test-key.txt";
     sops.age.generateKey = lib.mkForce false;
 
-    # Create test key file at boot (before sops activation)
-    system.activationScripts.createTestKey = lib.stringAfter ["etc"] ''
-      mkdir -p /var/lib/sops-nix
-      cat > /var/lib/sops-nix/test-key.txt <<'EOF'
-      ${builtins.readFile ./age-key.txt}
-      EOF
-      chmod 600 /var/lib/sops-nix/test-key.txt
-    '';
+    # Provide test age key early in boot process (before sops decryption)
+    environment.etc."sops-age-test-key.txt" = {
+      text = builtins.readFile ./age-key.txt;
+      mode = "0600";
+    };
+    sops.age.keyFile = lib.mkForce "/etc/sops-age-test-key.txt";
+
+    # Override secret ownership for VM tests (service users may not exist during activation)
+    sops.secrets.grafana-admin-password = {
+      owner = lib.mkForce "root";
+      group = lib.mkForce "root";
+      mode = lib.mkForce "0444";
+      restartUnits = lib.mkForce [];
+    };
 
     # Override PostgreSQL settings for VM test (limited memory)
     services.postgresql.settings = lib.mkForce {
