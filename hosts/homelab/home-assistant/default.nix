@@ -256,7 +256,10 @@ in {
     settings = {
       homeassistant.enabled = true; # Enable auto-discovery
       permit_join = false;
-      serial.port = "/dev/zigbee";
+      serial = {
+        port = "/dev/zigbee";
+        adapter = "ezsp"; # Connect ZBT-2 uses Silicon Labs EFR32 (EZSP protocol)
+      };
       mqtt = {
         server = "mqtt://localhost:1883";
         user = "homeassistant";
