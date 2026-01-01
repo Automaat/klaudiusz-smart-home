@@ -55,6 +55,9 @@ pkgs.testers.nixosTest {
     # Disable Wyoming services (require external model downloads, no network in VM)
     services.wyoming.faster-whisper.servers.default.enable = lib.mkForce false;
     services.wyoming.piper.servers.default.enable = lib.mkForce false;
+
+    # Ensure Grafana waits for sops-nix secrets before starting
+    systemd.services.grafana.requires = ["sops-nix.service"];
   };
 
   testScript = ''
