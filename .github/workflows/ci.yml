@@ -324,7 +324,15 @@ jobs:
 
       - name: Run integration tests
         if: steps.changes.outputs.nix == 'true'
-        run: nix build .#checks.x86_64-linux.all-integration-tests --show-trace --max-jobs auto
+        run: nix build .#checks.x86_64-linux.all-integration-tests --show-trace --max-jobs auto 2>&1 | tee integration-test.log
+
+      - name: Upload test logs on failure
+        if: failure() && steps.changes.outputs.nix == 'true'
+        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4
+        with:
+          name: integration-test-logs
+          path: integration-test.log
+          retention-days: 30
 
   update-production:
     name: Update Production Branch

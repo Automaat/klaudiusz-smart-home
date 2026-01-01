@@ -323,6 +323,13 @@ tail -f /var/lib/hass/home-assistant.log
 
 ## Troubleshooting
 
+### CI Integration Test Failures
+
+1. Go to failed GitHub Actions run
+2. Download `integration-test-logs` artifact (retained 30 days)
+3. Extract and review full test output
+4. Check for Python import errors, service start failures, VM issues
+
 ### Rebuild Fails
 
 1. Check syntax: `nix flake check`
