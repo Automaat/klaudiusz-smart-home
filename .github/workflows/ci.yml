@@ -324,4 +324,6 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
-      - run: git push origin HEAD:production
+        with:
+          fetch-depth: 0
+      - run: git push --force-with-lease origin HEAD:production
