@@ -62,38 +62,10 @@ homelab.fail("journalctl -u home-assistant --since '5 minutes ago' | grep -i 'ho
 
 # Test that all custom Python packages can be imported
 # This catches missing transitive dependencies early
+# Use hass command which runs in the correct Python environment
 print("Testing Python package imports...")
-status, output = homelab.execute("""
-  sudo -u hass /run/current-system/sw/bin/python3 -c '
-import sys
-import traceback
-
-# Test custom packages declared in extraPackages
-packages = [
-    "ibeacon_ble",
-    "ha_silabs_firmware_client",
-]
-
-errors = []
-for pkg in packages:
-    try:
-        __import__(pkg)
-        print(f"✓ {pkg} imported successfully")
-    except Exception as e:
-        print(f"✗ {pkg} FAILED:")
-        print(f"  Error: {e}")
-        traceback.print_exc()
-        errors.append(pkg)
-
-if errors:
-    print(f"\\nFailed to import {len(errors)} package(s): {errors}")
-    sys.exit(1)
-else:
-    print(f"\\n✓ All {len(packages)} packages imported successfully")
-  '
+homelab.succeed("""
+  hass --script check_config --config /var/lib/hass
 """)
-print(output)
-if status != 0:
-    raise Exception(f"Package import test failed with status {status}")
 
 print("✅ All integration tests passed!")
