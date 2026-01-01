@@ -156,12 +156,14 @@ in {
       # ];
 
       # MQTT (for Zigbee2MQTT)
-      mqtt = {
-        broker = "127.0.0.1";
-        port = 1883;
-        username = "homeassistant";
-        password = "!secret mqtt_password";
-      };
+      mqtt = [
+        {
+          broker = "127.0.0.1";
+          port = 1883;
+          username = "homeassistant";
+          password = "!secret mqtt_password";
+        }
+      ];
     };
 
     # Allow GUI automations and dashboard edits

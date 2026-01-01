@@ -31,16 +31,18 @@ jobs:
       - name: Extract HA config for validation
         if: steps.changes.outputs.ha_config == 'true'
         run: |
-          mkdir -p /tmp/ha-config
+          mkdir -p .ha-config
           # Generate config from Nix
+          # Filter: null values (deprecated), frontend.themes (!include directive incompatible with validator)
           nix eval --raw .#nixosConfigurations.homelab.config.services.home-assistant.config --apply 'x: builtins.toJSON x' | \
-            nix run nixpkgs#yq-go -- -P > /tmp/ha-config/configuration.yaml
+            nix run nixpkgs#jq -- 'del(..|select(. == null)) | del(.frontend.themes)' | \
+            nix run nixpkgs#yq-go -- -P > .ha-config/configuration.yaml
 
       - name: Run Home Assistant Config Check
         if: steps.changes.outputs.ha_config == 'true'
         uses: frenck/action-home-assistant@941d5d917f4c1c7a7e7d4087526daf90d53f4437 # v1
         with:
-          path: /tmp/ha-config
+          path: .ha-config
           version: stable
 
   enhanced-validation-jinja2:
