@@ -63,7 +63,7 @@ homelab.fail("journalctl -u home-assistant --since '5 minutes ago' | grep -i 'ho
 # Test that all custom Python packages can be imported
 # This catches missing transitive dependencies early
 print("Testing Python package imports...")
-result = homelab.succeed("""
+status, output = homelab.execute("""
   sudo -u hass python3 -c '
 import sys
 import traceback
@@ -74,6 +74,7 @@ packages = [
     "ha_silabs_firmware_client",
 ]
 
+errors = []
 for pkg in packages:
     try:
         __import__(pkg)
@@ -82,11 +83,17 @@ for pkg in packages:
         print(f"✗ {pkg} FAILED:")
         print(f"  Error: {e}")
         traceback.print_exc()
-        sys.exit(1)
+        errors.append(pkg)
 
-print(f"✓ All {len(packages)} packages imported successfully")
+if errors:
+    print(f"\\nFailed to import {len(errors)} package(s): {errors}")
+    sys.exit(1)
+else:
+    print(f"\\n✓ All {len(packages)} packages imported successfully")
   '
 """)
-print(result)
+print(output)
+if status != 0:
+    raise Exception(f"Package import test failed with status {status}")
 
 print("✅ All integration tests passed!")
