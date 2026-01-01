@@ -8,7 +8,7 @@
   # HACS (Home Assistant Community Store)
   # ===========================================
   hacsSource = pkgs.fetchzip {
-    url = "https://github.com/hacs/integration/releases/download/2.0.1/hacs.zip";
+    url = "https://github.com/hacs/integration/releases/download/2.0.5/hacs.zip";
     hash = "sha256-eKTdksAKEU07y9pbHmTBl1d8L25eP/Y4VlYLubQRDmo=";
     stripRoot = false;
   };
