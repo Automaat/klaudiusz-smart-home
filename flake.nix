@@ -7,7 +7,7 @@
     # Home Assistant pinned version
     # renovate: datasource=github-releases depName=home-assistant/core versioning=semver extractVersion=^(?<version>.*)$
     # Current HA version: 2025.12.4
-    nixpkgs-ha.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs-ha.url = "github:NixOS/nixpkgs/905716d1403f78bc5d79a73fbd78a028916dca6d";
 
     comin = {
       url = "github:nlewo/comin";
