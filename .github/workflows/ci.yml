@@ -6,8 +6,8 @@ on:
     branches: [main]
 
 jobs:
-  static-tests:
-    name: Static Tests
+  nix-flake-check:
+    name: Nix Flake Check
     runs-on: ubuntu-latest
     needs: [format, yaml-lint, markdown-lint, action-lint]
     steps:
@@ -35,17 +35,85 @@ jobs:
             substituters = https://cache.nixos.org https://nix-community.cachix.org
             trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=
 
-      - name: Setup Nix cache
+      - name: Restore Nix cache
         if: steps.changes.outputs.nix == 'true'
-        uses: DeterminateSystems/magic-nix-cache-action@565684385bcd71bad329742eefe8d12f2e765b39 # v13
+        uses: nix-community/cache-nix-action@bf4962b9164a15eb7bda8b16c3ded111bc0c5fcb # v6.0.0
+        with:
+          primary-key: nix-flake-check-${{ runner.os }}-${{ hashFiles('flake.lock') }}
+          restore-prefixes-first-match: nix-flake-check-${{ runner.os }}-
+          gc-max-store-size: 3221225472
 
       - name: Flake Check
         if: steps.changes.outputs.nix == 'true'
         run: nix build .#checks.x86_64-linux.all-static-tests --show-trace --max-jobs auto
 
+      - name: Save Nix cache
+        if: steps.changes.outputs.nix == 'true'
+        uses: nix-community/cache-nix-action@bf4962b9164a15eb7bda8b16c3ded111bc0c5fcb # v6.0.0
+        with:
+          primary-key: nix-flake-check-${{ runner.os }}-${{ hashFiles('flake.lock') }}
+          gc-max-store-size: 3221225472
+
+  build-homelab:
+    name: Build Homelab System
+    runs-on: ubuntu-latest
+    needs: [format, yaml-lint, markdown-lint, action-lint]
+    if: github.event_name == 'push'
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
+
+      - name: Check for Nix changes
+        uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # v3
+        id: changes
+        with:
+          filters: |
+            nix:
+              - '**/*.nix'
+              - 'flake.lock'
+              - 'custom_sentences/**/*.yaml'
+              - 'tests/**'
+
+      - name: Install Nix
+        if: steps.changes.outputs.nix == 'true'
+        uses: cachix/install-nix-action@4e002c8ec80594ecd40e759629461e26c8abed15 # v31
+        with:
+          nix_path: nixpkgs=channel:nixos-unstable
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+            accept-flake-config = true
+            substituters = https://cache.nixos.org https://nix-community.cachix.org
+            trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=
+
+      - name: Restore Nix cache
+        if: steps.changes.outputs.nix == 'true'
+        uses: nix-community/cache-nix-action@bf4962b9164a15eb7bda8b16c3ded111bc0c5fcb # v6.0.0
+        with:
+          primary-key: nix-build-homelab-${{ runner.os }}-${{ hashFiles('flake.lock') }}
+          restore-prefixes-first-match: nix-build-homelab-${{ runner.os }}-
+          gc-max-store-size: 4294967296
+
       - name: Build homelab system
-        if: steps.changes.outputs.nix == 'true' && github.event_name == 'push'
+        if: steps.changes.outputs.nix == 'true'
         run: nix build .#nixosConfigurations.homelab.config.system.build.toplevel --show-trace --max-jobs auto
+
+      - name: Export system closure
+        if: steps.changes.outputs.nix == 'true'
+        run: nix-store -qR result | xargs nix-store --export | zstd -T0 -10 > homelab-system.nar.zst
+
+      - name: Upload system artifact
+        if: steps.changes.outputs.nix == 'true'
+        uses: actions/upload-artifact@84480863f228bb9747b473957fcc9e309aa96097 # v4
+        with:
+          name: homelab-system
+          path: homelab-system.nar.zst
+          retention-days: 7
+
+      - name: Save Nix cache
+        if: steps.changes.outputs.nix == 'true'
+        uses: nix-community/cache-nix-action@bf4962b9164a15eb7bda8b16c3ded111bc0c5fcb # v6.0.0
+        with:
+          primary-key: nix-build-homelab-${{ runner.os }}-${{ hashFiles('flake.lock') }}
+          gc-max-store-size: 4294967296
 
   format:
     name: Format Check
@@ -74,14 +142,25 @@ jobs:
             substituters = https://cache.nixos.org https://nix-community.cachix.org
             trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=
 
-      - name: Setup Nix cache
+      - name: Restore Nix cache
         if: steps.changes.outputs.nix == 'true'
-        uses: DeterminateSystems/magic-nix-cache-action@565684385bcd71bad329742eefe8d12f2e765b39 # v13
+        uses: nix-community/cache-nix-action@bf4962b9164a15eb7bda8b16c3ded111bc0c5fcb # v6.0.0
+        with:
+          primary-key: nix-format-${{ runner.os }}-${{ hashFiles('flake.lock') }}
+          restore-prefixes-first-match: nix-format-${{ runner.os }}-
+          gc-max-store-size: 1073741824
 
       - name: Check Nix formatting
         if: steps.changes.outputs.nix == 'true'
         run: |
           nix fmt -- --check .
+
+      - name: Save Nix cache
+        if: steps.changes.outputs.nix == 'true'
+        uses: nix-community/cache-nix-action@bf4962b9164a15eb7bda8b16c3ded111bc0c5fcb # v6.0.0
+        with:
+          primary-key: nix-format-${{ runner.os }}-${{ hashFiles('flake.lock') }}
+          gc-max-store-size: 1073741824
 
   yaml-lint:
     name: YAML Lint
@@ -97,6 +176,14 @@ jobs:
             yaml:
               - '**/*.yaml'
               - '**/*.yml'
+
+      - name: Setup pip cache
+        if: steps.changes.outputs.yaml == 'true'
+        uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v4
+        with:
+          path: ~/.cache/pip
+          key: pip-${{ runner.os }}-yamllint
+          restore-keys: pip-${{ runner.os }}-
 
       - name: Install yamllint
         if: steps.changes.outputs.yaml == 'true'
@@ -140,6 +227,14 @@ jobs:
             workflows:
               - '.github/workflows/**'
 
+      - name: Setup mise cache
+        if: steps.changes.outputs.workflows == 'true'
+        uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v4
+        with:
+          path: ~/.local/share/mise
+          key: mise-${{ runner.os }}-${{ hashFiles('.mise.toml') }}
+          restore-keys: mise-${{ runner.os }}-
+
       - name: Install mise
         if: steps.changes.outputs.workflows == 'true'
         uses: jdx/mise-action@146a28175021df8ca24f8ee1828cc2a60f980bd5 # v3
@@ -151,7 +246,7 @@ jobs:
   integration-tests:
     name: Integration Tests (Main Only)
     runs-on: ubuntu-latest
-    needs: [static-tests]
+    needs: [nix-flake-check, build-homelab]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
@@ -178,9 +273,23 @@ jobs:
             substituters = https://cache.nixos.org https://nix-community.cachix.org
             trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=
 
-      - name: Setup Nix cache
+      - name: Restore Nix cache
         if: steps.changes.outputs.nix == 'true'
-        uses: DeterminateSystems/magic-nix-cache-action@565684385bcd71bad329742eefe8d12f2e765b39 # v13
+        uses: nix-community/cache-nix-action@bf4962b9164a15eb7bda8b16c3ded111bc0c5fcb # v6.0.0
+        with:
+          primary-key: nix-integration-tests-${{ runner.os }}-${{ hashFiles('flake.lock') }}
+          restore-prefixes-first-match: nix-integration-tests-${{ runner.os }}-
+          gc-max-store-size: 2147483648
+
+      - name: Download homelab system artifact
+        if: steps.changes.outputs.nix == 'true'
+        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4
+        with:
+          name: homelab-system
+
+      - name: Import homelab system to Nix store
+        if: steps.changes.outputs.nix == 'true'
+        run: zstd -d homelab-system.nar.zst --stdout | nix-store --import
 
       - name: Enable KVM (for VM tests)
         if: steps.changes.outputs.nix == 'true'
@@ -206,10 +315,17 @@ jobs:
         if: steps.changes.outputs.nix == 'true'
         run: nix build .#checks.x86_64-linux.all-integration-tests --show-trace --max-jobs auto
 
+      - name: Save Nix cache
+        if: steps.changes.outputs.nix == 'true'
+        uses: nix-community/cache-nix-action@bf4962b9164a15eb7bda8b16c3ded111bc0c5fcb # v6.0.0
+        with:
+          primary-key: nix-integration-tests-${{ runner.os }}-${{ hashFiles('flake.lock') }}
+          gc-max-store-size: 2147483648
+
   update-production:
     name: Update Production Branch
     runs-on: ubuntu-latest
-    needs: [static-tests, integration-tests]
+    needs: [nix-flake-check, build-homelab, integration-tests]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     permissions:
       contents: write
