@@ -32,8 +32,9 @@ jobs:
         if: steps.changes.outputs.ha_config == 'true'
         run: |
           mkdir -p .ha-config
-          # Generate config from Nix
+          # Generate config from Nix, filter out null values
           nix eval --raw .#nixosConfigurations.homelab.config.services.home-assistant.config --apply 'x: builtins.toJSON x' | \
+            nix run nixpkgs#jq -- 'del(..|select(. == null))' | \
             nix run nixpkgs#yq-go -- -P > .ha-config/configuration.yaml
 
       - name: Run Home Assistant Config Check
