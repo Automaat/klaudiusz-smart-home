@@ -82,7 +82,12 @@ pkgs.testers.nixosTest {
     homelab.succeed("curl -f http://localhost:9090/-/healthy")
 
     # Grafana
-    homelab.wait_for_unit("grafana.service")
+    try:
+        homelab.wait_for_unit("grafana.service")
+    except Exception as e:
+        print(f"Grafana service failed to start: {e}")
+        print(homelab.succeed("journalctl -u grafana.service -n 50 --no-pager"))
+        raise
     homelab.wait_for_open_port(3000)
     homelab.succeed("curl -f http://localhost:3000/api/health")
 
