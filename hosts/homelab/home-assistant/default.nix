@@ -292,7 +292,7 @@ in {
 
     serviceConfig = {
       RuntimeDirectory = "zigbee2mqtt";
-      EnvironmentFile = "/run/zigbee2mqtt/env";
+      EnvironmentFile = "-/run/zigbee2mqtt/env"; # - prefix makes optional
     };
   };
 }
