@@ -73,6 +73,18 @@
               {{ 'mdi:shield-check' if status == 'on' else 'mdi:shield-off' }}
             '';
           };
+
+          postgresql_status = {
+            friendly_name = "PostgreSQL Status";
+            value_template = ''
+              {% set status = states('binary_sensor.postgresql_health') %}
+              {{ 'active' if status == 'on' else 'inactive' }}
+            '';
+            icon_template = ''
+              {% set status = states('binary_sensor.postgresql_health') %}
+              {{ 'mdi:database' if status == 'on' else 'mdi:database-off' }}
+            '';
+          };
         };
       }
     ];
@@ -109,6 +121,14 @@
         sensor = {
           name = "fail2ban_health";
           command = "systemctl is-active fail2ban";
+          value_template = "{{ value == 'active' }}";
+          scan_interval = 60;
+        };
+      }
+      {
+        sensor = {
+          name = "postgresql_health";
+          command = "systemctl is-active postgresql";
           value_template = "{{ value == 'active' }}";
           scan_interval = 60;
         };
@@ -256,6 +276,28 @@
             data = {
               title = "⚠️ Tailscale nie działa";
               message = "Sprawdź systemctl status tailscaled";
+            };
+          }
+        ];
+      }
+
+      {
+        id = "alert_postgresql_down";
+        alias = "Alert - PostgreSQL service down";
+        trigger = [
+          {
+            platform = "state";
+            entity_id = "sensor.postgresql_health";
+            to = "False";
+            for.minutes = 2;
+          }
+        ];
+        action = [
+          {
+            service = "persistent_notification.create";
+            data = {
+              title = "⚠️ PostgreSQL nie działa";
+              message = "Sprawdź systemctl status postgresql";
             };
           }
         ];

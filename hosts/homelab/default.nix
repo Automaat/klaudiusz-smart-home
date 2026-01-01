@@ -145,6 +145,13 @@
       openFirewall = false;
     };
 
+    exporters.postgres = {
+      enable = true;
+      port = 9187;
+      openFirewall = false;
+      runAsLocalSuperUser = true; # Run as postgres user for socket auth
+    };
+
     scrapeConfigs = [
       {
         job_name = "node";
@@ -155,6 +162,10 @@
         static_configs = [{targets = ["localhost:8123"];}];
         metrics_path = "/api/prometheus";
         bearer_token_file = config.sops.secrets."home-assistant-prometheus-token".path;
+      }
+      {
+        job_name = "postgresql";
+        static_configs = [{targets = ["localhost:9187"];}];
       }
     ];
   };
