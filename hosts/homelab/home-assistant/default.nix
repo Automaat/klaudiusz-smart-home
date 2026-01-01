@@ -258,7 +258,9 @@ in {
       permit_join = false;
       serial = {
         port = "/dev/zigbee";
-        # Let zigbee2mqtt auto-detect adapter type
+        adapter = "ember"; # ZBT-2 uses EmberZNet firmware 7.4.4.3
+        baudrate = 460800; # Required for ZBT-2
+        rtscts = true; # Hardware flow control required
       };
       mqtt = {
         server = "mqtt://localhost:1883";
