@@ -55,6 +55,15 @@ pkgs.testers.nixosTest {
     # Disable Wyoming services (require external model downloads, no network in VM)
     services.wyoming.faster-whisper.servers.default.enable = lib.mkForce false;
     services.wyoming.piper.servers.default.enable = lib.mkForce false;
+
+    # Override Grafana path-based secret waiting for VM tests
+    # In tests, sops creates secrets during activation (before systemd units start)
+    # so the path check is redundant and can cause timing issues
+    systemd.paths.grafana-secret.enable = lib.mkForce false;
+    systemd.services.grafana = {
+      after = lib.mkForce [];
+      requires = lib.mkForce [];
+    };
   };
 
   testScript = ''
