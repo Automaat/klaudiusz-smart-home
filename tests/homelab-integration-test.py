@@ -64,7 +64,7 @@ homelab.fail("journalctl -u home-assistant --since '5 minutes ago' | grep -i 'ho
 # This catches missing transitive dependencies early
 print("Testing Python package imports...")
 status, output = homelab.execute("""
-  sudo -u hass python3 -c '
+  sudo -u hass /run/current-system/sw/bin/python3 -c '
 import sys
 import traceback
 
