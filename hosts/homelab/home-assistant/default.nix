@@ -2,7 +2,6 @@
   config,
   pkgs,
   lib,
-  nixpkgs-ha,
   ...
 }: let
   # ===========================================
@@ -36,9 +35,6 @@ in {
   # ===========================================
   services.home-assistant = {
     enable = true;
-
-    # Use pinned Home Assistant version from nixpkgs-ha
-    package = nixpkgs-ha.legacyPackages.${pkgs.system}.home-assistant;
 
     extraComponents = [
       # Core

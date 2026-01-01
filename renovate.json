@@ -14,7 +14,7 @@
       "description": "Update HACS GitHub release download URLs",
       "fileMatch": ["\\.nix$"],
       "matchStrings": [
-        "url = \"https://github\\.com/(?<depName>[^/]+/[^/]+)/releases/download/(?<currentValue>[^/]+)/"
+        "url = \"https://github\\.com/(?<depName>[^/]+/[^/]+)/releases/download/(?<currentValue>[^/]+)"
       ],
       "datasourceTemplate": "github-releases"
     },
@@ -23,19 +23,9 @@
       "description": "Update fetchFromGitHub rev tags",
       "fileMatch": ["\\.nix$"],
       "matchStrings": [
-        "# renovate: datasource=github-tags depName=(?<depName>.+?)\\s+rev = \"(?<currentValue>.+?)\";"
+        "# renovate: datasource=github-tags depName=(?<depName>.+?)\\s+rev = \"(?<currentValue>.+?)\""
       ],
       "datasourceTemplate": "github-tags"
-    },
-    {
-      "customType": "regex",
-      "description": "Track Home Assistant version in flake.nix comment",
-      "fileMatch": ["flake\\.nix$"],
-      "matchStrings": [
-        "# Current HA version: (?<currentValue>\\d+\\.\\d+\\.\\d+)"
-      ],
-      "depNameTemplate": "home-assistant/core",
-      "datasourceTemplate": "github-releases"
     }
   ],
   "packageRules": [
@@ -46,12 +36,12 @@
       "groupName": "nixpkgs"
     },
     {
-      "description": "Separate comin updates into individual PRs",
+      "description": "Configure comin dependency updates",
       "matchManagers": ["nix"],
       "matchDepNames": ["comin"]
     },
     {
-      "description": "Separate sops-nix updates into individual PRs",
+      "description": "Configure sops-nix dependency updates",
       "matchManagers": ["nix"],
       "matchDepNames": ["sops-nix"]
     },
