@@ -258,7 +258,7 @@ in {
       permit_join = false;
       serial = {
         port = "/dev/zigbee";
-        adapter = "ezsp"; # Connect ZBT-2 uses Silicon Labs EFR32 (EZSP protocol)
+        adapter = "ember"; # Connect ZBT-2 uses Silicon Labs EFR32 (ember replaces deprecated ezsp)
       };
       mqtt = {
         server = "mqtt://localhost:1883";
