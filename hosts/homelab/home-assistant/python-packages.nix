@@ -15,7 +15,7 @@
       owner = "bluetooth-devices";
       repo = "ibeacon-ble";
       rev = "v${version}";
-      hash = "sha256-YDiI2S/FfKc+Cyt/pXJxuWWJcPoMF1INk0rfD0CCutg=";
+      hash = "sha256-1liSWxduYpjIMu7226EH4bsc7gca5g/fyL79W4ZMdU4=";
     };
 
     nativeBuildInputs = with pkgs.python3Packages; [
