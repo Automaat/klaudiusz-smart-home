@@ -57,7 +57,6 @@ in {
 
       # Monitoring
       "prometheus" # Metrics export for Grafana
-      # "systemmonitor" # Deprecated - use Systemmonitor integration via GUI
       "command_line" # Service health checks
 
       # Notifications

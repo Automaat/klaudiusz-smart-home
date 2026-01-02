@@ -8,24 +8,9 @@
     # ===========================================
     # System Monitor Integration
     # ===========================================
-    # Tracks CPU, RAM, disk usage, etc.
+    # System Monitor configured via UI (see docs/manual-config.md)
+    # Creates entities: sensor.processor_use, sensor.memory_use_percent, etc.
     sensor = [
-      # -----------------------------------------
-      # System Resources
-      # -----------------------------------------
-      {
-        platform = "systemmonitor";
-        resources = [
-          "disk_use_percent_/"
-          "memory_use_percent"
-          "processor_use"
-          "processor_temperature"
-          "load_1m"
-          "load_5m"
-          "load_15m"
-        ];
-      }
-
       # -----------------------------------------
       # Service Health - Template Sensors
       # -----------------------------------------

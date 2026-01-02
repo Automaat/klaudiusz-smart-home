@@ -258,8 +258,6 @@
       SupplementaryGroups = ["postgres"];
       Restart = "on-failure";
       RestartSec = "10";
-      # Watchdog disabled - HA startup can exceed 5min with slow integrations
-      # WatchdogSec = "300";
     };
     wyoming-faster-whisper-default.serviceConfig.Restart = "on-failure";
     wyoming-piper-default.serviceConfig.Restart = "on-failure";
