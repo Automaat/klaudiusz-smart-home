@@ -61,10 +61,11 @@ homelab.fail("journalctl -u home-assistant --since '5 minutes ago' | grep -i 'ho
 # =============================================
 
 # Use 5-minute window (consistent with ModuleNotFoundError, integration checks above)
-# journalctl --priority filters by syslog level: err = ERROR + CRITICAL
+# Note: HA logs ERROR/CRITICAL at journald priority 6 (info), not 3 (err)
+# Must grep message content, not filter by --priority
 print("Checking for ERROR/CRITICAL messages in last 5 minutes...")
 log_errors = homelab.succeed("""
-  journalctl -u home-assistant --since '5 minutes ago' --priority=err --no-pager || true
+  journalctl -u home-assistant --since '5 minutes ago' --no-pager | grep -E ' (ERROR|CRITICAL) ' || true
 """).strip()
 
 if log_errors:
