@@ -13,21 +13,21 @@
       # Lights
       # -----------------------------------------
       TurnOnLight = {
-        speech.text = "Włączam {{ slots.name }}";
+        speech.text = "Włączam {{ slots.name if slots.name is defined else slots.area }}";
         action = [
           {
             service = "light.turn_on";
-            target.entity_id = "light.{{ slots.name | lower | replace(' ', '_') }}";
+            target.entity_id = "light.{{ (slots.name if slots.name is defined else slots.area) | lower | replace(' ', '_') }}";
           }
         ];
       };
 
       TurnOffLight = {
-        speech.text = "Wyłączam {{ slots.name }}";
+        speech.text = "Wyłączam {{ slots.name if slots.name is defined else slots.area }}";
         action = [
           {
             service = "light.turn_off";
-            target.entity_id = "light.{{ slots.name | lower | replace(' ', '_') }}";
+            target.entity_id = "light.{{ (slots.name if slots.name is defined else slots.area) | lower | replace(' ', '_') }}";
           }
         ];
       };
@@ -63,11 +63,11 @@
       };
 
       SetBrightness = {
-        speech.text = "Ustawiam jasność {{ slots.name }} na {{ slots.brightness }} procent";
+        speech.text = "Ustawiam jasność {{ slots.name if slots.name is defined else slots.area }} na {{ slots.brightness }} procent";
         action = [
           {
             service = "light.turn_on";
-            target.entity_id = "light.{{ slots.name | lower | replace(' ', '_') }}";
+            target.entity_id = "light.{{ (slots.name if slots.name is defined else slots.area) | lower | replace(' ', '_') }}";
             data.brightness_pct = "{{ slots.brightness }}";
           }
         ];
@@ -108,21 +108,21 @@
       # Covers / Blinds
       # -----------------------------------------
       OpenCover = {
-        speech.text = "Otwieram {{ slots.name }}";
+        speech.text = "Otwieram {{ slots.name if slots.name is defined else slots.area }}";
         action = [
           {
             service = "cover.open_cover";
-            target.entity_id = "cover.{{ slots.name | lower | replace(' ', '_') }}";
+            target.entity_id = "cover.{{ (slots.name if slots.name is defined else slots.area) | lower | replace(' ', '_') }}";
           }
         ];
       };
 
       CloseCover = {
-        speech.text = "Zamykam {{ slots.name }}";
+        speech.text = "Zamykam {{ slots.name if slots.name is defined else slots.area }}";
         action = [
           {
             service = "cover.close_cover";
-            target.entity_id = "cover.{{ slots.name | lower | replace(' ', '_') }}";
+            target.entity_id = "cover.{{ (slots.name if slots.name is defined else slots.area) | lower | replace(' ', '_') }}";
           }
         ];
       };
@@ -131,21 +131,21 @@
       # Media
       # -----------------------------------------
       TurnOnMedia = {
-        speech.text = "Włączam {{ slots.name }}";
+        speech.text = "Włączam {{ slots.name if slots.name is defined else slots.area }}";
         action = [
           {
             service = "media_player.turn_on";
-            target.entity_id = "media_player.{{ slots.name | lower | replace(' ', '_') }}";
+            target.entity_id = "media_player.{{ (slots.name if slots.name is defined else slots.area) | lower | replace(' ', '_') }}";
           }
         ];
       };
 
       TurnOffMedia = {
-        speech.text = "Wyłączam {{ slots.name }}";
+        speech.text = "Wyłączam {{ slots.name if slots.name is defined else slots.area }}";
         action = [
           {
             service = "media_player.turn_off";
-            target.entity_id = "media_player.{{ slots.name | lower | replace(' ', '_') }}";
+            target.entity_id = "media_player.{{ (slots.name if slots.name is defined else slots.area) | lower | replace(' ', '_') }}";
           }
         ];
       };
