@@ -42,6 +42,26 @@
         ];
       };
 
+      TurnOnKitchenLight = {
+        speech.text = "Włączam światło w kuchni";
+        action = [
+          {
+            service = "light.turn_on";
+            target.entity_id = "light.kuchnia";
+          }
+        ];
+      };
+
+      TurnOffKitchenLight = {
+        speech.text = "Wyłączam światło w kuchni";
+        action = [
+          {
+            service = "light.turn_off";
+            target.entity_id = "light.kuchnia";
+          }
+        ];
+      };
+
       SetBrightness = {
         speech.text = "Ustawiam jasność {{ slots.name }} na {{ slots.brightness }} procent";
         action = [

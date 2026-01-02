@@ -38,6 +38,19 @@ intents:
           - "(wyłącz|zgaś) wszystko"
           - "ciemno"
 
+  TurnOnKitchenLight:
+    data:
+      - sentences:
+          - "(włącz|zapal|odpal) [światło] [w] kuchni"
+          - "(włącz|zapal) kuchni[ę]"
+          - "[niech] (będzie|zrobi się) jasno [w] kuchni"
+
+  TurnOffKitchenLight:
+    data:
+      - sentences:
+          - "(wyłącz|zgaś|ugaś) [światło] [w] kuchni"
+          - "(wyłącz|zgaś) kuchni[ę]"
+
   SetBrightness:
     data:
       - sentences:
