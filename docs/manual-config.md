@@ -20,7 +20,7 @@ The integration must be set up through the UI.
    - **Broker**: `localhost` (or `127.0.0.1`)
    - **Port**: `1883`
    - **Username**: `homeassistant`
-   - **Password**: Use the password from `/run/secrets/mosquitto-ha-password-plaintext`
+   - **Password**: Retrieve with: `ssh homelab "sudo cat /run/secrets/mosquitto-ha-password-plaintext"`
 
 ### Verify Configuration
 
@@ -35,7 +35,7 @@ ssh homelab "systemctl status mosquitto zigbee2mqtt"
 **View MQTT messages (debugging):**
 
 ```bash
-ssh homelab "mosquitto_sub -h localhost -p 1883 -u homeassistant -P \$(cat /run/secrets/mosquitto-ha-password-plaintext) -t '#'"
+ssh homelab "mosquitto_sub -h localhost -p 1883 -u homeassistant -P \$(sudo cat /run/secrets/mosquitto-ha-password-plaintext) -t '#'"
 ```
 
 ## Related Documentation
