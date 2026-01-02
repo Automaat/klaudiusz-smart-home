@@ -324,7 +324,9 @@ jobs:
 
       - name: Run integration tests
         if: steps.changes.outputs.nix == 'true'
-        run: nix build .#checks.x86_64-linux.all-integration-tests --show-trace --max-jobs auto 2>&1 | tee integration-test.log
+        run: |
+          set -o pipefail
+          nix build .#checks.x86_64-linux.all-integration-tests --show-trace --max-jobs auto 2>&1 | tee integration-test.log
 
       - name: Upload test logs on failure
         if: failure() && steps.changes.outputs.nix == 'true'
