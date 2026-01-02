@@ -50,7 +50,7 @@
         trigger = [
           {
             platform = "numeric_state";
-            entity_id = "sensor.processor_use";
+            entity_id = "sensor.system_monitor_obciazenie_procesora";
             above = 80;
             "for" = {
               minutes = 2;
@@ -67,7 +67,7 @@
           # {
           #   service = "notify.telegram";
           #   data = {
-          #     message = "🔴 High CPU usage: {{ states('sensor.processor_use') }}%";
+          #     message = "🔴 High CPU usage: {{ states('sensor.system_monitor_obciazenie_procesora') }}%";
           #   };
           # }
         ];
@@ -80,7 +80,7 @@
         trigger = [
           {
             platform = "numeric_state";
-            entity_id = "sensor.memory_use_percent";
+            entity_id = "sensor.system_monitor_memory_use";
             above = 85;
             "for" = {
               minutes = 2;
@@ -97,7 +97,7 @@
           # {
           #   service = "notify.telegram";
           #   data = {
-          #     message = "🟠 High memory usage: {{ states('sensor.memory_use_percent') }}%";
+          #     message = "🟠 High memory usage: {{ states('sensor.system_monitor_memory_use') }}%";
           #   };
           # }
         ];
@@ -110,7 +110,7 @@
         trigger = [
           {
             platform = "numeric_state";
-            entity_id = "sensor.disk_use_percent_";
+            entity_id = "sensor.system_monitor_disk_use";
             above = 85;
             "for" = {
               minutes = 5;
@@ -127,7 +127,7 @@
           # {
           #   service = "notify.telegram";
           #   data = {
-          #     message = "💾 Low disk space: {{ states('sensor.disk_use_percent_') }}% used";
+          #     message = "💾 Low disk space: {{ states('sensor.system_monitor_disk_use') }}% used";
           #   };
           # }
         ];
@@ -140,7 +140,7 @@
         trigger = [
           {
             platform = "numeric_state";
-            entity_id = "sensor.processor_temperature";
+            entity_id = "sensor.system_monitor_temperatura_procesora";
             above = 75;
             "for" = {
               minutes = 2;
@@ -157,7 +157,7 @@
           # {
           #   service = "notify.telegram";
           #   data = {
-          #     message = "🔥 High CPU temperature: {{ states('sensor.processor_temperature') }}°C";
+          #     message = "🔥 High CPU temperature: {{ states('sensor.system_monitor_temperatura_procesora') }}°C";
           #   };
           # }
         ];

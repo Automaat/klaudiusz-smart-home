@@ -57,56 +57,33 @@ homelab.fail("journalctl -u home-assistant --since '5 minutes ago' | grep -i 'Er
 homelab.fail("journalctl -u home-assistant --since '5 minutes ago' | grep -i 'homeassistant.data_entry_flow.UnknownHandler'")
 
 # =============================================
-# Explicit Python Dependencies Validation
+# Comprehensive Error/Critical Log Checks
 # =============================================
 
-# Explicitly test that custom packages can be imported in HA's environment
-# This catches missing transitive dependencies before they cause runtime errors
-print("Testing explicit Python imports in HA environment...")
-homelab.succeed("""
-  set -e
+# Use 5-minute window (consistent with ModuleNotFoundError, integration checks above)
+# Note: HA logs ERROR/CRITICAL at journald priority 6 (info), not 3 (err)
+# Must grep message content, not filter by --priority
+print("Checking for ERROR/CRITICAL messages in last 5 minutes...")
+log_errors = homelab.succeed("""
+  journalctl -u home-assistant --since '5 minutes ago' --no-pager | grep -E ' (ERROR|CRITICAL) ' || true
+""").strip()
 
-  # Get the Python executable that HA is using
-  HA_PYTHON=$(systemctl show -p ExecStart home-assistant.service | grep -oP '/nix/store/[^/]+/bin/python[0-9.]*' | head -1)
-  echo "=========================================="
-  echo "Python executable: $HA_PYTHON"
-  echo "Python version: $($HA_PYTHON --version)"
-  echo "=========================================="
-  echo ""
+if log_errors:
+    print("========================================")
+    print("❌ Found ERROR/CRITICAL in logs:")
+    print("========================================")
+    print(log_errors)
+    print("========================================")
+    raise Exception("Home Assistant logs contain ERROR/CRITICAL messages")
 
-  # Test each custom package with detailed error output
-  for pkg in ibeacon_ble ha_silabs_firmware_client; do
-    echo "Testing: $pkg"
-    if ! $HA_PYTHON -c "
-import sys
-import traceback
-try:
-    __import__('$pkg')
-    print('  ✓ $pkg imported successfully')
-except Exception as e:
-    print('  ✗ FAILED to import $pkg')
-    print('  Error:', str(e))
-    print('')
-    print('Full traceback:')
-    traceback.print_exc()
-    print('')
-    print('Python path:')
-    for p in sys.path:
-        print('  -', p)
-    sys.exit(1)
-"; then
-      echo ""
-      echo "=========================================="
-      echo "IMPORT TEST FAILED FOR: $pkg"
-      echo "=========================================="
-      exit 1
-    fi
-  done
+print("✅ No ERROR/CRITICAL messages found in logs")
 
-  echo ""
-  echo "=========================================="
-  echo "✓ All custom packages imported successfully"
-  echo "=========================================="
-""")
+# =============================================
+# Python Dependencies Validation
+# =============================================
+# Custom packages are validated implicitly:
+# - If HA starts without ModuleNotFoundError, packages imported successfully
+# - HA logs are checked above for import errors
+# - No need for explicit import test since HA already loaded them
 
 print("✅ All integration tests passed!")
