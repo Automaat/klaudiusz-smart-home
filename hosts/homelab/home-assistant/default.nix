@@ -9,7 +9,7 @@
   # ===========================================
   hacsSource = pkgs.fetchzip {
     url = "https://github.com/hacs/integration/releases/download/2.0.5/hacs.zip";
-    hash = "sha256-eKTdksAKEU07y9pbHmTBl1d8L25eP/Y4VlYLubQRDmo=";
+    hash = "sha256-iMomioxH7Iydy+bzJDbZxt6BX31UkCvqhXrxYFQV8Gw=";
     stripRoot = false;
   };
 

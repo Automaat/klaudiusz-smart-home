@@ -11,7 +11,7 @@
   "customManagers": [
     {
       "customType": "regex",
-      "description": "Update HACS GitHub release download URLs",
+      "description": "Update GitHub release download URLs in Nix files (hash must be updated manually)",
       "fileMatch": ["\\.nix$"],
       "matchStrings": [
         "url = \"https://github\\.com/(?<depName>[^/]+/[^/]+)/releases/download/(?<currentValue>[^/]+)"
