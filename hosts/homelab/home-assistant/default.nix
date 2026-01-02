@@ -69,7 +69,6 @@ in {
       # Devices
       "hue" # Philips Hue Bridge
       "esphome" # ESPHome devices (Voice Preview Edition)
-      "webostv" # LG WebOS TV
       # "cast"           # Google Cast
     ];
 
