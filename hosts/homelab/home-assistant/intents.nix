@@ -120,6 +120,26 @@
       # -----------------------------------------
       # Media
       # -----------------------------------------
+      TurnOnMedia = {
+        speech.text = "Włączam {{ slots.name }}";
+        action = [
+          {
+            service = "media_player.turn_on";
+            target.entity_id = "media_player.{{ slots.name | lower | replace(' ', '_') }}";
+          }
+        ];
+      };
+
+      TurnOffMedia = {
+        speech.text = "Wyłączam {{ slots.name }}";
+        action = [
+          {
+            service = "media_player.turn_off";
+            target.entity_id = "media_player.{{ slots.name | lower | replace(' ', '_') }}";
+          }
+        ];
+      };
+
       PauseMedia = {
         speech.text = "Pauzuję";
         action = [

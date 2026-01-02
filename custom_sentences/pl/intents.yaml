@@ -115,6 +115,18 @@ intents:
   # =========================================
   # Media
   # =========================================
+  TurnOnMedia:
+    data:
+      - sentences:
+          - "(włącz|uruchom) {name}"
+          - "(włącz|uruchom) [telewizor] [w] {area}"
+
+  TurnOffMedia:
+    data:
+      - sentences:
+          - "(wyłącz|zgaś) {name}"
+          - "(wyłącz|zgaś) [telewizor] [w] {area}"
+
   PauseMedia:
     data:
       - sentences:

@@ -284,11 +284,12 @@ ssh homelab "journalctl -u home-assistant | grep -i 'voice_assistant\|wyoming'"
 
 ## LG WebOS TV
 
-**Why manual?** WebOS integration requires network discovery or manual IP entry, and initial pairing requires accepting the connection on the TV screen.
+**Why manual?** WebOS integration requires network discovery or manual IP entry, and
+initial pairing requires accepting the connection on the TV screen.
 
 **When to do this:** After adding TV to network, before voice/automation control.
 
-### Setup Steps
+### WebOS TV Setup
 
 **1. Ensure TV is powered on and connected to network:**
 
@@ -318,34 +319,36 @@ ssh homelab "journalctl -u home-assistant | grep -i 'voice_assistant\|wyoming'"
 1. In **Devices & Services**, click **LG webOS Smart TV** card
 2. Click device name
 3. Rename to Polish format: `Telewizor {location}`
-   - Example: `Telewizor Salon`
+   - Example device name: `Telewizor Salon` (creates `media_player.telewizor_salon`)
 
-### Verify Integration
+### WebOS TV Verification
 
 **Check device status:**
 
 1. **Settings** → **Devices & Services** → **LG webOS Smart TV**
 2. Device should show as "Available" when TV is on
 3. Entities created:
-   - `media_player.lg_webos_smart_tv` (or custom name)
+   - `media_player.telewizor_salon` (or custom Polish name)
    - `media_player.{tv_name}_soundbar` (if soundbar connected)
 
 **Test control:**
 
 ```bash
 # Test service call
-ssh homelab "ha-cli service call media_player.turn_on --arguments entity_id=media_player.lg_webos_smart_tv"
+ssh homelab "ha-cli service call media_player.turn_on --arguments \
+  entity_id=media_player.telewizor_salon"
 ```
 
 ### Voice Control
 
-After setup, expose entity to voice assistant:
+After setup, TV can be controlled via voice commands:
 
-1. **Settings** → **Voice assistants** → **Expose** tab
-2. Toggle `media_player.lg_webos_smart_tv`
-3. Test: *"Włącz telewizor"*, *"Wyłącz telewizor"*
+- Uses `TurnOnMedia`/`TurnOffMedia` intents from `intents.nix`
+- Expose entity: **Settings** → **Voice assistants** → **Expose** tab
+- Toggle `media_player.telewizor_salon`
+- Test commands: *"Włącz telewizor salon"*, *"Wyłącz telewizor"*
 
-### Notes
+### WebOS TV Notes
 
 - TV must support wake-on-LAN for power-on when off
 - Integration persists across HA restarts
