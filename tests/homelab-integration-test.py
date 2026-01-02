@@ -57,6 +57,43 @@ homelab.fail("journalctl -u home-assistant --since '5 minutes ago' | grep -i 'Er
 homelab.fail("journalctl -u home-assistant --since '5 minutes ago' | grep -i 'homeassistant.data_entry_flow.UnknownHandler'")
 
 # =============================================
+# Comprehensive Error/Critical Log Checks
+# =============================================
+
+print("Checking journalctl for ERROR/CRITICAL messages...")
+journalctl_errors = homelab.succeed("""
+  journalctl -u home-assistant --since '5 minutes ago' --no-pager | \
+  grep -E '(ERROR|CRITICAL)' || true
+""").strip()
+
+if journalctl_errors:
+    print("========================================")
+    print("❌ Found ERROR/CRITICAL in journalctl:")
+    print("========================================")
+    print(journalctl_errors)
+    print("========================================")
+    raise Exception(f"Home Assistant journalctl contains ERROR/CRITICAL messages")
+
+print("Checking Home Assistant log file for ERROR/CRITICAL messages...")
+log_file_errors = homelab.succeed("""
+  if [ -f /var/lib/hass/home-assistant.log ]; then
+    grep -E '(ERROR|CRITICAL)' /var/lib/hass/home-assistant.log || true
+  else
+    echo "Log file not found"
+  fi
+""").strip()
+
+if log_file_errors and log_file_errors != "Log file not found":
+    print("========================================")
+    print("❌ Found ERROR/CRITICAL in log file:")
+    print("========================================")
+    print(log_file_errors)
+    print("========================================")
+    raise Exception(f"Home Assistant log file contains ERROR/CRITICAL messages")
+
+print("✅ No ERROR/CRITICAL messages found in logs")
+
+# =============================================
 # Explicit Python Dependencies Validation
 # =============================================
 
