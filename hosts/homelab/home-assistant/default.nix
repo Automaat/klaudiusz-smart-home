@@ -70,6 +70,7 @@ in {
       "hue" # Philips Hue Bridge
       "esphome" # ESPHome devices (Voice Preview Edition)
       "webostv" # LG WebOS TV
+      "homekit_controller" # Aqara FP2 presence sensor
       # "cast"           # Google Cast
     ];
 
