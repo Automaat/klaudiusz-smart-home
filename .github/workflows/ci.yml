@@ -73,12 +73,6 @@ jobs:
             substituters = https://cache.nixos.org https://nix-community.cachix.org
             trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=
 
-      - name: Setup Nix cache
-        if: steps.changes.outputs.nix == 'true'
-        uses: DeterminateSystems/magic-nix-cache-action@565684385bcd71bad329742eefe8d12f2e765b39 # v13
-        with:
-          use-gha-cache: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
-
       - name: Run Jinja2 Template Validation
         if: steps.changes.outputs.nix == 'true'
         run: nix build .#checks.x86_64-linux.jinja2-validation --show-trace --max-jobs auto
@@ -110,12 +104,6 @@ jobs:
             accept-flake-config = true
             substituters = https://cache.nixos.org https://nix-community.cachix.org
             trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=
-
-      - name: Setup Nix cache
-        if: steps.changes.outputs.nix == 'true'
-        uses: DeterminateSystems/magic-nix-cache-action@565684385bcd71bad329742eefe8d12f2e765b39 # v13
-        with:
-          use-gha-cache: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
 
       - name: Run Entity Reference Validation
         if: steps.changes.outputs.nix == 'true'
@@ -149,12 +137,6 @@ jobs:
             accept-flake-config = true
             substituters = https://cache.nixos.org https://nix-community.cachix.org
             trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=
-
-      - name: Setup Nix cache
-        if: steps.changes.outputs.nix == 'true' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
-        uses: DeterminateSystems/magic-nix-cache-action@565684385bcd71bad329742eefe8d12f2e765b39 # v13
-        with:
-          use-gha-cache: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
 
       - name: Flake Check
         if: steps.changes.outputs.nix == 'true' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
@@ -190,12 +172,6 @@ jobs:
             experimental-features = nix-command flakes
             substituters = https://cache.nixos.org https://nix-community.cachix.org
             trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=
-
-      - name: Setup Nix cache
-        if: steps.changes.outputs.nix == 'true'
-        uses: DeterminateSystems/magic-nix-cache-action@565684385bcd71bad329742eefe8d12f2e765b39 # v13
-        with:
-          use-gha-cache: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
 
       - name: Check Nix formatting
         if: steps.changes.outputs.nix == 'true'
@@ -295,12 +271,6 @@ jobs:
             accept-flake-config = true
             substituters = https://cache.nixos.org https://nix-community.cachix.org
             trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=
-
-      - name: Setup Nix cache
-        if: steps.changes.outputs.nix == 'true' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
-        uses: DeterminateSystems/magic-nix-cache-action@565684385bcd71bad329742eefe8d12f2e765b39 # v13
-        with:
-          use-gha-cache: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
 
       - name: Enable KVM (for VM tests)
         if: steps.changes.outputs.nix == 'true' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
