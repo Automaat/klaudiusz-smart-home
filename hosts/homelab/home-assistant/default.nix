@@ -208,9 +208,9 @@ in {
     # Force derivation update when HA config changes
     # Hash of imported config files ensures Comin detects changes
     environment.HA_CONFIG_HASH = builtins.hashString "sha256" (
-      builtins.readFile ./intents.nix +
-      builtins.readFile ./automations.nix +
-      builtins.readFile ./monitoring.nix
+      builtins.readFile ./intents.nix
+      + builtins.readFile ./automations.nix
+      + builtins.readFile ./monitoring.nix
     );
   };
 
