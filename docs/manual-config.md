@@ -13,7 +13,7 @@ setup wizard and device pairing must be done through the Home Assistant UI.
 
 ### Initial Setup
 
-1. Plug Connect ZBT-2 dongle into USB port on homelab
+1. Plug Connect ZBT-2 dongle into **USB 2.0 port** on homelab (not USB 3.0 - can cause 2.4GHz interference)
 2. Verify device detected: `ssh homelab "ls -la /dev/zigbee"`
 3. Open Home Assistant UI
 4. Navigate to **Settings** → **Devices & Services**
