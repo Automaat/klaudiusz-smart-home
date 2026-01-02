@@ -89,11 +89,14 @@ platform configuration to UI-based integration setup. The old
 
 ## Wyoming Protocol Integration
 
-**Why manual?** Wyoming Protocol integration doesn't auto-discover localhost services. Each Wyoming service (Whisper/Piper) requires explicit host:port configuration through the UI.
+**Why manual?** Wyoming Protocol integration doesn't auto-discover localhost services.
+Each Wyoming service (Whisper/Piper) requires explicit host:port configuration through
+the UI.
 
-**When to do this:** After initial installation, before setting up voice assistants. Required for speech-to-text and text-to-speech functionality.
+**When to do this:** After initial installation, before setting up voice assistants.
+Required for speech-to-text and text-to-speech functionality.
 
-### Setup Steps
+### Wyoming Setup Steps
 
 **1. Add Whisper (Speech-to-Text):**
 
@@ -117,7 +120,7 @@ platform configuration to UI-based integration setup. The old
 4. Click **SUBMIT**
 5. Integration should discover: **"piper (pl_PL-darkman-medium)"**
 
-### Verify Integration
+### Wyoming Verify Integration
 
 **Check services discovered:**
 
@@ -147,7 +150,8 @@ ssh homelab "ss -tlnp | grep -E '10200|10300'"
 ```
 
 Expected output:
-```
+
+```text
 tcp   LISTEN  0  5  127.0.0.1:10200  *:*  users:(("wyoming-piper"))
 tcp   LISTEN  0  5  127.0.0.1:10300  *:*  users:(("wyoming-faster"))
 ```
@@ -158,7 +162,7 @@ tcp   LISTEN  0  5  127.0.0.1:10300  *:*  users:(("wyoming-faster"))
 ssh homelab "sudo systemctl restart wyoming-faster-whisper-default wyoming-piper-default"
 ```
 
-### Notes
+### Wyoming Notes
 
 - Services configured in `hosts/homelab/home-assistant/default.nix`
 - Whisper model: `small` (good Polish accuracy, ~500MB)
@@ -168,9 +172,12 @@ ssh homelab "sudo systemctl restart wyoming-faster-whisper-default wyoming-piper
 
 ## Voice Assistant Preview Edition
 
-**Why manual?** Voice Preview Edition devices use Bluetooth (Improv via BLE) for initial WiFi provisioning and require UI-based pipeline assignment. The device cannot be fully configured declaratively.
+**Why manual?** Voice Preview Edition devices use Bluetooth (Improv via BLE) for initial
+WiFi provisioning and require UI-based pipeline assignment. The device cannot be fully
+configured declaratively.
 
-**When to do this:** After unboxing the Voice Preview Edition device, with Wyoming Protocol integration configured (see above).
+**When to do this:** After unboxing the Voice Preview Edition device, with Wyoming
+Protocol integration configured (see above).
 
 ### Prerequisites
 
@@ -180,7 +187,7 @@ ssh homelab "sudo systemctl restart wyoming-faster-whisper-default wyoming-piper
 - Wyoming integration configured (Whisper + Piper running)
 - Admin user logged in
 
-### Initial Setup
+### Voice Assistant Initial Setup
 
 **1. Power on device:**
 
@@ -268,7 +275,7 @@ ssh homelab "journalctl -u home-assistant | grep -i 'voice_assistant\|wyoming'"
 - Volume multiplier: increase if responses too quiet
 - Auto gain: tune for room acoustics
 
-### Notes
+### Voice Assistant Notes
 
 - Device requires continuous power (no battery)
 - All voice processing local (Whisper/Piper) - no cloud dependency
