@@ -38,6 +38,19 @@ intents:
           - "(wyłącz|zgaś) wszystko"
           - "ciemno"
 
+  TurnOnKitchenLight:
+    data:
+      - sentences:
+          - "(włącz|zapal|odpal) [światło] [w] kuchni"
+          - "(włącz|zapal) kuchni[ę]"
+          - "[niech] (będzie|zrobi się) jasno [w] kuchni"
+
+  TurnOffKitchenLight:
+    data:
+      - sentences:
+          - "(wyłącz|zgaś|ugaś) [światło] [w] kuchni"
+          - "(wyłącz|zgaś) kuchni[ę]"
+
   SetBrightness:
     data:
       - sentences:
@@ -46,39 +59,14 @@ intents:
           - "jasność {brightness} [procent] [w] {name}"
 
   # =========================================
-  # Scenes / Routines (Placeholder - no devices yet)
+  # Scenes
   # =========================================
-  # GoodMorning:
-  #   data:
-  #     - sentences:
-  #         - "dzień dobry"
-  #         - "poranek"
-  #         - "pobudka"
-  #         - "wstaję"
-  #
-  # GoodNight:
-  #   data:
-  #     - sentences:
-  #         - "dobranoc"
-  #         - "idę spać"
-  #         - "czas spać"
-  #         - "śpię"
-  #
-  # LeavingHome:
-  #   data:
-  #     - sentences:
-  #         - "wychodzę"
-  #         - "wychodzimy"
-  #         - "do widzenia"
-  #         - "pa"
-  #
-  # ComingHome:
-  #   data:
-  #     - sentences:
-  #         - "jestem w domu"
-  #         - "wróciłem"
-  #         - "wróciłam"
-  #         - "jesteśmy w domu"
+  ActivateScene:
+    data:
+      - sentences:
+          - "(włącz|aktywuj|uruchom) scenę {name}"
+          - "scena {name}"
+          - "(włącz|aktywuj) {name}"
 
   # =========================================
   # Climate (Placeholder - configure after device setup)
