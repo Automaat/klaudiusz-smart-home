@@ -232,14 +232,10 @@ in {
   # ===========================================
   services.wyoming.faster-whisper.servers.default = {
     enable = true;
-    model = "medium"; # Better Polish accuracy (+10-20%)
+    model = "small"; # Good Polish accuracy
     language = "pl"; # Force Polish
     device = "cpu";
     uri = "tcp://127.0.0.1:10300"; # Localhost only for security
-    extraArgs = [
-      "--beam-size"
-      "5" # Improved decoding quality (better alternatives)
-    ];
   };
 
   # ===========================================
