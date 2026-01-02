@@ -43,7 +43,19 @@ hosts/homelab/
     ├── intents.nix                 # Voice command handlers
     └── automations.nix             # Automations, helpers, scripts
 custom_sentences/pl/                # Polish voice patterns
+docs/manual-config.md               # GUI configuration steps
 ```
+
+## Manual Configuration
+
+Some HA features cannot be configured declaratively via NixOS and require GUI setup.
+
+**When manual GUI steps are needed:**
+
+- Document in `docs/manual-config.md`
+- Include step-by-step instructions
+- Note why it can't be declarative
+- Link to relevant HA documentation
 
 ## Development Workflow
 
@@ -146,18 +158,19 @@ IntentName = {
 - Template: `"(verb1|verb2) [optional] {slot}"`
 - Test with: "Która godzina", "Włącz salon"
 
-### Zigbee Configuration
+### Zigbee Configuration (ZHA)
 
 **Device Setup:**
 
-- ZHA enabled by default (Connect ZBT-2)
+- ZHA integration enabled declaratively
 - Persistent device: `/dev/zigbee` via udev
 - Database: `/var/lib/hass/zigbee.db`
 - User: hass in dialout group
+- Manual setup wizard required (see docs/manual-config.md)
 
 **Device Naming:**
 
-- Use Polish area names
+- Use Polish area names via GUI
 - Format: `{area} - {function}`
 - Example: `Salon - Główne światło`
 - Areas auto-work with voice commands

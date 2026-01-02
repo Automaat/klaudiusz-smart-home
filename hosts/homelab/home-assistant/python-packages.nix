@@ -1,12 +1,12 @@
 {
   pkgs,
   lib,
-  ...
+  python3Packages,
 }: {
   # Custom Python packages not in nixpkgs
   # Required by auto-discovered Home Assistant integrations
 
-  ibeacon-ble = pkgs.python3Packages.buildPythonPackage rec {
+  ibeacon-ble = python3Packages.buildPythonPackage rec {
     pname = "ibeacon-ble";
     version = "1.2.0";
     format = "pyproject";
@@ -18,11 +18,11 @@
       hash = "sha256-1liSWxduYpjIMu7226EH4bsc7gca5g/fyL79W4ZMdU4=";
     };
 
-    nativeBuildInputs = with pkgs.python3Packages; [
+    nativeBuildInputs = with python3Packages; [
       poetry-core
     ];
 
-    propagatedBuildInputs = with pkgs.python3Packages; [
+    propagatedBuildInputs = with python3Packages; [
       aiooui
       home-assistant-bluetooth
       mac-vendor-lookup
@@ -41,7 +41,7 @@
     };
   };
 
-  ha-silabs-firmware-client = pkgs.python3Packages.buildPythonPackage rec {
+  ha-silabs-firmware-client = python3Packages.buildPythonPackage rec {
     pname = "ha-silabs-firmware-client";
     version = "0.3.0";
     format = "wheel";
@@ -51,7 +51,7 @@
       hash = "sha256-0i/WGZ1kPCY7LRBYbHZ1p+eQAnJATLckfmWPYDIPOsA=";
     };
 
-    propagatedBuildInputs = with pkgs.python3Packages; [
+    propagatedBuildInputs = with python3Packages; [
       aiohttp
       packaging
       yarl

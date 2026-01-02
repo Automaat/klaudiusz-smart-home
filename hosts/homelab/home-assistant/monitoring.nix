@@ -8,24 +8,9 @@
     # ===========================================
     # System Monitor Integration
     # ===========================================
-    # Tracks CPU, RAM, disk usage, etc.
+    # System Monitor configured via UI (see docs/manual-config.md)
+    # Creates entities: sensor.processor_use, sensor.memory_use_percent, etc.
     sensor = [
-      # -----------------------------------------
-      # System Resources
-      # -----------------------------------------
-      {
-        platform = "systemmonitor";
-        resources = [
-          "disk_use_percent_/"
-          "memory_use_percent"
-          "processor_use"
-          "processor_temperature"
-          "load_1m"
-          "load_5m"
-          "load_15m"
-        ];
-      }
-
       # -----------------------------------------
       # Service Health - Template Sensors
       # -----------------------------------------
@@ -162,7 +147,7 @@
         trigger = [
           {
             platform = "numeric_state";
-            entity_id = "sensor.disk_use_percent_";
+            entity_id = "sensor.system_monitor_disk_use";
             above = 90;
           }
         ];
@@ -171,7 +156,7 @@
             service = "persistent_notification.create";
             data = {
               title = "⚠️ Krytyczny poziom dysku";
-              message = "Użycie dysku: {{ states('sensor.disk_use_percent_') }}%";
+              message = "Użycie dysku: {{ states('sensor.system_monitor_disk_use') }}%";
             };
           }
         ];
@@ -186,7 +171,7 @@
         trigger = [
           {
             platform = "numeric_state";
-            entity_id = "sensor.disk_use_percent_";
+            entity_id = "sensor.system_monitor_disk_use";
             above = 80;
           }
         ];
@@ -195,7 +180,7 @@
             service = "persistent_notification.create";
             data = {
               title = "⚠️ Ostrzeżenie - Dysk";
-              message = "Użycie dysku: {{ states('sensor.disk_use_percent_') }}%";
+              message = "Użycie dysku: {{ states('sensor.system_monitor_disk_use') }}%";
             };
           }
         ];
@@ -210,7 +195,7 @@
         trigger = [
           {
             platform = "numeric_state";
-            entity_id = "sensor.memory_use_percent";
+            entity_id = "sensor.system_monitor_memory_use";
             above = 90;
             for.minutes = 5;
           }
@@ -220,7 +205,7 @@
             service = "persistent_notification.create";
             data = {
               title = "⚠️ Wysokie użycie RAM";
-              message = "Pamięć RAM: {{ states('sensor.memory_use_percent') }}%";
+              message = "Pamięć RAM: {{ states('sensor.system_monitor_memory_use') }}%";
             };
           }
         ];

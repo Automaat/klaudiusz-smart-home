@@ -40,7 +40,6 @@
       allowedTCPPorts = [
         22 # SSH
         8123 # Home Assistant
-        8080 # Zigbee2MQTT frontend
       ];
       # Allow Tailscale traffic
       trustedInterfaces = ["tailscale0"];
@@ -258,7 +257,6 @@
       SupplementaryGroups = ["postgres"];
       Restart = "on-failure";
       RestartSec = "10";
-      WatchdogSec = "300";
     };
     wyoming-faster-whisper-default.serviceConfig.Restart = "on-failure";
     wyoming-piper-default.serviceConfig.Restart = "on-failure";
