@@ -246,7 +246,7 @@ jobs:
   integration-tests:
     name: Integration Tests
     runs-on: ubuntu-24.04
-    needs: [static-tests]
+    needs: [format, yaml-lint, markdown-lint, action-lint, enhanced-validation-ha-official, enhanced-validation-jinja2, enhanced-validation-entity-references]
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
 
