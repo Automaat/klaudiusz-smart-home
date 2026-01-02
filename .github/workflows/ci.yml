@@ -140,7 +140,7 @@ jobs:
               - 'tests/**'
 
       - name: Install Nix
-        if: steps.changes.outputs.nix == 'true'
+        if: steps.changes.outputs.nix == 'true' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
         uses: cachix/install-nix-action@4e002c8ec80594ecd40e759629461e26c8abed15 # v31
         with:
           nix_path: nixpkgs=channel:nixos-unstable
@@ -151,17 +151,17 @@ jobs:
             trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=
 
       - name: Setup Nix cache
-        if: steps.changes.outputs.nix == 'true'
+        if: steps.changes.outputs.nix == 'true' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
         uses: DeterminateSystems/magic-nix-cache-action@565684385bcd71bad329742eefe8d12f2e765b39 # v13
         with:
           use-gha-cache: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
 
       - name: Flake Check
-        if: steps.changes.outputs.nix == 'true'
+        if: steps.changes.outputs.nix == 'true' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
         run: nix build .#checks.x86_64-linux.all-static-tests --show-trace --max-jobs auto
 
       - name: Build homelab system
-        if: steps.changes.outputs.nix == 'true' && github.event_name == 'push'
+        if: (steps.changes.outputs.nix == 'true' || (github.event_name == 'push' && github.ref == 'refs/heads/main')) && github.event_name == 'push'
         run: nix build .#nixosConfigurations.homelab.config.system.build.toplevel --show-trace --max-jobs auto
 
   format:
@@ -286,7 +286,7 @@ jobs:
               - 'tests/**'
 
       - name: Install Nix
-        if: steps.changes.outputs.nix == 'true'
+        if: steps.changes.outputs.nix == 'true' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
         uses: cachix/install-nix-action@4e002c8ec80594ecd40e759629461e26c8abed15 # v31
         with:
           nix_path: nixpkgs=channel:nixos-unstable
@@ -297,13 +297,13 @@ jobs:
             trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=
 
       - name: Setup Nix cache
-        if: steps.changes.outputs.nix == 'true'
+        if: steps.changes.outputs.nix == 'true' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
         uses: DeterminateSystems/magic-nix-cache-action@565684385bcd71bad329742eefe8d12f2e765b39 # v13
         with:
           use-gha-cache: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
 
       - name: Enable KVM (for VM tests)
-        if: steps.changes.outputs.nix == 'true'
+        if: steps.changes.outputs.nix == 'true' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules
@@ -323,7 +323,7 @@ jobs:
           fi
 
       - name: Run integration tests
-        if: steps.changes.outputs.nix == 'true'
+        if: steps.changes.outputs.nix == 'true' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
         run: |
           set -o pipefail
           nix build .#checks.x86_64-linux.all-integration-tests --show-trace --max-jobs auto 2>&1 | tee integration-test.log || {
@@ -337,7 +337,7 @@ jobs:
           }
 
       - name: Upload test logs on failure
-        if: failure() && steps.changes.outputs.nix == 'true'
+        if: failure() && (steps.changes.outputs.nix == 'true' || (github.event_name == 'push' && github.ref == 'refs/heads/main'))
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
           name: integration-test-logs
