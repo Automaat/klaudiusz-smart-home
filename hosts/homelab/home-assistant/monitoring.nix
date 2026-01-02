@@ -126,14 +126,18 @@
       {
         binary_sensor = {
           name = "comin_deployment_success";
-          command = "journalctl -u comin.service --since '60 seconds ago' --no-pager | grep -q 'switch successfully terminated' && echo ON || echo OFF";
+          command = ''
+            jq -r '.deployments[0] | select(.status == "done" and .error_msg == "") | "ON"' /var/lib/comin/store.json 2>/dev/null || echo "OFF"
+          '';
           scan_interval = 30;
         };
       }
       {
         binary_sensor = {
           name = "comin_deployment_failed";
-          command = "journalctl -u comin.service --since '60 seconds ago' --no-pager | grep -q 'level=error' && echo ON || echo OFF";
+          command = ''
+            jq -r '.deployments[0] | select(.status == "done" and .error_msg != "") | "ON"' /var/lib/comin/store.json 2>/dev/null || echo "OFF"
+          '';
           scan_interval = 30;
         };
       }
