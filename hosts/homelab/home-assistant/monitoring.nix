@@ -19,12 +19,14 @@
         sensor = [
           {
             name = "Home Assistant Status";
+            unique_id = "home_assistant_status";
             state = "{{ 'active' }}";
             icon = "mdi:home-assistant";
           }
 
           {
             name = "Whisper STT Status";
+            unique_id = "whisper_status";
             state = ''
               {% set status = states('sensor.wyoming_whisper_health') %}
               {{ 'active' if status == 'on' else 'inactive' }}
@@ -37,6 +39,7 @@
 
           {
             name = "Piper TTS Status";
+            unique_id = "piper_status";
             state = ''
               {% set status = states('sensor.wyoming_piper_health') %}
               {{ 'active' if status == 'on' else 'inactive' }}
@@ -49,6 +52,7 @@
 
           {
             name = "Tailscale Status";
+            unique_id = "tailscale_status";
             state = ''
               {% set status = states('sensor.tailscale_health') %}
               {{ 'connected' if status == 'on' else 'disconnected' }}
@@ -61,6 +65,7 @@
 
           {
             name = "PostgreSQL Status";
+            unique_id = "postgresql_status";
             state = ''
               {% set status = states('sensor.postgresql_health') %}
               {{ 'active' if status == 'on' else 'inactive' }}
