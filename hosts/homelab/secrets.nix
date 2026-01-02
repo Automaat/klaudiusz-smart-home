@@ -44,6 +44,5 @@
       mode = "0400";
       restartUnits = ["home-assistant.service"];
     };
-
   };
 }

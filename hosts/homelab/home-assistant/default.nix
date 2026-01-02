@@ -232,5 +232,4 @@ in {
     voice = "pl_PL-darkman-medium";
     uri = "tcp://127.0.0.1:10200"; # Localhost only for security
   };
-
 }
