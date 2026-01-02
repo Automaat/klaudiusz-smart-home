@@ -147,7 +147,7 @@
         trigger = [
           {
             platform = "numeric_state";
-            entity_id = "sensor.disk_use_percent_";
+            entity_id = "sensor.system_monitor_disk_use";
             above = 90;
           }
         ];
@@ -156,7 +156,7 @@
             service = "persistent_notification.create";
             data = {
               title = "⚠️ Krytyczny poziom dysku";
-              message = "Użycie dysku: {{ states('sensor.disk_use_percent_') }}%";
+              message = "Użycie dysku: {{ states('sensor.system_monitor_disk_use') }}%";
             };
           }
         ];
@@ -171,7 +171,7 @@
         trigger = [
           {
             platform = "numeric_state";
-            entity_id = "sensor.disk_use_percent_";
+            entity_id = "sensor.system_monitor_disk_use";
             above = 80;
           }
         ];
@@ -180,7 +180,7 @@
             service = "persistent_notification.create";
             data = {
               title = "⚠️ Ostrzeżenie - Dysk";
-              message = "Użycie dysku: {{ states('sensor.disk_use_percent_') }}%";
+              message = "Użycie dysku: {{ states('sensor.system_monitor_disk_use') }}%";
             };
           }
         ];
@@ -195,7 +195,7 @@
         trigger = [
           {
             platform = "numeric_state";
-            entity_id = "sensor.memory_use_percent";
+            entity_id = "sensor.system_monitor_memory_use";
             above = 90;
             for.minutes = 5;
           }
@@ -205,7 +205,7 @@
             service = "persistent_notification.create";
             data = {
               title = "⚠️ Wysokie użycie RAM";
-              message = "Pamięć RAM: {{ states('sensor.memory_use_percent') }}%";
+              message = "Pamięć RAM: {{ states('sensor.system_monitor_memory_use') }}%";
             };
           }
         ];
