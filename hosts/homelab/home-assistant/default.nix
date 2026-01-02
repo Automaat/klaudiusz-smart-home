@@ -79,6 +79,8 @@ in {
         psycopg2 # PostgreSQL adapter for recorder
         aiogithubapi # Required by HACS
         customPkgs.ibeacon-ble # iBeacon integration
+        paho-mqtt # MQTT client library
+        gtts # Google Translate Text-to-Speech
       ];
 
     config = {
