@@ -47,7 +47,7 @@
         action = [
           {
             service = "light.turn_on";
-            target.entity_id = "light.kuchnia";
+            target.entity_id = "light.kitchen";
           }
         ];
       };
@@ -57,7 +57,7 @@
         action = [
           {
             service = "light.turn_off";
-            target.entity_id = "light.kuchnia";
+            target.entity_id = "light.kitchen";
           }
         ];
       };
@@ -74,27 +74,17 @@
       };
 
       # -----------------------------------------
-      # Scenes / Routines (Placeholder - no devices yet)
+      # Scenes
       # -----------------------------------------
-      # GoodMorning = {
-      #   speech.text = "Dzień dobry! Włączam poranny scenariusz.";
-      #   action = [];
-      # };
-      #
-      # GoodNight = {
-      #   speech.text = "Dobranoc! Wyłączam wszystko.";
-      #   action = [];
-      # };
-      #
-      # LeavingHome = {
-      #   speech.text = "Do zobaczenia! Zabezpieczam dom.";
-      #   action = [];
-      # };
-      #
-      # ComingHome = {
-      #   speech.text = "Witaj w domu!";
-      #   action = [];
-      # };
+      ActivateScene = {
+        speech.text = "Włączam scenę {{ slots.name }}";
+        action = [
+          {
+            service = "scene.turn_on";
+            target.entity_id = "scene.{{ slots.name | lower | replace(' ', '_') }}";
+          }
+        ];
+      };
 
       # -----------------------------------------
       # Climate (Placeholder - configure after device setup)
