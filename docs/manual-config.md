@@ -66,9 +66,10 @@ platform configuration to UI-based integration setup. The old
 
 ### Notes
 
-- Previously configured via YAML `sensor.platform: systemmonitor`
-- Old YAML config causes errors and should be removed from `configuration.yaml`
+- Previously configured via YAML `sensor.platform: systemmonitor` in `hosts/homelab/home-assistant/monitoring.nix`
+- Old YAML platform config removed in favor of UI-based integration
 - Integration creates entities like `sensor.processor_use`, `sensor.memory_use_percent`
+- Existing automations in `automations.nix` and `monitoring.nix` will continue working after manual setup
 
 ## Related Documentation
 
