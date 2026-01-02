@@ -27,7 +27,8 @@
   # ===========================================
   # Custom Python Packages
   # ===========================================
-  customPythonPackages = import ./python-packages.nix {inherit pkgs lib;};
+  # Function that builds custom packages with HA's Python environment
+  mkCustomPythonPackages = python3Packages: import ./python-packages.nix {inherit pkgs lib python3Packages;};
 in {
   imports = [
     ./intents.nix
@@ -72,12 +73,14 @@ in {
       # "cast"           # Google Cast
     ];
 
-    extraPackages = ps:
+    extraPackages = ps: let
+      customPkgs = mkCustomPythonPackages ps;
+    in
       with ps; [
         psycopg2 # PostgreSQL adapter for recorder
         aiogithubapi # Required by HACS
-        customPythonPackages.ibeacon-ble # iBeacon integration
-        customPythonPackages.ha-silabs-firmware-client # Connect ZBT-2 integration
+        customPkgs.ibeacon-ble # iBeacon integration
+        customPkgs.ha-silabs-firmware-client # Connect ZBT-2 integration
       ];
 
     config = {
