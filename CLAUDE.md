@@ -51,6 +51,7 @@ docs/manual-config.md               # GUI configuration steps
 Some HA features cannot be configured declaratively via NixOS and require GUI setup.
 
 **When manual GUI steps are needed:**
+
 - Document in `docs/manual-config.md`
 - Include step-by-step instructions
 - Note why it can't be declarative
