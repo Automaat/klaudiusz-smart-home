@@ -75,30 +75,32 @@ homelab.succeed("""
   echo ""
 
   # Test each custom package with detailed error output
+  # Save errors to file for better debugging
   for pkg in ibeacon_ble ha_silabs_firmware_client; do
-    echo "Testing: $pkg"
-    if ! $HA_PYTHON -c "
+    echo "Testing import: $pkg"
+    $HA_PYTHON -c "
 import sys
 import traceback
 try:
     __import__('$pkg')
-    print('  ✓ $pkg imported successfully')
+    print('✓ Successfully imported $pkg')
 except Exception as e:
-    print('  ✗ FAILED to import $pkg')
-    print('  Error:', str(e))
-    print('')
+    print('=' * 60)
+    print('IMPORT FAILED: $pkg')
+    print('=' * 60)
+    print('Error:', str(e))
+    print()
     print('Full traceback:')
     traceback.print_exc()
-    print('')
+    print()
     print('Python path:')
     for p in sys.path:
-        print('  -', p)
+        print('  ', p)
+    print('=' * 60)
     sys.exit(1)
-"; then
-      echo ""
-      echo "=========================================="
-      echo "IMPORT TEST FAILED FOR: $pkg"
-      echo "=========================================="
+"
+    if [ $? -ne 0 ]; then
+      echo "FATAL: Import test failed for $pkg"
       exit 1
     fi
   done
