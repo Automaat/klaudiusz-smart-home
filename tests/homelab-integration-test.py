@@ -63,52 +63,49 @@ homelab.fail("journalctl -u home-assistant --since '5 minutes ago' | grep -i 'ho
 # Explicitly test that custom packages can be imported in HA's environment
 # This catches missing transitive dependencies before they cause runtime errors
 print("Testing explicit Python imports in HA environment...")
+
+# Write errors to file so they appear in last lines of output
 homelab.succeed("""
   set -e
+  ERROR_LOG=/tmp/import-errors.log
+  rm -f $ERROR_LOG
 
   # Get the Python executable that HA is using
   HA_PYTHON=$(systemctl show -p ExecStart home-assistant.service | grep -oP '/nix/store/[^/]+/bin/python[0-9.]*' | head -1)
-  echo "=========================================="
-  echo "Python executable: $HA_PYTHON"
-  echo "Python version: $($HA_PYTHON --version)"
-  echo "=========================================="
-  echo ""
 
-  # Test each custom package with detailed error output
-  # Save errors to file for better debugging
+  # Test each custom package, saving errors to file
   for pkg in ibeacon_ble ha_silabs_firmware_client; do
-    echo "Testing import: $pkg"
     $HA_PYTHON -c "
-import sys
-import traceback
+import sys, traceback
 try:
     __import__('$pkg')
-    print('✓ Successfully imported $pkg')
 except Exception as e:
-    print('=' * 60)
-    print('IMPORT FAILED: $pkg')
-    print('=' * 60)
-    print('Error:', str(e))
-    print()
-    print('Full traceback:')
-    traceback.print_exc()
-    print()
-    print('Python path:')
-    for p in sys.path:
-        print('  ', p)
-    print('=' * 60)
+    with open('/tmp/import-errors.log', 'w') as f:
+        f.write('=' * 60 + '\\n')
+        f.write(f'IMPORT FAILED: $pkg\\n')
+        f.write('=' * 60 + '\\n')
+        f.write(f'Error: {e}\\n\\n')
+        f.write('Full traceback:\\n')
+        traceback.print_exc(file=f)
+        f.write('\\nPython path:\\n')
+        for p in sys.path:
+            f.write(f'   {p}\\n')
+        f.write('=' * 60 + '\\n')
     sys.exit(1)
-"
-    if [ $? -ne 0 ]; then
-      echo "FATAL: Import test failed for $pkg"
+" 2>&1 || {
+      # Display error log if it exists
+      if [ -f $ERROR_LOG ]; then
+        echo ""
+        echo "PYTHON IMPORT ERROR DETAILS:"
+        cat $ERROR_LOG
+      fi
       exit 1
-    fi
+    }
   done
 
-  echo ""
-  echo "=========================================="
   echo "✓ All custom packages imported successfully"
-  echo "=========================================="
 """)
+
+print("✅ All integration tests passed!")
 
 print("✅ All integration tests passed!")
