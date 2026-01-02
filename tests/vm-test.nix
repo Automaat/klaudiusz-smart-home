@@ -22,19 +22,25 @@ pkgs.testers.nixosTest {
     nixpkgs.pkgs = lib.mkForce pkgs;
     nixpkgs.config = lib.mkForce {};
 
-    # Use dummy secrets for testing (encrypted with test key)
-    sops.defaultSopsFile = lib.mkForce ./secrets.yaml;
-    sops.age.keyFile = lib.mkForce "/var/lib/sops-nix/test-key.txt";
+    # Disable sops-nix for VM tests - use plaintext configs
+    # Tests validate system builds & services start, not secret management
     sops.age.generateKey = lib.mkForce false;
 
-    # Create test key file at boot (before sops activation)
-    system.activationScripts.createTestKey = lib.stringAfter ["etc"] ''
-      mkdir -p /var/lib/sops-nix
-      cat > /var/lib/sops-nix/test-key.txt <<'EOF'
-      ${builtins.readFile ./age-key.txt}
-      EOF
-      chmod 600 /var/lib/sops-nix/test-key.txt
-    '';
+    # Override Grafana to not use sops secret
+    services.grafana.settings.security = lib.mkForce {
+      admin_user = "admin";
+      admin_password = "test-password";
+    };
+
+    # Override Mosquitto to use plaintext password (hashedPasswordFile requires sops)
+    services.mosquitto.listeners = lib.mkForce [
+      {
+        users.hass = {
+          acl = ["readwrite #"];
+          password = "test-password";
+        };
+      }
+    ];
 
     # Override PostgreSQL settings for VM test (limited memory)
     services.postgresql.settings = lib.mkForce {
@@ -56,57 +62,15 @@ pkgs.testers.nixosTest {
     services.wyoming.faster-whisper.servers.default.enable = lib.mkForce false;
     services.wyoming.piper.servers.default.enable = lib.mkForce false;
 
-    # Ensure Grafana waits for sops-nix secrets before starting
-    systemd.services.grafana.requires = ["sops-nix.service"];
+    # Override Grafana path-based secret waiting for VM tests
+    # In tests, sops creates secrets during activation (before systemd units start)
+    # so the path check is redundant and can cause timing issues
+    systemd.paths.grafana-secret.enable = lib.mkForce false;
+    systemd.services.grafana = {
+      after = lib.mkForce [];
+      requires = lib.mkForce [];
+    };
   };
 
-  testScript = ''
-    # Start the machine
-    homelab.start()
-
-    # Wait for systemd to be ready
-    homelab.wait_for_unit("multi-user.target")
-
-    # =============================================
-    # Critical Service Checks
-    # =============================================
-
-    # Home Assistant
-    homelab.wait_for_unit("home-assistant.service")
-    homelab.wait_for_open_port(8123)
-    homelab.succeed("curl -f http://localhost:8123/manifest.json")
-
-    # PostgreSQL (for HA recorder)
-    homelab.wait_for_unit("postgresql.service")
-
-    # Prometheus
-    homelab.wait_for_unit("prometheus.service")
-    homelab.wait_for_open_port(9090)
-    homelab.succeed("curl -f http://localhost:9090/-/healthy")
-
-    # Grafana
-    try:
-        homelab.wait_for_unit("grafana.service")
-    except Exception as e:
-        print(f"Grafana service failed to start: {e}")
-        print(homelab.succeed("journalctl -u grafana.service -n 50 --no-pager"))
-        raise
-    homelab.wait_for_open_port(3000)
-    homelab.succeed("curl -f http://localhost:3000/api/health")
-
-    # Comin (GitOps)
-    homelab.wait_for_unit("comin.service")
-
-    # =============================================
-    # Service Health Checks
-    # =============================================
-
-    # Check no failed units
-    homelab.succeed("[ $(systemctl list-units --state=failed --no-legend | wc -l) -eq 0 ]")
-
-    # Check home-assistant can access PostgreSQL
-    homelab.succeed("sudo -u hass psql -d hass -c 'SELECT 1' > /dev/null")
-
-    print("✅ All integration tests passed!")
-  '';
+  testScript = builtins.readFile ./homelab-integration-test.py;
 }

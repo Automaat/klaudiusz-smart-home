@@ -76,6 +76,8 @@ jobs:
       - name: Setup Nix cache
         if: steps.changes.outputs.nix == 'true'
         uses: DeterminateSystems/magic-nix-cache-action@565684385bcd71bad329742eefe8d12f2e765b39 # v13
+        with:
+          use-gha-cache: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
 
       - name: Run Jinja2 Template Validation
         if: steps.changes.outputs.nix == 'true'
@@ -112,6 +114,8 @@ jobs:
       - name: Setup Nix cache
         if: steps.changes.outputs.nix == 'true'
         uses: DeterminateSystems/magic-nix-cache-action@565684385bcd71bad329742eefe8d12f2e765b39 # v13
+        with:
+          use-gha-cache: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
 
       - name: Run Entity Reference Validation
         if: steps.changes.outputs.nix == 'true'
@@ -149,6 +153,8 @@ jobs:
       - name: Setup Nix cache
         if: steps.changes.outputs.nix == 'true'
         uses: DeterminateSystems/magic-nix-cache-action@565684385bcd71bad329742eefe8d12f2e765b39 # v13
+        with:
+          use-gha-cache: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
 
       - name: Flake Check
         if: steps.changes.outputs.nix == 'true'
@@ -188,6 +194,8 @@ jobs:
       - name: Setup Nix cache
         if: steps.changes.outputs.nix == 'true'
         uses: DeterminateSystems/magic-nix-cache-action@565684385bcd71bad329742eefe8d12f2e765b39 # v13
+        with:
+          use-gha-cache: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
 
       - name: Check Nix formatting
         if: steps.changes.outputs.nix == 'true'
@@ -260,10 +268,9 @@ jobs:
         run: actionlint
 
   integration-tests:
-    name: Integration Tests (Main Only)
+    name: Integration Tests
     runs-on: ubuntu-24.04
     needs: [static-tests]
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
 
@@ -292,6 +299,8 @@ jobs:
       - name: Setup Nix cache
         if: steps.changes.outputs.nix == 'true'
         uses: DeterminateSystems/magic-nix-cache-action@565684385bcd71bad329742eefe8d12f2e765b39 # v13
+        with:
+          use-gha-cache: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
 
       - name: Enable KVM (for VM tests)
         if: steps.changes.outputs.nix == 'true'
@@ -315,7 +324,15 @@ jobs:
 
       - name: Run integration tests
         if: steps.changes.outputs.nix == 'true'
-        run: nix build .#checks.x86_64-linux.all-integration-tests --show-trace --max-jobs auto
+        run: nix build .#checks.x86_64-linux.all-integration-tests --show-trace --max-jobs auto 2>&1 | tee integration-test.log
+
+      - name: Upload test logs on failure
+        if: failure() && steps.changes.outputs.nix == 'true'
+        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4
+        with:
+          name: integration-test-logs
+          path: integration-test.log
+          retention-days: 30
 
   update-production:
     name: Update Production Branch
