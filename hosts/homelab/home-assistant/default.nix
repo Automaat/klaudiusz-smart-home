@@ -184,6 +184,8 @@ in {
     "d /var/lib/hass/blueprints 0755 hass hass -"
     # Create secrets.yaml with correct ownership (written by preStart)
     "f /var/lib/hass/secrets.yaml 0600 hass hass -"
+    # Polish custom sentences
+    "L+ /var/lib/hass/custom_sentences - - - - ${../../../custom_sentences}"
   ];
 
   # ===========================================
