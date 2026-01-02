@@ -17,7 +17,7 @@
         action = [
           {
             service = "light.turn_on";
-            target.entity_id = "light.{{ slots.get('name', slots.area) | lower | replace(' ', '_') }}";
+            target.area_id = "{{ area_id(slots.get('name', slots.area)) }}";
           }
         ];
       };
@@ -27,7 +27,7 @@
         action = [
           {
             service = "light.turn_off";
-            target.entity_id = "light.{{ slots.get('name', slots.area) | lower | replace(' ', '_') }}";
+            target.area_id = "{{ area_id(slots.get('name', slots.area)) }}";
           }
         ];
       };
@@ -67,7 +67,7 @@
         action = [
           {
             service = "light.turn_on";
-            target.entity_id = "light.{{ slots.get('name', slots.area) | lower | replace(' ', '_') }}";
+            target.area_id = "{{ area_id(slots.get('name', slots.area)) }}";
             data.brightness_pct = "{{ slots.brightness }}";
           }
         ];
@@ -112,7 +112,7 @@
         action = [
           {
             service = "cover.open_cover";
-            target.entity_id = "cover.{{ slots.get('name', slots.area) | lower | replace(' ', '_') }}";
+            target.area_id = "{{ area_id(slots.get('name', slots.area)) }}";
           }
         ];
       };
@@ -122,7 +122,7 @@
         action = [
           {
             service = "cover.close_cover";
-            target.entity_id = "cover.{{ slots.get('name', slots.area) | lower | replace(' ', '_') }}";
+            target.area_id = "{{ area_id(slots.get('name', slots.area)) }}";
           }
         ];
       };
@@ -135,7 +135,7 @@
         action = [
           {
             service = "media_player.turn_on";
-            target.entity_id = "media_player.{{ slots.get('name', slots.area) | lower | replace(' ', '_') }}";
+            target.area_id = "{{ area_id(slots.get('name', slots.area)) }}";
           }
         ];
       };
@@ -145,7 +145,7 @@
         action = [
           {
             service = "media_player.turn_off";
-            target.entity_id = "media_player.{{ slots.get('name', slots.area) | lower | replace(' ', '_') }}";
+            target.area_id = "{{ area_id(slots.get('name', slots.area)) }}";
           }
         ];
       };
