@@ -326,14 +326,24 @@ jobs:
         if: steps.changes.outputs.nix == 'true'
         run: |
           set -o pipefail
-          nix build .#checks.x86_64-linux.all-integration-tests --show-trace --max-jobs auto 2>&1 | tee integration-test.log
+          nix build .#checks.x86_64-linux.all-integration-tests --show-trace --max-jobs auto 2>&1 | tee integration-test.log || {
+            # Extract failing derivation path and get full logs
+            FAILED_DRV=$(grep -oP "nix log /nix/store/[^\s]+" integration-test.log | head -1 | sed 's/nix log //')
+            if [ -n "$FAILED_DRV" ]; then
+              echo "Extracting full logs from: $FAILED_DRV"
+              nix log "$FAILED_DRV" > integration-test-full.log 2>&1 || echo "Could not extract full logs"
+            fi
+            exit 1
+          }
 
       - name: Upload test logs on failure
         if: failure() && steps.changes.outputs.nix == 'true'
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
           name: integration-test-logs
-          path: integration-test.log
+          path: |
+            integration-test.log
+            integration-test-full.log
           retention-days: 30
 
   update-production:
