@@ -302,7 +302,7 @@ extraComponents = [
   "hue"       # Philips Hue
   "cast"      # Google Cast
   "esphome"   # ESPHome devices
-  "mqtt"      # MQTT devices
+  "zha"       # Zigbee Home Automation
 ];
 ```
 
@@ -360,7 +360,7 @@ journalctl -u comin -f
 ### Setup Guides
 
 - [First Install Guide](docs/first-install-guide.md) - Complete NixOS installation walkthrough
-- [Zigbee Setup Guide](docs/zigbee-setup.md) - Connect ZBT-2 dongle and pair Zigbee devices
+- [Manual Configuration](docs/manual-config.md) - ZHA setup and device pairing
 - [Custom Voice Commands](docs/custom-voice.md) - Add Polish voice patterns
 - [Wake Word Training](docs/wake-word-training.md) - Train custom wake words
 
