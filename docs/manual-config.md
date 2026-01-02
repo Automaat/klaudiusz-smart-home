@@ -367,7 +367,9 @@ through Samsung account. Cannot be configured declaratively.
 - Samsung account created and logged in
 - SmartThings devices added and responding in the app
 - SmartThings hub configured (if using Zigbee/Z-Wave devices)
-- Home Assistant accessible remotely (required for OAuth callback)
+- Remote access configured:
+  - **Option 1**: Home Assistant Cloud (Nabu Casa subscription) - OAuth handled via cloud
+  - **Option 2**: Self-hosted with public HTTPS URL and external URL configured in HA
 
 ### SmartThings Setup
 
@@ -408,17 +410,19 @@ through Samsung account. Cannot be configured declaratively.
 1. In **Settings** → **Devices & Services** → **SmartThings**
 2. Check devices imported correctly
 3. Entities created with format: `{domain}.{device_name}`
-   - Example: `light.salon_bulb`, `switch.bedroom_plug`
+   - Example: `light.salon`, `switch.sypialnia`
 
 ### SmartThings Configuration
 
 **Rename entities (optional):**
 
 1. Click device in **SmartThings** integration card
-2. Click entity name
-3. Rename to Polish format for voice control:
-   - Example: `Lampa salon` → `light.lampa_salon`
-   - Example: `Gniazdko sypialnia` → `switch.gniazdko_sypialnia`
+2. Click the entity
+3. Set the **Friendly name** to a Polish label for voice control (what you will say)
+4. Open the **entity settings** (gear icon) and manually set the **Entity ID** to lowercase with underscores
+   - Example: Friendly name: `Światło salon`, Entity ID: `light.salon`
+   - Example: Friendly name: `Gniazdko sypialnia`, Entity ID: `switch.sypialnia`
+   - Voice commands use the Polish friendly name; automations and CLI use the entity_id
 
 **Expose to voice assistant:**
 
@@ -439,11 +443,11 @@ ssh homelab "journalctl -u home-assistant | grep -i smartthings"
 ```bash
 # Test light control
 ssh homelab "ha-cli service call light.turn_on --arguments \
-  entity_id=light.lampa_salon"
+  entity_id=light.salon"
 
 # Test switch control
 ssh homelab "ha-cli service call switch.turn_on --arguments \
-  entity_id=switch.gniazdko_sypialnia"
+  entity_id=switch.sypialnia"
 ```
 
 ### Troubleshooting
@@ -469,8 +473,8 @@ ssh homelab "ha-cli service call switch.turn_on --arguments \
 **OAuth callback fails:**
 
 - Ensure `cloud:` component enabled (already in `default.nix`)
-- Check firewall rules allow inbound HTTPS
-- Verify external URL configured in HA if using reverse proxy
+- If using Home Assistant Cloud (Nabu Casa): verify subscription is active
+- If self-hosting: check firewall rules allow inbound HTTPS and external URL is configured
 
 ### SmartThings Notes
 

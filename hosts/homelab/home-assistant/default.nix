@@ -47,7 +47,7 @@ in {
       "default_config"
       "met" # Weather
       "radio_browser" # Internet radio
-      "cloud" # Required for OAuth flows (SmartThings)
+      "cloud" # Home Assistant Cloud (simplifies OAuth for SmartThings; alternative to public HTTPS URL)
 
       # Database
       "recorder" # PostgreSQL database
