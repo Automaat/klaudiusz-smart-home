@@ -45,11 +45,13 @@ ssh homelab "mosquitto_sub -h localhost -p 1883 -u homeassistant \
 
 ## System Monitor Integration
 
-**Why manual?** Since Home Assistant 2022.12, System Monitor moved from YAML platform configuration to UI-based integration setup. The old `platform: systemmonitor` YAML syntax is deprecated.
+**Why manual?** Since Home Assistant 2022.12, System Monitor moved from YAML
+platform configuration to UI-based integration setup. The old
+`platform: systemmonitor` YAML syntax is deprecated.
 
 **When to do this:** After initial installation to monitor system resources (CPU, memory, disk).
 
-### Steps
+### Setup Steps
 
 1. Open Home Assistant UI
 2. Navigate to **Settings** → **Devices & Services**
