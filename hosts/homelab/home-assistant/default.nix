@@ -194,15 +194,25 @@ in {
   # Write secrets.yaml and create HACS symlink before HA starts
   # File ownership set by tmpfiles.rules above (avoids chown in VM tests)
   # HACS symlink created after Nix-managed preStart removes /nix/store symlinks
-  systemd.services.home-assistant.preStart = lib.mkAfter ''
-    cat > /var/lib/hass/secrets.yaml <<EOF
-    telegram_bot_token: "123456789:ABCdefGHIjklMNOpqrsTUVwxyz-DUMMY"
-    telegram_chat_id: "123456789"
-    EOF
+  systemd.services.home-assistant = {
+    preStart = lib.mkAfter ''
+      cat > /var/lib/hass/secrets.yaml <<EOF
+      telegram_bot_token: "123456789:ABCdefGHIjklMNOpqrsTUVwxyz-DUMMY"
+      telegram_chat_id: "123456789"
+      EOF
 
-    # Create HACS symlink (release zip extracts to root)
-    ln -sfn ${hacsSource} /var/lib/hass/custom_components/hacs
-  '';
+      # Create HACS symlink (release zip extracts to root)
+      ln -sfn ${hacsSource} /var/lib/hass/custom_components/hacs
+    '';
+
+    # Force derivation update when HA config changes
+    # Hash of imported config files ensures Comin detects changes
+    environment.HA_CONFIG_HASH = builtins.hashString "sha256" (
+      builtins.readFile ./intents.nix +
+      builtins.readFile ./automations.nix +
+      builtins.readFile ./monitoring.nix
+    );
+  };
 
   # ===========================================
   # Zigbee USB Device (ZHA)
