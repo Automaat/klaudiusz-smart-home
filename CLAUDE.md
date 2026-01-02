@@ -43,7 +43,7 @@ hosts/homelab/
     ├── intents.nix                 # Voice command handlers
     └── automations.nix             # Automations, helpers, scripts
 custom_sentences/pl/                # Polish voice patterns
-docs/manual-config.md               # GUI configuration steps
+docs/manual-config/                 # GUI configuration steps (per integration)
 ```
 
 ## Manual Configuration
@@ -52,10 +52,16 @@ Some HA features cannot be configured declaratively via NixOS and require GUI se
 
 **When manual GUI steps are needed:**
 
-- Document in `docs/manual-config.md`
-- Include step-by-step instructions
-- Note why it can't be declarative
-- Link to relevant HA documentation
+- Create separate file in `docs/manual-config/{integration-name}.md`
+- Use existing files as template
+- Include:
+  - Why manual configuration is needed
+  - When to perform setup
+  - Step-by-step instructions
+  - Verification steps
+  - Troubleshooting (if applicable)
+  - Related documentation links
+- Update `docs/manual-config/README.md` with link to new file
 
 ## Development Workflow
 
@@ -166,7 +172,7 @@ IntentName = {
 - Persistent device: `/dev/zigbee` via udev
 - Database: `/var/lib/hass/zigbee.db`
 - User: hass in dialout group
-- Manual setup wizard required (see docs/manual-config.md)
+- Manual setup wizard required (see docs/manual-config/zha.md)
 
 **Device Naming:**
 

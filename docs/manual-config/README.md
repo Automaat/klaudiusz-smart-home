@@ -1,0 +1,29 @@
+# Manual Configuration Steps
+
+This directory contains instructions for configuration that cannot be done
+declaratively through NixOS and must be performed manually through the
+Home Assistant UI.
+
+## Integrations
+
+- **[Zigbee Home Automation (ZHA)](zha.md)** - Zigbee device pairing and setup
+- **[System Monitor](system-monitor.md)** - System resource monitoring
+- **[Wyoming Protocol](wyoming-protocol.md)** - Speech-to-text and text-to-speech services
+- **[Voice Assistant Preview Edition](voice-assistant-preview.md)** - Voice hardware setup
+- **[LG WebOS TV](lg-webos-tv.md)** - Smart TV integration
+- **[MCP Server (Claude Code)](mcp-server.md)** - AI assistant API access
+
+## When to Add New Documentation
+
+When a Home Assistant feature requires manual GUI configuration:
+
+1. Create new file in `docs/manual-config/{integration-name}.md`
+2. Use existing files as template
+3. Include:
+   - Why manual configuration is needed
+   - When to perform setup
+   - Step-by-step instructions
+   - Verification steps
+   - Troubleshooting (if applicable)
+   - Related documentation links
+4. Update this README with link to new file
