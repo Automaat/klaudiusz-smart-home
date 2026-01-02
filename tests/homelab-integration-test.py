@@ -57,6 +57,28 @@ homelab.fail("journalctl -u home-assistant --since '5 minutes ago' | grep -i 'Er
 homelab.fail("journalctl -u home-assistant --since '5 minutes ago' | grep -i 'homeassistant.data_entry_flow.UnknownHandler'")
 
 # =============================================
+# Comprehensive Error/Critical Log Checks
+# =============================================
+
+# Use 5-minute window (consistent with ModuleNotFoundError, integration checks above)
+# Note: HA logs ERROR/CRITICAL at journald priority 6 (info), not 3 (err)
+# Must grep message content, not filter by --priority
+print("Checking for ERROR/CRITICAL messages in last 5 minutes...")
+log_errors = homelab.succeed("""
+  journalctl -u home-assistant --since '5 minutes ago' --no-pager | grep -E ' (ERROR|CRITICAL) ' || true
+""").strip()
+
+if log_errors:
+    print("========================================")
+    print("❌ Found ERROR/CRITICAL in logs:")
+    print("========================================")
+    print(log_errors)
+    print("========================================")
+    raise Exception("Home Assistant logs contain ERROR/CRITICAL messages")
+
+print("✅ No ERROR/CRITICAL messages found in logs")
+
+# =============================================
 # Python Dependencies Validation
 # =============================================
 # Custom packages are validated implicitly:
