@@ -47,6 +47,7 @@ in {
       "default_config"
       "met" # Weather
       "radio_browser" # Internet radio
+      "cloud" # Required for OAuth flows (SmartThings)
 
       # Database
       "recorder" # PostgreSQL database
@@ -70,6 +71,7 @@ in {
       "hue" # Philips Hue Bridge
       "esphome" # ESPHome devices (Voice Preview Edition)
       "webostv" # LG WebOS TV
+      "smartthings" # Samsung SmartThings
       # "cast"           # Google Cast
     ];
 
