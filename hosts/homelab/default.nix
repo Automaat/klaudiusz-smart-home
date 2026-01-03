@@ -255,6 +255,8 @@
     home-assistant.serviceConfig = {
       # Allow connecting to PostgreSQL via socket
       SupplementaryGroups = ["postgres"];
+      # Bluetooth management capabilities
+      AmbientCapabilities = ["CAP_NET_ADMIN" "CAP_NET_RAW"];
       Restart = "on-failure";
       RestartSec = "10";
     };
@@ -304,6 +306,8 @@
     # Coral USB TPU (if using Frigate)
     SUBSYSTEM=="usb", ATTRS{idVendor}=="1a6e", MODE="0666"
     SUBSYSTEM=="usb", ATTRS{idVendor}=="18d1", MODE="0666"
+    # Bluetooth USB devices (for HA Bluetooth management)
+    SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ENV{ID_USB_DRIVER}=="btusb", MODE="0660", GROUP="dialout"
   '';
 
   # ===========================================
