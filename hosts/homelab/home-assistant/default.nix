@@ -231,7 +231,7 @@ in {
     beamSize = 5; # Improved decoding quality
     extraArgs = [
       "--compute-type"
-      "int8_float16" # Speed/accuracy sweet spot for CPU
+      "int8" # CPU-compatible quantization (N5095 lacks AVX512 for int8_float16)
     ];
   };
 
