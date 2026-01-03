@@ -334,7 +334,8 @@
             };
           }
           {
-            service = "notify.telegram";
+            action = "notify.send_message";
+            target.entity_id = "notify.telegram";
             data = {
               message = "✅ Deployment successful\n🚀 Comin deployed changes at {{ now().strftime('%H:%M') }}";
             };
@@ -362,7 +363,8 @@
             };
           }
           {
-            service = "notify.telegram";
+            action = "notify.send_message";
+            target.entity_id = "notify.telegram";
             data = {
               message = "❌ Deployment failed\n🔥 Comin could not deploy changes. Check journalctl -u comin";
             };

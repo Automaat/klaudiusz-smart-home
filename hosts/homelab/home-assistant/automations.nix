@@ -32,7 +32,8 @@
             };
           }
           # {
-          #   service = "notify.telegram";
+          #   action = "notify.send_message";
+          #   target.entity_id = "notify.telegram";
           #   data = {
           #     message = "✅ Home Assistant started at {{ now().strftime('%H:%M') }}";
           #   };
@@ -65,7 +66,8 @@
         ];
         action = [
           # {
-          #   service = "notify.telegram";
+          #   action = "notify.send_message";
+          #   target.entity_id = "notify.telegram";
           #   data = {
           #     message = "🔴 High CPU usage: {{ states('sensor.system_monitor_obciazenie_procesora') }}%";
           #   };
@@ -95,7 +97,8 @@
         ];
         action = [
           # {
-          #   service = "notify.telegram";
+          #   action = "notify.send_message";
+          #   target.entity_id = "notify.telegram";
           #   data = {
           #     message = "🟠 High memory usage: {{ states('sensor.system_monitor_memory_use') }}%";
           #   };
@@ -125,7 +128,8 @@
         ];
         action = [
           # {
-          #   service = "notify.telegram";
+          #   action = "notify.send_message";
+          #   target.entity_id = "notify.telegram";
           #   data = {
           #     message = "💾 Low disk space: {{ states('sensor.system_monitor_disk_use') }}% used";
           #   };
@@ -155,7 +159,8 @@
         ];
         action = [
           # {
-          #   service = "notify.telegram";
+          #   action = "notify.send_message";
+          #   target.entity_id = "notify.telegram";
           #   data = {
           #     message = "🔥 High CPU temperature: {{ states('sensor.system_monitor_temperatura_procesora') }}°C";
           #   };
