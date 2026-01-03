@@ -53,8 +53,8 @@ As of Home Assistant 2025.12.0, Telegram bot must be configured via UI - YAML co
    sops -d secrets/secrets.yaml | grep telegram-bot-token
    ```
 
-6. Enter allowed chat IDs: `8508480746` (or your chat ID)
-7. Click "Submit"
+   1. Enter allowed chat IDs: `8508480746` (or your chat ID)
+6. Click "Submit"
 
 ### 4. Add Notifier via UI
 
