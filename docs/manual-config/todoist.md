@@ -61,9 +61,11 @@ Check entities:
 2. Service: `todo.add_item`
 3. Target: `todo.inbox`
 4. Data:
+
    ```yaml
    item: "Test task from HA"
    ```
+
 5. Click **Call Service**
 6. Check Todoist app/web - task should appear
 
@@ -81,9 +83,11 @@ Test Polish voice commands:
 
 - Verify `"todoist"` in extraComponents
 - Check HA logs:
+
   ```bash
   journalctl -u home-assistant | grep -i todoist
   ```
+
 - Restart HA: `sudo systemctl restart home-assistant`
 
 **OAuth fails:**
@@ -101,7 +105,7 @@ Test Polish voice commands:
 
 **Tasks not syncing:**
 
-- Check Todoist API status: https://status.todoist.com/
+- Check Todoist API status: <https://status.todoist.com/>
 - Verify OAuth token valid: **Devices & Services** → Todoist → **Configure**
 - Re-authenticate if needed: **⋮** → **Reauthenticate**
 
