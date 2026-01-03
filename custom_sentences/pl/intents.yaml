@@ -212,7 +212,7 @@ intents:
   GetTasksFromTodoist:
     data:
       - sentences:
-          - "(pokaż|sprawdź|przeczytaj|odczytaj) [moje] (zadania|listę|tasks)"
+          - "(pokaż|sprawdź|przeczytaj|odczytaj) [moje] (zadania|listę)"
           - "(co|jakie) mam (zadania|na liście)"
           - "lista zadań"
           - "co [jest] do zrobienia"

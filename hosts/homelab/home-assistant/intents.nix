@@ -202,7 +202,7 @@
             service = "tts.speak";
             target.entity_id = "tts.piper";
             data = {
-              message = "{% set tasks = state_attr('todo.inbox', 'tasks') %}{% if tasks %}Masz {{ tasks | length }} zadań: {% for task in tasks[:5] %}{{ task.summary }}. {% endfor %}{% else %}Nie masz żadnych zadań.{% endif %}";
+              message = "{% set tasks = state_attr('todo.inbox', 'tasks') %}{% if tasks %}{% set count = tasks | length %}{% if count == 1 %}Masz {{ count }} zadanie: {% elif count in [2, 3, 4] %}Masz {{ count }} zadania: {% else %}Masz {{ count }} zadań: {% endif %}{% for task in tasks[:5] %}{{ task.summary }}. {% endfor %}{% else %}Nie masz żadnych zadań.{% endif %}";
             };
           }
         ];
