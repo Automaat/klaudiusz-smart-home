@@ -146,6 +146,9 @@ in {
         default = "info";
         logs = {
           "homeassistant.components.intent_script" = "debug";
+          "homeassistant.components.assist_pipeline" = "debug";
+          "homeassistant.components.wyoming" = "debug";
+          "homeassistant.components.conversation" = "debug";
         };
       };
 

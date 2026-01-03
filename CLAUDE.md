@@ -164,6 +164,56 @@ IntentName = {
 - Template: `"(verb1|verb2) [optional] {slot}"`
 - Test with: "Która godzina", "Włącz salon"
 
+### Writing Performant Voice Intents
+
+**Performance Model:**
+
+- Hassil template matcher (not ML), first-match greedy algorithm
+- Fast rejection via `required_keywords` (check before pattern expansion)
+- Pattern expansion cost: alternations multiplicative, optionals exponential (2^n), permutations factorial (n!)
+
+**Performance Rules:**
+
+- **ALWAYS** add `required_keywords` to every intent for fast rejection
+- **NEVER** use optionals for skip_words (`[mi]`, `[no]`, `[może]`, `[proszę]`)
+- **LIMIT** permutations to 2-4 items max (factorial growth)
+- **PREFER** multiple simple patterns over one complex pattern
+- **ORDER** patterns by frequency (most common first)
+
+**Pattern Complexity:**
+
+```yaml
+# ❌ BAD: 2^3 = 8 expansions (skip_words as optionals)
+"włącz [mi] [no] [może] światło"
+
+# ✅ GOOD: 1 expansion (skip_words auto-ignored)
+"włącz światło"
+
+# ❌ BAD: 5! = 120 permutations
+"(a; b; c; d; e)"
+
+# ✅ GOOD: Split into separate patterns
+"(a|b) followed by (c|d|e)"
+```
+
+**Polish Inflection Handling:**
+
+- Entity/area names must use base forms (nominative case) in HA GUI
+- Inflected forms DON'T work: `"w Łazience"` ❌ fails
+- Workaround: add inflected forms to `area_names` list in sentences YAML
+- Add GUI aliases for natural speech variations
+
+**Required Keywords Pattern:**
+
+```yaml
+IntentName:
+  data:
+    - required_keywords: [verb1, verb2, noun1, noun2]  # Fast path: check first
+      sentences:
+        - "(verb1|verb2) {slot}"
+        - "noun1 (verb1|verb2)"
+```
+
 ### Zigbee Configuration (ZHA)
 
 **Device Setup:**
