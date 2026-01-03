@@ -7,6 +7,7 @@ Home Assistant UI.
 ## Integrations
 
 - **[Zigbee Home Automation (ZHA)](zha.md)** - Zigbee device pairing and setup
+- **[GIOŚ Air Quality](gios.md)** - Polish air quality monitoring
 - **[System Monitor](system-monitor.md)** - System resource monitoring
 - **[Wyoming Protocol](wyoming-protocol.md)** - Speech-to-text and text-to-speech services
 - **[Voice Assistant Preview Edition](voice-assistant-preview.md)** - Voice hardware setup
