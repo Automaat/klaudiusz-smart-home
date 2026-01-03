@@ -25,10 +25,12 @@ Telegram requires bot token and chat ID from Telegram's BotFather - cannot be au
 1. Search for your new bot in Telegram
 2. Send any message to bot (e.g., `/start`)
 3. Get chat ID via browser:
+
    ```bash
    # Replace TOKEN with your bot token
    curl https://api.telegram.org/botTOKEN/getUpdates
    ```
+
 4. Find `"chat":{"id":123456789}` in response
 5. Copy chat ID (numeric value)
 
@@ -85,15 +87,18 @@ git push
 ### 6. Enable Automations (Optional)
 
 Uncomment notify actions in `hosts/homelab/home-assistant/automations.nix`:
+
 - Startup notification
 - System alerts (CPU, memory, disk, temperature)
 
 ## Verification
 
 1. Check bot connected:
+
    ```bash
    journalctl -u home-assistant | grep -i telegram
    ```
+
    Look for: `Telegram bot polling started`
 
 2. Test notification in HA:
@@ -105,18 +110,23 @@ Uncomment notify actions in `hosts/homelab/home-assistant/automations.nix`:
 ## Troubleshooting
 
 **Bot doesn't respond:**
+
 - Verify token with `getMe`:
+
   ```bash
   curl https://api.telegram.org/botTOKEN/getMe
   ```
+
 - Check `allowed_chat_ids` matches your chat ID
 
 **Notifications not received:**
+
 - Send message to bot first (activates chat)
 - Check HA logs for errors
 - Verify secrets mounted: `cat /run/secrets/telegram-bot-token`
 
 **Wrong chat ID:**
+
 - Send new message to bot
 - Run `getUpdates` again
 - Look for your username in response
