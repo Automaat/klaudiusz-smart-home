@@ -255,8 +255,7 @@
     home-assistant.serviceConfig = {
       # Allow connecting to PostgreSQL via socket
       SupplementaryGroups = ["postgres"];
-      # Bluetooth management capabilities
-      AmbientCapabilities = ["CAP_NET_ADMIN" "CAP_NET_RAW"];
+      # Bluetooth capabilities auto-added by NixOS module for bluetooth components
       Restart = "on-failure";
       RestartSec = "10";
     };
