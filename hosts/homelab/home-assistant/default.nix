@@ -226,6 +226,8 @@ in {
     extraArgs = [
       "--beam-size"
       "5" # Improved decoding quality (better alternatives)
+      "--preload-model"
+      "true" # Load model on startup (eliminate cold-start delay)
     ];
   };
 
