@@ -93,10 +93,12 @@ Uncomment notify actions in `hosts/homelab/home-assistant/automations.nix` and `
 **Integration won't add:**
 
 - Verify bot token:
+
   ```bash
   TOKEN=$(sops -d secrets/secrets.yaml | grep telegram-bot-token | cut -d: -f2- | tr -d ' "')
   curl -s https://api.telegram.org/bot${TOKEN}/getMe | jq .
   ```
+
 - Ensure `telegram_bot` in extraComponents (default.nix:64)
 - Restart HA if just enabled: `sudo systemctl restart home-assistant`
 
@@ -115,12 +117,14 @@ Uncomment notify actions in `hosts/homelab/home-assistant/automations.nix` and `
 ## Migration from YAML (2025.12.0+)
 
 Old YAML config (deprecated):
+
 ```nix
 telegram_bot = [{ platform = "polling"; api_key = "!secret ..."; }];
 notify = [{ platform = "telegram"; ... }];
 ```
 
 **Migration steps:**
+
 1. Remove YAML config from default.nix (already done)
 2. Deploy NixOS config
 3. Follow "Add Integration via UI" steps above
@@ -130,6 +134,7 @@ notify = [{ platform = "telegram"; ... }];
 The `notify.telegram` service is deprecated. Use `notify.send_message` action with notify entities instead.
 
 **Old format (deprecated):**
+
 ```nix
 {
   service = "notify.telegram";
@@ -140,6 +145,7 @@ The `notify.telegram` service is deprecated. Use `notify.send_message` action wi
 ```
 
 **New format:**
+
 ```nix
 {
   action = "notify.send_message";
@@ -151,6 +157,7 @@ The `notify.telegram` service is deprecated. Use `notify.send_message` action wi
 ```
 
 **Notes:**
+
 - Notify entity created automatically when adding notifier via UI
 - Entity ID format: `notify.{notifier_name}` (e.g., `notify.telegram` if named "telegram")
 - All automations in this repo already use new format
