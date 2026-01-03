@@ -127,13 +127,20 @@
         binary_sensor = {
           name = "comin_deployment_success";
           command = ''
-            LAST_UUID=$(cat /var/lib/hass/.comin_last_success_uuid 2>/dev/null || echo "")
             CURRENT_UUID=$(jq -r '.deployments[0].uuid' /var/lib/comin/store.json 2>/dev/null)
             CURRENT_STATUS=$(jq -r '.deployments[0] | select(.status == "done" and .error_msg == "") | "success"' /var/lib/comin/store.json 2>/dev/null)
 
-            if [ "$CURRENT_UUID" != "$LAST_UUID" ] && [ "$CURRENT_STATUS" = "success" ]; then
-              echo "ON"
-              echo "$CURRENT_UUID" > /var/lib/hass/.comin_last_success_uuid
+            if [ -n "$CURRENT_UUID" ] && [ "$CURRENT_STATUS" = "success" ]; then
+              (
+                flock -x 200
+                LAST_UUID=$(cat /var/lib/hass/.comin_last_success_uuid 2>/dev/null || echo "")
+                if [ "$CURRENT_UUID" != "$LAST_UUID" ]; then
+                  echo "ON"
+                  echo "$CURRENT_UUID" > /var/lib/hass/.comin_last_success_uuid
+                else
+                  echo "OFF"
+                fi
+              ) 200>/var/lib/hass/.comin_last_success_uuid.lock
             else
               echo "OFF"
             fi
@@ -145,13 +152,20 @@
         binary_sensor = {
           name = "comin_deployment_failed";
           command = ''
-            LAST_UUID=$(cat /var/lib/hass/.comin_last_failed_uuid 2>/dev/null || echo "")
             CURRENT_UUID=$(jq -r '.deployments[0].uuid' /var/lib/comin/store.json 2>/dev/null)
             CURRENT_STATUS=$(jq -r '.deployments[0] | select(.status == "done" and .error_msg != "") | "failed"' /var/lib/comin/store.json 2>/dev/null)
 
-            if [ "$CURRENT_UUID" != "$LAST_UUID" ] && [ "$CURRENT_STATUS" = "failed" ]; then
-              echo "ON"
-              echo "$CURRENT_UUID" > /var/lib/hass/.comin_last_failed_uuid
+            if [ -n "$CURRENT_UUID" ] && [ "$CURRENT_STATUS" = "failed" ]; then
+              (
+                flock -x 200
+                LAST_UUID=$(cat /var/lib/hass/.comin_last_failed_uuid 2>/dev/null || echo "")
+                if [ "$CURRENT_UUID" != "$LAST_UUID" ]; then
+                  echo "ON"
+                  echo "$CURRENT_UUID" > /var/lib/hass/.comin_last_failed_uuid
+                else
+                  echo "OFF"
+                fi
+              ) 200>/var/lib/hass/.comin_last_failed_uuid.lock
             else
               echo "OFF"
             fi
