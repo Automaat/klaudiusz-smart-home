@@ -231,8 +231,10 @@ in {
     extraArgs = [
       "--beam-size"
       "5" # Improved decoding quality (better alternatives)
-      "--preload-model"
-      "true" # Load model on startup (eliminate cold-start delay)
+      "--cpu-threads"
+      "4" # N5095 quad-core optimization
+      "--compute-type"
+      "int8_float16" # Speed/accuracy sweet spot for CPU
     ];
   };
 
