@@ -46,60 +46,66 @@ intents:
   # =========================================
   TurnOnLight:
     data:
-      - sentences:
+      - required_keywords: [włącz, zapal, odpal, uruchom, jasno, zaświeć, poświeć, oświetl, daj, zrób, oświetlenie]
+        sentences:
           - "(włącz|zapal|odpal|uruchom) [światło] [w] {name}"
           - "(włącz|zapal) [światło] [w] {area}"
           - "[niech] (będzie|zrobi się) jasno [w] {area}"
           - "(zaświeć|poświeć|oświetl) [w] {name}"
           - "(zapal|włącz) (lampę|światełko|lampkę|oświetlenie) [w] {name}"
           - "(daj|zrób) światło [w] {area}"
-          - "zapal [mi] [światło] [w] {name}"
-          - "włącz [mi] [no] [światło] [w] {area}"
+          - "zapal [światło] [w] {name}"
+          - "włącz [światło] [w] {area}"
           - "oświetlenie [w] {name} (włącz|zapal)"
 
   TurnOffLight:
     data:
-      - sentences:
+      - required_keywords: [wyłącz, zgaś, wygas, ugaś, ciemno, oświetlenie, gasić]
+        sentences:
           - "(wyłącz|zgaś|wygas|ugaś) [światło] [w] {name}"
           - "(wyłącz|zgaś) [światło] [w] {area}"
           - "(zgaś|wyłącz) (lampę|światełko|lampkę|oświetlenie) [w] {name}"
-          - "wyłącz [mi] [no] [światło] [w] {area}"
-          - "zgaś [mi] [światło] [w] {name}"
+          - "wyłącz [światło] [w] {area}"
+          - "zgaś [światło] [w] {name}"
           - "[niech] (będzie|zrobi się) ciemno [w] {area}"
           - "oświetlenie [w] {name} (wyłącz|zgaś)"
           - "gasić [w] {area}"
 
   TurnOffAllLights:
     data:
-      - sentences:
+      - required_keywords: [wyłącz, zgaś, ciemno, wszystkie, wszystko, całe, oświetlenie, wygas]
+        sentences:
           - "(wyłącz|zgaś) wszystkie światła"
           - "(wyłącz|zgaś) wszystko"
           - "ciemno"
-          - "(zgaś|wyłącz) [mi] [no] wszystko"
+          - "(zgaś|wyłącz) wszystko"
           - "wszystkie światła [wyłącz|zgaś]"
           - "(wygas|zgaś|wyłącz) całe oświetlenie"
 
   TurnOnKitchenLight:
     data:
-      - sentences:
+      - required_keywords: [włącz, zapal, odpal, kuchni, kuchnię, jasno, zaświeć, poświeć, daj, zrób]
+        sentences:
           - "(włącz|zapal|odpal) [światło] [w] kuchni"
           - "(włącz|zapal) kuchni[ę]"
           - "[niech] (będzie|zrobi się) jasno [w] kuchni"
-          - "zapal [mi] [no] [w] kuchni"
+          - "zapal [w] kuchni"
           - "(zaświeć|poświeć) [w] kuchni"
           - "(daj|zrób) światło [w] kuchni"
 
   TurnOffKitchenLight:
     data:
-      - sentences:
+      - required_keywords: [wyłącz, zgaś, ugaś, kuchni, kuchnię]
+        sentences:
           - "(wyłącz|zgaś|ugaś) [światło] [w] kuchni"
           - "(wyłącz|zgaś) kuchni[ę]"
-          - "zgaś [mi] [no] [w] kuchni"
-          - "wyłącz [mi] [w] kuchni"
+          - "zgaś [w] kuchni"
+          - "wyłącz [w] kuchni"
 
   SetBrightness:
     data:
-      - sentences:
+      - required_keywords: [ustaw, jasność, procent]
+        sentences:
           - "ustaw jasność {name} na {brightness} [procent]"
           - "{name} na {brightness} procent"
           - "jasność {brightness} [procent] [w] {name}"
@@ -109,11 +115,12 @@ intents:
   # =========================================
   ActivateScene:
     data:
-      - sentences:
+      - required_keywords: [włącz, aktywuj, uruchom, scena, scenę, odpal, zapal]
+        sentences:
           - "(włącz|aktywuj|uruchom) scenę {name}"
           - "scena {name}"
           - "(włącz|aktywuj) {name}"
-          - "(włącz|uruchom) [mi] [no] scenę {name}"
+          - "(włącz|uruchom) scenę {name}"
           - "{name} [scenę] (włącz|aktywuj)"
           - "(odpal|zapal) scenę {name}"
 
@@ -139,18 +146,20 @@ intents:
   # =========================================
   OpenCover:
     data:
-      - sentences:
+      - required_keywords: [otwórz, podnieś, odsłoń, odkryj, rolety, żaluzje, zasłony, roletę, roletki, okno]
+        sentences:
           - "(otwórz|podnieś|odsłoń) {name}"
           - "(otwórz|podnieś) (rolety|żaluzje|zasłony) [w] {area}"
-          - "(podnieś|otwórz) [mi] [no] (roletę|roletki|żaluzje) [w] {name}"
+          - "(podnieś|otwórz) (roletę|roletki|żaluzje) [w] {name}"
           - "(odsłoń|odkryj) okno [w] {area}"
 
   CloseCover:
     data:
-      - sentences:
+      - required_keywords: [zamknij, opuść, zasłoń, zakryj, rolety, żaluzje, zasłony, roletę, roletki, okno]
+        sentences:
           - "(zamknij|opuść|zasłoń) {name}"
           - "(zamknij|opuść) (rolety|żaluzje|zasłony) [w] {area}"
-          - "(opuść|zamknij) [mi] [no] (roletę|roletki|żaluzje) [w] {name}"
+          - "(opuść|zamknij) (roletę|roletki|żaluzje) [w] {name}"
           - "(zasłoń|zakryj) okno [w] {area}"
 
   # =========================================
@@ -158,25 +167,29 @@ intents:
   # =========================================
   TurnOnMedia:
     data:
-      - sentences:
+      - required_keywords: [włącz, uruchom, telewizor]
+        sentences:
           - "(włącz|uruchom) {name}"
           - "(włącz|uruchom) [telewizor] [w] {area}"
 
   TurnOffMedia:
     data:
-      - sentences:
+      - required_keywords: [wyłącz, zgaś, telewizor]
+        sentences:
           - "(wyłącz|zgaś) {name}"
           - "(wyłącz|zgaś) [telewizor] [w] {area}"
 
   PauseMedia:
     data:
-      - sentences:
+      - required_keywords: [pauza, zatrzymaj, stop, wstrzymaj]
+        sentences:
           - "(pauza|zatrzymaj|stop)"
           - "wstrzymaj"
 
   PlayMedia:
     data:
-      - sentences:
+      - required_keywords: [graj, odtwarzaj, wznów, kontynuuj]
+        sentences:
           - "(graj|odtwarzaj|wznów)"
           - "kontynuuj"
 
@@ -185,14 +198,16 @@ intents:
   # =========================================
   WhatTime:
     data:
-      - sentences:
+      - required_keywords: [która, godzina, ile, godzin]
+        sentences:
           - "która [jest] godzina"
           - "która godzina"
           - "ile [jest] godzin[a]"
 
   WhatDate:
     data:
-      - sentences:
+      - required_keywords: [jaka, data, który, dzień, jaki, dziś]
+        sentences:
           - "jaka [jest] data"
           - "który [jest] (dzień|dziś)"
           - "jaki [jest] dzień"
