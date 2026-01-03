@@ -46,6 +46,7 @@ in {
       # Core
       "default_config"
       "met" # Weather
+      "gios" # Polish air quality (GIOŚ)
       "radio_browser" # Internet radio
 
       # Database
