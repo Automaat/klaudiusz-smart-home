@@ -41,10 +41,12 @@
         22 # SSH
         8123 # Home Assistant
       ];
+      allowedUDPPorts = [
+        config.services.tailscale.port # Tailscale
+        5353 # mDNS (Avahi/Bonjour for HomeKit discovery)
+      ];
       # Allow Tailscale traffic
       trustedInterfaces = ["tailscale0"];
-      # Allow Tailscale UDP port
-      allowedUDPPorts = [config.services.tailscale.port];
     };
   };
 
@@ -104,6 +106,20 @@
   hardware.bluetooth = {
     enable = true;
     powerOnBoot = true;
+  };
+
+  # ===========================================
+  # Avahi - mDNS/Bonjour for HomeKit Discovery
+  # ===========================================
+  services.avahi = {
+    enable = true;
+    nssmdns4 = true; # Enable mDNS resolution
+    publish = {
+      enable = true;
+      addresses = true;
+      domain = true;
+      userServices = true;
+    };
   };
 
   # ===========================================
