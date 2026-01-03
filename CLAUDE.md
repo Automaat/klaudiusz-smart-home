@@ -102,11 +102,13 @@ Edit locally → Push to main → CI tests → Production branch updates → Com
 5. Rebuild and verify declarative version
 
 **Benefits:**
+
 - No rebuild cycles during experimentation
 - Test with actual hardware states
 - Declarative Nix only for proven automations
 
 **Requirements:**
+
 - HA MCP server configured
 - Access token set up
 - MCP tools available in Claude Code
