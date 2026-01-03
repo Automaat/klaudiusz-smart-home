@@ -45,6 +45,7 @@ in {
     extraComponents = [
       # Core
       "default_config"
+      "zeroconf" # mDNS/Bonjour for device discovery (HomeKit, etc.)
       "met" # Weather
       "gios" # Polish air quality (GIOŚ)
       "radio_browser" # Internet radio
