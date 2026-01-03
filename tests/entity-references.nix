@@ -6,6 +6,9 @@
   testLib = import ./lib.nix {inherit lib;};
   haConfig = nixosConfig.services.home-assistant.config;
 
+  # Import automation data for validation when using file includes
+  automationsData = import ../hosts/homelab/home-assistant/automations-data.nix;
+
   # ===========================================
   # Collect Defined Entities
   # ===========================================
@@ -22,7 +25,11 @@
     scripts = lib.mapAttrsToList (name: _: "script.${name}") (haConfig.script or {});
 
     # Automations (as entities)
-    automations = builtins.map (auto: "automation.${auto.id}") (haConfig.automation or []);
+    # Use automationsData if config.automation is a string (file include)
+    automationsList = if builtins.isString (haConfig.automation or [])
+                      then automationsData
+                      else (haConfig.automation or []);
+    automations = builtins.map (auto: "automation.${auto.id}") automationsList;
 
     # Template sensors (if any)
     templateSensors =
@@ -85,7 +92,7 @@
             else [])
           auto.trigger)
         else [])
-      config.automation
+      automationsList
     );
 
     # From automation conditions
@@ -99,7 +106,7 @@
             else [])
           auto.condition)
         else [])
-      config.automation
+      automationsList
     );
 
     # From automation actions
@@ -115,7 +122,7 @@
             else [])
           auto.action)
         else [])
-      config.automation
+      automationsList
     );
   in
     intentEntities

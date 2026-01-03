@@ -5,6 +5,9 @@
 }: let
   haConfig = nixosConfig.services.home-assistant.config;
 
+  # Import automation data for validation when using file includes
+  automationsData = import ../hosts/homelab/home-assistant/automations-data.nix;
+
   # ===========================================
   # Extract Jinja2 Templates
   # ===========================================
@@ -46,6 +49,10 @@
     );
 
     # Extract from automation conditions and actions
+    # Use automationsData if config.automation is a string (file include)
+    automations = if builtins.isString (config.automation or [])
+                  then automationsData
+                  else (config.automation or []);
     automationTemplates = lib.flatten (
       builtins.map (auto: let
         autoId = auto.id or "unknown";
@@ -83,7 +90,7 @@
         );
       in
         conditionTemplates ++ (lib.filter (t: t != null) actionTemplates))
-      (config.automation or [])
+      automations
     );
   in
     intentTemplates ++ automationTemplates;
