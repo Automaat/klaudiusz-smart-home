@@ -126,8 +126,8 @@
       # -----------------------------------------
       # Comin Deployment Detection
       # -----------------------------------------
-      # Sensors output deployment UUID which changes on each deployment
-      # Automations trigger on state change (UUID change)
+      # Sensors track deployment UUID and timestamp
+      # Automations trigger on HA startup + check if deployment is recent
       {
         sensor = {
           name = "comin_last_deployment_uuid";
@@ -138,9 +138,25 @@
       }
       {
         sensor = {
+          name = "comin_last_deployment_time";
+          unique_id = "comin_last_deployment_time";
+          command = "jq -r '.deployments[0]|select(.error_msg==\"\")|.ended_at//\"none\"' /var/lib/comin/store.json";
+          scan_interval = 30;
+        };
+      }
+      {
+        sensor = {
           name = "comin_last_failed_uuid";
           unique_id = "comin_last_failed_uuid";
           command = "jq -r '.deployments[0]|if .error_msg==\"\" then \"none\" else .uuid end' /var/lib/comin/store.json";
+          scan_interval = 30;
+        };
+      }
+      {
+        sensor = {
+          name = "comin_last_failed_time";
+          unique_id = "comin_last_failed_time";
+          command = "jq -r '.deployments[0]|select(.error_msg!=\"\")|.ended_at//\"none\"' /var/lib/comin/store.json";
           scan_interval = 30;
         };
       }
@@ -171,6 +187,13 @@
               message = "Użycie dysku: {{ states('sensor.system_monitor_disk_use') }}%";
             };
           }
+          {
+            action = "notify.send_message";
+            target.entity_id = "notify.klaudiusz_smart_home_system";
+            data = {
+              message = "🚨 Critical disk space alert\nUsage: {{ states('sensor.system_monitor_disk_use') }}%";
+            };
+          }
         ];
       }
 
@@ -193,6 +216,13 @@
             data = {
               title = "⚠️ Ostrzeżenie - Dysk";
               message = "Użycie dysku: {{ states('sensor.system_monitor_disk_use') }}%";
+            };
+          }
+          {
+            action = "notify.send_message";
+            target.entity_id = "notify.klaudiusz_smart_home_system";
+            data = {
+              message = "⚠️ Disk space warning\nUsage: {{ states('sensor.system_monitor_disk_use') }}%";
             };
           }
         ];
@@ -220,6 +250,13 @@
               message = "Pamięć RAM: {{ states('sensor.system_monitor_memory_use') }}%";
             };
           }
+          {
+            action = "notify.send_message";
+            target.entity_id = "notify.klaudiusz_smart_home_system";
+            data = {
+              message = "🟠 High memory usage\nRAM: {{ states('sensor.system_monitor_memory_use') }}%";
+            };
+          }
         ];
       }
 
@@ -245,6 +282,13 @@
               message = "Sprawdź systemctl status wyoming-faster-whisper-default";
             };
           }
+          {
+            action = "notify.send_message";
+            target.entity_id = "notify.klaudiusz_smart_home_system";
+            data = {
+              message = "⚠️ Whisper service down\nCheck: systemctl status wyoming-faster-whisper-default";
+            };
+          }
         ];
       }
 
@@ -265,6 +309,13 @@
             data = {
               title = "⚠️ Usługa Piper nie działa";
               message = "Sprawdź systemctl status wyoming-piper-default";
+            };
+          }
+          {
+            action = "notify.send_message";
+            target.entity_id = "notify.klaudiusz_smart_home_system";
+            data = {
+              message = "⚠️ Piper service down\nCheck: systemctl status wyoming-piper-default";
             };
           }
         ];
@@ -289,6 +340,13 @@
               message = "Sprawdź systemctl status tailscaled";
             };
           }
+          {
+            action = "notify.send_message";
+            target.entity_id = "notify.klaudiusz_smart_home_system";
+            data = {
+              message = "⚠️ Tailscale service down\nCheck: systemctl status tailscaled";
+            };
+          }
         ];
       }
 
@@ -311,25 +369,41 @@
               message = "Sprawdź systemctl status postgresql";
             };
           }
+          {
+            action = "notify.send_message";
+            target.entity_id = "notify.klaudiusz_smart_home_system";
+            data = {
+              message = "⚠️ PostgreSQL service down\nCheck: systemctl status postgresql";
+            };
+          }
         ];
       }
 
       # -----------------------------------------
       # Comin Deployment Notifications
       # -----------------------------------------
+      # Deployments trigger HA restart, so detect "startup after recent deployment"
+      # instead of sensor state changes (sensor already has new value at startup)
       {
         id = "notify_comin_deployment_success";
         alias = "Alert - Comin deployment successful";
         trigger = [
           {
-            platform = "state";
-            entity_id = "sensor.comin_last_deployment_uuid";
+            platform = "homeassistant";
+            event = "start";
           }
         ];
         condition = [
           {
             condition = "template";
-            value_template = "{{ trigger.to_state.state not in ['none', 'unknown', 'unavailable'] }}";
+            value_template = ''
+              {% set deploy_time = states('sensor.comin_last_deployment_time') %}
+              {% if deploy_time not in ['none', 'unknown', 'unavailable'] %}
+                {{ (now() - as_datetime(deploy_time)).total_seconds() < 120 }}
+              {% else %}
+                false
+              {% endif %}
+            '';
           }
         ];
         action = [
@@ -355,14 +429,21 @@
         alias = "Alert - Comin deployment failed";
         trigger = [
           {
-            platform = "state";
-            entity_id = "sensor.comin_last_failed_uuid";
+            platform = "homeassistant";
+            event = "start";
           }
         ];
         condition = [
           {
             condition = "template";
-            value_template = "{{ trigger.to_state.state not in ['none', 'unknown', 'unavailable'] }}";
+            value_template = ''
+              {% set fail_time = states('sensor.comin_last_failed_time') %}
+              {% if fail_time not in ['none', 'unknown', 'unavailable'] %}
+                {{ (now() - as_datetime(fail_time)).total_seconds() < 120 }}
+              {% else %}
+                false
+              {% endif %}
+            '';
           }
         ];
         action = [
