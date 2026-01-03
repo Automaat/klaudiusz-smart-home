@@ -187,6 +187,13 @@
               message = "Użycie dysku: {{ states('sensor.system_monitor_disk_use') }}%";
             };
           }
+          {
+            action = "notify.send_message";
+            target.entity_id = "notify.klaudiusz_smart_home_system";
+            data = {
+              message = "🚨 Critical disk space alert\nUsage: {{ states('sensor.system_monitor_disk_use') }}%";
+            };
+          }
         ];
       }
 
@@ -209,6 +216,13 @@
             data = {
               title = "⚠️ Ostrzeżenie - Dysk";
               message = "Użycie dysku: {{ states('sensor.system_monitor_disk_use') }}%";
+            };
+          }
+          {
+            action = "notify.send_message";
+            target.entity_id = "notify.klaudiusz_smart_home_system";
+            data = {
+              message = "⚠️ Disk space warning\nUsage: {{ states('sensor.system_monitor_disk_use') }}%";
             };
           }
         ];
@@ -236,6 +250,13 @@
               message = "Pamięć RAM: {{ states('sensor.system_monitor_memory_use') }}%";
             };
           }
+          {
+            action = "notify.send_message";
+            target.entity_id = "notify.klaudiusz_smart_home_system";
+            data = {
+              message = "🟠 High memory usage\nRAM: {{ states('sensor.system_monitor_memory_use') }}%";
+            };
+          }
         ];
       }
 
@@ -261,6 +282,13 @@
               message = "Sprawdź systemctl status wyoming-faster-whisper-default";
             };
           }
+          {
+            action = "notify.send_message";
+            target.entity_id = "notify.klaudiusz_smart_home_system";
+            data = {
+              message = "⚠️ Whisper service down\nCheck: systemctl status wyoming-faster-whisper-default";
+            };
+          }
         ];
       }
 
@@ -281,6 +309,13 @@
             data = {
               title = "⚠️ Usługa Piper nie działa";
               message = "Sprawdź systemctl status wyoming-piper-default";
+            };
+          }
+          {
+            action = "notify.send_message";
+            target.entity_id = "notify.klaudiusz_smart_home_system";
+            data = {
+              message = "⚠️ Piper service down\nCheck: systemctl status wyoming-piper-default";
             };
           }
         ];
@@ -305,6 +340,13 @@
               message = "Sprawdź systemctl status tailscaled";
             };
           }
+          {
+            action = "notify.send_message";
+            target.entity_id = "notify.klaudiusz_smart_home_system";
+            data = {
+              message = "⚠️ Tailscale service down\nCheck: systemctl status tailscaled";
+            };
+          }
         ];
       }
 
@@ -325,6 +367,13 @@
             data = {
               title = "⚠️ PostgreSQL nie działa";
               message = "Sprawdź systemctl status postgresql";
+            };
+          }
+          {
+            action = "notify.send_message";
+            target.entity_id = "notify.klaudiusz_smart_home_system";
+            data = {
+              message = "⚠️ PostgreSQL service down\nCheck: systemctl status postgresql";
             };
           }
         ];
