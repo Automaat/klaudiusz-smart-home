@@ -173,6 +173,11 @@ in {
     "f /var/lib/hass/secrets.yaml 0600 hass hass -"
     # Polish custom sentences
     "L+ /var/lib/hass/custom_sentences - - - - ${../../../custom_sentences}"
+    # Comin deployment state tracking (monitoring.nix sensors)
+    "f /var/lib/hass/.comin_last_success_uuid 0600 hass hass -"
+    "f /var/lib/hass/.comin_last_failed_uuid 0600 hass hass -"
+    "f /var/lib/hass/.comin_last_success_uuid.lock 0600 hass hass -"
+    "f /var/lib/hass/.comin_last_failed_uuid.lock 0600 hass hass -"
   ];
 
   # ===========================================
