@@ -74,6 +74,7 @@ in {
       "webostv" # LG WebOS TV
       "wake_on_lan" # Wake on LAN for TV power-on
       "homekit_controller" # Aqara FP2 presence sensor
+      "homekit" # HomeKit Bridge (expose HA entities to Apple Home)
       # "cast"           # Google Cast
     ];
 
