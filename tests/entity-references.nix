@@ -9,6 +9,13 @@
   # Import automation data for validation when using file includes
   automationsData = import ../hosts/homelab/home-assistant/automations-data.nix;
 
+  # Automations list (used by both definedEntities and collectEntityReferences)
+  # Use automationsData if config.automation is a string (file include)
+  automationsList =
+    if builtins.isString (haConfig.automation or [])
+    then automationsData
+    else (haConfig.automation or []);
+
   # ===========================================
   # Collect Defined Entities
   # ===========================================
@@ -25,10 +32,6 @@
     scripts = lib.mapAttrsToList (name: _: "script.${name}") (haConfig.script or {});
 
     # Automations (as entities)
-    # Use automationsData if config.automation is a string (file include)
-    automationsList = if builtins.isString (haConfig.automation or [])
-                      then automationsData
-                      else (haConfig.automation or []);
     automations = builtins.map (auto: "automation.${auto.id}") automationsList;
 
     # Template sensors (if any)

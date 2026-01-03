@@ -50,9 +50,10 @@
 
     # Extract from automation conditions and actions
     # Use automationsData if config.automation is a string (file include)
-    automations = if builtins.isString (config.automation or [])
-                  then automationsData
-                  else (config.automation or []);
+    automations =
+      if builtins.isString (config.automation or [])
+      then automationsData
+      else (config.automation or []);
     automationTemplates = lib.flatten (
       builtins.map (auto: let
         autoId = auto.id or "unknown";
