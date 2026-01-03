@@ -33,7 +33,7 @@
           }
           # {
           #   action = "notify.send_message";
-          #   target.entity_id = "notify.klaudiusz_smart_home_marcin_skalski_8508480746";
+          #   target.entity_id = "notify.klaudiusz_smart_home_system";
           #   data = {
           #     message = "✅ Home Assistant started at {{ now().strftime('%H:%M') }}";
           #   };
@@ -67,7 +67,7 @@
         action = [
           # {
           #   action = "notify.send_message";
-          #   target.entity_id = "notify.klaudiusz_smart_home_marcin_skalski_8508480746";
+          #   target.entity_id = "notify.klaudiusz_smart_home_system";
           #   data = {
           #     message = "🔴 High CPU usage: {{ states('sensor.system_monitor_obciazenie_procesora') }}%";
           #   };
@@ -98,7 +98,7 @@
         action = [
           # {
           #   action = "notify.send_message";
-          #   target.entity_id = "notify.klaudiusz_smart_home_marcin_skalski_8508480746";
+          #   target.entity_id = "notify.klaudiusz_smart_home_system";
           #   data = {
           #     message = "🟠 High memory usage: {{ states('sensor.system_monitor_memory_use') }}%";
           #   };
@@ -129,7 +129,7 @@
         action = [
           # {
           #   action = "notify.send_message";
-          #   target.entity_id = "notify.klaudiusz_smart_home_marcin_skalski_8508480746";
+          #   target.entity_id = "notify.klaudiusz_smart_home_system";
           #   data = {
           #     message = "💾 Low disk space: {{ states('sensor.system_monitor_disk_use') }}% used";
           #   };
@@ -160,7 +160,7 @@
         action = [
           # {
           #   action = "notify.send_message";
-          #   target.entity_id = "notify.klaudiusz_smart_home_marcin_skalski_8508480746";
+          #   target.entity_id = "notify.klaudiusz_smart_home_system";
           #   data = {
           #     message = "🔥 High CPU temperature: {{ states('sensor.system_monitor_temperatura_procesora') }}°C";
           #   };

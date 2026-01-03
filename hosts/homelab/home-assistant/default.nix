@@ -153,7 +153,7 @@ in {
       };
 
       # Telegram integration - configured via UI (see docs/manual-config/telegram.md)
-      # Entity: notify.klaudiusz_smart_home_marcin_skalski_8508480746 (use with notify.send_message action)
+      # Entity: notify.klaudiusz_smart_home_system (use with notify.send_message action)
     };
 
     # Allow GUI automations and dashboard edits

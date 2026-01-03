@@ -335,7 +335,7 @@
           }
           {
             action = "notify.send_message";
-            target.entity_id = "notify.klaudiusz_smart_home_marcin_skalski_8508480746";
+            target.entity_id = "notify.klaudiusz_smart_home_system";
             data = {
               message = "✅ Deployment successful\n🚀 Comin deployed changes at {{ now().strftime('%H:%M') }}";
             };
@@ -364,7 +364,7 @@
           }
           {
             action = "notify.send_message";
-            target.entity_id = "notify.klaudiusz_smart_home_marcin_skalski_8508480746";
+            target.entity_id = "notify.klaudiusz_smart_home_system";
             data = {
               message = "❌ Deployment failed\n🔥 Comin could not deploy changes. Check journalctl -u comin";
             };
