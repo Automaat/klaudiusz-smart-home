@@ -188,8 +188,9 @@ in {
     "f /var/lib/hass/secrets.yaml 0600 hass hass -"
     # Polish custom sentences
     "L+ /var/lib/hass/custom_sentences - - - - ${../../../custom_sentences}"
-    # Hybrid automations directory (Nix + GUI)
-    "d /var/lib/hass/automations 0755 hass hass -"
+    # Hybrid automations directory (Nix + GUI). Runtime-only under /var/lib;
+    # GUI-created YAML lives here on server and must not be tracked in Git.
+    "d /var/lib/hass/automations 0750 hass hass -"
     # Comin deployment state tracking (monitoring.nix sensors)
     "f /var/lib/hass/.comin_last_success_uuid 0600 hass hass -"
     "f /var/lib/hass/.comin_last_failed_uuid 0600 hass hass -"

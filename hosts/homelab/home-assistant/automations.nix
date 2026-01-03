@@ -13,8 +13,8 @@ in {
     # Hybrid Automation Mode
     # ===========================================
     # Nix automations: automations/nix.yaml (regenerated on restart)
-    # GUI automations: automations/*.yaml (persisted, editable via UI)
-    # Override monitoring.nix automations (will be included via YAML files instead)
+    # GUI automations: automations/*.yaml (persisted, editable via UI for testing)
+    # monitoring.nix automations merged into automations-data.nix
     automation = lib.mkForce "!include_dir_merge_list automations/";
 
     # ===========================================

@@ -159,6 +159,227 @@
   }
 
   # -----------------------------------------
+  # Monitoring Alerts (from monitoring.nix)
+  # -----------------------------------------
+  {
+    id = "alert_disk_space_critical";
+    alias = "Alert - Disk space critical";
+    trigger = [
+      {
+        platform = "numeric_state";
+        entity_id = "sensor.system_monitor_disk_use";
+        above = 90;
+      }
+    ];
+    action = [
+      {
+        service = "persistent_notification.create";
+        data = {
+          title = "⚠️ Krytyczny poziom dysku";
+          message = "Użycie dysku: {{ states('sensor.system_monitor_disk_use') }}%";
+        };
+      }
+    ];
+  }
+
+  {
+    id = "alert_disk_space_warning";
+    alias = "Alert - Disk space warning";
+    trigger = [
+      {
+        platform = "numeric_state";
+        entity_id = "sensor.system_monitor_disk_use";
+        above = 80;
+      }
+    ];
+    action = [
+      {
+        service = "persistent_notification.create";
+        data = {
+          title = "⚠️ Ostrzeżenie - Dysk";
+          message = "Użycie dysku: {{ states('sensor.system_monitor_disk_use') }}%";
+        };
+      }
+    ];
+  }
+
+  {
+    id = "alert_memory_high";
+    alias = "Alert - High memory usage";
+    trigger = [
+      {
+        platform = "numeric_state";
+        entity_id = "sensor.system_monitor_memory_use";
+        above = 90;
+        "for".minutes = 5;
+      }
+    ];
+    action = [
+      {
+        service = "persistent_notification.create";
+        data = {
+          title = "⚠️ Wysokie użycie RAM";
+          message = "Pamięć RAM: {{ states('sensor.system_monitor_memory_use') }}%";
+        };
+      }
+    ];
+  }
+
+  {
+    id = "alert_whisper_down";
+    alias = "Alert - Whisper service down";
+    trigger = [
+      {
+        platform = "state";
+        entity_id = "sensor.wyoming_whisper_health";
+        to = "False";
+        "for".minutes = 2;
+      }
+    ];
+    action = [
+      {
+        service = "persistent_notification.create";
+        data = {
+          title = "⚠️ Usługa Whisper nie działa";
+          message = "Sprawdź systemctl status wyoming-faster-whisper-default";
+        };
+      }
+    ];
+  }
+
+  {
+    id = "alert_piper_down";
+    alias = "Alert - Piper service down";
+    trigger = [
+      {
+        platform = "state";
+        entity_id = "sensor.wyoming_piper_health";
+        to = "False";
+        "for".minutes = 2;
+      }
+    ];
+    action = [
+      {
+        service = "persistent_notification.create";
+        data = {
+          title = "⚠️ Usługa Piper nie działa";
+          message = "Sprawdź systemctl status wyoming-piper-default";
+        };
+      }
+    ];
+  }
+
+  {
+    id = "alert_tailscale_down";
+    alias = "Alert - Tailscale service down";
+    trigger = [
+      {
+        platform = "state";
+        entity_id = "sensor.tailscale_health";
+        to = "False";
+        "for".minutes = 2;
+      }
+    ];
+    action = [
+      {
+        service = "persistent_notification.create";
+        data = {
+          title = "⚠️ Tailscale nie działa";
+          message = "Sprawdź systemctl status tailscaled";
+        };
+      }
+    ];
+  }
+
+  {
+    id = "alert_postgresql_down";
+    alias = "Alert - PostgreSQL service down";
+    trigger = [
+      {
+        platform = "state";
+        entity_id = "sensor.postgresql_health";
+        to = "False";
+        "for".minutes = 2;
+      }
+    ];
+    action = [
+      {
+        service = "persistent_notification.create";
+        data = {
+          title = "⚠️ PostgreSQL nie działa";
+          message = "Sprawdź systemctl status postgresql";
+        };
+      }
+    ];
+  }
+
+  {
+    id = "notify_comin_deployment_success";
+    alias = "Alert - Comin deployment successful";
+    trigger = [
+      {
+        platform = "state";
+        entity_id = "sensor.comin_last_deployment_uuid";
+      }
+    ];
+    condition = [
+      {
+        condition = "template";
+        value_template = "{{ trigger.to_state.state not in ['none', 'unknown', 'unavailable'] }}";
+      }
+    ];
+    action = [
+      {
+        service = "persistent_notification.create";
+        data = {
+          title = "✅ Aktualizacja zakończona";
+          message = "🚀 Comin pomyślnie wdrożył zmiany o {{ now().strftime('%H:%M') }} 🎉";
+        };
+      }
+      {
+        action = "notify.send_message";
+        target.entity_id = "notify.klaudiusz_smart_home_system";
+        data = {
+          message = "✅ Deployment successful\n🚀 Comin deployed changes at {{ now().strftime('%H:%M') }}";
+        };
+      }
+    ];
+  }
+
+  {
+    id = "notify_comin_deployment_failed";
+    alias = "Alert - Comin deployment failed";
+    trigger = [
+      {
+        platform = "state";
+        entity_id = "sensor.comin_last_failed_uuid";
+      }
+    ];
+    condition = [
+      {
+        condition = "template";
+        value_template = "{{ trigger.to_state.state not in ['none', 'unknown', 'unavailable'] }}";
+      }
+    ];
+    action = [
+      {
+        service = "persistent_notification.create";
+        data = {
+          title = "❌ Aktualizacja nieudana";
+          message = "🔥 Comin nie mógł wdrożyć zmian. Sprawdź journalctl -u comin 🔍";
+        };
+      }
+      {
+        action = "notify.send_message";
+        target.entity_id = "notify.klaudiusz_smart_home_system";
+        data = {
+          message = "❌ Deployment failed\n🔥 Comin could not deploy changes. Check journalctl -u comin";
+        };
+      }
+    ];
+  }
+
+  # -----------------------------------------
   # TV Control
   # -----------------------------------------
   {
