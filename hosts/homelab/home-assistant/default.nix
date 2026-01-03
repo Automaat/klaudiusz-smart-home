@@ -152,23 +152,8 @@ in {
         database_path = "/var/lib/hass/zigbee.db";
       };
 
-      # Telegram Bot
-      telegram_bot = [
-        {
-          platform = "polling";
-          api_key = "!secret telegram_bot_token";
-          allowed_chat_ids = ["!secret telegram_chat_id"];
-        }
-      ];
-
-      # Telegram Notify
-      notify = [
-        {
-          platform = "telegram";
-          name = "telegram";
-          chat_id = "!secret telegram_chat_id";
-        }
-      ];
+      # Telegram integration - configured via UI (see docs/manual-config/telegram.md)
+      # Creates notify.telegram entity (use with notify.send_message action)
     };
 
     # Allow GUI automations and dashboard edits
