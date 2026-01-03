@@ -75,7 +75,8 @@ in {
       "wake_on_lan" # Wake on LAN for TV power-on
       "homekit_controller" # Aqara FP2 presence sensor
       "homekit" # HomeKit Bridge (expose HA entities to Apple Home)
-      # "cast"           # Google Cast
+      "apple_tv" # Apple TV / AirPlay devices
+      "cast" # Google Cast / Chromecast
     ];
 
     extraPackages = ps: let
@@ -85,6 +86,8 @@ in {
         psycopg2 # PostgreSQL adapter for recorder
         aiogithubapi # Required by HACS
         customPkgs.ibeacon-ble # iBeacon integration
+        pyatv # Apple TV integration
+        pychromecast # Google Cast integration
       ];
 
     config = {
