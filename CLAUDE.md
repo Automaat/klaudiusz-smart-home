@@ -65,11 +65,21 @@ Some HA features cannot be configured declaratively via NixOS and require GUI se
 
 ## Development Workflow
 
-### GitOps Flow
+### Branch-First Workflow (MANDATORY)
+
+**NEVER push directly to main. Always use feature branches + PRs.**
 
 ```text
-Edit locally → Push to main → CI tests → Production branch updates → Comin pulls (~60s) → NixOS rebuilds
+Create branch → Edit → Commit → Push to branch → Create PR → Merge → CI tests → Production deploys
 ```
+
+**Steps:**
+
+1. Create feature branch: `git checkout -b feat/description` or `fix/description`
+2. Make changes, commit with `-s -S`
+3. Push to branch: `git push -u origin branch-name`
+4. Create PR: `gh pr create --title "..." --body "..."`
+5. PR merges → CI tests → production branch updates → Comin pulls → NixOS rebuilds
 
 **CI Gating:**
 
@@ -80,10 +90,11 @@ Edit locally → Push to main → CI tests → Production branch updates → Com
 
 ### Before Changes
 
-1. ASK clarifying questions (what devices? what behavior?)
-2. Check existing patterns in codebase
-3. Plan changes, get approval for architecture changes
-4. Implement incrementally
+1. **Create feature/fix branch** (never work on main)
+2. ASK clarifying questions (what devices? what behavior?)
+3. Check existing patterns in codebase
+4. Plan changes, get approval for architecture changes
+5. Implement incrementally
 
 ### Testing
 
