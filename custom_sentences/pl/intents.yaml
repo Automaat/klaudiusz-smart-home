@@ -198,6 +198,36 @@ intents:
           - "jaki [jest] dzień"
 
   # =========================================
+  # Task Management (Todoist)
+  # =========================================
+  AddTaskToTodoist:
+    data:
+      - sentences:
+          - "(dodaj|zapisz|wrzuć) {task} (do|na) (listę|inbox|zadania)"
+          - "(dodaj|zapisz) [mi] {task}"
+          - "zadanie {task}"
+          - "(dodaj|wpisz) [mi] [no] {task} (do|na) (listę|zadania)"
+          - "zapisz [mi] [że] {task}"
+
+  GetTasksFromTodoist:
+    data:
+      - sentences:
+          - "(pokaż|sprawdź|przeczytaj|odczytaj) [moje] (zadania|listę|tasks)"
+          - "(co|jakie) mam (zadania|na liście)"
+          - "lista zadań"
+          - "co [jest] do zrobienia"
+          - "(przeczytaj|powiedz) [mi] [no] [moje] zadania"
+
+  MarkTaskComplete:
+    data:
+      - sentences:
+          - "(oznacz|zaznacz) {task} (jako|za) (zrobione|wykonane|ukończone)"
+          - "{task} (zrobione|wykonane|ukończone)"
+          - "(ukończ|zakończ|zrób) {task}"
+          - "(zrobiłem|zrobiłam|wykonałem|wykonałam) {task}"
+          - "(oznacz|zaznacz) [mi] [no] {task} (jako|za) (zrobione|gotowe)"
+
+  # =========================================
   # Scripts (Placeholder - no devices yet)
   # =========================================
   # MovieMode:

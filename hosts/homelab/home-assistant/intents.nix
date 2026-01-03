@@ -182,6 +182,47 @@
       };
 
       # -----------------------------------------
+      # Task Management (Todoist)
+      # -----------------------------------------
+      AddTaskToTodoist = {
+        speech.text = "Dodaję {{ slots.task }} do listy inbox";
+        action = [
+          {
+            service = "todo.add_item";
+            target.entity_id = "todo.inbox";
+            data.item = "{{ slots.task }}";
+          }
+        ];
+      };
+
+      GetTasksFromTodoist = {
+        speech.text = "Sprawdzam twoją listę zadań";
+        action = [
+          {
+            service = "tts.speak";
+            target.entity_id = "tts.piper";
+            data = {
+              message = "{% set tasks = state_attr('todo.inbox', 'tasks') %}{% if tasks %}Masz {{ tasks | length }} zadań: {% for task in tasks[:5] %}{{ task.summary }}. {% endfor %}{% else %}Nie masz żadnych zadań.{% endif %}";
+            };
+          }
+        ];
+      };
+
+      MarkTaskComplete = {
+        speech.text = "Oznaczam {{ slots.task }} jako zrobione";
+        action = [
+          {
+            service = "todo.update_item";
+            target.entity_id = "todo.inbox";
+            data = {
+              item = "{{ slots.task }}";
+              status = "completed";
+            };
+          }
+        ];
+      };
+
+      # -----------------------------------------
       # Scripts (Placeholder - no devices yet)
       # -----------------------------------------
       # MovieMode = {

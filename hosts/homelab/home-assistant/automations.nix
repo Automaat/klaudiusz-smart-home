@@ -187,6 +187,35 @@
       }
 
       # -----------------------------------------
+      # Task Management (Todoist)
+      # -----------------------------------------
+      {
+        id = "todoist_task_added_confirmation";
+        alias = "Todoist - Task added confirmation";
+        trigger = [
+          {
+            platform = "state";
+            entity_id = "todo.inbox";
+          }
+        ];
+        condition = [
+          {
+            condition = "template";
+            value_template = "{{ trigger.to_state.state | int > trigger.from_state.state | int }}";
+          }
+        ];
+        action = [
+          {
+            service = "tts.speak";
+            target.entity_id = "tts.piper";
+            data = {
+              message = "Zadanie dodane do listy";
+            };
+          }
+        ];
+      }
+
+      # -----------------------------------------
       # Mode Management (Placeholder - no devices yet)
       # -----------------------------------------
       # {
