@@ -91,6 +91,26 @@ Edit locally → Push to main → CI tests → Production branch updates → Com
 - Test on device: `nixos-rebuild test --flake .#homelab`
 - Check services: `systemctl status home-assistant`
 
+### Automation Development with MCP
+
+**Fast iteration workflow (requires HA MCP server):**
+
+1. Create/test automation via MCP → HA GUI
+2. Verify works with real devices/sensors
+3. Port working automation to automations.nix
+4. Delete GUI version
+5. Rebuild and verify declarative version
+
+**Benefits:**
+- No rebuild cycles during experimentation
+- Test with actual hardware states
+- Declarative Nix only for proven automations
+
+**Requirements:**
+- HA MCP server configured
+- Access token set up
+- MCP tools available in Claude Code
+
 ## NixOS Conventions
 
 ### Module Organization
