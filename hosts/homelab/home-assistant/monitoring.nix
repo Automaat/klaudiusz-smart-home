@@ -132,7 +132,7 @@
         sensor = {
           name = "comin_last_deployment_uuid";
           unique_id = "comin_last_deployment_uuid";
-          command = "jq -r '.deployments[0]|select(.status==\"done\" and .error_msg==\"\")|.uuid' /var/lib/comin/store.json||echo none";
+          command = "jq -r '.deployments[0]|select(.error_msg==\"\")|.uuid//\"none\"' /var/lib/comin/store.json";
           scan_interval = 30;
         };
       }
@@ -140,7 +140,7 @@
         sensor = {
           name = "comin_last_failed_uuid";
           unique_id = "comin_last_failed_uuid";
-          command = "jq -r '.deployments[0]|select(.status==\"done\" and .error_msg!=\"\")|.uuid' /var/lib/comin/store.json||echo none";
+          command = "jq -r '.deployments[0]|if .error_msg==\"\" then \"none\" else .uuid end' /var/lib/comin/store.json";
           scan_interval = 30;
         };
       }
