@@ -214,6 +214,11 @@ in {
       + builtins.readFile ./automations.nix
       + builtins.readFile ./monitoring.nix
     );
+
+    # Allow USB device access for Bluetooth adapter management
+    # bluetooth_auto_recovery needs to reset USB devices
+    # Restricted to /dev/bluetooth-hci symlink (created by udev, matches Bluetooth USB class)
+    serviceConfig.DeviceAllow = lib.mkAfter ["/dev/bluetooth-hci rw"];
   };
 
   # ===========================================
