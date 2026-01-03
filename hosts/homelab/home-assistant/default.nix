@@ -25,6 +25,13 @@
   };
 
   # ===========================================
+  # Hybrid Automations (Nix + GUI)
+  # ===========================================
+  yamlFormat = pkgs.formats.yaml {};
+  nixAutomations = import ./automations-data.nix;
+  nixAutomationsFile = yamlFormat.generate "nix.yaml" nixAutomations;
+
+  # ===========================================
   # Custom Python Packages
   # ===========================================
   # Function that builds custom packages with HA's Python environment
@@ -181,6 +188,8 @@ in {
     "f /var/lib/hass/secrets.yaml 0600 hass hass -"
     # Polish custom sentences
     "L+ /var/lib/hass/custom_sentences - - - - ${../../../custom_sentences}"
+    # Hybrid automations directory (Nix + GUI)
+    "d /var/lib/hass/automations 0755 hass hass -"
     # Comin deployment state tracking (monitoring.nix sensors)
     "f /var/lib/hass/.comin_last_success_uuid 0600 hass hass -"
     "f /var/lib/hass/.comin_last_failed_uuid 0600 hass hass -"
@@ -205,6 +214,9 @@ in {
 
       # Create HACS symlink (release zip extracts to root)
       ln -sfn ${hacsSource} /var/lib/hass/custom_components/hacs
+
+      # Hybrid automations: link Nix automations (GUI can add more files)
+      ln -sfn ${nixAutomationsFile} /var/lib/hass/automations/nix.yaml
     '';
 
     # Force derivation update when HA config changes
