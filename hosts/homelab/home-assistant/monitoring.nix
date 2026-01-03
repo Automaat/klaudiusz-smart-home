@@ -333,6 +333,12 @@
               message = "🚀 Comin pomyślnie wdrożył zmiany o {{ now().strftime('%H:%M') }} 🎉";
             };
           }
+          {
+            service = "notify.telegram";
+            data = {
+              message = "✅ Deployment successful\n🚀 Comin deployed changes at {{ now().strftime('%H:%M') }}";
+            };
+          }
         ];
       }
 
@@ -353,6 +359,12 @@
             data = {
               title = "❌ Aktualizacja nieudana";
               message = "🔥 Comin nie mógł wdrożyć zmian. Sprawdź journalctl -u comin 🔍";
+            };
+          }
+          {
+            service = "notify.telegram";
+            data = {
+              message = "❌ Deployment failed\n🔥 Comin could not deploy changes. Check journalctl -u comin";
             };
           }
         ];
