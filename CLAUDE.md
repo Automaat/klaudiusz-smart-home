@@ -74,6 +74,7 @@ Create branch → Edit → Commit → Push to branch → Create PR → Merge →
 ```
 
 **Steps:**
+
 1. Create feature branch: `git checkout -b feat/description` or `fix/description`
 2. Make changes, commit with `-s -S`
 3. Push to branch: `git push -u origin branch-name`
