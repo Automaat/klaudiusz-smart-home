@@ -6,14 +6,17 @@
   testLib = import ./lib.nix {inherit lib;};
   haConfig = nixosConfig.services.home-assistant.config;
 
+  # Import automation list directly from data file (hybrid mode uses include_dir)
+  automationsList = import ../hosts/homelab/home-assistant/automations-data.nix;
+
   # Extract Nix intent names
   nixIntents = testLib.extractIntentNames haConfig.intent_script;
 
   # Extract automation IDs
-  automationIds = testLib.extractAutomationIds haConfig.automation;
+  automationIds = testLib.extractAutomationIds automationsList;
 
   # Collect all service calls from intents and automations
-  collectServiceCalls = config: let
+  collectServiceCalls = config: automations: let
     intentServices = lib.flatten (
       lib.mapAttrsToList (_: intent:
         if intent ? action
@@ -24,13 +27,13 @@
     automationServices = lib.flatten (
       builtins.map (auto:
         lib.flatten (builtins.map (a: a.service or null) auto.action))
-      config.automation
+      automations
     );
   in
     lib.filter (s: s != null) (intentServices ++ automationServices);
 
   # Collect all entity_id targets from intents and automations
-  collectEntityIds = config: let
+  collectEntityIds = config: automations: let
     extractEntityIds = entityId:
       if builtins.isString entityId
       then [entityId]
@@ -57,13 +60,13 @@
           then extractEntityIds a.target.entity_id
           else [])
         auto.action))
-      config.automation
+      automations
     );
   in
     lib.filter (e: e != "all") (intentEntities ++ automationEntities);
 
-  serviceCalls = collectServiceCalls haConfig;
-  entityIds = collectEntityIds haConfig;
+  serviceCalls = collectServiceCalls haConfig automationsList;
+  entityIds = collectEntityIds haConfig automationsList;
 
   # =============================================
   # Test Results
@@ -140,7 +143,7 @@
 
     automationActions = lib.flatten (builtins.map (auto:
       lib.flatten (builtins.map checkAction auto.action))
-    haConfig.automation);
+    automationsList);
   in
     intentActions ++ automationActions;
 
