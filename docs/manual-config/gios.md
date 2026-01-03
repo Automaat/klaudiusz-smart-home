@@ -129,7 +129,9 @@ Each pollutant has corresponding index sensor (very good → very bad):
     platform = "numeric_state";
     entity_id = "sensor.krakow_aleja_krasinskiego_pm25";
     above = 50; # WHO 24h guideline
-    for.minutes = 30; # Sustained high level
+    "for" = {
+      minutes = 30; # Sustained high level
+    };
   }];
   action = [{
     action = "notify.send_message";
