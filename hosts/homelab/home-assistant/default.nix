@@ -228,11 +228,8 @@ in {
     language = "pl"; # Force Polish
     device = "cpu";
     uri = "tcp://127.0.0.1:10300"; # Localhost only for security
+    beamSize = 5; # Improved decoding quality
     extraArgs = [
-      "--beam-size"
-      "5" # Improved decoding quality (better alternatives)
-      "--cpu-threads"
-      "4" # N5095 quad-core optimization
       "--compute-type"
       "int8_float16" # Speed/accuracy sweet spot for CPU
     ];
