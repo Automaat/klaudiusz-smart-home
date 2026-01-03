@@ -192,6 +192,45 @@
       }
 
       # -----------------------------------------
+      # Kitchen
+      # -----------------------------------------
+      {
+        id = "kitchen_presence_lights_on";
+        alias = "Kitchen - Turn on lights on presence";
+        trigger = [
+          {
+            platform = "state";
+            entity_id = "binary_sensor.presence_kitchen";
+            to = "on";
+          }
+        ];
+        action = [
+          {
+            service = "light.turn_on";
+            target.entity_id = "light.kitchen";
+          }
+        ];
+      }
+
+      {
+        id = "kitchen_presence_lights_off";
+        alias = "Kitchen - Turn off lights on clear";
+        trigger = [
+          {
+            platform = "state";
+            entity_id = "binary_sensor.presence_kitchen";
+            to = "off";
+          }
+        ];
+        action = [
+          {
+            service = "light.turn_off";
+            target.entity_id = "light.kitchen";
+          }
+        ];
+      }
+
+      # -----------------------------------------
       # Mode Management (Placeholder - no devices yet)
       # -----------------------------------------
       # {
