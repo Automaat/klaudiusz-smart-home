@@ -31,6 +31,8 @@ Telegram requires bot token and chat ID from Telegram's BotFather - cannot be au
    curl https://api.telegram.org/botTOKEN/getUpdates
    ```
 
+   **Note:** Token will be saved in bash history. Prefix command with space (bash) or use `history -d $(history 1)` afterward to remove.
+
 4. Find `"chat":{"id":123456789}` in response
 5. Copy chat ID (numeric value)
 
@@ -117,13 +119,15 @@ Uncomment notify actions in `hosts/homelab/home-assistant/automations.nix`:
   curl https://api.telegram.org/botTOKEN/getMe
   ```
 
+  **Note:** Token will be saved in bash history. Prefix command with space (bash) or use `history -d $(history 1)` afterward to remove.
+
 - Check `allowed_chat_ids` matches your chat ID
 
 **Notifications not received:**
 
 - Send message to bot first (activates chat)
 - Check HA logs for errors
-- Verify secrets mounted: `cat /run/secrets/telegram-bot-token`
+- Verify secrets file: `cat /var/lib/hass/secrets.yaml` (contains dummy values written by preStart)
 
 **Wrong chat ID:**
 
