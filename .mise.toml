@@ -1,4 +1,4 @@
 [tools]
 actionlint = "1.7.10"
-sops = "latest"
+sops = "3.11.0"
 uv = "0.9.21"
