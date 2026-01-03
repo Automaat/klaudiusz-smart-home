@@ -127,7 +127,7 @@
       # Comin Deployment Detection
       # -----------------------------------------
       # Sensors output deployment UUID which changes on each deployment
-      # Automations trigger on state change (UUID change)
+      # Automations trigger on state change (UUID change from previous deployment)
       {
         sensor = {
           name = "comin_last_deployment_uuid";
