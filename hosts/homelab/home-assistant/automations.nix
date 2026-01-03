@@ -164,6 +164,29 @@
       }
 
       # -----------------------------------------
+      # TV Control
+      # -----------------------------------------
+      {
+        id = "lg_c2_turn_on";
+        alias = "TV - Turn on LG C2";
+        trigger = [
+          {
+            platform = "webostv.turn_on";
+            entity_id = "media_player.tv";
+          }
+        ];
+        action = [
+          {
+            service = "wake_on_lan.send_magic_packet";
+            data = {
+              mac = "20:28:bc:69:b9:84";
+              broadcast_address = "192.168.0.255";
+            };
+          }
+        ];
+      }
+
+      # -----------------------------------------
       # Mode Management (Placeholder - no devices yet)
       # -----------------------------------------
       # {
