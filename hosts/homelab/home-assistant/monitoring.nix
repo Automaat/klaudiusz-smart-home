@@ -123,52 +123,25 @@
           scan_interval = 60;
         };
       }
+      # -----------------------------------------
+      # Comin Deployment Detection
+      # -----------------------------------------
+      # Sensors output deployment UUID which changes on each deployment
+      # Automations trigger on state change (UUID change)
       {
-        binary_sensor = {
-          name = "comin_deployment_success";
+        sensor = {
+          name = "comin_last_deployment_uuid";
           command = ''
-            CURRENT_UUID=$(jq -r '.deployments[0].uuid' /var/lib/comin/store.json 2>/dev/null)
-            CURRENT_STATUS=$(jq -r '.deployments[0] | select(.status == "done" and .error_msg == "") | "success"' /var/lib/comin/store.json 2>/dev/null)
-
-            if [ -n "$CURRENT_UUID" ] && [ "$CURRENT_STATUS" = "success" ]; then
-              (
-                flock -x 200
-                LAST_UUID=$(cat /var/lib/hass/.comin_last_success_uuid 2>/dev/null || echo "")
-                if [ "$CURRENT_UUID" != "$LAST_UUID" ]; then
-                  echo "ON"
-                  echo "$CURRENT_UUID" > /var/lib/hass/.comin_last_success_uuid
-                else
-                  echo "OFF"
-                fi
-              ) 200>/var/lib/hass/.comin_last_success_uuid.lock
-            else
-              echo "OFF"
-            fi
+            jq -r '.deployments[0] | select(.status == "done" and .error_msg == "") | .uuid' /var/lib/comin/store.json 2>/dev/null || echo "none"
           '';
           scan_interval = 30;
         };
       }
       {
-        binary_sensor = {
-          name = "comin_deployment_failed";
+        sensor = {
+          name = "comin_last_failed_uuid";
           command = ''
-            CURRENT_UUID=$(jq -r '.deployments[0].uuid' /var/lib/comin/store.json 2>/dev/null)
-            CURRENT_STATUS=$(jq -r '.deployments[0] | select(.status == "done" and .error_msg != "") | "failed"' /var/lib/comin/store.json 2>/dev/null)
-
-            if [ -n "$CURRENT_UUID" ] && [ "$CURRENT_STATUS" = "failed" ]; then
-              (
-                flock -x 200
-                LAST_UUID=$(cat /var/lib/hass/.comin_last_failed_uuid 2>/dev/null || echo "")
-                if [ "$CURRENT_UUID" != "$LAST_UUID" ]; then
-                  echo "ON"
-                  echo "$CURRENT_UUID" > /var/lib/hass/.comin_last_failed_uuid
-                else
-                  echo "OFF"
-                fi
-              ) 200>/var/lib/hass/.comin_last_failed_uuid.lock
-            else
-              echo "OFF"
-            fi
+            jq -r '.deployments[0] | select(.status == "done" and .error_msg != "") | .uuid' /var/lib/comin/store.json 2>/dev/null || echo "none"
           '';
           scan_interval = 30;
         };
@@ -352,9 +325,13 @@
         trigger = [
           {
             platform = "state";
-            entity_id = "binary_sensor.comin_deployment_success";
-            from = "off";
-            to = "on";
+            entity_id = "sensor.comin_last_deployment_uuid";
+          }
+        ];
+        condition = [
+          {
+            condition = "template";
+            value_template = "{{ trigger.to_state.state not in ['none', 'unknown', 'unavailable'] }}";
           }
         ];
         action = [
@@ -381,9 +358,13 @@
         trigger = [
           {
             platform = "state";
-            entity_id = "binary_sensor.comin_deployment_failed";
-            from = "off";
-            to = "on";
+            entity_id = "sensor.comin_last_failed_uuid";
+          }
+        ];
+        condition = [
+          {
+            condition = "template";
+            value_template = "{{ trigger.to_state.state not in ['none', 'unknown', 'unavailable'] }}";
           }
         ];
         action = [
