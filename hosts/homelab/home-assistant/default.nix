@@ -216,9 +216,9 @@ in {
     );
 
     # Allow USB device access for Bluetooth adapter management
-    # bluetooth_auto_recovery needs to reset USB devices
-    # Restricted to /dev/bluetooth-hci symlink (created by udev, matches Bluetooth USB class)
-    serviceConfig.DeviceAllow = lib.mkAfter ["/dev/bluetooth-hci rw"];
+    # bluetooth_auto_recovery accesses /dev/bus/usb/NNN/DDD to reset USB devices
+    # Using char-usb_device allows all USB devices (systemd doesn't support path wildcards)
+    serviceConfig.DeviceAllow = lib.mkAfter ["char-usb_device rw"];
   };
 
   # ===========================================
