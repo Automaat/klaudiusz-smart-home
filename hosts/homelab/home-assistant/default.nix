@@ -192,6 +192,8 @@ in {
   # File ownership set by tmpfiles.rules above (avoids chown in VM tests)
   # HACS symlink created after Nix-managed preStart removes /nix/store symlinks
   systemd.services.home-assistant = {
+    path = [pkgs.jq]; # Required for command_line sensor jq commands
+
     preStart = lib.mkAfter ''
       cat > /var/lib/hass/secrets.yaml <<EOF
       telegram_bot_token: "123456789:ABCdefGHIjklMNOpqrsTUVwxyz-DUMMY"
