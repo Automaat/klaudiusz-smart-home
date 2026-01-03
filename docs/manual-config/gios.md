@@ -19,6 +19,7 @@ GIOŚ integration uses config flow (UI-based setup) - cannot be configured via Y
 4. Note station ID from URL (e.g., `http://powietrze.gios.gov.pl/pjp/current/station_details/chart/400` → ID: **400**)
 
 **Example stations near Kraków:**
+
 - Kraków, Aleja Krasińskiego (ID: 400)
 - Kraków, ul. Bujaka (ID: 401)
 - Kraków, ul. Bulwarowa (ID: 402)
@@ -41,13 +42,16 @@ GIOŚ integration uses config flow (UI-based setup) - cannot be configured via Y
 Integration creates sensors based on what your station measures. Common entities:
 
 ### Air Quality Index (AQI)
+
 - `sensor.{station}_aqi` - Overall air quality index (scale: very good → very bad)
 
 ### Particulate Matter
+
 - `sensor.{station}_pm25` - PM2.5 (µg/m³)
 - `sensor.{station}_pm10` - PM10 (µg/m³)
 
 ### Gases (if measured by station)
+
 - `sensor.{station}_so2` - Sulfur dioxide (µg/m³)
 - `sensor.{station}_no2` - Nitrogen dioxide (µg/m³)
 - `sensor.{station}_o3` - Ozone (µg/m³)
@@ -55,7 +59,9 @@ Integration creates sensors based on what your station measures. Common entities
 - `sensor.{station}_c6h6` - Benzene (µg/m³)
 
 ### Index Sensors
+
 Each pollutant has corresponding index sensor (very good → very bad):
+
 - `sensor.{station}_pm25_index`
 - `sensor.{station}_pm10_index`
 - etc.
@@ -75,6 +81,7 @@ Each pollutant has corresponding index sensor (very good → very bad):
    - Developer Tools → States → filter by station name
 
 3. Test in automation/dashboard:
+
    ```nix
    # Example: check PM2.5 level
    condition = [{
