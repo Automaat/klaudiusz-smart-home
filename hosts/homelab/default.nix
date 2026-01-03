@@ -307,7 +307,8 @@
     SUBSYSTEM=="usb", ATTRS{idVendor}=="1a6e", MODE="0666"
     SUBSYSTEM=="usb", ATTRS{idVendor}=="18d1", MODE="0666"
     # Bluetooth USB devices (for HA Bluetooth management)
-    SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ENV{ID_USB_DRIVER}=="btusb", MODE="0660", GROUP="dialout"
+    # Match Bluetooth class (e0=Wireless, 01=RF, 01=Bluetooth) for any BT adapter
+    SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ENV{ID_USB_INTERFACES}=="*:e00101:*", MODE="0660", GROUP="dialout"
   '';
 
   # ===========================================
