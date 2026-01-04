@@ -6,6 +6,16 @@
 }: {
   services.home-assistant.config = {
     # ===========================================
+    # Prometheus Metrics Export
+    # ===========================================
+    prometheus = {
+      namespace = "ha";
+      filter = {
+        include_domains = ["sensor" "binary_sensor" "light" "switch" "climate" "automation"];
+      };
+    };
+
+    # ===========================================
     # System Monitor Integration
     # ===========================================
     # System Monitor configured via UI (see docs/manual-config.md)
