@@ -26,6 +26,9 @@ pkgs.testers.nixosTest {
     # Tests validate system builds & services start, not secret management
     sops.age.generateKey = lib.mkForce false;
 
+    # Override InfluxDB secret owner (influxdb2 user exists but avoid evaluation issues)
+    sops.secrets.influxdb-admin-token.owner = lib.mkForce "root";
+
     # Override Grafana to not use sops secret
     services.grafana.settings.security = lib.mkForce {
       admin_user = "admin";
