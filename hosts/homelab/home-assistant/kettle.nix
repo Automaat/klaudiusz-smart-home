@@ -53,23 +53,23 @@
       };
 
       # Template switch combining REST commands + sensor state
-      switch = [
+      # Modern template syntax (2026.6+)
+      template = [
         {
-          platform = "template";
-          switches = {
-            czajnik = {
-              friendly_name = "Czajnik";
+          switch = [
+            {
+              name = "Czajnik";
               unique_id = "fellow_kettle_switch";
               # Check actual heating mode from API
-              value_template = "{{ states('sensor.czajnik_stan') == 'S_On' }}";
-              turn_on = {
-                service = "rest_command.kettle_heaton";
-              };
-              turn_off = {
-                service = "rest_command.kettle_heatoff";
-              };
-            };
-          };
+              state = "{{ states('sensor.czajnik_stan') == 'S_On' }}";
+              turn_on = [
+                {action = "rest_command.kettle_heaton";}
+              ];
+              turn_off = [
+                {action = "rest_command.kettle_heatoff";}
+              ];
+            }
+          ];
         }
       ];
     };
