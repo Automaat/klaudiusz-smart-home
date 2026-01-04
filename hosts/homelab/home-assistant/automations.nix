@@ -300,7 +300,7 @@
         action = [
           {
             service = "climate.set_temperature";
-            target.entity_id = "climate.better_thermostat_livingroom";
+            target.entity_id = "climate.livingroom_thermostat";
             data.temperature = 21;
           }
         ];
@@ -318,7 +318,7 @@
         action = [
           {
             service = "climate.set_temperature";
-            target.entity_id = "climate.better_thermostat_livingroom";
+            target.entity_id = "climate.livingroom_thermostat";
             data.temperature = 18;
           }
         ];
