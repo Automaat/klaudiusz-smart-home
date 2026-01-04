@@ -26,9 +26,6 @@ pkgs.testers.nixosTest {
     # Tests validate system builds & services start, not secret management
     sops.age.generateKey = lib.mkForce false;
 
-    # Override secrets with disabled services to prevent missing user errors
-    sops.secrets.influxdb-admin-token.owner = lib.mkForce "root";
-
     # Override Grafana to not use sops secret
     services.grafana.settings.security = lib.mkForce {
       admin_user = "admin";
@@ -55,9 +52,16 @@ pkgs.testers.nixosTest {
     services.wyoming.faster-whisper.servers.default.enable = lib.mkForce false;
     services.wyoming.piper.servers.default.enable = lib.mkForce false;
 
-    # Disable InfluxDB services (not critical for VM integration tests, validated separately)
-    services.influxdb2.enable = lib.mkForce false;
-    systemd.services.influxdb2-init.enable = lib.mkForce false;
+    # Fast mock InfluxDB init for VM tests (keeps service enabled but avoids slow setup)
+    systemd.services.influxdb2-init = {
+      serviceConfig.TimeoutStartSec = lib.mkForce "5s";
+      script = lib.mkForce ''
+        # Mock init for VM tests - skip real influx setup
+        # InfluxDB runs uninitialized; HA retries in background
+        sleep 2
+        echo "InfluxDB mock init complete (VM test mode)"
+      '';
+    };
 
     # Override Grafana path-based secret waiting for VM tests
     # In tests, sops creates secrets during activation (before systemd units start)
