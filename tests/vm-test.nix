@@ -34,11 +34,33 @@ pkgs.testers.nixosTest {
     sops.secrets.influxdb-admin-token.owner = lib.mkForce "root";
     sops.secrets.influxdb-admin-password.owner = lib.mkForce "root";
 
-    # Override Grafana to not use sops secret
+    # Override Grafana to not use sops secrets
     services.grafana.settings.security = lib.mkForce {
       admin_user = "admin";
       admin_password = "test-password";
     };
+    services.grafana.provision.datasources.settings.datasources = lib.mkForce [
+      {
+        name = "Prometheus";
+        type = "prometheus";
+        url = "http://localhost:9090";
+        isDefault = true;
+      }
+      {
+        name = "InfluxDB";
+        type = "influxdb";
+        url = "http://localhost:8086";
+        isDefault = false;
+        jsonData = {
+          version = "Flux";
+          organization = "homeassistant";
+          defaultBucket = "home-assistant";
+        };
+        secureJsonData = {
+          token = "test-token";
+        };
+      }
+    ];
 
     # Override PostgreSQL settings for VM test (limited memory)
     services.postgresql.settings = lib.mkForce {
