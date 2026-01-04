@@ -254,6 +254,7 @@
     serviceConfig = {
       Type = "oneshot";
       RemainAfterExit = true;
+      TimeoutStartSec = "90s";
     };
     script = ''
       # Wait for InfluxDB to be ready
