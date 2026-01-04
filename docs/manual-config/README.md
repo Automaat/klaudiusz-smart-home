@@ -9,6 +9,7 @@ Home Assistant UI.
 - **[Zigbee Home Automation (ZHA)](zha.md)** - Zigbee device pairing and setup
 - **[Better Thermostat](better-thermostat.md)** - Use external temperature sensors for thermostat control
 - **[GIOŚ Air Quality](gios.md)** - Polish air quality monitoring
+- **[InfluxDB](influxdb.md)** - Time-series database for metrics (365d retention)
 - **[System Monitor](system-monitor.md)** - System resource monitoring
 - **[Wyoming Protocol](wyoming-protocol.md)** - Speech-to-text and text-to-speech services
 - **[Voice Assistant Preview Edition](voice-assistant-preview.md)** - Voice hardware setup

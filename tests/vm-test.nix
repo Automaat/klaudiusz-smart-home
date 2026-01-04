@@ -41,12 +41,14 @@ pkgs.testers.nixosTest {
         type = "prometheus";
         url = "http://localhost:9090";
         isDefault = true;
+        uid = "prometheus";
       }
       {
         name = "InfluxDB";
         type = "influxdb";
         url = "http://localhost:8086";
         isDefault = false;
+        uid = "influxdb";
         jsonData = {
           version = "Flux";
           organization = "homeassistant";

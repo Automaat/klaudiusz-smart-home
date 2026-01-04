@@ -7,6 +7,7 @@
   imports = [
     ./hardware-configuration.nix
     ./home-assistant
+    ./grafana
     ./secrets.nix
   ];
 
@@ -151,7 +152,7 @@
   services.prometheus = {
     enable = true;
     port = 9090;
-    retentionTime = "15d";
+    retentionTime = "365d";
     checkConfig = false; # Disable check - bearer_token_file unavailable at build time
 
     exporters.node = {
@@ -187,68 +188,10 @@
   };
 
   # ===========================================
-  # Monitoring - Grafana
-  # ===========================================
-  # Accessible on local network (192.168.0.241:3000) and Tailscale
-  services.grafana = {
-    enable = true;
-    settings = {
-      server = {
-        http_addr = "0.0.0.0"; # Bind to all interfaces (Tailscale can access)
-        http_port = 3000;
-      };
-      security = {
-        admin_user = "admin";
-        admin_password = "$__file{${config.sops.secrets.grafana-admin-password.path}}";
-      };
-    };
-    provision = {
-      enable = true;
-      datasources.settings.datasources = [
-        {
-          name = "Prometheus";
-          type = "prometheus";
-          url = "http://localhost:9090";
-          isDefault = true;
-        }
-        {
-          name = "InfluxDB";
-          type = "influxdb";
-          url = "http://localhost:8086";
-          isDefault = false;
-          jsonData = {
-            version = "Flux";
-            organization = "homeassistant";
-            defaultBucket = "home-assistant";
-          };
-          secureJsonData = {
-            token = "$__file{${config.sops.secrets.influxdb-admin-token.path}}";
-          };
-        }
-      ];
-    };
-  };
-
-  # Grafana waits for sops-nix secrets via sops.secrets.<name>.restartUnits
-  # No additional systemd dependencies needed
-
-  # Grafana restart limits + failure notification
-  systemd.services.grafana = {
-    serviceConfig = {
-      # Limit restart attempts: 5 tries within 5 minutes, then give up
-      StartLimitBurst = 5;
-      StartLimitIntervalSec = 300;
-      # Wait 10s between restart attempts
-      RestartSec = "10s";
-    };
-    # Send Telegram alert when service fails permanently
-    unitConfig.OnFailure = "notify-service-failure@%n.service";
-  };
-
-  # ===========================================
   # Monitoring - InfluxDB
   # ===========================================
   # Time-series database for Home Assistant entity states
+  # 365d retention configured via init service
   services.influxdb2 = {
     enable = true;
     settings = {
@@ -303,6 +246,19 @@
         exit 1
       fi
     '';
+  };
+
+  # Grafana restart limits + failure notification
+  systemd.services.grafana = {
+    serviceConfig = {
+      # Limit restart attempts: 5 tries within 5 minutes, then give up
+      StartLimitBurst = 5;
+      StartLimitIntervalSec = 300;
+      # Wait 10s between restart attempts
+      RestartSec = "10s";
+    };
+    # Send Telegram alert when service fails permanently
+    unitConfig.OnFailure = "notify-service-failure@%n.service";
   };
 
   # ===========================================

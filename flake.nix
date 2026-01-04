@@ -77,6 +77,10 @@
         inherit lib pkgs nixosConfig;
       };
 
+      grafanaDashboards = import ./tests/grafana-dashboards.nix {
+        inherit lib pkgs nixosConfig;
+      };
+
       vmTest = import ./tests/vm-test.nix {
         inherit pkgs self comin sops-nix;
       };
@@ -114,6 +118,7 @@
       # Enhanced validation checks
       jinja2-validation = jinja2Validation.all;
       entity-references = entityReferences.all;
+      grafana-dashboards = grafanaDashboards.all;
 
       # NixOS VM integration test
       vm-integration-test = vmTest;
@@ -123,6 +128,7 @@
         echo "Running all static tests..."
         echo "Enhanced validation - Jinja2: $(cat ${self.checks.${system}.jinja2-validation})"
         echo "Enhanced validation - Entity references: $(cat ${self.checks.${system}.entity-references})"
+        echo "Grafana dashboards: $(cat ${self.checks.${system}.grafana-dashboards})"
         echo "Config validation result: $(cat ${self.checks.${system}.config-validation})"
         echo "Schema validation result: $(cat ${self.checks.${system}.schema-validation})"
         echo "Service validation result: $(cat ${self.checks.${system}.service-validation})"

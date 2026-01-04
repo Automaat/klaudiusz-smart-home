@@ -23,6 +23,22 @@ try:
     homelab.wait_for_unit("grafana.service")
     homelab.wait_for_open_port(3000)
     homelab.succeed("curl -f http://localhost:3000/api/health")
+
+    # Check Prometheus datasource is configured
+    homelab.succeed("curl -f http://admin:test-password@localhost:3000/api/datasources/uid/prometheus")
+
+    # Check dashboards are provisioned (expect at least 4 dashboards)
+    dashboard_count = homelab.succeed(
+        "curl -sf http://admin:test-password@localhost:3000/api/search | jq 'length'"
+    ).strip()
+    print(f"Grafana dashboards provisioned: {dashboard_count}")
+    homelab.succeed(f"[ {dashboard_count} -ge 4 ]")
+
+    # Check specific custom dashboard exists (service-health)
+    homelab.succeed(
+        "curl -f http://admin:test-password@localhost:3000/api/dashboards/uid/service-health"
+    )
+
 except Exception as e:
     print(f"Grafana failed: {e}")
     print(homelab.succeed("journalctl -u grafana.service -n 50 --no-pager"))
