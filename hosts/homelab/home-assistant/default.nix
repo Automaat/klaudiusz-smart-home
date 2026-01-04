@@ -45,6 +45,7 @@ in {
     ./intents.nix
     ./automations.nix
     ./monitoring.nix
+    ./kettle.nix
   ];
 
   # ===========================================
@@ -227,6 +228,7 @@ in {
       builtins.readFile ./intents.nix
       + builtins.readFile ./automations.nix
       + builtins.readFile ./monitoring.nix
+      + builtins.readFile ./kettle.nix
     );
 
     # Allow USB device access for Bluetooth adapter management
