@@ -15,17 +15,26 @@
       #   mode=S_Off / S_On
       #   tempr=23.201085 C
 
-      # Command line sensor for kettle temperature
+      # Command line sensors for kettle state
       # Uses curl + grep to parse text response
-      sensor = [
+      command_line = [
         {
-          platform = "command_line";
-          name = "Czajnik Temperatura";
-          unique_id = "fellow_kettle_temperature";
-          command = "curl -s 'http://192.168.0.47/cli?cmd=state' | grep 'tempr=' | cut -d= -f2 | cut -d' ' -f1";
-          unit_of_measurement = "°C";
-          device_class = "temperature";
-          scan_interval = 30;
+          sensor = {
+            name = "Czajnik Temperatura";
+            unique_id = "fellow_kettle_temperature";
+            command = "curl -s --max-time 5 'http://192.168.0.47/cli?cmd=state' | grep 'tempr=' | cut -d= -f2 | cut -d' ' -f1";
+            unit_of_measurement = "°C";
+            device_class = "temperature";
+            scan_interval = 30;
+          };
+        }
+        {
+          sensor = {
+            name = "Czajnik Stan";
+            unique_id = "fellow_kettle_mode";
+            command = "curl -s --max-time 5 'http://192.168.0.47/cli?cmd=state' | grep 'mode=' | cut -d= -f2";
+            scan_interval = 30;
+          };
         }
       ];
 
@@ -34,10 +43,12 @@
         kettle_heaton = {
           url = "http://192.168.0.47/cli?cmd=heaton";
           method = "get";
+          timeout = 5;
         };
         kettle_heatoff = {
           url = "http://192.168.0.47/cli?cmd=heatoff";
           method = "get";
+          timeout = 5;
         };
       };
 
@@ -49,9 +60,8 @@
             czajnik = {
               friendly_name = "Czajnik";
               unique_id = "fellow_kettle_switch";
-              # Check if temperature is rising (heating)
-              # Note: Imperfect - kettle doesn't expose actual heating state via API
-              value_template = "{{ states('sensor.czajnik_temperatura')|float(0) > 25 }}";
+              # Check actual heating mode from API
+              value_template = "{{ states('sensor.czajnik_stan') == 'S_On' }}";
               turn_on = {
                 service = "rest_command.kettle_heaton";
               };
