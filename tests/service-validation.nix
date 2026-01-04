@@ -6,6 +6,8 @@
   haConfig = nixosConfig.services.home-assistant.config;
   postgresConfig = nixosConfig.services.postgresql;
   haServiceConfig = nixosConfig.systemd.services.home-assistant.serviceConfig;
+  prometheusConfig = nixosConfig.services.prometheus;
+  grafanaConfig = nixosConfig.services.grafana;
 
   # =============================================
   # PostgreSQL Recorder Validation
@@ -107,6 +109,84 @@
         ''
       else "PASS: home-assistant service has postgres supplementary group for socket auth"
     else "PASS: Not using PostgreSQL socket authentication";
+
+  # =============================================
+  # Prometheus Validation
+  # =============================================
+
+  # Test 5: Prometheus retention should be 365d for long-term analysis
+  prometheusRetentionCorrect =
+    if prometheusConfig.enable
+    then
+      if prometheusConfig.retentionTime != "365d"
+      then
+        throw ''
+          FAIL: Prometheus retention time misconfigured
+          Expected: 365d (1 year for long-term trends)
+          Actual: ${prometheusConfig.retentionTime}
+        ''
+      else "PASS: Prometheus retention set to 365d"
+    else "PASS: Prometheus not enabled";
+
+  # =============================================
+  # Grafana Validation
+  # =============================================
+
+  # Test 6: Grafana dashboard provisioning must be enabled
+  grafanaDashboardProvisioningEnabled =
+    if grafanaConfig.enable
+    then
+      if !grafanaConfig.provision.enable
+      then
+        throw ''
+          FAIL: Grafana provisioning not enabled
+          services.grafana.provision.enable must be true
+        ''
+      else "PASS: Grafana provisioning enabled"
+    else "PASS: Grafana not enabled";
+
+  # Test 7: Dashboard providers must include required categories
+  grafanaDashboardProvidersValid =
+    if grafanaConfig.enable && grafanaConfig.provision.enable
+    then let
+      providers = grafanaConfig.provision.dashboards.settings.providers or [];
+      providerNames = builtins.map (p: p.name) providers;
+      requiredProviders = ["Infrastructure" "Smart Home" "Services"];
+      missingProviders = lib.filter (name: !builtins.elem name providerNames) requiredProviders;
+    in
+      if builtins.length missingProviders > 0
+      then
+        throw ''
+          FAIL: Grafana dashboard providers missing
+          Required: ${lib.concatStringsSep ", " requiredProviders}
+          Found: ${lib.concatStringsSep ", " providerNames}
+          Missing: ${lib.concatStringsSep ", " missingProviders}
+        ''
+      else "PASS: All required Grafana dashboard providers configured"
+    else "PASS: Grafana provisioning not configured";
+
+  # Test 8: Prometheus datasource must be configured
+  grafanaPrometheusDataSourceConfigured =
+    if grafanaConfig.enable && grafanaConfig.provision.enable
+    then let
+      datasources = grafanaConfig.provision.datasources.settings.datasources or [];
+      promDs = lib.findFirst (ds: ds.type == "prometheus") null datasources;
+    in
+      if promDs == null
+      then
+        throw ''
+          FAIL: Prometheus datasource not configured in Grafana
+          services.grafana.provision.datasources.settings.datasources must include prometheus
+        ''
+      else if (promDs.uid or "") != "prometheus"
+      then
+        throw ''
+          FAIL: Prometheus datasource UID misconfigured
+          Expected: prometheus
+          Actual: ${promDs.uid or "not set"}
+        ''
+      else "PASS: Prometheus datasource configured with correct UID"
+    else "PASS: Grafana provisioning not configured";
 in {
   # Export test results
   inherit
@@ -114,6 +194,10 @@ in {
     databaseNameMatches
     databaseUserExists
     socketAuthConfigured
+    prometheusRetentionCorrect
+    grafanaDashboardProvisioningEnabled
+    grafanaDashboardProvidersValid
+    grafanaPrometheusDataSourceConfigured
     ;
 
   # Summary test that fails if any check fails
@@ -122,5 +206,9 @@ in {
     databaseNameMatches
     databaseUserExists
     socketAuthConfigured
+    prometheusRetentionCorrect
+    grafanaDashboardProvisioningEnabled
+    grafanaDashboardProvidersValid
+    grafanaPrometheusDataSourceConfigured
   ] "PASS: All service validation tests passed";
 }
