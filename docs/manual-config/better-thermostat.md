@@ -1,8 +1,13 @@
 # Better Thermostat
 
-**Why manual?** Better Thermostat is a HACS custom integration that creates a virtual thermostat using external temperature sensors. The installation and configuration must be done through the Home Assistant UI as it's not a core HA component and cannot be configured declaratively.
+**Why manual?** Better Thermostat is a HACS custom integration that creates
+a virtual thermostat using external temperature sensors. The installation and
+configuration must be done through the Home Assistant UI as it's not a core HA
+component and cannot be configured declaratively.
 
-**When to do this:** When a thermostat has an inaccurate built-in temperature sensor and you want to use a separate, more accurate temperature sensor to control heating.
+**When to do this:** When a thermostat has an inaccurate built-in temperature
+sensor and you want to use a separate, more accurate temperature sensor to
+control heating.
 
 ## Prerequisites
 
@@ -68,6 +73,7 @@ With climate intents enabled, test voice commands:
 - **Polish**: "Jaka temperatura w salonie?"
 
 The Better Thermostat entity will:
+
 - Read temperature from external sensor
 - Control the physical thermostat based on that reading
 - Maintain target temperature more accurately
@@ -91,19 +97,24 @@ Look for automation triggers at 06:00 (21°C) and 22:00 (18°C).
 ## Troubleshooting
 
 **Better Thermostat not controlling physical thermostat:**
+
 - Verify physical thermostat is on and responsive
 - Check Better Thermostat mode is set correctly for your heating type
-- Review Better Thermostat logs: **Settings** → **System** → **Logs** → Filter "better_thermostat"
+- Review Better Thermostat logs: **Settings** → **System** → **Logs** →
+  Filter "better_thermostat"
 
 **Temperature not accurate:**
+
 - Verify external sensor is reporting valid temperature
 - Adjust **Temperature Calibration** offset if needed
 - Check sensor update frequency (should update every 1-2 minutes)
 
 **Voice commands not working:**
+
 - Verify area name in HA matches voice command (e.g., "salon" or "livingroom")
 - Check climate intents are uncommented in configuration
-- Restart Home Assistant after changes: `ssh homelab "sudo systemctl restart home-assistant"`
+- Restart Home Assistant after changes:
+  `ssh homelab "sudo systemctl restart home-assistant"`
 
 ## Related Documentation
 
