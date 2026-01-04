@@ -76,13 +76,13 @@ You can test by manually adjusting the target temperature through the UI.
 2. Click device → Check **Current Temperature** matches external sensor
 3. Change target temperature and verify physical thermostat responds
 
-**Check scheduled automations work:**
+**Check logs for errors:**
 
 ```bash
-ssh homelab "journalctl -u home-assistant | grep -i 'livingroom_thermostat'"
+ssh homelab "journalctl -u home-assistant | grep -i 'better_thermostat'"
 ```
 
-Look for automation triggers at 06:00 (21°C) and 22:00 (18°C).
+Look for successful initialization and no errors.
 
 ## Troubleshooting
 

@@ -286,45 +286,6 @@
       }
 
       # -----------------------------------------
-      # Livingroom
-      # -----------------------------------------
-      {
-        id = "livingroom_thermostat_morning";
-        alias = "Climate - Livingroom morning heat";
-        trigger = [
-          {
-            platform = "time";
-            at = "06:00:00";
-          }
-        ];
-        action = [
-          {
-            service = "climate.set_temperature";
-            target.entity_id = "climate.better_thermostat_livingroom";
-            data.temperature = 21;
-          }
-        ];
-      }
-
-      {
-        id = "livingroom_thermostat_night";
-        alias = "Climate - Livingroom night lower";
-        trigger = [
-          {
-            platform = "time";
-            at = "22:00:00";
-          }
-        ];
-        action = [
-          {
-            service = "climate.set_temperature";
-            target.entity_id = "climate.better_thermostat_livingroom";
-            data.temperature = 18;
-          }
-        ];
-      }
-
-      # -----------------------------------------
       # Mode Management (Placeholder - no devices yet)
       # -----------------------------------------
       # {
