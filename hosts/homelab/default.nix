@@ -191,6 +191,7 @@
   # Monitoring - InfluxDB
   # ===========================================
   # Time-series database for Home Assistant entity states
+  # 365d retention configured via init service
   services.influxdb2 = {
     enable = true;
     settings = {
@@ -259,6 +260,7 @@
     # Send Telegram alert when service fails permanently
     unitConfig.OnFailure = "notify-service-failure@%n.service";
   };
+
 
   # ===========================================
   # PostgreSQL Database

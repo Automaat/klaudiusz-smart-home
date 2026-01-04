@@ -27,6 +27,21 @@
           isDefault = true;
           uid = "prometheus"; # Explicit UID for dashboard references
         }
+        {
+          name = "InfluxDB";
+          type = "influxdb";
+          url = "http://localhost:8086";
+          uid = "influxdb";
+          jsonData = {
+            version = "Flux"; # InfluxDB 2.x uses Flux query language
+            organization = "homeassistant";
+            defaultBucket = "home-assistant";
+            tlsSkipVerify = true;
+          };
+          secureJsonData = {
+            token = "$__file{${config.sops.secrets.influxdb-admin-token.path}}";
+          };
+        }
       ];
 
       # Dashboard Provisioning
