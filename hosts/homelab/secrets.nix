@@ -44,5 +44,12 @@
       mode = "0400";
       restartUnits = ["home-assistant.service"];
     };
+
+    # InfluxDB admin token
+    "influxdb-admin-token" = {
+      owner = "influxdb2";
+      mode = "0400";
+      restartUnits = ["influxdb2.service" "grafana.service"];
+    };
   };
 }

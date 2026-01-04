@@ -211,12 +211,74 @@
           url = "http://localhost:9090";
           isDefault = true;
         }
+        {
+          name = "InfluxDB";
+          type = "influxdb";
+          url = "http://localhost:8086";
+          isDefault = false;
+          jsonData = {
+            version = "Flux";
+            organization = "homeassistant";
+            defaultBucket = "home-assistant";
+          };
+          secureJsonData = {
+            token = "$__file{${config.sops.secrets.influxdb-admin-token.path}}";
+          };
+        }
       ];
     };
   };
 
   # Grafana waits for sops-nix secrets via sops.secrets.<name>.restartUnits
   # No additional systemd dependencies needed
+
+  # ===========================================
+  # Monitoring - InfluxDB
+  # ===========================================
+  # Time-series database for Home Assistant entity states
+  services.influxdb2 = {
+    enable = true;
+    settings = {
+      http-bind-address = "127.0.0.1:8086";
+      reporting-disabled = true;
+    };
+  };
+
+  # InfluxDB initialization (org, bucket, user)
+  systemd.services.influxdb2-init = {
+    description = "Initialize InfluxDB for Home Assistant";
+    after = ["influxdb2.service"];
+    requires = ["influxdb2.service"];
+    wantedBy = ["multi-user.target"];
+    path = [pkgs.influxdb2];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+    };
+    script = ''
+      # Wait for InfluxDB to be ready
+      until influx ping &>/dev/null; do
+        echo "Waiting for InfluxDB..."
+        sleep 1
+      done
+
+      # Check if setup already done
+      if influx org list 2>/dev/null | grep -q homeassistant; then
+        echo "InfluxDB already initialized"
+        exit 0
+      fi
+
+      # Initial setup
+      influx setup \
+        --org homeassistant \
+        --bucket home-assistant \
+        --username admin \
+        --password $(cat ${config.sops.secrets.influxdb-admin-token.path}) \
+        --token $(cat ${config.sops.secrets.influxdb-admin-token.path}) \
+        --retention 365d \
+        --force
+    '';
+  };
 
   # ===========================================
   # PostgreSQL Database
