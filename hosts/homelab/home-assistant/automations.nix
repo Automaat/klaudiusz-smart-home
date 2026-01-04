@@ -286,6 +286,45 @@
       }
 
       # -----------------------------------------
+      # Living Room
+      # -----------------------------------------
+      {
+        id = "living_room_temperature_morning";
+        alias = "Living Room - Morning temperature";
+        trigger = [
+          {
+            platform = "time";
+            at = "06:00:00";
+          }
+        ];
+        action = [
+          {
+            service = "climate.set_temperature";
+            target.entity_id = "climate.better_thermostat_livingroom";
+            data.temperature = 21;
+          }
+        ];
+      }
+
+      {
+        id = "living_room_temperature_evening";
+        alias = "Living Room - Evening temperature";
+        trigger = [
+          {
+            platform = "time";
+            at = "22:00:00";
+          }
+        ];
+        action = [
+          {
+            service = "climate.set_temperature";
+            target.entity_id = "climate.better_thermostat_livingroom";
+            data.temperature = 18;
+          }
+        ];
+      }
+
+      # -----------------------------------------
       # Mode Management (Placeholder - no devices yet)
       # -----------------------------------------
       # {
