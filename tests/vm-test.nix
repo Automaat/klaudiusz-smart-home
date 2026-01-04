@@ -55,15 +55,11 @@ pkgs.testers.nixosTest {
     services.wyoming.faster-whisper.servers.default.enable = lib.mkForce false;
     services.wyoming.piper.servers.default.enable = lib.mkForce false;
 
-    # Fast mock InfluxDB init for VM tests (keeps service enabled but avoids slow setup)
+    # Run real InfluxDB init in VM tests (validates full integration)
     systemd.services.influxdb2-init = {
-      serviceConfig.TimeoutStartSec = lib.mkForce "5s";
-      script = lib.mkForce ''
-        # Mock init for VM tests - skip real influx setup
-        # InfluxDB runs uninitialized; HA retries in background
-        sleep 2
-        echo "InfluxDB mock init complete (VM test mode)"
-      '';
+      serviceConfig.TimeoutStartSec = lib.mkForce "90s";
+      # Keep real init script from production config
+      # This properly initializes InfluxDB so Grafana/HA can connect
     };
 
     # Override Grafana path-based secret waiting for VM tests
