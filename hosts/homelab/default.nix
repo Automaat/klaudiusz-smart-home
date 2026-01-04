@@ -214,15 +214,8 @@
     };
   };
 
-  # Ensure Grafana waits for sops secret file
-  systemd.paths.grafana-secret = {
-    wantedBy = ["grafana.service"];
-    pathConfig.PathExists = config.sops.secrets.grafana-admin-password.path;
-  };
-  systemd.services.grafana = {
-    after = ["grafana-secret.path"];
-    requires = ["grafana-secret.path"];
-  };
+  # Grafana waits for sops-nix secrets via sops.secrets.<name>.restartUnits
+  # No additional systemd dependencies needed
 
   # ===========================================
   # PostgreSQL Database
