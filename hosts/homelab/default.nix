@@ -268,6 +268,11 @@
       Type = "oneshot";
       RemainAfterExit = true;
       TimeoutStartSec = "90s";
+      # Load credentials without exposing in argv
+      LoadCredential = [
+        "password:${config.sops.secrets.influxdb-admin-password.path}"
+        "token:${config.sops.secrets.influxdb-admin-token.path}"
+      ];
     };
     script = ''
       # Wait for InfluxDB to be ready
@@ -276,21 +281,27 @@
         sleep 1
       done
 
-      # Check if setup already done
-      if influx org list 2>/dev/null | grep -q homeassistant; then
-        echo "InfluxDB already initialized"
+      # Idempotency: check marker file
+      if [ -f /var/lib/influxdb2/.homeassistant-initialized ]; then
+        echo "InfluxDB already initialized (marker file present)"
         exit 0
       fi
 
-      # Initial setup
-      influx setup \
+      # Initial setup with separate password and token
+      if influx setup \
         --org homeassistant \
         --bucket home-assistant \
         --username admin \
-        --password $(cat ${config.sops.secrets.influxdb-admin-token.path}) \
-        --token $(cat ${config.sops.secrets.influxdb-admin-token.path}) \
+        --password $(cat "$CREDENTIALS_DIRECTORY/password") \
+        --token $(cat "$CREDENTIALS_DIRECTORY/token") \
         --retention 365d \
-        --force
+        --force; then
+        touch /var/lib/influxdb2/.homeassistant-initialized
+        echo "InfluxDB initialized for Home Assistant"
+      else
+        echo "InfluxDB initialization failed" >&2
+        exit 1
+      fi
     '';
   };
 
@@ -372,10 +383,12 @@
       description = "Send Telegram notification when %i fails";
       serviceConfig = {
         Type = "oneshot";
+        # Load token from file without exposing in argv
+        LoadCredential = "ha-token:${config.sops.secrets.home-assistant-prometheus-token.path}";
         # Call Home Assistant notify service via curl
         ExecStart = ''
           ${pkgs.curl}/bin/curl -X POST \
-            -H "Authorization: Bearer $(cat ${config.sops.secrets.home-assistant-prometheus-token.path})" \
+            -H "Authorization: Bearer $(cat $CREDENTIALS_DIRECTORY/ha-token)" \
             -H "Content-Type: application/json" \
             -d '{"message": "⚠️ Service failure: %i exceeded restart limit (5 attempts in 5 min)", "title": "Homelab Alert"}' \
             http://localhost:8123/api/services/notify/telegram

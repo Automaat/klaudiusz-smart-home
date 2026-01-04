@@ -104,6 +104,13 @@
             Datasource org: ${influxdbDs.jsonData.organization or "null"}
             Expected: homeassistant
           ''
+        else if (influxdbDs.jsonData.defaultBucket or null) != "home-assistant"
+        then
+          throw ''
+            FAIL: Grafana InfluxDB datasource bucket mismatch
+            Datasource bucket: ${influxdbDs.jsonData.defaultBucket or "null"}
+            Expected: home-assistant
+          ''
         else "PASS: Grafana has valid InfluxDB datasource"
     else "PASS: InfluxDB or Grafana not enabled";
 

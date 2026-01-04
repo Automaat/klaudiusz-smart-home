@@ -45,11 +45,18 @@
       restartUnits = ["home-assistant.service"];
     };
 
-    # InfluxDB admin token
+    # InfluxDB admin token (API authentication)
     "influxdb-admin-token" = {
       owner = "influxdb2";
       mode = "0400";
-      restartUnits = ["influxdb2.service" "grafana.service"];
+      restartUnits = ["influxdb2.service" "grafana.service" "home-assistant.service"];
+    };
+
+    # InfluxDB admin password (user authentication, separate for independent rotation)
+    "influxdb-admin-password" = {
+      owner = "influxdb2";
+      mode = "0400";
+      restartUnits = ["influxdb2.service"];
     };
   };
 }
