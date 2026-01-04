@@ -232,6 +232,19 @@
   # Grafana waits for sops-nix secrets via sops.secrets.<name>.restartUnits
   # No additional systemd dependencies needed
 
+  # Grafana restart limits + failure notification
+  systemd.services.grafana = {
+    serviceConfig = {
+      # Limit restart attempts: 5 tries within 5 minutes, then give up
+      StartLimitBurst = 5;
+      StartLimitIntervalSec = 300;
+      # Wait 10s between restart attempts
+      RestartSec = "10s";
+    };
+    # Send Telegram alert when service fails permanently
+    unitConfig.OnFailure = "notify-service-failure@%n.service";
+  };
+
   # ===========================================
   # Monitoring - InfluxDB
   # ===========================================
@@ -331,9 +344,44 @@
       # Bluetooth capabilities auto-added by NixOS module for bluetooth components
       Restart = "on-failure";
       RestartSec = "10";
+      # Restart limits
+      StartLimitBurst = 5;
+      StartLimitIntervalSec = 300;
     };
+    home-assistant.unitConfig.OnFailure = "notify-service-failure@%n.service";
+
+    influxdb2.serviceConfig = {
+      StartLimitBurst = 5;
+      StartLimitIntervalSec = 300;
+      RestartSec = "10s";
+    };
+    influxdb2.unitConfig.OnFailure = "notify-service-failure@%n.service";
+
+    prometheus.serviceConfig = {
+      StartLimitBurst = 5;
+      StartLimitIntervalSec = 300;
+      RestartSec = "10s";
+    };
+    prometheus.unitConfig.OnFailure = "notify-service-failure@%n.service";
+
     wyoming-faster-whisper-default.serviceConfig.Restart = "on-failure";
     wyoming-piper-default.serviceConfig.Restart = "on-failure";
+
+    # Telegram notification service template for service failures
+    "notify-service-failure@" = {
+      description = "Send Telegram notification when %i fails";
+      serviceConfig = {
+        Type = "oneshot";
+        # Call Home Assistant notify service via curl
+        ExecStart = ''
+          ${pkgs.curl}/bin/curl -X POST \
+            -H "Authorization: Bearer $(cat ${config.sops.secrets.home-assistant-prometheus-token.path})" \
+            -H "Content-Type: application/json" \
+            -d '{"message": "⚠️ Service failure: %i exceeded restart limit (5 attempts in 5 min)", "title": "Homelab Alert"}' \
+            http://localhost:8123/api/services/notify/telegram
+        '';
+      };
+    };
   };
 
   # ===========================================
