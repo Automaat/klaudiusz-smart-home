@@ -39,6 +39,7 @@
       enable = true;
       allowedTCPPorts = [
         22 # SSH
+        3000 # Grafana
         8123 # Home Assistant
       ];
       allowedUDPPorts = [
@@ -188,7 +189,7 @@
   # ===========================================
   # Monitoring - Grafana
   # ===========================================
-  # Accessible via Tailscale only (not exposed on public network)
+  # Accessible on local network (192.168.0.241:3000) and Tailscale
   services.grafana = {
     enable = true;
     settings = {
