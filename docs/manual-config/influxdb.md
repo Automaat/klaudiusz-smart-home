@@ -2,7 +2,8 @@
 
 ## Overview
 
-InfluxDB time-series database for Home Assistant metrics with 365-day retention. Declarative service enabled in NixOS, but initial setup and HA integration require GUI configuration.
+InfluxDB time-series database for Home Assistant metrics with 365-day retention.
+Declarative service enabled in NixOS, but initial setup and HA integration require GUI configuration.
 
 ## Why Manual Configuration?
 
@@ -117,10 +118,10 @@ Click **"Submit"**
    - **Recommended**: Exclude high-frequency entities (timestamps, trackers)
    - **Custom**: Select specific domains
 
-**Suggested exclusions:**
+   **Suggested exclusions:**
 
-- Domains: `persistent_notification`, `update`, `scene`
-- Entity patterns: `*_last_*`, `*_timestamp`
+   - Domains: `persistent_notification`, `update`, `scene`
+   - Entity patterns: `*_last_*`, `*_timestamp`
 
 3. Click **"Submit"**
 

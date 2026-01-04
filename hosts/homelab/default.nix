@@ -261,7 +261,6 @@
     unitConfig.OnFailure = "notify-service-failure@%n.service";
   };
 
-
   # ===========================================
   # PostgreSQL Database
   # ===========================================
