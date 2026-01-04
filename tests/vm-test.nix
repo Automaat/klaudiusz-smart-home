@@ -30,10 +30,6 @@ pkgs.testers.nixosTest {
     # Tests validate system builds & services start, not secret management
     sops.age.generateKey = lib.mkForce false;
 
-    # Override InfluxDB secret owners (influxdb2 user exists but avoid evaluation issues)
-    sops.secrets.influxdb-admin-token.owner = lib.mkForce "root";
-    sops.secrets.influxdb-admin-password.owner = lib.mkForce "root";
-
     # Override Grafana to not use sops secrets
     services.grafana.settings.security = lib.mkForce {
       admin_user = "admin";
@@ -82,16 +78,14 @@ pkgs.testers.nixosTest {
     services.wyoming.faster-whisper.servers.default.enable = lib.mkForce false;
     services.wyoming.piper.servers.default.enable = lib.mkForce false;
 
-    # Run real InfluxDB init in VM tests (validates full integration)
-    systemd.services.influxdb2-init = let
-      cfg = config.sops.secrets;
-    in {
+    # Run InfluxDB init in VM tests with hardcoded credentials
+    systemd.services.influxdb2-init = {
       serviceConfig = {
         TimeoutStartSec = lib.mkForce "90s";
-        # Disable LoadCredential in tests - read secrets directly
+        # Disable LoadCredential in tests - use hardcoded values
         LoadCredential = lib.mkForce [];
       };
-      # Override script to use direct secret paths instead of LoadCredential
+      # Override script with inline test credentials (no sops paths)
       script = lib.mkForce ''
         until influx ping &>/dev/null; do
           echo "Waiting for InfluxDB..."
@@ -107,8 +101,8 @@ pkgs.testers.nixosTest {
           --org homeassistant \
           --bucket home-assistant \
           --username admin \
-          --password $(cat ${cfg.influxdb-admin-password.path}) \
-          --token $(cat ${cfg.influxdb-admin-token.path}) \
+          --password test-password \
+          --token test-token \
           --retention 365d \
           --force; then
           touch /var/lib/influxdb2/.homeassistant-initialized
