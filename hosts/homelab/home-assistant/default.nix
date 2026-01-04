@@ -179,6 +179,7 @@ in {
         api_version = 2;
         host = "localhost";
         port = 8086;
+        ssl = false;
         organization = "homeassistant";
         bucket = "home-assistant";
         token = "!secret influxdb_token";
