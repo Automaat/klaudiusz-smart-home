@@ -8,7 +8,7 @@
 pkgs.testers.nixosTest {
   name = "homelab-integration-test";
 
-  nodes.homelab = {lib, ...}: {
+  nodes.homelab = {config, lib, ...}: {
     # Import the homelab configuration with required modules
     imports = [
       comin.nixosModules.comin
