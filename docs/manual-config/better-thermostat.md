@@ -1,9 +1,9 @@
 # Better Thermostat
 
-**Why manual?** Better Thermostat is a HACS custom integration that creates
-a virtual thermostat using external temperature sensors. The installation and
-configuration must be done through the Home Assistant UI as it's not a core HA
-component and cannot be configured declaratively.
+**Why manual?** Better Thermostat is installed declaratively via Nix, but the
+configuration must be done through the Home Assistant UI. Each thermostat
+requires mapping to its external temperature sensor through the GUI setup
+wizard.
 
 **When to do this:** When a thermostat has an inaccurate built-in temperature
 sensor and you want to use a separate, more accurate temperature sensor to
@@ -11,28 +11,21 @@ control heating.
 
 ## Prerequisites
 
-- HACS (Home Assistant Community Store) installed
 - A physical thermostat entity (e.g., `climate.thermostat_livingroom`)
-- An external temperature sensor in the same area (e.g., `sensor.livingroom_temperature`)
+- An external temperature sensor in the same area
+  (e.g., `sensor.livingroom_temperature`)
+- Better Thermostat installed declaratively (already configured in Nix)
 
-## Installation
+## Configuration
 
-### 1. Install from HACS
-
-1. Open Home Assistant UI
-2. Navigate to **HACS** → **Integrations**
-3. Search for **"Better Thermostat"**
-4. Click **DOWNLOAD**
-5. Restart Home Assistant when prompted
-
-### 2. Add Better Thermostat Integration
+### 1. Add Better Thermostat Integration
 
 1. Navigate to **Settings** → **Devices & Services**
 2. Click **+ ADD INTEGRATION** (bottom-right)
 3. Search for **"Better Thermostat"**
 4. Click to start configuration wizard
 
-### 3. Configure Integration
+### 2. Configure Integration
 
 **Basic Configuration:**
 
@@ -51,7 +44,7 @@ control heating.
 
 Click **Submit** to create the virtual thermostat.
 
-## Post-Installation Steps
+## Post-Configuration Steps
 
 ### 1. Hide Original Thermostat
 
@@ -65,18 +58,15 @@ To avoid confusion, disable the original thermostat from voice control:
 
 **Note:** The entity still functions but is hidden from voice assistants and UI.
 
-### 2. Test Voice Commands
-
-With climate intents enabled, test voice commands:
-
-- **Polish**: "Ustaw temperaturę w salonie na 22 stopnie"
-- **Polish**: "Jaka temperatura w salonie?"
+### 2. Test Better Thermostat
 
 The Better Thermostat entity will:
 
 - Read temperature from external sensor
 - Control the physical thermostat based on that reading
 - Maintain target temperature more accurately
+
+You can test by manually adjusting the target temperature through the UI.
 
 ## Verify Integration
 
@@ -109,12 +99,13 @@ Look for automation triggers at 06:00 (21°C) and 22:00 (18°C).
 - Adjust **Temperature Calibration** offset if needed
 - Check sensor update frequency (should update every 1-2 minutes)
 
-**Voice commands not working:**
+**Integration not available after Nix rebuild:**
 
-- Verify area name in HA matches voice command (e.g., "salon" or "livingroom")
-- Check climate intents are uncommented in configuration
-- Restart Home Assistant after changes:
-  `ssh homelab "sudo systemctl restart home-assistant"`
+- Better Thermostat is installed declaratively via symlink
+- Check symlink exists: `ssh homelab "ls -la /var/lib/hass/custom_components/better_thermostat"`
+- Verify HA recognized the component:
+  `ssh homelab "journalctl -u home-assistant | grep better_thermostat"`
+- Restart Home Assistant: `ssh homelab "sudo systemctl restart home-assistant"`
 
 ## Related Documentation
 

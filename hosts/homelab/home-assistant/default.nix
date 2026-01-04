@@ -25,6 +25,17 @@
   };
 
   # ===========================================
+  # Better Thermostat
+  # ===========================================
+  betterThermostatSource = pkgs.fetchFromGitHub {
+    owner = "KartoffelToby";
+    repo = "better_thermostat";
+    # renovate: datasource=github-tags depName=KartoffelToby/better_thermostat
+    rev = "1.7.0";
+    hash = "sha256-rE14iKAXo3hecK3bQ9MLcOtnZviwjOpYKGlIc4+uCfw=";
+  };
+
+  # ===========================================
   # Custom Python Packages
   # ===========================================
   # Function that builds custom packages with HA's Python environment
@@ -205,6 +216,9 @@ in {
 
       # Create HACS symlink (release zip extracts to root)
       ln -sfn ${hacsSource} /var/lib/hass/custom_components/hacs
+
+      # Create Better Thermostat symlink (component is in custom_components/better_thermostat)
+      ln -sfn ${betterThermostatSource}/custom_components/better_thermostat /var/lib/hass/custom_components/better_thermostat
     '';
 
     # Force derivation update when HA config changes

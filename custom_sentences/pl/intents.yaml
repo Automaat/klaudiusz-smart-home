@@ -125,24 +125,21 @@ intents:
           - "(odpal|zapal) scenę {name}"
 
   # =========================================
-  # Climate
+  # Climate (Placeholder - configure after device setup)
   # =========================================
-  SetTemperature:
-    data:
-      - required_keywords: [ustaw, temperatur, stopni, ogrzewanie]
-        sentences:
-          - "ustaw temperaturę [w] {area} [na] {temperature} [stopni]"
-          - "temperatura [w] {area} [na] {temperature} [stopni]"
-          - "ogrzewanie [w] {area} [na] {temperature} [stopni]"
-          - "{temperature} stopni [w] {area}"
-
-  GetTemperature:
-    data:
-      - required_keywords: [jaka, temperatura, ile, stopni]
-        sentences:
-          - "jaka [jest] temperatura [w] {area}"
-          - "ile [jest] stopni [w] {area}"
-          - "temperatura [w] {area}"
+  # SetTemperature:
+  #   data:
+  #     - sentences:
+  #         - "ustaw temperaturę [na] {temperature} [stopni]"
+  #         - "temperatura {temperature} [stopni]"
+  #         - "ogrzewanie [na] {temperature} [stopni]"
+  #
+  # GetTemperature:
+  #   data:
+  #     - sentences:
+  #         - "jaka [jest] temperatura [w] {area}"
+  #         - "ile [jest] stopni [w] {area}"
+  #         - "temperatura [w] {area}"
 
   # =========================================
   # Covers / Blinds
