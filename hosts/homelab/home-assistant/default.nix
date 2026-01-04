@@ -64,6 +64,7 @@ in {
 
       # Database
       "recorder" # PostgreSQL database
+      "influxdb" # InfluxDB time-series for Grafana
 
       # Voice
       "conversation"
@@ -173,6 +174,18 @@ in {
         database_path = "/var/lib/hass/zigbee.db";
       };
 
+      # InfluxDB integration for Grafana dashboards
+      influxdb = {
+        api_version = 2;
+        host = "localhost";
+        port = 8086;
+        organization = "homeassistant";
+        bucket = "home-assistant";
+        token = "!secret influxdb_token";
+        max_retries = 3;
+        precision = "s";
+      };
+
       # Telegram integration - configured via UI (see docs/manual-config/telegram.md)
       # Entity: notify.klaudiusz_smart_home_system (use with notify.send_message action)
     };
@@ -213,6 +226,7 @@ in {
       cat > /var/lib/hass/secrets.yaml <<EOF
       telegram_bot_token: "123456789:ABCdefGHIjklMNOpqrsTUVwxyz-DUMMY"
       telegram_chat_id: "123456789"
+      influxdb_token: "$(cat ${config.sops.secrets.influxdb-admin-token.path})"
       EOF
 
       # Create HACS symlink (release zip extracts to root)

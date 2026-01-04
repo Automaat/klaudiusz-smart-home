@@ -8,7 +8,11 @@
 pkgs.testers.nixosTest {
   name = "homelab-integration-test";
 
-  nodes.homelab = {lib, ...}: {
+  nodes.homelab = {
+    config,
+    lib,
+    ...
+  }: {
     # Import the homelab configuration with required modules
     imports = [
       comin.nixosModules.comin
@@ -26,11 +30,33 @@ pkgs.testers.nixosTest {
     # Tests validate system builds & services start, not secret management
     sops.age.generateKey = lib.mkForce false;
 
-    # Override Grafana to not use sops secret
+    # Override Grafana to not use sops secrets
     services.grafana.settings.security = lib.mkForce {
       admin_user = "admin";
       admin_password = "test-password";
     };
+    services.grafana.provision.datasources.settings.datasources = lib.mkForce [
+      {
+        name = "Prometheus";
+        type = "prometheus";
+        url = "http://localhost:9090";
+        isDefault = true;
+      }
+      {
+        name = "InfluxDB";
+        type = "influxdb";
+        url = "http://localhost:8086";
+        isDefault = false;
+        jsonData = {
+          version = "Flux";
+          organization = "homeassistant";
+          defaultBucket = "home-assistant";
+        };
+        secureJsonData = {
+          token = "test-token";
+        };
+      }
+    ];
 
     # Override PostgreSQL settings for VM test (limited memory)
     services.postgresql.settings = lib.mkForce {
@@ -51,6 +77,42 @@ pkgs.testers.nixosTest {
     # Disable Wyoming services (require external model downloads, no network in VM)
     services.wyoming.faster-whisper.servers.default.enable = lib.mkForce false;
     services.wyoming.piper.servers.default.enable = lib.mkForce false;
+
+    # Run InfluxDB init in VM tests with hardcoded credentials
+    systemd.services.influxdb2-init = {
+      serviceConfig = {
+        TimeoutStartSec = lib.mkForce "90s";
+        # Disable LoadCredential in tests - use hardcoded values
+        LoadCredential = lib.mkForce [];
+      };
+      # Override script with inline test credentials (no sops paths)
+      script = lib.mkForce ''
+        until influx ping &>/dev/null; do
+          echo "Waiting for InfluxDB..."
+          sleep 1
+        done
+
+        if [ -f /var/lib/influxdb2/.homeassistant-initialized ]; then
+          echo "InfluxDB already initialized (marker file present)"
+          exit 0
+        fi
+
+        if influx setup \
+          --org homeassistant \
+          --bucket home-assistant \
+          --username admin \
+          --password test-password \
+          --token test-token \
+          --retention 365d \
+          --force; then
+          touch /var/lib/influxdb2/.homeassistant-initialized
+          echo "InfluxDB initialized for Home Assistant"
+        else
+          echo "InfluxDB initialization failed" >&2
+          exit 1
+        fi
+      '';
+    };
 
     # Override Grafana path-based secret waiting for VM tests
     # In tests, sops creates secrets during activation (before systemd units start)

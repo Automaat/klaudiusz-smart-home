@@ -211,12 +211,99 @@
           url = "http://localhost:9090";
           isDefault = true;
         }
+        {
+          name = "InfluxDB";
+          type = "influxdb";
+          url = "http://localhost:8086";
+          isDefault = false;
+          jsonData = {
+            version = "Flux";
+            organization = "homeassistant";
+            defaultBucket = "home-assistant";
+          };
+          secureJsonData = {
+            token = "$__file{${config.sops.secrets.influxdb-admin-token.path}}";
+          };
+        }
       ];
     };
   };
 
   # Grafana waits for sops-nix secrets via sops.secrets.<name>.restartUnits
   # No additional systemd dependencies needed
+
+  # Grafana restart limits + failure notification
+  systemd.services.grafana = {
+    serviceConfig = {
+      # Limit restart attempts: 5 tries within 5 minutes, then give up
+      StartLimitBurst = 5;
+      StartLimitIntervalSec = 300;
+      # Wait 10s between restart attempts
+      RestartSec = "10s";
+    };
+    # Send Telegram alert when service fails permanently
+    unitConfig.OnFailure = "notify-service-failure@%n.service";
+  };
+
+  # ===========================================
+  # Monitoring - InfluxDB
+  # ===========================================
+  # Time-series database for Home Assistant entity states
+  services.influxdb2 = {
+    enable = true;
+    settings = {
+      http-bind-address = "127.0.0.1:8086";
+      reporting-disabled = true;
+    };
+  };
+
+  # InfluxDB initialization (org, bucket, user)
+  systemd.services.influxdb2-init = {
+    description = "Initialize InfluxDB for Home Assistant";
+    after = ["influxdb2.service"];
+    requires = ["influxdb2.service"];
+    wantedBy = ["multi-user.target"];
+    path = [pkgs.influxdb2];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+      TimeoutStartSec = "90s";
+      # Load credentials without exposing in argv
+      LoadCredential = [
+        "password:${config.sops.secrets.influxdb-admin-password.path}"
+        "token:${config.sops.secrets.influxdb-admin-token.path}"
+      ];
+    };
+    script = ''
+      # Wait for InfluxDB to be ready
+      until influx ping &>/dev/null; do
+        echo "Waiting for InfluxDB..."
+        sleep 1
+      done
+
+      # Idempotency: check marker file
+      if [ -f /var/lib/influxdb2/.homeassistant-initialized ]; then
+        echo "InfluxDB already initialized (marker file present)"
+        exit 0
+      fi
+
+      # Initial setup with separate password and token
+      if influx setup \
+        --org homeassistant \
+        --bucket home-assistant \
+        --username admin \
+        --password $(cat "$CREDENTIALS_DIRECTORY/password") \
+        --token $(cat "$CREDENTIALS_DIRECTORY/token") \
+        --retention 365d \
+        --force; then
+        touch /var/lib/influxdb2/.homeassistant-initialized
+        echo "InfluxDB initialized for Home Assistant"
+      else
+        echo "InfluxDB initialization failed" >&2
+        exit 1
+      fi
+    '';
+  };
 
   # ===========================================
   # PostgreSQL Database
@@ -268,9 +355,46 @@
       # Bluetooth capabilities auto-added by NixOS module for bluetooth components
       Restart = "on-failure";
       RestartSec = "10";
+      # Restart limits
+      StartLimitBurst = 5;
+      StartLimitIntervalSec = 300;
     };
+    home-assistant.unitConfig.OnFailure = "notify-service-failure@%n.service";
+
+    influxdb2.serviceConfig = {
+      StartLimitBurst = 5;
+      StartLimitIntervalSec = 300;
+      RestartSec = "10s";
+    };
+    influxdb2.unitConfig.OnFailure = "notify-service-failure@%n.service";
+
+    prometheus.serviceConfig = {
+      StartLimitBurst = 5;
+      StartLimitIntervalSec = 300;
+      RestartSec = "10s";
+    };
+    prometheus.unitConfig.OnFailure = "notify-service-failure@%n.service";
+
     wyoming-faster-whisper-default.serviceConfig.Restart = "on-failure";
     wyoming-piper-default.serviceConfig.Restart = "on-failure";
+
+    # Telegram notification service template for service failures
+    "notify-service-failure@" = {
+      description = "Send Telegram notification when %i fails";
+      serviceConfig = {
+        Type = "oneshot";
+        # Load token from file without exposing in argv
+        LoadCredential = "ha-token:${config.sops.secrets.home-assistant-prometheus-token.path}";
+        # Call Home Assistant notify service via curl
+        ExecStart = ''
+          ${pkgs.curl}/bin/curl -X POST \
+            -H "Authorization: Bearer $(cat $CREDENTIALS_DIRECTORY/ha-token)" \
+            -H "Content-Type: application/json" \
+            -d '{"message": "⚠️ Service failure: %i exceeded restart limit (5 attempts in 5 min)", "title": "Homelab Alert"}' \
+            http://localhost:8123/api/services/notify/telegram
+        '';
+      };
+    };
   };
 
   # ===========================================

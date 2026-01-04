@@ -60,6 +60,10 @@
         inherit lib pkgs nixosConfig;
       };
 
+      influxdbValidation = import ./tests/influxdb-validation.nix {
+        inherit lib pkgs nixosConfig;
+      };
+
       haConfigCheck = import ./tests/ha-config-check.nix {
         inherit lib pkgs nixosConfig;
       };
@@ -98,6 +102,12 @@
         touch $out
       '';
 
+      influxdb-validation = pkgs.runCommand "influxdb-validation-tests" {} ''
+        echo "Running InfluxDB validation tests..."
+        echo "${influxdbValidation.all}"
+        touch $out
+      '';
+
       # Home Assistant config validation
       ha-config-validation = haConfigCheck.all;
 
@@ -116,6 +126,7 @@
         echo "Config validation result: $(cat ${self.checks.${system}.config-validation})"
         echo "Schema validation result: $(cat ${self.checks.${system}.schema-validation})"
         echo "Service validation result: $(cat ${self.checks.${system}.service-validation})"
+        echo "InfluxDB validation result: $(cat ${self.checks.${system}.influxdb-validation})"
         echo "HA config validation result: $(cat ${self.checks.${system}.ha-config-validation})"
         echo "All static tests passed!"
         touch $out
