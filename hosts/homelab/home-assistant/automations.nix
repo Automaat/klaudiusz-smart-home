@@ -231,6 +231,55 @@
       }
 
       # -----------------------------------------
+      # Bathroom
+      # -----------------------------------------
+      {
+        id = "bathroom_morning_boost_start";
+        alias = "Bathroom - Morning boost start";
+        trigger = [
+          {
+            platform = "time";
+            at = "06:00:00";
+          }
+        ];
+        action = [
+          {
+            service = "climate.set_preset_mode";
+            target.entity_id = "climate.thermostat_bathroom";
+            data.preset_mode = "boost";
+          }
+          {
+            service = "climate.set_temperature";
+            target.entity_id = "climate.thermostat_bathroom";
+            data.temperature = 24;
+          }
+        ];
+      }
+
+      {
+        id = "bathroom_morning_boost_end";
+        alias = "Bathroom - Morning boost end";
+        trigger = [
+          {
+            platform = "time";
+            at = "09:00:00";
+          }
+        ];
+        action = [
+          {
+            service = "climate.set_preset_mode";
+            target.entity_id = "climate.thermostat_bathroom";
+            data.preset_mode = "eco";
+          }
+          {
+            service = "climate.set_temperature";
+            target.entity_id = "climate.thermostat_bathroom";
+            data.temperature = 19;
+          }
+        ];
+      }
+
+      # -----------------------------------------
       # Mode Management (Placeholder - no devices yet)
       # -----------------------------------------
       # {
