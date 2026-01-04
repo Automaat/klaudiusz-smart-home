@@ -87,22 +87,22 @@
       };
 
       # -----------------------------------------
-      # Climate (Placeholder - configure after device setup)
+      # Climate
       # -----------------------------------------
-      # SetTemperature = {
-      #   speech.text = "Ustawiam temperaturę na {{ slots.temperature }} stopni";
-      #   action = [
-      #     {
-      #       service = "climate.set_temperature";
-      #       target.entity_id = "climate.your_thermostat_here";
-      #       data.temperature = "{{ slots.temperature }}";
-      #     }
-      #   ];
-      # };
-      #
-      # GetTemperature = {
-      #   speech.text = "Temperatura w {{ slots.area }} wynosi {{ states('sensor.temperature_' + slots.area | lower | replace(' ', '_')) }} stopni";
-      # };
+      SetTemperature = {
+        speech.text = "Ustawiam temperaturę w {{ slots.area }} na {{ slots.temperature }} stopni";
+        action = [
+          {
+            service = "climate.set_temperature";
+            target.area_id = "{{ area_id(slots.area) }}";
+            data.temperature = "{{ slots.temperature }}";
+          }
+        ];
+      };
+
+      GetTemperature = {
+        speech.text = "Temperatura w {{ slots.area }} wynosi {{ states('sensor.' + slots.area | lower | replace(' ', '_') + '_temperature') }} stopni";
+      };
 
       # -----------------------------------------
       # Covers / Blinds

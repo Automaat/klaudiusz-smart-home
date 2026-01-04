@@ -7,6 +7,7 @@ Home Assistant UI.
 ## Integrations
 
 - **[Zigbee Home Automation (ZHA)](zha.md)** - Zigbee device pairing and setup
+- **[Better Thermostat](better-thermostat.md)** - Use external temperature sensors for thermostat control
 - **[GIOŚ Air Quality](gios.md)** - Polish air quality monitoring
 - **[System Monitor](system-monitor.md)** - System resource monitoring
 - **[Wyoming Protocol](wyoming-protocol.md)** - Speech-to-text and text-to-speech services
