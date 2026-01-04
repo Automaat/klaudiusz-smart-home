@@ -46,8 +46,9 @@
     };
 
     # InfluxDB admin token (API authentication)
+    # Owner: hass (HA needs read access, Grafana accesses via systemd DynamicUser)
     "influxdb-admin-token" = {
-      owner = "influxdb2";
+      owner = "hass";
       mode = "0400";
       restartUnits = ["influxdb2.service" "grafana.service" "home-assistant.service"];
     };
