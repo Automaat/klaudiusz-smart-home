@@ -52,6 +52,10 @@ pkgs.testers.nixosTest {
     services.wyoming.faster-whisper.servers.default.enable = lib.mkForce false;
     services.wyoming.piper.servers.default.enable = lib.mkForce false;
 
+    # Disable InfluxDB services (not critical for VM integration tests, validated separately)
+    services.influxdb2.enable = lib.mkForce false;
+    systemd.services.influxdb2-init.enable = lib.mkForce false;
+
     # Override Grafana path-based secret waiting for VM tests
     # In tests, sops creates secrets during activation (before systemd units start)
     # so the path check is redundant and can cause timing issues
