@@ -42,6 +42,15 @@
             token = "$__file{${config.sops.secrets.influxdb-admin-token.path}}";
           };
         }
+        {
+          name = "Loki";
+          type = "loki";
+          url = "http://localhost:3100";
+          uid = "loki";
+          jsonData = {
+            maxLines = 1000;
+          };
+        }
       ];
 
       # Dashboard Provisioning

@@ -18,6 +18,46 @@ homelab.wait_for_unit("prometheus.service")
 homelab.wait_for_open_port(9090)
 homelab.succeed("curl -f http://localhost:9090/-/healthy")
 
+# Loki (Log Aggregation)
+try:
+    homelab.wait_for_unit("loki.service")
+    homelab.wait_for_open_port(3100)
+
+    # Note: /ready endpoint waits for compactor (10m in VM) - skip, check metrics instead
+    # Check Loki metrics endpoint (validates internal components running)
+    homelab.succeed("curl -sf http://localhost:3100/metrics > /dev/null")
+
+    # Check Loki can accept log pushes (query API for label names)
+    # Empty response is OK - just validates API is responding
+    homelab.succeed("curl -f http://localhost:3100/loki/api/v1/labels")
+
+    print("✅ Loki service healthy")
+
+except Exception as e:
+    print(f"Loki failed: {e}")
+    print(homelab.succeed("journalctl -u loki.service -n 100 --no-pager"))
+    print(homelab.succeed("systemctl status loki.service --no-pager"))
+    raise
+
+# Promtail (Log Shipper)
+try:
+    homelab.wait_for_unit("promtail.service")
+    homelab.wait_for_open_port(9080)
+
+    # Check Promtail ready endpoint
+    homelab.succeed("curl -f http://localhost:9080/ready")
+
+    # Check Promtail metrics (validates scrape configs loaded)
+    homelab.succeed("curl -sf http://localhost:9080/metrics > /dev/null")
+
+    print("✅ Promtail service healthy")
+
+except Exception as e:
+    print(f"Promtail failed: {e}")
+    print(homelab.succeed("journalctl -u promtail.service -n 100 --no-pager"))
+    print(homelab.succeed("systemctl status promtail.service --no-pager"))
+    raise
+
 # Grafana
 try:
     homelab.wait_for_unit("grafana.service")
@@ -26,6 +66,9 @@ try:
 
     # Check Prometheus datasource is configured
     homelab.succeed("curl -f http://admin:test-password@localhost:3000/api/datasources/uid/prometheus")
+
+    # Check Loki datasource is configured
+    homelab.succeed("curl -f http://admin:test-password@localhost:3000/api/datasources/uid/loki")
 
     # Check dashboards are provisioned (expect at least 4 dashboards)
     dashboard_count = homelab.succeed(
