@@ -502,6 +502,8 @@
       # Override hardening that blocks journal access
       PrivateMounts = lib.mkForce false;
       MountFlags = lib.mkForce "";
+      # Allow reading Home Assistant log file
+      ReadOnlyPaths = ["/var/lib/hass"];
     };
     promtail.unitConfig.OnFailure = "notify-service-failure@%n.service";
 
