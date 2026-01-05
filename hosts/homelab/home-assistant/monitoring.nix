@@ -34,105 +34,19 @@
             icon = "mdi:home-assistant";
           }
 
-          {
-            name = "Whisper STT Status";
-            unique_id = "whisper_status";
-            state = ''
-              {% set status = states('binary_sensor.wyoming_whisper_health') %}
-              {{ 'active' if status == 'on' else 'inactive' }}
-            '';
-            icon = ''
-              {% set status = states('binary_sensor.wyoming_whisper_health') %}
-              {{ 'mdi:microphone' if status == 'on' else 'mdi:microphone-off' }}
-            '';
-          }
-
-          {
-            name = "Piper TTS Status";
-            unique_id = "piper_status";
-            state = ''
-              {% set status = states('binary_sensor.wyoming_piper_health') %}
-              {{ 'active' if status == 'on' else 'inactive' }}
-            '';
-            icon = ''
-              {% set status = states('binary_sensor.wyoming_piper_health') %}
-              {{ 'mdi:speaker' if status == 'on' else 'mdi:speaker-off' }}
-            '';
-          }
-
-          {
-            name = "Tailscale Status";
-            unique_id = "tailscale_status";
-            state = ''
-              {% set status = states('binary_sensor.tailscale_health') %}
-              {{ 'connected' if status == 'on' else 'disconnected' }}
-            '';
-            icon = ''
-              {% set status = states('binary_sensor.tailscale_health') %}
-              {{ 'mdi:shield-check' if status == 'on' else 'mdi:shield-off' }}
-            '';
-          }
-
-          {
-            name = "PostgreSQL Status";
-            unique_id = "postgresql_status";
-            state = ''
-              {% set status = states('binary_sensor.postgresql_health') %}
-              {{ 'active' if status == 'on' else 'inactive' }}
-            '';
-            icon = ''
-              {% set status = states('binary_sensor.postgresql_health') %}
-              {{ 'mdi:database' if status == 'on' else 'mdi:database-off' }}
-            '';
-          }
         ];
       }
     ];
 
     # ===========================================
-    # Command Line Binary Sensors for Service Health
+    # Command Line Sensors - Comin Deployment Tracking
     # ===========================================
+    # Service health monitored via Prometheus node_exporter systemd collector
+    # Comin deployment info read from /var/lib/comin/store.json
     command_line = [
-      {
-        platform = "binary_sensor";
-        name = "wyoming_whisper_health";
-        command = "systemctl is-active wyoming-faster-whisper-default";
-        value_template = "{{ value == 'active' }}";
-        scan_interval = 60;
-      }
-      {
-        platform = "binary_sensor";
-        name = "wyoming_piper_health";
-        command = "systemctl is-active wyoming-piper-default";
-        value_template = "{{ value == 'active' }}";
-        scan_interval = 60;
-      }
-      {
-        platform = "binary_sensor";
-        name = "tailscale_health";
-        command = "systemctl is-active tailscaled";
-        value_template = "{{ value == 'active' }}";
-        scan_interval = 60;
-      }
-      {
-        platform = "binary_sensor";
-        name = "fail2ban_health";
-        command = "systemctl is-active fail2ban";
-        value_template = "{{ value == 'active' }}";
-        scan_interval = 60;
-      }
-      {
-        platform = "binary_sensor";
-        name = "postgresql_health";
-        command = "systemctl is-active postgresql";
-        value_template = "{{ value == 'active' }}";
-        scan_interval = 60;
-      }
       # -----------------------------------------
       # Comin Deployment Detection
       # -----------------------------------------
-      # Sensors track deployment UUID and timestamp
-      # Automations trigger on HA startup + check if deployment is recent
       {
         platform = "sensor";
         name = "comin_last_deployment_uuid";
@@ -264,123 +178,8 @@
       }
 
       # -----------------------------------------
-      # Service Failure Alerts
+      # Service health alerts moved to Grafana (uses Prometheus node_exporter)
       # -----------------------------------------
-      {
-        id = "alert_whisper_down";
-        alias = "Alert - Whisper service down";
-        trigger = [
-          {
-            platform = "state";
-            entity_id = "binary_sensor.wyoming_whisper_health";
-            to = "off";
-            for.minutes = 2;
-          }
-        ];
-        action = [
-          {
-            service = "persistent_notification.create";
-            data = {
-              title = "⚠️ Usługa Whisper nie działa";
-              message = "Sprawdź systemctl status wyoming-faster-whisper-default";
-            };
-          }
-          {
-            action = "notify.send_message";
-            target.entity_id = "notify.klaudiusz_smart_home_system";
-            data = {
-              message = "⚠️ Whisper service down\nCheck: systemctl status wyoming-faster-whisper-default";
-            };
-          }
-        ];
-      }
-
-      {
-        id = "alert_piper_down";
-        alias = "Alert - Piper service down";
-        trigger = [
-          {
-            platform = "state";
-            entity_id = "binary_sensor.wyoming_piper_health";
-            to = "off";
-            for.minutes = 2;
-          }
-        ];
-        action = [
-          {
-            service = "persistent_notification.create";
-            data = {
-              title = "⚠️ Usługa Piper nie działa";
-              message = "Sprawdź systemctl status wyoming-piper-default";
-            };
-          }
-          {
-            action = "notify.send_message";
-            target.entity_id = "notify.klaudiusz_smart_home_system";
-            data = {
-              message = "⚠️ Piper service down\nCheck: systemctl status wyoming-piper-default";
-            };
-          }
-        ];
-      }
-
-      {
-        id = "alert_tailscale_down";
-        alias = "Alert - Tailscale service down";
-        trigger = [
-          {
-            platform = "state";
-            entity_id = "binary_sensor.tailscale_health";
-            to = "off";
-            for.minutes = 2;
-          }
-        ];
-        action = [
-          {
-            service = "persistent_notification.create";
-            data = {
-              title = "⚠️ Tailscale nie działa";
-              message = "Sprawdź systemctl status tailscaled";
-            };
-          }
-          {
-            action = "notify.send_message";
-            target.entity_id = "notify.klaudiusz_smart_home_system";
-            data = {
-              message = "⚠️ Tailscale service down\nCheck: systemctl status tailscaled";
-            };
-          }
-        ];
-      }
-
-      {
-        id = "alert_postgresql_down";
-        alias = "Alert - PostgreSQL service down";
-        trigger = [
-          {
-            platform = "state";
-            entity_id = "binary_sensor.postgresql_health";
-            to = "off";
-            for.minutes = 2;
-          }
-        ];
-        action = [
-          {
-            service = "persistent_notification.create";
-            data = {
-              title = "⚠️ PostgreSQL nie działa";
-              message = "Sprawdź systemctl status postgresql";
-            };
-          }
-          {
-            action = "notify.send_message";
-            target.entity_id = "notify.klaudiusz_smart_home_system";
-            data = {
-              message = "⚠️ PostgreSQL service down\nCheck: systemctl status postgresql";
-            };
-          }
-        ];
-      }
 
       # -----------------------------------------
       # Comin Deployment Notifications
