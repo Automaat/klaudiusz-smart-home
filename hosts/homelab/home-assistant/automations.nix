@@ -172,8 +172,8 @@
       # Bedroom
       # -----------------------------------------
       {
-        id = "bedroom_morning_boost_start";
-        alias = "Bedroom - Morning boost start";
+        id = "bedroom_temperature_morning";
+        alias = "Bedroom - Morning temperature";
         trigger = [
           {
             platform = "time";
@@ -182,21 +182,16 @@
         ];
         action = [
           {
-            service = "climate.set_preset_mode";
-            target.entity_id = "climate.thermostat_bedroom";
-            data.preset_mode = "boost";
-          }
-          {
             service = "climate.set_temperature";
-            target.entity_id = "climate.thermostat_bedroom";
+            target.entity_id = "climate.bedroom_thermostat";
             data.temperature = 22;
           }
         ];
       }
 
       {
-        id = "bedroom_morning_boost_end";
-        alias = "Bedroom - Morning boost end";
+        id = "bedroom_temperature_day";
+        alias = "Bedroom - Day temperature";
         trigger = [
           {
             platform = "time";
@@ -205,13 +200,8 @@
         ];
         action = [
           {
-            service = "climate.set_preset_mode";
-            target.entity_id = "climate.thermostat_bedroom";
-            data.preset_mode = "eco";
-          }
-          {
             service = "climate.set_temperature";
-            target.entity_id = "climate.thermostat_bedroom";
+            target.entity_id = "climate.bedroom_thermostat";
             data.temperature = 18;
           }
         ];
