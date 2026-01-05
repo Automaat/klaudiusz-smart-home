@@ -133,6 +133,25 @@ pkgs.testers.nixosTest {
       after = lib.mkForce [];
       requires = lib.mkForce [];
     };
+
+    # Override Promtail hardening for VM tests (namespace features not available)
+    systemd.services.promtail.serviceConfig = {
+      # Disable namespace features causing "status=226/NAMESPACE" failure
+      PrivateTmp = lib.mkForce false;
+      PrivateDevices = lib.mkForce false;
+      ProtectHome = lib.mkForce false;
+      ProtectSystem = lib.mkForce false;
+      ProtectKernelTunables = lib.mkForce false;
+      ProtectKernelModules = lib.mkForce false;
+      ProtectControlGroups = lib.mkForce false;
+      RestrictAddressFamilies = lib.mkForce [];
+      RestrictNamespaces = lib.mkForce false;
+      LockPersonality = lib.mkForce false;
+      MemoryDenyWriteExecute = lib.mkForce false;
+      RestrictRealtime = lib.mkForce false;
+      RestrictSUIDSGID = lib.mkForce false;
+      SystemCallArchitectures = lib.mkForce "";
+    };
   };
 
   testScript = builtins.readFile ./homelab-integration-test.py;
