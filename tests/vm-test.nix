@@ -89,6 +89,21 @@ pkgs.testers.nixosTest {
     services.wyoming.faster-whisper.servers.default.enable = lib.mkForce false;
     services.wyoming.piper.servers.default.enable = lib.mkForce false;
 
+    # Override Loki compactor wait time for faster VM test startup
+    # Production: 10m wait ensures ring stability before compaction
+    # VM tests: 10s sufficient (no real data, just validating service starts)
+    services.loki.configuration.compactor = lib.mkForce {
+      working_directory = "/var/lib/loki/compactor";
+      compaction_interval = "10m";
+      retention_enabled = true;
+      retention_delete_delay = "2h";
+      retention_delete_worker_count = 150;
+      delete_request_store = "filesystem";
+      compactor_ring = {
+        wait_stability_min_duration = "10s"; # Reduced from default 1m
+      };
+    };
+
     # Run InfluxDB init in VM tests with hardcoded credentials
     systemd.services.influxdb2-init = {
       serviceConfig = {
