@@ -2,3 +2,11 @@
 actionlint = "1.7.10"
 sops = "3.11.0"
 uv = "0.9.21"
+
+[tasks.decrypt-secrets]
+description = "Decrypt secrets to temp file for editing"
+run = "sops -d secrets/secrets.yaml > /tmp/secrets-decrypted.yaml && echo 'Decrypted to /tmp/secrets-decrypted.yaml'"
+
+[tasks.encrypt-secrets]
+description = "Encrypt temp file back to secrets/secrets.yaml"
+run = "cp /tmp/secrets-decrypted.yaml secrets/secrets.yaml && sops -e -i secrets/secrets.yaml && echo 'Encrypted to secrets/secrets.yaml'"
