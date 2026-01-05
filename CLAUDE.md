@@ -357,14 +357,22 @@ sensor = [
 ```nix
 command_line = [
   {
-    platform = "sensor";
-    name = "Sensor Name";
-    unique_id = "unique_sensor_id";
-    command = "curl -s http://example.com/api";
-    unit_of_measurement = "°C";
-    device_class = "temperature";
-    scan_interval = 30;
-    value_template = "{{ value_json.temp }}";
+    sensor = {
+      name = "Sensor Name";
+      unique_id = "unique_sensor_id";
+      command = "curl -s http://example.com/api";
+      unit_of_measurement = "°C";
+      device_class = "temperature";
+      scan_interval = 30;
+      value_template = "{{ value_json.temp }}";
+    };
+  }
+  {
+    binary_sensor = {
+      name = "Binary Sensor";
+      command = "systemctl is-active service";
+      value_template = "{{ value == 'active' }}";
+    };
   }
 ];
 ```
@@ -373,21 +381,20 @@ command_line = [
 
 ```nix
 # ❌ NEVER USE THIS
-command_line = [
+sensor = [
   {
-    sensor = {
-      name = "...";
-      command = "...";
-    };
+    platform = "command_line";
+    name = "...";
+    command = "...";
   }
 ];
 ```
 
 **Key changes:**
 
-- Flatten structure: remove nested `sensor = { }`
-- Add `platform = "sensor"` at root level
-- All other attributes stay same level as platform
+- Use nested `sensor = { }` or `binary_sensor = { }` structure
+- NO `platform` attribute at any level
+- All sensor attributes nested under sensor/binary_sensor key
 
 ### REST Integration
 
