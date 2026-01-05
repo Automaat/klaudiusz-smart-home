@@ -255,8 +255,7 @@ in {
   # ===========================================
   # Zigbee USB Device (ZHA)
   # ===========================================
-  # Add hass user to dialout group for serial port access
-  users.users.hass.extraGroups = ["dialout"];
+  # User groups configured in users.nix (dialout for serial access)
 
   # Create persistent /dev/zigbee symlink for Connect ZBT-2
   # Espressif ESP32 (Nabu Casa ZBT-2: 303a:831a)

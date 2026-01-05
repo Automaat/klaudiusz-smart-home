@@ -16,6 +16,7 @@
   sops.defaultSopsFile = ../../secrets/secrets.yaml;
 
   # Define secrets and their target paths
+  # User/group memberships configured in users.nix
   sops.secrets = {
     # Grafana admin password
     "grafana-admin-password" = {
@@ -46,10 +47,10 @@
     };
 
     # InfluxDB admin token (API authentication)
-    # Owner: hass (HA needs read access, Grafana accesses via systemd DynamicUser)
+    # Group: influxdb-readers (hass + grafana)
     "influxdb-admin-token" = {
-      owner = "hass";
-      mode = "0400";
+      group = "influxdb-readers";
+      mode = "0440";
       restartUnits = ["influxdb2.service" "grafana.service" "home-assistant.service"];
     };
 

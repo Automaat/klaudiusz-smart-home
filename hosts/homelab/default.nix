@@ -9,6 +9,7 @@
     ./home-assistant
     ./grafana
     ./secrets.nix
+    ./users.nix
   ];
 
   # ===========================================
