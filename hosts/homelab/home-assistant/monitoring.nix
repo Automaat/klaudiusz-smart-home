@@ -33,7 +33,6 @@
             state = "{{ 'active' }}";
             icon = "mdi:home-assistant";
           }
-
         ];
       }
     ];
