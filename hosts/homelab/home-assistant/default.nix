@@ -36,6 +36,50 @@
   };
 
   # ===========================================
+  # Bubble Card
+  # ===========================================
+  bubbleCardSource = pkgs.fetchFromGitHub {
+    owner = "Clooos";
+    repo = "Bubble-Card";
+    # renovate: datasource=github-tags depName=Clooos/Bubble-Card
+    rev = "v3.1.0-rc.2";
+    hash = "sha256-WGe8XAJFYrFxp4KkXefK5ImAnRtgKH9ZhbEC74QRPVY=";
+  };
+
+  # ===========================================
+  # Adaptive Lighting
+  # ===========================================
+  adaptiveLightingSource = pkgs.fetchFromGitHub {
+    owner = "basnijholt";
+    repo = "adaptive-lighting";
+    # renovate: datasource=github-tags depName=basnijholt/adaptive-lighting
+    rev = "v1.29.0";
+    hash = "sha256-v10Mrc/sSB09mC0UHMhjoEnPhj5S3tISmMcPQrPHPq8=";
+  };
+
+  # ===========================================
+  # Watchman
+  # ===========================================
+  watchmanSource = pkgs.fetchFromGitHub {
+    owner = "dummylabs";
+    repo = "thewatchman";
+    # renovate: datasource=github-tags depName=dummylabs/thewatchman
+    rev = "v0.6.5";
+    hash = "sha256-qMsCkUf8G9oGWHTg1w2j8T5cvmAtk5bmeXEMXRXuOCk=";
+  };
+
+  # ===========================================
+  # Powercalc
+  # ===========================================
+  powercalcSource = pkgs.fetchFromGitHub {
+    owner = "bramstroker";
+    repo = "homeassistant-powercalc";
+    # renovate: datasource=github-tags depName=bramstroker/homeassistant-powercalc
+    rev = "v1.20.1";
+    hash = "sha256-LzXLsKFBDC/Lcdv62kAiQeyc/fu/eH6ukV76jwSb/Es=";
+  };
+
+  # ===========================================
   # Custom Python Packages
   # ===========================================
   # Function that builds custom packages with HA's Python environment
@@ -235,6 +279,19 @@ in {
 
       # Create Better Thermostat symlink (component is in custom_components/better_thermostat)
       ln -sfn ${betterThermostatSource}/custom_components/better_thermostat /var/lib/hass/custom_components/better_thermostat
+
+      # Create Bubble Card symlink (frontend card in www/community)
+      mkdir -p /var/lib/hass/www/community
+      ln -sfn ${bubbleCardSource}/dist /var/lib/hass/www/community/bubble-card
+
+      # Create Adaptive Lighting symlink
+      ln -sfn ${adaptiveLightingSource}/custom_components/adaptive_lighting /var/lib/hass/custom_components/adaptive_lighting
+
+      # Create Watchman symlink
+      ln -sfn ${watchmanSource}/custom_components/watchman /var/lib/hass/custom_components/watchman
+
+      # Create Powercalc symlink
+      ln -sfn ${powercalcSource}/custom_components/powercalc /var/lib/hass/custom_components/powercalc
     '';
 
     # Force derivation update when HA config changes
