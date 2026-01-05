@@ -169,6 +169,45 @@
       }
 
       # -----------------------------------------
+      # Bedroom
+      # -----------------------------------------
+      {
+        id = "bedroom_temperature_morning";
+        alias = "Bedroom - Morning temperature";
+        trigger = [
+          {
+            platform = "time";
+            at = "06:00:00";
+          }
+        ];
+        action = [
+          {
+            service = "climate.set_temperature";
+            target.entity_id = "climate.bedroom_thermostat";
+            data.temperature = 22;
+          }
+        ];
+      }
+
+      {
+        id = "bedroom_temperature_day";
+        alias = "Bedroom - Day temperature";
+        trigger = [
+          {
+            platform = "time";
+            at = "09:00:00";
+          }
+        ];
+        action = [
+          {
+            service = "climate.set_temperature";
+            target.entity_id = "climate.bedroom_thermostat";
+            data.temperature = 18;
+          }
+        ];
+      }
+
+      # -----------------------------------------
       # Living Room
       # -----------------------------------------
       {
