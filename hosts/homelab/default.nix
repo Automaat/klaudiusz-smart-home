@@ -256,6 +256,7 @@
     enable = true;
     configuration = {
       server.http_listen_port = 3100;
+      server.http_listen_address = "127.0.0.1";
       auth_enabled = false;
 
       ingester = {
@@ -296,11 +297,6 @@
       limits_config = {
         reject_old_samples = true;
         reject_old_samples_max_age = "168h";
-        retention_period = "8760h"; # 365 days
-      };
-
-      table_manager = {
-        retention_deletes_enabled = true;
         retention_period = "8760h"; # 365 days
       };
 
