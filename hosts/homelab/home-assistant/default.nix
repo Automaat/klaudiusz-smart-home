@@ -122,6 +122,9 @@ in {
       # Notifications
       "telegram_bot" # Telegram notifications
 
+      # Task Management
+      "todoist" # Todo list integration
+
       # Zigbee
       "zha" # Zigbee Home Automation
 

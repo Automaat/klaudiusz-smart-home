@@ -16,6 +16,7 @@ Home Assistant UI.
 - **[Voice Assistant Preview Edition](voice-assistant-preview.md)** - Voice hardware setup
 - **[LG WebOS TV](lg-webos-tv.md)** - Smart TV integration
 - **[MCP Server (Claude Code)](mcp-server.md)** - AI assistant API access
+- **[Todoist](todoist.md)** - Todo list integration with OAuth setup
 
 ## When to Add New Documentation
 
