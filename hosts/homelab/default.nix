@@ -492,6 +492,8 @@
 
     # Promtail - log shipper hardening
     promtail.serviceConfig = {
+      # Create state directory for positions.yaml
+      StateDirectory = "promtail";
       # Allow reading systemd journal
       SupplementaryGroups = ["systemd-journal"];
       # Restart on failure (resilient to missing log files at startup)
