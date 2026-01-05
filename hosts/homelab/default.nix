@@ -490,6 +490,21 @@
     wyoming-faster-whisper-default.serviceConfig.Restart = "on-failure";
     wyoming-piper-default.serviceConfig.Restart = "on-failure";
 
+    # Promtail - log shipper hardening
+    promtail.serviceConfig = {
+      # Allow reading systemd journal
+      SupplementaryGroups = ["systemd-journal"];
+      # Restart on failure (resilient to missing log files at startup)
+      Restart = "on-failure";
+      RestartSec = "10s";
+      StartLimitBurst = 5;
+      StartLimitIntervalSec = 300;
+      # Override hardening that blocks journal access
+      PrivateMounts = lib.mkForce false;
+      MountFlags = lib.mkForce "";
+    };
+    promtail.unitConfig.OnFailure = "notify-service-failure@%n.service";
+
     # Telegram notification service template for service failures
     "notify-service-failure@" = {
       description = "Send Telegram notification when %i fails";
