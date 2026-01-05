@@ -47,8 +47,13 @@
           type = "loki";
           url = "http://localhost:3100";
           uid = "loki";
+          isDefault = false;
           jsonData = {
             maxLines = 1000;
+            # Enable time range boundaries for Grafana Explore
+            timeout = "60s";
+            # Derived fields for log drilldown (trace ID linking, etc.)
+            derivedFields = [];
           };
         }
       ];

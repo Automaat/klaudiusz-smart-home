@@ -11,6 +11,7 @@ Home Assistant UI.
 - **[GIOŚ Air Quality](gios.md)** - Polish air quality monitoring
 - **[InfluxDB](influxdb.md)** - Time-series database for metrics (365d retention)
 - **[Loki Log Aggregation](loki-logs.md)** - View HA and system logs in Grafana (365d retention)
+- **[Grafana Loki Explore App](grafana-loki-explore.md)** - Configure default datasource for log drilldown features
 - **[System Monitor](system-monitor.md)** - System resource monitoring
 - **[Wyoming Protocol](wyoming-protocol.md)** - Speech-to-text and text-to-speech services
 - **[Voice Assistant Preview Edition](voice-assistant-preview.md)** - Voice hardware setup
