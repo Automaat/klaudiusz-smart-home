@@ -264,6 +264,38 @@
           }
         ];
       }
+
+      # -----------------------------------------
+      # Grafana Systemd Service Alerts
+      # -----------------------------------------
+      # Receives webhook from Grafana alerts and forwards to Telegram
+      {
+        id = "grafana_systemd_alert_webhook";
+        alias = "Alert - Grafana systemd service alert";
+        trigger = [
+          {
+            platform = "webhook";
+            allowed_methods = ["POST"];
+            local_only = true;
+            webhook_id = "grafana_systemd_alerts";
+          }
+        ];
+        action = [
+          {
+            action = "notify.send_message";
+            target.entity_id = "notify.klaudiusz_smart_home_system";
+            data = {
+              message = ''
+                🚨 {{ trigger.json.status | upper }}
+                {% for alert in trigger.json.alerts %}
+                {{ alert.labels.severity | upper }}: {{ alert.annotations.summary }}
+                {{ alert.annotations.description }}
+                {% endfor %}
+              '';
+            };
+          }
+        ];
+      }
     ];
   };
 }
