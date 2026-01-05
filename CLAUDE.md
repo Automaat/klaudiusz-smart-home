@@ -287,6 +287,7 @@ IntentName:
 **Status:** Legacy format deprecated 2025.12, removed 2026.6
 
 **Modern format (REQUIRED):**
+
 ```nix
 template = [
   {
@@ -308,6 +309,7 @@ template = [
 ```
 
 **Trigger-based templates:**
+
 ```nix
 template = [
   {
@@ -328,6 +330,7 @@ template = [
 ```
 
 **Legacy format (FORBIDDEN - will break):**
+
 ```nix
 # ❌ NEVER USE THIS
 sensor = [
@@ -341,6 +344,7 @@ sensor = [
 ```
 
 **Benefits of modern format:**
+
 - Trigger-based updates (not just state-based)
 - Support for button, image, number, select entities
 - Long-term statistics via state_class
@@ -349,6 +353,7 @@ sensor = [
 ### Command Line Sensors
 
 **Modern format:**
+
 ```nix
 command_line = [
   {
@@ -365,6 +370,7 @@ command_line = [
 ```
 
 **Legacy format (FORBIDDEN):**
+
 ```nix
 # ❌ NEVER USE THIS
 command_line = [
@@ -378,6 +384,7 @@ command_line = [
 ```
 
 **Key changes:**
+
 - Flatten structure: remove nested `sensor = { }`
 - Add `platform = "sensor"` at root level
 - All other attributes stay same level as platform
@@ -385,6 +392,7 @@ command_line = [
 ### REST Integration
 
 **Modern format (multiple sensors, same endpoint):**
+
 ```nix
 rest = [
   {
@@ -410,6 +418,7 @@ rest = [
 ```
 
 **Single sensor (legacy platform syntax still works):**
+
 ```nix
 sensor = [
   {
@@ -425,6 +434,7 @@ sensor = [
 ### REST Commands
 
 **Modern format (unchanged, still current):**
+
 ```nix
 rest_command = {
   command_name = {
@@ -442,6 +452,7 @@ rest_command = {
 ### Automation/Script Modern Syntax
 
 **Automation format (2024.10+ syntax):**
+
 ```nix
 {
   id = "unique_id";
@@ -479,6 +490,7 @@ rest_command = {
 ```
 
 **Script format:**
+
 ```nix
 script = {
   script_name = {
@@ -509,6 +521,7 @@ script = {
 ```
 
 **Key changes 2024.10:**
+
 - Use `action` instead of `service` in action blocks
 - Old syntax still works (no breaking change)
 - All docs updated to new syntax
@@ -530,22 +543,26 @@ script = {
 ### When to Use Each Format
 
 **Template (top-level):**
+
 - Custom sensors from existing states
 - Binary sensors based on conditions
 - Virtual switches combining multiple entities
 - Anything needing trigger-based updates
 
 **Command Line:**
+
 - External system polling (systemctl, curl)
 - Shell script outputs
 - System metrics not in HA
 
 **REST:**
+
 - HTTP APIs without native HA integration
 - JSON/XML endpoints
 - Multiple sensors from same API
 
 **REST Command:**
+
 - Control external HTTP APIs
 - Webhooks, triggers, actions
 - One-way communication (no state)
