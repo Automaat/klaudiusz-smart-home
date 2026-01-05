@@ -314,6 +314,9 @@
   # ===========================================
   # Monitoring - Promtail (Log Collection)
   # ===========================================
+  # Grant promtail user read access to Home Assistant logs
+  users.users.promtail.extraGroups = ["hass"];
+
   services.promtail = {
     enable = true;
     configuration = {
