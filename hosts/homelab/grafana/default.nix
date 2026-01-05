@@ -158,7 +158,7 @@
                 ];
                 noDataState = "Alerting";
                 execErrState = "Alerting";
-                for = "2m";
+                for = "5m";
                 annotations = {
                   inherit summary description;
                 };
@@ -170,13 +170,13 @@
               };
 
               services = [
-                # Critical services - alert if failed for more than 2 minutes
+                # Critical services - alert if failed for more than 5 minutes
                 {
                   serviceName = "home_assistant";
                   unitName = "home-assistant.service";
                   title = "Home Assistant Service Down";
                   summary = "Home Assistant service is not running";
-                  description = "The home-assistant.service has been inactive for more than 2 minutes. Check: systemctl status home-assistant";
+                  description = "The home-assistant.service has been inactive for more than 5 minutes. Check: systemctl status home-assistant";
                   severity = "critical";
                 }
                 {
@@ -184,7 +184,7 @@
                   unitName = "postgresql.service";
                   title = "PostgreSQL Service Down";
                   summary = "PostgreSQL service is not running";
-                  description = "The postgresql.service has been inactive for more than 2 minutes. Check: systemctl status postgresql";
+                  description = "The postgresql.service has been inactive for more than 5 minutes. Check: systemctl status postgresql";
                   severity = "critical";
                 }
                 {
@@ -192,7 +192,7 @@
                   unitName = "prometheus.service";
                   title = "Prometheus Service Down";
                   summary = "Prometheus service is not running";
-                  description = "The prometheus.service has been inactive for more than 2 minutes. Metrics collection and alerting stopped. Check: systemctl status prometheus";
+                  description = "The prometheus.service has been inactive for more than 5 minutes. Metrics collection and alerting stopped. Check: systemctl status prometheus";
                   severity = "critical";
                 }
                 # Warning services
@@ -201,42 +201,42 @@
                   unitName = "wyoming-faster-whisper-default.service";
                   title = "Whisper STT Service Down";
                   summary = "Whisper STT service is not running";
-                  description = "The wyoming-faster-whisper-default.service has been inactive for more than 2 minutes. Voice commands will not work. Check: systemctl status wyoming-faster-whisper-default";
+                  description = "The wyoming-faster-whisper-default.service has been inactive for more than 5 minutes. Voice commands will not work. Check: systemctl status wyoming-faster-whisper-default";
                 }
                 {
                   serviceName = "piper";
                   unitName = "wyoming-piper-default.service";
                   title = "Piper TTS Service Down";
                   summary = "Piper TTS service is not running";
-                  description = "The wyoming-piper-default.service has been inactive for more than 2 minutes. Voice responses will not work. Check: systemctl status wyoming-piper-default";
+                  description = "The wyoming-piper-default.service has been inactive for more than 5 minutes. Voice responses will not work. Check: systemctl status wyoming-piper-default";
                 }
                 {
                   serviceName = "tailscale";
                   unitName = "tailscaled.service";
                   title = "Tailscale Service Down";
                   summary = "Tailscale service is not running";
-                  description = "The tailscaled.service has been inactive for more than 2 minutes. Remote access via Tailscale will not work. Check: systemctl status tailscaled";
+                  description = "The tailscaled.service has been inactive for more than 5 minutes. Remote access via Tailscale will not work. Check: systemctl status tailscaled";
                 }
                 {
                   serviceName = "grafana";
                   unitName = "grafana.service";
                   title = "Grafana Service Down";
                   summary = "Grafana service is not running";
-                  description = "The grafana.service has been inactive for more than 2 minutes. Dashboards and monitoring UI unavailable. Check: systemctl status grafana";
+                  description = "The grafana.service has been inactive for more than 5 minutes. Dashboards and monitoring UI unavailable. Check: systemctl status grafana";
                 }
                 {
                   serviceName = "influxdb";
                   unitName = "influxdb2.service";
                   title = "InfluxDB Service Down";
                   summary = "InfluxDB service is not running";
-                  description = "The influxdb2.service has been inactive for more than 2 minutes. Time-series data collection stopped. Check: systemctl status influxdb2";
+                  description = "The influxdb2.service has been inactive for more than 5 minutes. Time-series data collection stopped. Check: systemctl status influxdb2";
                 }
                 {
                   serviceName = "fail2ban";
                   unitName = "fail2ban.service";
                   title = "fail2ban Service Down";
                   summary = "fail2ban service is not running";
-                  description = "The fail2ban.service has been inactive for more than 2 minutes. SSH brute-force protection disabled. Check: systemctl status fail2ban";
+                  description = "The fail2ban.service has been inactive for more than 5 minutes. SSH brute-force protection disabled. Check: systemctl status fail2ban";
                 }
               ];
             in
