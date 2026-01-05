@@ -89,10 +89,10 @@ pkgs.testers.nixosTest {
     services.wyoming.faster-whisper.servers.default.enable = lib.mkForce false;
     services.wyoming.piper.servers.default.enable = lib.mkForce false;
 
-    # Disable Loki compactor in VM tests (blocks /ready for 10m)
-    # Production: compactor handles retention
-    # VM tests: no data to compact, just validate service starts
-    services.loki.configuration.compactor = lib.mkForce {};
+    # Disable Loki retention in VM tests (compactor blocks /ready for 10m)
+    # Production: retention enabled via compactor
+    # VM tests: no data to retain, just validate service starts
+    services.loki.configuration.compactor.retention_enabled = lib.mkForce false;
 
     # Run InfluxDB init in VM tests with hardcoded credentials
     systemd.services.influxdb2-init = {
