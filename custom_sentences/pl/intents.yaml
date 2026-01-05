@@ -213,34 +213,16 @@ intents:
           - "jaki [jest] dzień"
 
   # =========================================
-  # Task Management (Todoist)
+  # Shopping List (Todoist)
   # =========================================
-  AddTaskToTodoist:
+  AddToShoppingList:
     data:
-      - sentences:
-          - "(dodaj|zapisz|wrzuć) {task} (do|na) (listę|inbox|zadania)"
-          - "(dodaj|zapisz) [mi] {task}"
-          - "zadanie {task}"
-          - "(dodaj|wpisz) [mi] [no] {task} (do|na) (listę|zadania)"
-          - "zapisz [mi] [że] {task}"
-
-  GetTasksFromTodoist:
-    data:
-      - sentences:
-          - "(pokaż|sprawdź|przeczytaj|odczytaj) [moje] (zadania|listę)"
-          - "(co|jakie) mam (zadania|na liście)"
-          - "lista zadań"
-          - "co [jest] do zrobienia"
-          - "(przeczytaj|powiedz) [mi] [no] [moje] zadania"
-
-  MarkTaskComplete:
-    data:
-      - sentences:
-          - "(oznacz|zaznacz) {task} (jako|za) (zrobione|wykonane|ukończone)"
-          - "{task} (zrobione|wykonane|ukończone)"
-          - "(ukończ|zakończ|zrób) {task}"
-          - "(zrobiłem|zrobiłam|wykonałem|wykonałam) {task}"
-          - "(oznacz|zaznacz) [mi] [no] {task} (jako|za) (zrobione|gotowe)"
+      - required_keywords: [dodaj, zapisz, wrzuć, lista, zakupów]
+        sentences:
+          - "(dodaj|zapisz|wrzuć) do listy zakupów {item}"
+          - "dodaj {item} do zakupów"
+          - "(wrzuć|dodaj|zapisz) {item} na listę zakupów"
+          - "lista zakupów {item}"
 
   # =========================================
   # Scripts (Placeholder - no devices yet)
