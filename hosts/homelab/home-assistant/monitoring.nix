@@ -47,34 +47,34 @@
       # Comin Deployment Detection
       # -----------------------------------------
       {
-        platform = "sensor";
-        name = "comin_last_deployment_uuid";
-        unique_id = "comin_last_deployment_uuid";
-        command = "jq -r '.deployments[0]|select(.error_msg==\"\")|.uuid//\"none\"' /var/lib/comin/store.json";
-        scan_interval = 30;
-      }
-      {
-        platform = "sensor";
-        name = "comin_last_deployment_time";
-        unique_id = "comin_last_deployment_time";
-        command = "jq -r '.deployments[0]|select(.error_msg==\"\")|.ended_at//\"none\"' /var/lib/comin/store.json";
-        device_class = "timestamp";
-        scan_interval = 30;
-      }
-      {
-        platform = "sensor";
-        name = "comin_last_failed_uuid";
-        unique_id = "comin_last_failed_uuid";
-        command = "jq -r '.deployments[0]|if .error_msg==\"\" then \"none\" else .uuid end' /var/lib/comin/store.json";
-        scan_interval = 30;
-      }
-      {
-        platform = "sensor";
-        name = "comin_last_failed_time";
-        unique_id = "comin_last_failed_time";
-        command = "jq -r '.deployments[0]|select(.error_msg!=\"\")|.ended_at//\"none\"' /var/lib/comin/store.json";
-        device_class = "timestamp";
-        scan_interval = 30;
+        sensor = [
+          {
+            name = "comin_last_deployment_uuid";
+            unique_id = "comin_last_deployment_uuid";
+            command = "jq -r '.deployments[0]|select(.error_msg==\"\")|.uuid//\"none\"' /var/lib/comin/store.json";
+            scan_interval = 30;
+          }
+          {
+            name = "comin_last_deployment_time";
+            unique_id = "comin_last_deployment_time";
+            command = "jq -r '.deployments[0]|select(.error_msg==\"\")|.ended_at//\"none\"' /var/lib/comin/store.json";
+            device_class = "timestamp";
+            scan_interval = 30;
+          }
+          {
+            name = "comin_last_failed_uuid";
+            unique_id = "comin_last_failed_uuid";
+            command = "jq -r '.deployments[0]|if .error_msg==\"\" then \"none\" else .uuid end' /var/lib/comin/store.json";
+            scan_interval = 30;
+          }
+          {
+            name = "comin_last_failed_time";
+            unique_id = "comin_last_failed_time";
+            command = "jq -r '.deployments[0]|select(.error_msg!=\"\")|.ended_at//\"none\"' /var/lib/comin/store.json";
+            device_class = "timestamp";
+            scan_interval = 30;
+          }
+        ];
       }
     ];
 
