@@ -94,44 +94,39 @@
     # ===========================================
     command_line = [
       {
-        sensor = {
-          name = "wyoming_whisper_health";
-          command = "systemctl is-active wyoming-faster-whisper-default";
-          value_template = "{{ value == 'active' }}";
-          scan_interval = 60;
-        };
+        platform = "sensor";
+        name = "wyoming_whisper_health";
+        command = "systemctl is-active wyoming-faster-whisper-default";
+        value_template = "{{ value == 'active' }}";
+        scan_interval = 60;
       }
       {
-        sensor = {
-          name = "wyoming_piper_health";
-          command = "systemctl is-active wyoming-piper-default";
-          value_template = "{{ value == 'active' }}";
-          scan_interval = 60;
-        };
+        platform = "sensor";
+        name = "wyoming_piper_health";
+        command = "systemctl is-active wyoming-piper-default";
+        value_template = "{{ value == 'active' }}";
+        scan_interval = 60;
       }
       {
-        sensor = {
-          name = "tailscale_health";
-          command = "systemctl is-active tailscaled";
-          value_template = "{{ value == 'active' }}";
-          scan_interval = 60;
-        };
+        platform = "sensor";
+        name = "tailscale_health";
+        command = "systemctl is-active tailscaled";
+        value_template = "{{ value == 'active' }}";
+        scan_interval = 60;
       }
       {
-        sensor = {
-          name = "fail2ban_health";
-          command = "systemctl is-active fail2ban";
-          value_template = "{{ value == 'active' }}";
-          scan_interval = 60;
-        };
+        platform = "sensor";
+        name = "fail2ban_health";
+        command = "systemctl is-active fail2ban";
+        value_template = "{{ value == 'active' }}";
+        scan_interval = 60;
       }
       {
-        sensor = {
-          name = "postgresql_health";
-          command = "systemctl is-active postgresql";
-          value_template = "{{ value == 'active' }}";
-          scan_interval = 60;
-        };
+        platform = "sensor";
+        name = "postgresql_health";
+        command = "systemctl is-active postgresql";
+        value_template = "{{ value == 'active' }}";
+        scan_interval = 60;
       }
       # -----------------------------------------
       # Comin Deployment Detection
@@ -139,36 +134,32 @@
       # Sensors track deployment UUID and timestamp
       # Automations trigger on HA startup + check if deployment is recent
       {
-        sensor = {
-          name = "comin_last_deployment_uuid";
-          unique_id = "comin_last_deployment_uuid";
-          command = "jq -r '.deployments[0]|select(.error_msg==\"\")|.uuid//\"none\"' /var/lib/comin/store.json";
-          scan_interval = 30;
-        };
+        platform = "sensor";
+        name = "comin_last_deployment_uuid";
+        unique_id = "comin_last_deployment_uuid";
+        command = "jq -r '.deployments[0]|select(.error_msg==\"\")|.uuid//\"none\"' /var/lib/comin/store.json";
+        scan_interval = 30;
       }
       {
-        sensor = {
-          name = "comin_last_deployment_time";
-          unique_id = "comin_last_deployment_time";
-          command = "jq -r '.deployments[0]|select(.error_msg==\"\")|.ended_at//\"none\"' /var/lib/comin/store.json";
-          scan_interval = 30;
-        };
+        platform = "sensor";
+        name = "comin_last_deployment_time";
+        unique_id = "comin_last_deployment_time";
+        command = "jq -r '.deployments[0]|select(.error_msg==\"\")|.ended_at//\"none\"' /var/lib/comin/store.json";
+        scan_interval = 30;
       }
       {
-        sensor = {
-          name = "comin_last_failed_uuid";
-          unique_id = "comin_last_failed_uuid";
-          command = "jq -r '.deployments[0]|if .error_msg==\"\" then \"none\" else .uuid end' /var/lib/comin/store.json";
-          scan_interval = 30;
-        };
+        platform = "sensor";
+        name = "comin_last_failed_uuid";
+        unique_id = "comin_last_failed_uuid";
+        command = "jq -r '.deployments[0]|if .error_msg==\"\" then \"none\" else .uuid end' /var/lib/comin/store.json";
+        scan_interval = 30;
       }
       {
-        sensor = {
-          name = "comin_last_failed_time";
-          unique_id = "comin_last_failed_time";
-          command = "jq -r '.deployments[0]|select(.error_msg!=\"\")|.ended_at//\"none\"' /var/lib/comin/store.json";
-          scan_interval = 30;
-        };
+        platform = "sensor";
+        name = "comin_last_failed_time";
+        unique_id = "comin_last_failed_time";
+        command = "jq -r '.deployments[0]|select(.error_msg!=\"\")|.ended_at//\"none\"' /var/lib/comin/store.json";
+        scan_interval = 30;
       }
     ];
 
