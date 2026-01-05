@@ -334,11 +334,11 @@ in {
   # ===========================================
   services.wyoming.faster-whisper.servers.default = {
     enable = true;
-    model = "base"; # Balanced speed/accuracy for Polish
+    model = "small"; # Better accuracy for Polish
     language = "pl"; # Force Polish
     device = "cpu";
     uri = "tcp://127.0.0.1:10300"; # Localhost only for security
-    beamSize = 3; # Balance quality/performance
+    beamSize = 5; # Higher quality transcription
     extraArgs = [
       "--compute-type"
       "int8" # CPU-compatible quantization (N5095 lacks AVX512 for int8_float16)
