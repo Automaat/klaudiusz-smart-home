@@ -747,6 +747,7 @@ mise run encrypt-secrets
 ```
 
 **NEVER:**
+
 - Edit secrets/secrets.yaml directly
 - Use raw sops commands (use mise tasks)
 - Commit unencrypted secrets
