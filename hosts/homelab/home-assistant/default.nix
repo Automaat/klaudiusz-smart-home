@@ -307,6 +307,10 @@ in {
     # bluetooth_auto_recovery accesses /dev/bus/usb/NNN/DDD to reset USB devices
     # Using char-usb_device allows all USB devices (systemd doesn't support path wildcards)
     serviceConfig.DeviceAllow = lib.mkAfter ["char-usb_device rw"];
+
+    # Allow promtail (in hass group) to read log files
+    # 0750 = owner: rwx, group: r-x, others: ---
+    serviceConfig.StateDirectoryMode = lib.mkForce "0750";
   };
 
   # ===========================================
