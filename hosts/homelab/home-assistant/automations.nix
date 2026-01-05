@@ -134,12 +134,12 @@
         action = [
           {
             service = "climate.set_preset_mode";
-            target.entity_id = "climate.thermostat_bathroom";
+            target.entity_id = "climate.bathroom_thermostat";
             data.preset_mode = "boost";
           }
           {
             service = "climate.set_temperature";
-            target.entity_id = "climate.thermostat_bathroom";
+            target.entity_id = "climate.bathroom_thermostat";
             data.temperature = 24;
           }
         ];
@@ -157,12 +157,12 @@
         action = [
           {
             service = "climate.set_preset_mode";
-            target.entity_id = "climate.thermostat_bathroom";
+            target.entity_id = "climate.bathroom_thermostat";
             data.preset_mode = "eco";
           }
           {
             service = "climate.set_temperature";
-            target.entity_id = "climate.thermostat_bathroom";
+            target.entity_id = "climate.bathroom_thermostat";
             data.temperature = 19;
           }
         ];
