@@ -2,12 +2,15 @@
 
 ## Why Manual Configuration is Needed
 
-The Grafana Loki Explore app (now called "Grafana Logs Drilldown") cannot have its default datasource configured declaratively via NixOS. The app may default to the Prometheus datasource (marked as `isDefault = true`) instead of Loki, causing 404 errors when accessing log volume endpoints.
+The Grafana Loki Explore app (now called "Grafana Logs Drilldown") cannot have its default datasource configured
+declaratively via NixOS. The app may default to the Prometheus datasource (marked as `isDefault = true`) instead of
+Loki, causing 404 errors when accessing log volume endpoints.
 
 ## When to Perform Setup
 
 After deploying Grafana with the Loki datasource provisioned, or when you see 404 errors accessing:
-```
+
+```text
 /api/datasources/uid/prometheus/resources/index/volume
 ```
 
