@@ -736,11 +736,11 @@ tail -f /var/lib/hass/home-assistant.log
 **ALWAYS use mise tasks for secrets editing:**
 
 ```bash
-# Decrypt to /tmp/secrets-decrypted.yaml
+# Decrypt to secrets/secrets.decrypted.yaml
 mise run decrypt-secrets
 
 # Edit plaintext
-vim /tmp/secrets-decrypted.yaml
+vim secrets/secrets.decrypted.yaml
 
 # Encrypt back to secrets/secrets.yaml
 mise run encrypt-secrets

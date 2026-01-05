@@ -21,8 +21,8 @@ run = "nix flake update"
 
 [tasks.decrypt-secrets]
 description = "Decrypt secrets to temp file for editing"
-run = "sops -d secrets/secrets.yaml > /tmp/secrets-decrypted.yaml && echo 'Decrypted to /tmp/secrets-decrypted.yaml'"
+run = "sops -d secrets/secrets.yaml > secrets/secrets.decrypted.yaml && chmod 600 secrets/secrets.decrypted.yaml && echo 'Decrypted to secrets/secrets.decrypted.yaml'"
 
 [tasks.encrypt-secrets]
 description = "Encrypt temp file back to secrets/secrets.yaml"
-run = "cp /tmp/secrets-decrypted.yaml secrets/secrets.yaml && sops -e -i secrets/secrets.yaml && echo 'Encrypted to secrets/secrets.yaml'"
+run = "if [ -f secrets/secrets.decrypted.yaml ]; then cp secrets/secrets.decrypted.yaml secrets/secrets.yaml && sops -e -i secrets/secrets.yaml && shred -u secrets/secrets.decrypted.yaml && echo 'Encrypted to secrets/secrets.yaml'; else echo 'No decrypted secrets file found at secrets/secrets.decrypted.yaml' >&2; exit 1; fi"
