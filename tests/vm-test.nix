@@ -139,6 +139,7 @@ pkgs.testers.nixosTest {
       # Disable namespace features causing "status=226/NAMESPACE" failure
       PrivateTmp = lib.mkForce false;
       PrivateDevices = lib.mkForce false;
+      PrivateMounts = lib.mkForce false;
       ProtectHome = lib.mkForce false;
       ProtectSystem = lib.mkForce false;
       ProtectKernelTunables = lib.mkForce false;
@@ -151,6 +152,7 @@ pkgs.testers.nixosTest {
       RestrictRealtime = lib.mkForce false;
       RestrictSUIDSGID = lib.mkForce false;
       SystemCallArchitectures = lib.mkForce "";
+      MountFlags = lib.mkForce "";
     };
   };
 
