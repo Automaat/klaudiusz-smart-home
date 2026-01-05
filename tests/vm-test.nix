@@ -58,6 +58,15 @@ pkgs.testers.nixosTest {
           token = "test-token";
         };
       }
+      {
+        name = "Loki";
+        type = "loki";
+        url = "http://localhost:3100";
+        uid = "loki";
+        jsonData = {
+          maxLines = 1000;
+        };
+      }
     ];
 
     # Override PostgreSQL settings for VM test (limited memory)
