@@ -16,12 +16,6 @@
     };
 
     # ===========================================
-    # System Monitor Integration
-    # ===========================================
-    # System Monitor configured via UI (see docs/manual-config.md)
-    # Creates entities: sensor.processor_use, sensor.memory_use_percent, etc.
-
-    # ===========================================
     # Template Sensors (Modern Syntax)
     # ===========================================
     template = [
@@ -47,34 +41,34 @@
       # Comin Deployment Detection
       # -----------------------------------------
       {
-        sensor = [
-          {
-            name = "comin_last_deployment_uuid";
-            unique_id = "comin_last_deployment_uuid";
-            command = "jq -r '.deployments[0]|select(.error_msg==\"\")|.uuid//\"none\"' /var/lib/comin/store.json";
-            scan_interval = 30;
-          }
-          {
-            name = "comin_last_deployment_time";
-            unique_id = "comin_last_deployment_time";
-            command = "jq -r '.deployments[0]|select(.error_msg==\"\")|.ended_at//\"none\"' /var/lib/comin/store.json";
-            device_class = "timestamp";
-            scan_interval = 30;
-          }
-          {
-            name = "comin_last_failed_uuid";
-            unique_id = "comin_last_failed_uuid";
-            command = "jq -r '.deployments[0]|if .error_msg==\"\" then \"none\" else .uuid end' /var/lib/comin/store.json";
-            scan_interval = 30;
-          }
-          {
-            name = "comin_last_failed_time";
-            unique_id = "comin_last_failed_time";
-            command = "jq -r '.deployments[0]|select(.error_msg!=\"\")|.ended_at//\"none\"' /var/lib/comin/store.json";
-            device_class = "timestamp";
-            scan_interval = 30;
-          }
-        ];
+        platform = "sensor";
+        name = "comin_last_deployment_uuid";
+        unique_id = "comin_last_deployment_uuid";
+        command = "jq -r '.deployments[0]|select(.error_msg==\"\")|.uuid//\"none\"' /var/lib/comin/store.json";
+        scan_interval = 30;
+      }
+      {
+        platform = "sensor";
+        name = "comin_last_deployment_time";
+        unique_id = "comin_last_deployment_time";
+        command = "jq -r '.deployments[0]|select(.error_msg==\"\")|.ended_at//\"none\"' /var/lib/comin/store.json";
+        device_class = "timestamp";
+        scan_interval = 30;
+      }
+      {
+        platform = "sensor";
+        name = "comin_last_failed_uuid";
+        unique_id = "comin_last_failed_uuid";
+        command = "jq -r '.deployments[0]|if .error_msg==\"\" then \"none\" else .uuid end' /var/lib/comin/store.json";
+        scan_interval = 30;
+      }
+      {
+        platform = "sensor";
+        name = "comin_last_failed_time";
+        unique_id = "comin_last_failed_time";
+        command = "jq -r '.deployments[0]|select(.error_msg!=\"\")|.ended_at//\"none\"' /var/lib/comin/store.json";
+        device_class = "timestamp";
+        scan_interval = 30;
       }
     ];
 
@@ -83,101 +77,7 @@
     # ===========================================
     automation = [
       # -----------------------------------------
-      # Disk Space Critical Alert
-      # -----------------------------------------
-      {
-        id = "alert_disk_space_critical";
-        alias = "Alert - Disk space critical";
-        trigger = [
-          {
-            platform = "numeric_state";
-            entity_id = "sensor.system_monitor_disk_use";
-            above = 90;
-          }
-        ];
-        action = [
-          {
-            service = "persistent_notification.create";
-            data = {
-              title = "⚠️ Krytyczny poziom dysku";
-              message = "Użycie dysku: {{ states('sensor.system_monitor_disk_use') }}%";
-            };
-          }
-          {
-            action = "notify.send_message";
-            target.entity_id = "notify.klaudiusz_smart_home_system";
-            data = {
-              message = "🚨 Critical disk space alert\nUsage: {{ states('sensor.system_monitor_disk_use') }}%";
-            };
-          }
-        ];
-      }
-
-      # -----------------------------------------
-      # Disk Space Warning Alert
-      # -----------------------------------------
-      {
-        id = "alert_disk_space_warning";
-        alias = "Alert - Disk space warning";
-        trigger = [
-          {
-            platform = "numeric_state";
-            entity_id = "sensor.system_monitor_disk_use";
-            above = 80;
-          }
-        ];
-        action = [
-          {
-            service = "persistent_notification.create";
-            data = {
-              title = "⚠️ Ostrzeżenie - Dysk";
-              message = "Użycie dysku: {{ states('sensor.system_monitor_disk_use') }}%";
-            };
-          }
-          {
-            action = "notify.send_message";
-            target.entity_id = "notify.klaudiusz_smart_home_system";
-            data = {
-              message = "⚠️ Disk space warning\nUsage: {{ states('sensor.system_monitor_disk_use') }}%";
-            };
-          }
-        ];
-      }
-
-      # -----------------------------------------
-      # High Memory Usage Alert
-      # -----------------------------------------
-      {
-        id = "alert_memory_high";
-        alias = "Alert - High memory usage";
-        trigger = [
-          {
-            platform = "numeric_state";
-            entity_id = "sensor.system_monitor_memory_use";
-            above = 90;
-            for.minutes = 5;
-          }
-        ];
-        action = [
-          {
-            service = "persistent_notification.create";
-            data = {
-              title = "⚠️ Wysokie użycie RAM";
-              message = "Pamięć RAM: {{ states('sensor.system_monitor_memory_use') }}%";
-            };
-          }
-          {
-            action = "notify.send_message";
-            target.entity_id = "notify.klaudiusz_smart_home_system";
-            data = {
-              message = "🟠 High memory usage\nRAM: {{ states('sensor.system_monitor_memory_use') }}%";
-            };
-          }
-        ];
-      }
-
-      # -----------------------------------------
-      # Service health alerts moved to Grafana (uses Prometheus node_exporter)
+      # System health alerts moved to Grafana (uses Prometheus node_exporter)
       # -----------------------------------------
 
       # -----------------------------------------
