@@ -252,11 +252,26 @@
                 ];
                 sequence = [
                   {
-                    action = "notify.send_message";
-                    target.entity_id = "notify.klaudiusz_smart_home_system";
+                    action = "media_player.media_pause";
+                    target.entity_id = "media_player.tv";
+                  }
+                  {
+                    delay.seconds = 1;
+                  }
+                  {
+                    action = "tts.speak";
+                    target.entity_id = "tts.piper";
                     data = {
-                      message = "🌡️ Temperatura w sypialni: {{ state_attr('climate.thermostat_bedroom', 'current_temperature') | round(1) }}°C. Otwórz okno na 15-20 min przed snem. Jakość powietrza: {{ states('sensor.aleje_pm2_5') }} μg/m³ ({{ 'doskonała' if states('sensor.aleje_pm2_5_index') == 'very_good' else 'dobra' }})";
+                      media_player_entity_id = "media_player.tv";
+                      message = "Temperatura w sypialni {{ state_attr('climate.thermostat_bedroom', 'current_temperature') | round(0) }} stopni. Otwórz okno żeby wietrzyć przed snem";
                     };
+                  }
+                  {
+                    delay.seconds = 1;
+                  }
+                  {
+                    action = "media_player.media_play";
+                    target.entity_id = "media_player.tv";
                   }
                 ];
               }
