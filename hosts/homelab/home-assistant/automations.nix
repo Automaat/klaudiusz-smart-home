@@ -207,6 +207,75 @@
         ];
       }
 
+      {
+        id = "bedroom_sleep_ventilation";
+        alias = "Bedroom - Sleep ventilation reminder";
+        trigger = [
+          {
+            platform = "time";
+            at = "21:00:00";
+          }
+        ];
+        condition = [
+          {
+            condition = "numeric_state";
+            entity_id = "climate.thermostat_bedroom";
+            attribute = "current_temperature";
+            above = 18;
+          }
+          {
+            condition = "or";
+            conditions = [
+              {
+                condition = "state";
+                entity_id = "sensor.aleje_pm2_5_index";
+                state = "very_good";
+              }
+              {
+                condition = "state";
+                entity_id = "sensor.aleje_pm2_5_index";
+                state = "good";
+              }
+            ];
+          }
+        ];
+        action = [
+          {
+            choose = [
+              {
+                conditions = [
+                  {
+                    condition = "state";
+                    entity_id = "media_player.tv";
+                    state = "playing";
+                  }
+                ];
+                sequence = [
+                  {
+                    action = "notify.send_message";
+                    target.entity_id = "notify.klaudiusz_smart_home_system";
+                    data = {
+                      message = "🌡️ Temperatura w sypialni: {{ state_attr('climate.thermostat_bedroom', 'current_temperature') | round(1) }}°C. Otwórz okno na 15-20 min przed snem. Jakość powietrza: {{ states('sensor.aleje_pm2_5') }} μg/m³ ({{ 'doskonała' if states('sensor.aleje_pm2_5_index') == 'very_good' else 'dobra' }})";
+                    };
+                  }
+                ];
+              }
+            ];
+            default = [
+              {
+                action = "tts.speak";
+                target.entity_id = "tts.piper";
+                data = {
+                  media_player_entity_id = "media_player.tv";
+                  message = "Temperatura w sypialni {{ state_attr('climate.thermostat_bedroom', 'current_temperature') | round(0) }} stopni. Otwórz okno żeby wietrzyć przed snem";
+                };
+              }
+            ];
+          }
+        ];
+        mode = "single";
+      }
+
       # -----------------------------------------
       # Living Room
       # -----------------------------------------
