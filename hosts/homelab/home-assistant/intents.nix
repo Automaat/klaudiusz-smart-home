@@ -183,8 +183,9 @@
 
       # -----------------------------------------
       # Shopping List (Todoist)
+      # Override built-in HassShoppingListAddItem to use Todoist
       # -----------------------------------------
-      AddToShoppingList = {
+      HassShoppingListAddItem = {
         speech.text = "Dodaję {{ slots.item }} do listy zakupów";
         action = [
           {

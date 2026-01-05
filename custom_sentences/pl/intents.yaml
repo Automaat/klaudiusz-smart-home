@@ -214,15 +214,9 @@ intents:
 
   # =========================================
   # Shopping List (Todoist)
+  # Using built-in HassShoppingListAddItem sentences
+  # Override handler in intents.nix to use Todoist
   # =========================================
-  AddToShoppingList:
-    data:
-      - required_keywords: [dodaj, zapisz, wrzuć, lista, zakupów]
-        sentences:
-          - "(dodaj|zapisz|wrzuć) do listy zakupów {item}"
-          - "dodaj {item} do zakupów"
-          - "(wrzuć|dodaj|zapisz) {item} na listę zakupów"
-          - "lista zakupów {item}"
 
   # =========================================
   # Scripts (Placeholder - no devices yet)
