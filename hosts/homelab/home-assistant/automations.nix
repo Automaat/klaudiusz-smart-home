@@ -79,8 +79,18 @@
         ];
         condition = [
           {
-            condition = "sun";
-            after = "sunset";
+            condition = "or";
+            conditions = [
+              {
+                condition = "sun";
+                after = "sunset";
+              }
+              {
+                condition = "numeric_state";
+                entity_id = "sensor.kitchen_light_power";
+                below = 20;
+              }
+            ];
           }
         ];
         action = [
