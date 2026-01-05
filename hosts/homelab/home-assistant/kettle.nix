@@ -19,22 +19,20 @@
       # Uses curl + grep to parse text response
       command_line = [
         {
-          sensor = {
-            name = "Czajnik Temperatura";
-            unique_id = "fellow_kettle_temperature";
-            command = "curl -s --max-time 5 'http://192.168.0.47/cli?cmd=state' | grep 'tempr=' | cut -d= -f2 | cut -d' ' -f1";
-            unit_of_measurement = "°C";
-            device_class = "temperature";
-            scan_interval = 30;
-          };
+          platform = "sensor";
+          name = "Czajnik Temperatura";
+          unique_id = "fellow_kettle_temperature";
+          command = "curl -s --max-time 5 'http://192.168.0.47/cli?cmd=state' | grep 'tempr=' | cut -d= -f2 | cut -d' ' -f1";
+          unit_of_measurement = "°C";
+          device_class = "temperature";
+          scan_interval = 30;
         }
         {
-          sensor = {
-            name = "Czajnik Stan";
-            unique_id = "fellow_kettle_mode";
-            command = "curl -s --max-time 5 'http://192.168.0.47/cli?cmd=state' | grep 'mode=' | cut -d= -f2";
-            scan_interval = 30;
-          };
+          platform = "sensor";
+          name = "Czajnik Stan";
+          unique_id = "fellow_kettle_mode";
+          command = "curl -s --max-time 5 'http://192.168.0.47/cli?cmd=state' | grep 'mode=' | cut -d= -f2";
+          scan_interval = 30;
         }
       ];
 
