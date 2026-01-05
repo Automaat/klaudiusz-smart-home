@@ -410,14 +410,16 @@
   # Grafana restart limits + failure notification
   systemd.services.grafana = {
     serviceConfig = {
-      # Limit restart attempts: 5 tries within 5 minutes, then give up
-      StartLimitBurst = 5;
-      StartLimitIntervalSec = 300;
       # Wait 10s between restart attempts
       RestartSec = "10s";
     };
-    # Send Telegram alert when service fails permanently
-    unitConfig.OnFailure = "notify-service-failure@%n.service";
+    unitConfig = {
+      # Limit restart attempts: 5 tries within 5 minutes, then give up
+      StartLimitBurst = 5;
+      StartLimitIntervalSec = 300;
+      # Send Telegram alert when service fails permanently
+      OnFailure = "notify-service-failure@%n.service";
+    };
   };
 
   # ===========================================
@@ -468,27 +470,35 @@
       # Allow connecting to PostgreSQL via socket
       SupplementaryGroups = ["postgres"];
       # Bluetooth capabilities auto-added by NixOS module for bluetooth components
+      # UMask for group-readable log files (640) - allows promtail in hass group to read logs
+      UMask = lib.mkForce "0027";
       Restart = "on-failure";
       RestartSec = "10";
+    };
+    home-assistant.unitConfig = {
       # Restart limits
       StartLimitBurst = 5;
       StartLimitIntervalSec = 300;
+      OnFailure = "notify-service-failure@%n.service";
     };
-    home-assistant.unitConfig.OnFailure = "notify-service-failure@%n.service";
 
     influxdb2.serviceConfig = {
-      StartLimitBurst = 5;
-      StartLimitIntervalSec = 300;
       RestartSec = "10s";
     };
-    influxdb2.unitConfig.OnFailure = "notify-service-failure@%n.service";
+    influxdb2.unitConfig = {
+      StartLimitBurst = 5;
+      StartLimitIntervalSec = 300;
+      OnFailure = "notify-service-failure@%n.service";
+    };
 
     prometheus.serviceConfig = {
-      StartLimitBurst = 5;
-      StartLimitIntervalSec = 300;
       RestartSec = "10s";
     };
-    prometheus.unitConfig.OnFailure = "notify-service-failure@%n.service";
+    prometheus.unitConfig = {
+      StartLimitBurst = 5;
+      StartLimitIntervalSec = 300;
+      OnFailure = "notify-service-failure@%n.service";
+    };
 
     wyoming-faster-whisper-default.serviceConfig.Restart = "on-failure";
     wyoming-piper-default.serviceConfig.Restart = "on-failure";
@@ -502,15 +512,17 @@
       # Restart on failure (resilient to missing log files at startup)
       Restart = "on-failure";
       RestartSec = "10s";
-      StartLimitBurst = 5;
-      StartLimitIntervalSec = 300;
       # Override hardening that blocks journal access
       PrivateMounts = lib.mkForce false;
       MountFlags = lib.mkForce "";
       # Allow reading Home Assistant log file
       ReadOnlyPaths = ["/var/lib/hass"];
     };
-    promtail.unitConfig.OnFailure = "notify-service-failure@%n.service";
+    promtail.unitConfig = {
+      StartLimitBurst = 5;
+      StartLimitIntervalSec = 300;
+      OnFailure = "notify-service-failure@%n.service";
+    };
 
     # Telegram notification service template for service failures
     "notify-service-failure@" = {
