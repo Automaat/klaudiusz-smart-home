@@ -298,6 +298,7 @@
         reject_old_samples = true;
         reject_old_samples_max_age = "168h";
         retention_period = "8760h"; # 365 days
+        volume_enabled = true; # Enable log volume API for Grafana histogram
       };
 
       compactor = {
