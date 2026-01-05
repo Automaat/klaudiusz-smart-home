@@ -142,6 +142,7 @@ in {
       with ps; [
         psycopg2 # PostgreSQL adapter for recorder
         aiogithubapi # Required by HACS
+        prettytable # Required by Watchman
         customPkgs.ibeacon-ble # iBeacon integration
         pyatv # Apple TV integration
         pychromecast # Google Cast integration
