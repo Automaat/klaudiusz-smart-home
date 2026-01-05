@@ -6,6 +6,7 @@
 # Only exclude unencrypted copies
 secrets.yaml.dec
 *.yaml.dec
+*.decrypted.yaml
 
 # NixOS generated
 result

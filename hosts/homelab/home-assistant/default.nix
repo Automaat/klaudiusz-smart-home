@@ -25,6 +25,61 @@
   };
 
   # ===========================================
+  # Better Thermostat
+  # ===========================================
+  betterThermostatSource = pkgs.fetchFromGitHub {
+    owner = "KartoffelToby";
+    repo = "better_thermostat";
+    # renovate: datasource=github-tags depName=KartoffelToby/better_thermostat
+    rev = "1.7.0";
+    hash = "sha256-rE14iKAXo3hecK3bQ9MLcOtnZviwjOpYKGlIc4+uCfw=";
+  };
+
+  # ===========================================
+  # Bubble Card
+  # ===========================================
+  bubbleCardSource = pkgs.fetchFromGitHub {
+    owner = "Clooos";
+    repo = "Bubble-Card";
+    # renovate: datasource=github-tags depName=Clooos/Bubble-Card
+    rev = "v3.1.0-rc.2";
+    hash = "sha256-WGe8XAJFYrFxp4KkXefK5ImAnRtgKH9ZhbEC74QRPVY=";
+  };
+
+  # ===========================================
+  # Adaptive Lighting
+  # ===========================================
+  adaptiveLightingSource = pkgs.fetchFromGitHub {
+    owner = "basnijholt";
+    repo = "adaptive-lighting";
+    # renovate: datasource=github-tags depName=basnijholt/adaptive-lighting
+    rev = "v1.29.0";
+    hash = "sha256-v10Mrc/sSB09mC0UHMhjoEnPhj5S3tISmMcPQrPHPq8=";
+  };
+
+  # ===========================================
+  # Watchman
+  # ===========================================
+  watchmanSource = pkgs.fetchFromGitHub {
+    owner = "dummylabs";
+    repo = "thewatchman";
+    # renovate: datasource=github-tags depName=dummylabs/thewatchman
+    rev = "v0.6.5";
+    hash = "sha256-qMsCkUf8G9oGWHTg1w2j8T5cvmAtk5bmeXEMXRXuOCk=";
+  };
+
+  # ===========================================
+  # Powercalc
+  # ===========================================
+  powercalcSource = pkgs.fetchFromGitHub {
+    owner = "bramstroker";
+    repo = "homeassistant-powercalc";
+    # renovate: datasource=github-tags depName=bramstroker/homeassistant-powercalc
+    rev = "v1.20.1";
+    hash = "sha256-LzXLsKFBDC/Lcdv62kAiQeyc/fu/eH6ukV76jwSb/Es=";
+  };
+
+  # ===========================================
   # Custom Python Packages
   # ===========================================
   # Function that builds custom packages with HA's Python environment
@@ -34,6 +89,7 @@ in {
     ./intents.nix
     ./automations.nix
     ./monitoring.nix
+    ./kettle.nix
   ];
 
   # ===========================================
@@ -45,11 +101,14 @@ in {
     extraComponents = [
       # Core
       "default_config"
+      "zeroconf" # mDNS/Bonjour for device discovery (HomeKit, etc.)
       "met" # Weather
+      "gios" # Polish air quality (GIOŚ)
       "radio_browser" # Internet radio
 
       # Database
       "recorder" # PostgreSQL database
+      "influxdb" # InfluxDB time-series for Grafana
 
       # Voice
       "conversation"
@@ -75,7 +134,9 @@ in {
       "webostv" # LG WebOS TV
       "wake_on_lan" # Wake on LAN for TV power-on
       "homekit_controller" # Aqara FP2 presence sensor
-      # "cast"           # Google Cast
+      "homekit" # HomeKit Bridge (expose HA entities to Apple Home)
+      "apple_tv" # Apple TV / AirPlay devices
+      "cast" # Google Cast / Chromecast
     ];
 
     extraPackages = ps: let
@@ -84,7 +145,10 @@ in {
       with ps; [
         psycopg2 # PostgreSQL adapter for recorder
         aiogithubapi # Required by HACS
+        prettytable # Required by Watchman
         customPkgs.ibeacon-ble # iBeacon integration
+        pyatv # Apple TV integration
+        pychromecast # Google Cast integration
       ];
 
     config = {
@@ -147,6 +211,9 @@ in {
         default = "info";
         logs = {
           "homeassistant.components.intent_script" = "debug";
+          "homeassistant.components.assist_pipeline" = "debug";
+          "homeassistant.components.wyoming" = "debug";
+          "homeassistant.components.conversation" = "debug";
         };
       };
 
@@ -155,23 +222,21 @@ in {
         database_path = "/var/lib/hass/zigbee.db";
       };
 
-      # Telegram Bot
-      telegram_bot = [
-        {
-          platform = "polling";
-          api_key = "!secret telegram_bot_token";
-          allowed_chat_ids = ["!secret telegram_chat_id"];
-        }
-      ];
+      # InfluxDB integration for Grafana dashboards
+      influxdb = {
+        api_version = 2;
+        host = "localhost";
+        port = 8086;
+        ssl = false;
+        organization = "homeassistant";
+        bucket = "home-assistant";
+        token = "!secret influxdb_token";
+        max_retries = 3;
+        precision = "s";
+      };
 
-      # Telegram Notify
-      notify = [
-        {
-          platform = "telegram";
-          name = "telegram";
-          chat_id = "!secret telegram_chat_id";
-        }
-      ];
+      # Telegram integration - configured via UI (see docs/manual-config/telegram.md)
+      # Entity: notify.klaudiusz_smart_home_system (use with notify.send_message action)
     };
 
     # Allow GUI automations and dashboard edits
@@ -190,6 +255,11 @@ in {
     "f /var/lib/hass/secrets.yaml 0600 hass hass -"
     # Polish custom sentences
     "L+ /var/lib/hass/custom_sentences - - - - ${../../../custom_sentences}"
+    # Comin deployment state tracking (monitoring.nix sensors)
+    "f /var/lib/hass/.comin_last_success_uuid 0600 hass hass -"
+    "f /var/lib/hass/.comin_last_failed_uuid 0600 hass hass -"
+    "f /var/lib/hass/.comin_last_success_uuid.lock 0600 hass hass -"
+    "f /var/lib/hass/.comin_last_failed_uuid.lock 0600 hass hass -"
   ];
 
   # ===========================================
@@ -199,14 +269,33 @@ in {
   # File ownership set by tmpfiles.rules above (avoids chown in VM tests)
   # HACS symlink created after Nix-managed preStart removes /nix/store symlinks
   systemd.services.home-assistant = {
+    path = [pkgs.jq]; # Required for command_line sensor jq commands
+
     preStart = lib.mkAfter ''
       cat > /var/lib/hass/secrets.yaml <<EOF
       telegram_bot_token: "123456789:ABCdefGHIjklMNOpqrsTUVwxyz-DUMMY"
       telegram_chat_id: "123456789"
+      influxdb_token: "$(cat ${config.sops.secrets.influxdb-admin-token.path})"
       EOF
 
       # Create HACS symlink (release zip extracts to root)
       ln -sfn ${hacsSource} /var/lib/hass/custom_components/hacs
+
+      # Create Better Thermostat symlink (component is in custom_components/better_thermostat)
+      ln -sfn ${betterThermostatSource}/custom_components/better_thermostat /var/lib/hass/custom_components/better_thermostat
+
+      # Create Bubble Card symlink (frontend card in www/community)
+      mkdir -p /var/lib/hass/www/community
+      ln -sfn ${bubbleCardSource}/dist /var/lib/hass/www/community/bubble-card
+
+      # Create Adaptive Lighting symlink
+      ln -sfn ${adaptiveLightingSource}/custom_components/adaptive_lighting /var/lib/hass/custom_components/adaptive_lighting
+
+      # Create Watchman symlink
+      ln -sfn ${watchmanSource}/custom_components/watchman /var/lib/hass/custom_components/watchman
+
+      # Create Powercalc symlink
+      ln -sfn ${powercalcSource}/custom_components/powercalc /var/lib/hass/custom_components/powercalc
     '';
 
     # Force derivation update when HA config changes
@@ -215,14 +304,23 @@ in {
       builtins.readFile ./intents.nix
       + builtins.readFile ./automations.nix
       + builtins.readFile ./monitoring.nix
+      + builtins.readFile ./kettle.nix
     );
+
+    # Allow USB device access for Bluetooth adapter management
+    # bluetooth_auto_recovery accesses /dev/bus/usb/NNN/DDD to reset USB devices
+    # Using char-usb_device allows all USB devices (systemd doesn't support path wildcards)
+    serviceConfig.DeviceAllow = lib.mkAfter ["char-usb_device rw"];
+
+    # Allow promtail (in hass group) to read log files
+    # 0750 = owner: rwx, group: r-x, others: ---
+    serviceConfig.StateDirectoryMode = lib.mkForce "0750";
   };
 
   # ===========================================
   # Zigbee USB Device (ZHA)
   # ===========================================
-  # Add hass user to dialout group for serial port access
-  users.users.hass.extraGroups = ["dialout"];
+  # User groups configured in users.nix (dialout for serial access)
 
   # Create persistent /dev/zigbee symlink for Connect ZBT-2
   # Espressif ESP32 (Nabu Casa ZBT-2: 303a:831a)
@@ -236,13 +334,14 @@ in {
   # ===========================================
   services.wyoming.faster-whisper.servers.default = {
     enable = true;
-    model = "medium"; # Better Polish accuracy (+10-20%)
+    model = "base"; # Balanced speed/accuracy for Polish
     language = "pl"; # Force Polish
     device = "cpu";
     uri = "tcp://127.0.0.1:10300"; # Localhost only for security
+    beamSize = 3; # Balance quality/performance
     extraArgs = [
-      "--beam-size"
-      "5" # Improved decoding quality (better alternatives)
+      "--compute-type"
+      "int8" # CPU-compatible quantization (N5095 lacks AVX512 for int8_float16)
     ];
   };
 

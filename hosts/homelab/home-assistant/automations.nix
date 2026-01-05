@@ -32,132 +32,10 @@
             };
           }
           # {
-          #   service = "notify.telegram";
+          #   action = "notify.send_message";
+          #   target.entity_id = "notify.klaudiusz_smart_home_system";
           #   data = {
           #     message = "✅ Home Assistant started at {{ now().strftime('%H:%M') }}";
-          #   };
-          # }
-        ];
-      }
-
-      # -----------------------------------------
-      # System Health Monitoring
-      # -----------------------------------------
-      {
-        id = "alert_high_cpu";
-        alias = "Health - High CPU usage";
-        mode = "single";
-        trigger = [
-          {
-            platform = "numeric_state";
-            entity_id = "sensor.system_monitor_obciazenie_procesora";
-            above = 80;
-            "for" = {
-              minutes = 2;
-            };
-          }
-        ];
-        condition = [
-          {
-            condition = "template";
-            value_template = "{{ (as_timestamp(now()) - as_timestamp(state_attr('automation.alert_high_cpu', 'last_triggered') | default(0))) > 300 }}";
-          }
-        ];
-        action = [
-          # {
-          #   service = "notify.telegram";
-          #   data = {
-          #     message = "🔴 High CPU usage: {{ states('sensor.system_monitor_obciazenie_procesora') }}%";
-          #   };
-          # }
-        ];
-      }
-
-      {
-        id = "alert_high_memory";
-        alias = "Health - High memory usage";
-        mode = "single";
-        trigger = [
-          {
-            platform = "numeric_state";
-            entity_id = "sensor.system_monitor_memory_use";
-            above = 85;
-            "for" = {
-              minutes = 2;
-            };
-          }
-        ];
-        condition = [
-          {
-            condition = "template";
-            value_template = "{{ (as_timestamp(now()) - as_timestamp(state_attr('automation.alert_high_memory', 'last_triggered') | default(0))) > 300 }}";
-          }
-        ];
-        action = [
-          # {
-          #   service = "notify.telegram";
-          #   data = {
-          #     message = "🟠 High memory usage: {{ states('sensor.system_monitor_memory_use') }}%";
-          #   };
-          # }
-        ];
-      }
-
-      {
-        id = "alert_disk_full";
-        alias = "Health - Disk space low";
-        mode = "single";
-        trigger = [
-          {
-            platform = "numeric_state";
-            entity_id = "sensor.system_monitor_disk_use";
-            above = 85;
-            "for" = {
-              minutes = 5;
-            };
-          }
-        ];
-        condition = [
-          {
-            condition = "template";
-            value_template = "{{ (as_timestamp(now()) - as_timestamp(state_attr('automation.alert_disk_full', 'last_triggered') | default(0))) > 1800 }}";
-          }
-        ];
-        action = [
-          # {
-          #   service = "notify.telegram";
-          #   data = {
-          #     message = "💾 Low disk space: {{ states('sensor.system_monitor_disk_use') }}% used";
-          #   };
-          # }
-        ];
-      }
-
-      {
-        id = "alert_high_temperature";
-        alias = "Health - High CPU temperature";
-        mode = "single";
-        trigger = [
-          {
-            platform = "numeric_state";
-            entity_id = "sensor.system_monitor_temperatura_procesora";
-            above = 75;
-            "for" = {
-              minutes = 2;
-            };
-          }
-        ];
-        condition = [
-          {
-            condition = "template";
-            value_template = "{{ (as_timestamp(now()) - as_timestamp(state_attr('automation.alert_high_temperature', 'last_triggered') | default(0))) > 300 }}";
-          }
-        ];
-        action = [
-          # {
-          #   service = "notify.telegram";
-          #   data = {
-          #     message = "🔥 High CPU temperature: {{ states('sensor.system_monitor_temperatura_procesora') }}°C";
           #   };
           # }
         ];
@@ -211,6 +89,272 @@
             data = {
               message = "Zadanie dodane do listy";
             };
+          }
+        ];
+      }
+
+      # -----------------------------------------
+      # Kitchen
+      # -----------------------------------------
+      {
+        id = "kitchen_presence_lights_on";
+        alias = "Kitchen - Turn on lights on presence";
+        trigger = [
+          {
+            platform = "state";
+            entity_id = "binary_sensor.presence_kitchen";
+            to = "on";
+          }
+        ];
+        condition = [
+          {
+            condition = "or";
+            conditions = [
+              {
+                condition = "sun";
+                after = "sunset";
+              }
+              {
+                condition = "numeric_state";
+                entity_id = "sensor.kitchen_light_power";
+                below = 20;
+              }
+            ];
+          }
+        ];
+        action = [
+          {
+            service = "light.turn_on";
+            target.entity_id = "light.kitchen";
+          }
+        ];
+      }
+
+      {
+        id = "kitchen_presence_lights_off";
+        alias = "Kitchen - Turn off lights on clear";
+        trigger = [
+          {
+            platform = "state";
+            entity_id = "binary_sensor.presence_kitchen";
+            to = "off";
+          }
+        ];
+        action = [
+          {
+            service = "light.turn_off";
+            target.entity_id = "light.kitchen";
+          }
+        ];
+      }
+
+      # -----------------------------------------
+      # Bathroom
+      # -----------------------------------------
+      {
+        id = "bathroom_morning_boost_start";
+        alias = "Bathroom - Morning boost start";
+        trigger = [
+          {
+            platform = "time";
+            at = "06:00:00";
+          }
+        ];
+        action = [
+          {
+            service = "climate.set_preset_mode";
+            target.entity_id = "climate.bathroom_thermostat";
+            data.preset_mode = "boost";
+          }
+          {
+            service = "climate.set_temperature";
+            target.entity_id = "climate.bathroom_thermostat";
+            data.temperature = 24;
+          }
+        ];
+      }
+
+      {
+        id = "bathroom_morning_boost_end";
+        alias = "Bathroom - Morning boost end";
+        trigger = [
+          {
+            platform = "time";
+            at = "09:00:00";
+          }
+        ];
+        action = [
+          {
+            service = "climate.set_preset_mode";
+            target.entity_id = "climate.bathroom_thermostat";
+            data.preset_mode = "eco";
+          }
+          {
+            service = "climate.set_temperature";
+            target.entity_id = "climate.bathroom_thermostat";
+            data.temperature = 19;
+          }
+        ];
+      }
+
+      # -----------------------------------------
+      # Bedroom
+      # -----------------------------------------
+      {
+        id = "bedroom_temperature_morning";
+        alias = "Bedroom - Morning temperature";
+        trigger = [
+          {
+            platform = "time";
+            at = "06:00:00";
+          }
+        ];
+        action = [
+          {
+            service = "climate.set_temperature";
+            target.entity_id = "climate.bedroom_thermostat";
+            data.temperature = 22;
+          }
+        ];
+      }
+
+      {
+        id = "bedroom_temperature_day";
+        alias = "Bedroom - Day temperature";
+        trigger = [
+          {
+            platform = "time";
+            at = "09:00:00";
+          }
+        ];
+        action = [
+          {
+            service = "climate.set_temperature";
+            target.entity_id = "climate.bedroom_thermostat";
+            data.temperature = 18;
+          }
+        ];
+      }
+
+      {
+        id = "bedroom_sleep_ventilation";
+        alias = "Bedroom - Sleep ventilation reminder";
+        trigger = [
+          {
+            platform = "time";
+            at = "21:00:00";
+          }
+        ];
+        condition = [
+          {
+            condition = "numeric_state";
+            entity_id = "climate.thermostat_bedroom";
+            attribute = "current_temperature";
+            above = 18;
+          }
+          {
+            condition = "or";
+            conditions = [
+              {
+                condition = "state";
+                entity_id = "sensor.aleje_pm2_5_index";
+                state = "very_good";
+              }
+              {
+                condition = "state";
+                entity_id = "sensor.aleje_pm2_5_index";
+                state = "good";
+              }
+            ];
+          }
+        ];
+        action = [
+          {
+            choose = [
+              {
+                conditions = [
+                  {
+                    condition = "state";
+                    entity_id = "media_player.tv";
+                    state = "playing";
+                  }
+                ];
+                sequence = [
+                  {
+                    action = "media_player.media_pause";
+                    target.entity_id = "media_player.tv";
+                  }
+                  {
+                    delay.seconds = 1;
+                  }
+                  {
+                    action = "tts.speak";
+                    target.entity_id = "tts.piper";
+                    data = {
+                      media_player_entity_id = "media_player.tv";
+                      message = "Temperatura w sypialni {{ state_attr('climate.thermostat_bedroom', 'current_temperature') | round(0) }} stopni. Otwórz okno żeby wietrzyć przed snem";
+                    };
+                  }
+                  {
+                    delay.seconds = 1;
+                  }
+                  {
+                    action = "media_player.media_play";
+                    target.entity_id = "media_player.tv";
+                  }
+                ];
+              }
+            ];
+            default = [
+              {
+                action = "tts.speak";
+                target.entity_id = "tts.piper";
+                data = {
+                  media_player_entity_id = "media_player.tv";
+                  message = "Temperatura w sypialni {{ state_attr('climate.thermostat_bedroom', 'current_temperature') | round(0) }} stopni. Otwórz okno żeby wietrzyć przed snem";
+                };
+              }
+            ];
+          }
+        ];
+        mode = "single";
+      }
+
+      # -----------------------------------------
+      # Living Room
+      # -----------------------------------------
+      {
+        id = "living_room_temperature_morning";
+        alias = "Living Room - Morning temperature";
+        trigger = [
+          {
+            platform = "time";
+            at = "06:00:00";
+          }
+        ];
+        action = [
+          {
+            service = "climate.set_temperature";
+            target.entity_id = "climate.livingroom_thermostat";
+            data.temperature = 21;
+          }
+        ];
+      }
+
+      {
+        id = "living_room_temperature_evening";
+        alias = "Living Room - Evening temperature";
+        trigger = [
+          {
+            platform = "time";
+            at = "22:00:00";
+          }
+        ];
+        action = [
+          {
+            service = "climate.set_temperature";
+            target.entity_id = "climate.livingroom_thermostat";
+            data.temperature = 18;
           }
         ];
       }
