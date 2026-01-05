@@ -249,6 +249,164 @@
     '';
   };
 
+  # ===========================================
+  # Monitoring - Loki (Log Aggregation)
+  # ===========================================
+  services.loki = {
+    enable = true;
+    configuration = {
+      server.http_listen_port = 3100;
+      auth_enabled = false;
+
+      ingester = {
+        lifecycler = {
+          address = "127.0.0.1";
+          ring = {
+            kvstore.store = "inmemory";
+            replication_factor = 1;
+          };
+        };
+        chunk_idle_period = "5m";
+        chunk_retain_period = "30s";
+      };
+
+      schema_config = {
+        configs = [
+          {
+            from = "2024-01-01";
+            store = "tsdb";
+            object_store = "filesystem";
+            schema = "v13";
+            index = {
+              prefix = "index_";
+              period = "24h";
+            };
+          }
+        ];
+      };
+
+      storage_config = {
+        tsdb_shipper = {
+          active_index_directory = "/var/lib/loki/tsdb-index";
+          cache_location = "/var/lib/loki/tsdb-cache";
+        };
+        filesystem.directory = "/var/lib/loki/chunks";
+      };
+
+      limits_config = {
+        reject_old_samples = true;
+        reject_old_samples_max_age = "168h";
+        retention_period = "8760h"; # 365 days
+      };
+
+      table_manager = {
+        retention_deletes_enabled = true;
+        retention_period = "8760h"; # 365 days
+      };
+
+      compactor = {
+        working_directory = "/var/lib/loki/compactor";
+        compaction_interval = "10m";
+        retention_enabled = true;
+        retention_delete_delay = "2h";
+        retention_delete_worker_count = 150;
+      };
+    };
+  };
+
+  # ===========================================
+  # Monitoring - Promtail (Log Collection)
+  # ===========================================
+  services.promtail = {
+    enable = true;
+    configuration = {
+      server = {
+        http_listen_port = 9080;
+        grpc_listen_port = 0;
+      };
+
+      positions.filename = "/var/lib/promtail/positions.yaml";
+
+      clients = [
+        {url = "http://localhost:3100/loki/api/v1/push";}
+      ];
+
+      scrape_configs = [
+        # Home Assistant logs (standard format parsing)
+        {
+          job_name = "homeassistant";
+          static_configs = [
+            {
+              targets = ["localhost"];
+              labels = {
+                job = "homeassistant";
+                __path__ = "/var/lib/hass/home-assistant.log";
+              };
+            }
+          ];
+          pipeline_stages = [
+            {
+              regex = {
+                expression = "^(?P<timestamp>\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}\\.\\d+) (?P<level>\\w+) \\((?P<thread>\\w+)\\) \\[(?P<logger>[^\\]]+)\\] (?P<message>.*)$";
+              };
+            }
+            {
+              labels = {
+                level = "";
+                logger = "";
+              };
+            }
+            {
+              timestamp = {
+                source = "timestamp";
+                format = "2006-01-02 15:04:05.000";
+              };
+            }
+          ];
+        }
+        # Systemd journal logs
+        {
+          job_name = "systemd";
+          journal = {
+            max_age = "12h";
+            labels = {
+              job = "systemd";
+            };
+          };
+          relabel_configs = [
+            {
+              source_labels = ["__journal__systemd_unit"];
+              target_label = "unit";
+            }
+            {
+              source_labels = ["__journal_priority"];
+              target_label = "priority";
+            }
+            {
+              source_labels = ["__journal__hostname"];
+              target_label = "hostname";
+            }
+          ];
+          # Filter to critical smart home services
+          pipeline_stages = [
+            {
+              match = {
+                selector = ''{unit=~"(home-assistant|wyoming-.*|prometheus|grafana|postgresql|influxdb2)\\.service"}'';
+                stages = [
+                  {
+                    labels = {
+                      service = "";
+                    };
+                  }
+                ];
+              };
+            }
+          ];
+        }
+      ];
+    };
+  };
+
   # Grafana restart limits + failure notification
   systemd.services.grafana = {
     serviceConfig = {
