@@ -110,8 +110,8 @@ topk(10, count_over_time({job="homeassistant"}[1h]))
 {job="homeassistant", level="ERROR", logger=~".*wyoming.*"}
 ```
 
-1. Verify logs appear (should see log lines)
-1. Adjust time range if needed (top-right)
+4. Verify logs appear (should see log lines)
+5. Adjust time range if needed (top-right)
 
 ### 3. Create Real-Time Log Viewer Dashboard
 
@@ -145,11 +145,11 @@ topk(10, count_over_time({job="homeassistant"}[1h]))
   - Show: timestamp, level, logger, message
   - Rename fields for clarity (optional)
 
-1. Click **"Apply"** (top-right)
-1. Click **"Save dashboard"** (top-right)
+5. Click **"Apply"** (top-right)
+6. Click **"Save dashboard"** (top-right)
    - Name: `Smart Home Logs`
    - Folder: **Services** (or create new)
-1. Click **"Save"**
+7. Click **"Save"**
 
 ### 4. Create Error Tracking Dashboard
 
