@@ -3,6 +3,22 @@ actionlint = "1.7.10"
 sops = "3.11.0"
 uv = "0.9.21"
 
+[tasks.check]
+description = "Validate flake and check syntax"
+run = "nix flake check"
+
+[tasks.fmt]
+description = "Format Nix files"
+run = "nix fmt ."
+
+[tasks.build-test]
+description = "Test build homelab config without switching"
+run = "nixos-rebuild build --flake .#homelab"
+
+[tasks.update]
+description = "Update flake.lock dependencies"
+run = "nix flake update"
+
 [tasks.decrypt-secrets]
 description = "Decrypt secrets to temp file for editing"
 run = "sops -d secrets/secrets.yaml > /tmp/secrets-decrypted.yaml && echo 'Decrypted to /tmp/secrets-decrypted.yaml'"
