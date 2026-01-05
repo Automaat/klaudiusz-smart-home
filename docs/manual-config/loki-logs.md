@@ -21,7 +21,7 @@ Declarative services enabled in NixOS, but dashboard creation and query setup re
 
 ## Architecture
 
-```
+```text
 HA logs (/var/lib/hass/home-assistant.log)
     ↓
 Journald (systemd services)
@@ -36,17 +36,20 @@ Grafana (UI) → query with LogQL, visualize, alert
 ## What's Already Configured
 
 ✅ **Loki service** (port 3100):
+
 - 365d retention
 - Filesystem storage: `/var/lib/loki/`
 - TSDB index format (v13 schema)
 
 ✅ **Promtail service** (port 9080):
+
 - Scrapes HA logfile: `/var/lib/hass/home-assistant.log`
 - Scrapes journald: HA, Wyoming, Prometheus, Grafana, PostgreSQL, InfluxDB services
 - Parses HA log format: extracts timestamp, level, logger, message
 - Labels: `job`, `level`, `logger`, `unit`
 
 ✅ **Grafana datasource**:
+
 - Loki datasource provisioned
 - URL: `http://localhost:3100`
 - UID: `loki`
@@ -63,6 +66,7 @@ ssh homelab
 Open browser: `http://192.168.0.241:3000`
 
 Login:
+
 - Username: `admin`
 - Password: (from sops secrets)
 
@@ -121,6 +125,7 @@ topk(10, count_over_time({job="homeassistant"}[1h]))
 **Panel Configuration:**
 
 - **Query:**
+
   ```logql
   {job="homeassistant"}
   ```
@@ -150,37 +155,43 @@ topk(10, count_over_time({job="homeassistant"}[1h]))
 
 **Purpose:** Error trends, top errors, error rate
 
-**Panel 1: Error Rate Graph**
+#### Panel 1: Error Rate Graph
 
 1. Add new panel
 2. Query:
+
    ```logql
    sum(rate({job="homeassistant"} |= "ERROR" [5m]))
    ```
+
 3. Visualization: **Time series**
 4. Title: `Home Assistant Error Rate (5min)`
 5. Legend: Hide
 6. Y-axis unit: `errors/sec`
 7. Apply
 
-**Panel 2: Error Count by Level**
+#### Panel 2: Error Count by Level
 
 1. Add new panel
 2. Query:
+
    ```logql
    sum by (level) (count_over_time({job="homeassistant"}[1h]))
    ```
+
 3. Visualization: **Bar chart**
 4. Title: `Log Levels (Last Hour)`
 5. Apply
 
-**Panel 3: Top Errors Table**
+#### Panel 3: Top Errors Table
 
 1. Add new panel
 2. Query:
+
    ```logql
    {job="homeassistant"} |= "ERROR"
    ```
+
 3. Visualization: **Table**
 4. Title: `Recent Errors`
 5. Transform:
@@ -191,13 +202,15 @@ topk(10, count_over_time({job="homeassistant"}[1h]))
    - Cell display mode: Color background (by level)
 7. Apply
 
-**Panel 4: Service Status (Systemd)**
+#### Panel 4: Service Status (Systemd)
 
 1. Add new panel
 2. Query:
+
    ```logql
    {job="systemd", unit=~"(home-assistant|wyoming-.*|prometheus|grafana)\\.service"}
    ```
+
 3. Visualization: **Logs**
 4. Title: `System Service Logs`
 5. Apply
@@ -214,15 +227,17 @@ topk(10, count_over_time({job="homeassistant"}[1h]))
 1. Navigate to: **Alerting → Alert rules** (left sidebar)
 2. Click **"New alert rule"**
 
-**Example: Error Spike Alert**
+#### Example: Error Spike Alert
 
 - **Rule name:** `Home Assistant Error Spike`
 - **Query:**
   - Datasource: **Loki**
   - Query:
+
     ```logql
     sum(rate({job="homeassistant"} |= "ERROR" [5m]))
     ```
+
   - Condition: `WHEN last() OF query IS ABOVE 0.1`
   - (More than 6 errors/min for 5 min = spike)
 
@@ -240,12 +255,14 @@ topk(10, count_over_time({job="homeassistant"}[1h]))
 
 3. Click **"Save rule and exit"**
 
-**Example: Component Failure Alert**
+#### Example: Component Failure Alert
 
 - Query:
+
   ```logql
   {job="homeassistant"} |= "Setup failed" or "Integration failed"
   ```
+
 - Condition: `WHEN count() OF query IS ABOVE 0`
 - For: `2m`
 
