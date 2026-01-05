@@ -471,7 +471,7 @@
       SupplementaryGroups = ["postgres"];
       # Bluetooth capabilities auto-added by NixOS module for bluetooth components
       # UMask for group-readable log files (640) - allows promtail in hass group to read logs
-      UMask = "0027";
+      UMask = lib.mkForce "0027";
       Restart = "on-failure";
       RestartSec = "10";
     };
