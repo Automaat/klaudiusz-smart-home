@@ -255,7 +255,7 @@
                     action = "notify.send_message";
                     target.entity_id = "notify.klaudiusz_smart_home_system";
                     data = {
-                      message = "🌡️ Temperatura w sypialni: {{ state_attr('climate.thermostat_bedroom', 'current_temperature') | round(1) }}°C. Otwórz okno na 15-20 min przed snem. Jakość powietrza: {{ states('sensor.aleje_pm2_5') }} μg/m³ (doskonała)";
+                      message = "🌡️ Temperatura w sypialni: {{ state_attr('climate.thermostat_bedroom', 'current_temperature') | round(1) }}°C. Otwórz okno na 15-20 min przed snem. Jakość powietrza: {{ states('sensor.aleje_pm2_5') }} μg/m³ ({{ 'doskonała' if states('sensor.aleje_pm2_5_index') == 'very_good' else 'dobra' }})";
                     };
                   }
                 ];
