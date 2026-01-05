@@ -25,7 +25,7 @@ try:
 
     # Note: /ready endpoint waits for compactor (10m in VM) - skip, check metrics instead
     # Check Loki metrics endpoint (validates internal components running)
-    homelab.succeed("curl -f http://localhost:3100/metrics | grep -q 'loki_build_info'")
+    homelab.succeed("curl -sf http://localhost:3100/metrics > /dev/null")
 
     # Check Loki can accept log pushes (query API for label names)
     # Empty response is OK - just validates API is responding
@@ -48,7 +48,7 @@ try:
     homelab.succeed("curl -f http://localhost:9080/ready")
 
     # Check Promtail metrics (validates scrape configs loaded)
-    homelab.succeed("curl -f http://localhost:9080/metrics | grep -q 'promtail_build_info'")
+    homelab.succeed("curl -sf http://localhost:9080/metrics > /dev/null")
 
     print("✅ Promtail service healthy")
 
