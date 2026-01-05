@@ -278,6 +278,297 @@ IntentName:
 - Group related intents (lights, climate, scenes)
 - Add fallback for unknown commands
 
+## Modern HA Configuration Formats (2024+)
+
+**CRITICAL:** Always use modern formats. Legacy formats deprecated, will be removed 2026.6.
+
+### Template Entities (HIGHEST PRIORITY)
+
+**Status:** Legacy format deprecated 2025.12, removed 2026.6
+
+**Modern format (REQUIRED):**
+```nix
+template = [
+  {
+    sensor = [
+      {
+        name = "Sensor Name";
+        state = "{{ states('input.source') }}";
+        unit_of_measurement = "°C";
+      }
+    ];
+    binary_sensor = [
+      {
+        name = "Sun Up";
+        state = "{{ is_state('sun.sun', 'above_horizon') }}";
+      }
+    ];
+  }
+];
+```
+
+**Trigger-based templates:**
+```nix
+template = [
+  {
+    trigger = [
+      {
+        platform = "state";
+        entity_id = "sun.sun";
+      }
+    ];
+    sensor = [
+      {
+        name = "Triggered Sensor";
+        state = "{{ trigger.to_state.state }}";
+      }
+    ];
+  }
+];
+```
+
+**Legacy format (FORBIDDEN - will break):**
+```nix
+# ❌ NEVER USE THIS
+sensor = [
+  {
+    platform = "template";
+    sensors = {
+      name = { ... };
+    };
+  }
+];
+```
+
+**Benefits of modern format:**
+- Trigger-based updates (not just state-based)
+- Support for button, image, number, select entities
+- Long-term statistics via state_class
+- Better performance (controlled update timing)
+
+### Command Line Sensors
+
+**Modern format:**
+```nix
+command_line = [
+  {
+    platform = "sensor";
+    name = "Sensor Name";
+    unique_id = "unique_sensor_id";
+    command = "curl -s http://example.com/api";
+    unit_of_measurement = "°C";
+    device_class = "temperature";
+    scan_interval = 30;
+    value_template = "{{ value_json.temp }}";
+  }
+];
+```
+
+**Legacy format (FORBIDDEN):**
+```nix
+# ❌ NEVER USE THIS
+command_line = [
+  {
+    sensor = {
+      name = "...";
+      command = "...";
+    };
+  }
+];
+```
+
+**Key changes:**
+- Flatten structure: remove nested `sensor = { }`
+- Add `platform = "sensor"` at root level
+- All other attributes stay same level as platform
+
+### REST Integration
+
+**Modern format (multiple sensors, same endpoint):**
+```nix
+rest = [
+  {
+    authentication = "basic";
+    username = "admin";
+    password = "hunter2";
+    scan_interval = 60;
+    resource = "http://192.168.1.12/status.xml";
+    sensor = [
+      {
+        name = "Temperature";
+        value_template = "{{ value_json.temp }}";
+        unit_of_measurement = "°C";
+      }
+      {
+        name = "Humidity";
+        value_template = "{{ value_json.humidity }}";
+        unit_of_measurement = "%";
+      }
+    ];
+  }
+];
+```
+
+**Single sensor (legacy platform syntax still works):**
+```nix
+sensor = [
+  {
+    platform = "rest";
+    resource = "http://IP_ADDRESS/ENDPOINT";
+    name = "Single Sensor";
+  }
+];
+```
+
+**Recommendation:** Use `rest` top-level key for all new integrations.
+
+### REST Commands
+
+**Modern format (unchanged, still current):**
+```nix
+rest_command = {
+  command_name = {
+    url = "http://192.168.1.1/api";
+    method = "post";  # get, post, put, delete
+    timeout = 5;
+    payload = "{{ {'key': 'value'} | to_json }}";
+    headers = {
+      Content-Type = "application/json";
+    };
+  };
+};
+```
+
+### Automation/Script Modern Syntax
+
+**Automation format (2024.10+ syntax):**
+```nix
+{
+  id = "unique_id";
+  alias = "Descriptive Name";
+  description = "What this automation does and why";
+
+  trigger = [
+    {
+      platform = "state";
+      entity_id = "sensor.temperature";
+      to = "25";
+    }
+  ];
+
+  condition = [
+    {
+      condition = "state";
+      entity_id = "sun.sun";
+      state = "above_horizon";
+    }
+  ];
+
+  action = [
+    {
+      action = "light.turn_on";  # Use 'action' not 'service'
+      target.entity_id = "light.bedroom";
+      data = {
+        brightness_pct = 75;
+      };
+    }
+  ];
+
+  mode = "single";  # single, restart, queued, parallel
+}
+```
+
+**Script format:**
+```nix
+script = {
+  script_name = {
+    alias = "Script Display Name";
+    description = "What this script does";
+    fields = {
+      target_temp = {
+        name = "Target Temperature";
+        description = "Desired temperature";
+        example = "22";
+        selector.number = {
+          min = 15;
+          max = 30;
+          unit_of_measurement = "°C";
+        };
+      };
+    };
+    sequence = [
+      {
+        action = "climate.set_temperature";
+        target.entity_id = "climate.thermostat";
+        data.temperature = "{{ target_temp }}";
+      }
+    ];
+    mode = "restart";
+  };
+};
+```
+
+**Key changes 2024.10:**
+- Use `action` instead of `service` in action blocks
+- Old syntax still works (no breaking change)
+- All docs updated to new syntax
+- Automation editor auto-migrates on save
+
+### Modern Format Migration Checklist
+
+**Before committing any HA config:**
+
+- [ ] No `platform: template` under sensor/binary_sensor/switch
+- [ ] All templates use top-level `template:` key
+- [ ] No nested `sensor = { }` in command_line
+- [ ] All command_line have `platform = "sensor"`
+- [ ] REST sensors use `rest:` key (not sensor.platform)
+- [ ] Actions use `action:` field (future-proof)
+- [ ] All entities have unique_id for GUI customization
+- [ ] Templates use trigger-based updates where appropriate
+
+### When to Use Each Format
+
+**Template (top-level):**
+- Custom sensors from existing states
+- Binary sensors based on conditions
+- Virtual switches combining multiple entities
+- Anything needing trigger-based updates
+
+**Command Line:**
+- External system polling (systemctl, curl)
+- Shell script outputs
+- System metrics not in HA
+
+**REST:**
+- HTTP APIs without native HA integration
+- JSON/XML endpoints
+- Multiple sensors from same API
+
+**REST Command:**
+- Control external HTTP APIs
+- Webhooks, triggers, actions
+- One-way communication (no state)
+
+### Version Compatibility
+
+- **HA 2024.2+:** Command line modern format required
+- **HA 2024.10+:** Action syntax recommended (not required)
+- **HA 2025.12+:** Template legacy format deprecated (warnings shown)
+- **HA 2026.6:** Template legacy format REMOVED (will break)
+
+**Current codebase:** Targets HA 2025.x (update frequently via Renovate)
+
+### Documentation Sources
+
+- [Template Integration](https://www.home-assistant.io/integrations/template/)
+- [Command Line](https://www.home-assistant.io/integrations/command_line/)
+- [RESTful Integration](https://www.home-assistant.io/integrations/rest/)
+- [Automation YAML](https://www.home-assistant.io/docs/automation/yaml/)
+- [Script Syntax](https://www.home-assistant.io/docs/scripts/)
+- [2025.12 Deprecation Notice](https://community.home-assistant.io/t/deprecation-of-legacy-template-entities-in-2025-12/955562)
+- [2024.10 Syntax Changes](https://www.home-assistant.io/blog/2024/10/02/release-202410/)
+
 ## Anti-Patterns to AVOID
 
 ### Over-Engineering
