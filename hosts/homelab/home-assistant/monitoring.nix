@@ -38,11 +38,11 @@
             name = "Whisper STT Status";
             unique_id = "whisper_status";
             state = ''
-              {% set status = states('sensor.wyoming_whisper_health') %}
+              {% set status = states('binary_sensor.wyoming_whisper_health') %}
               {{ 'active' if status == 'on' else 'inactive' }}
             '';
             icon = ''
-              {% set status = states('sensor.wyoming_whisper_health') %}
+              {% set status = states('binary_sensor.wyoming_whisper_health') %}
               {{ 'mdi:microphone' if status == 'on' else 'mdi:microphone-off' }}
             '';
           }
@@ -51,11 +51,11 @@
             name = "Piper TTS Status";
             unique_id = "piper_status";
             state = ''
-              {% set status = states('sensor.wyoming_piper_health') %}
+              {% set status = states('binary_sensor.wyoming_piper_health') %}
               {{ 'active' if status == 'on' else 'inactive' }}
             '';
             icon = ''
-              {% set status = states('sensor.wyoming_piper_health') %}
+              {% set status = states('binary_sensor.wyoming_piper_health') %}
               {{ 'mdi:speaker' if status == 'on' else 'mdi:speaker-off' }}
             '';
           }
@@ -64,11 +64,11 @@
             name = "Tailscale Status";
             unique_id = "tailscale_status";
             state = ''
-              {% set status = states('sensor.tailscale_health') %}
+              {% set status = states('binary_sensor.tailscale_health') %}
               {{ 'connected' if status == 'on' else 'disconnected' }}
             '';
             icon = ''
-              {% set status = states('sensor.tailscale_health') %}
+              {% set status = states('binary_sensor.tailscale_health') %}
               {{ 'mdi:shield-check' if status == 'on' else 'mdi:shield-off' }}
             '';
           }
@@ -77,11 +77,11 @@
             name = "PostgreSQL Status";
             unique_id = "postgresql_status";
             state = ''
-              {% set status = states('sensor.postgresql_health') %}
+              {% set status = states('binary_sensor.postgresql_health') %}
               {{ 'active' if status == 'on' else 'inactive' }}
             '';
             icon = ''
-              {% set status = states('sensor.postgresql_health') %}
+              {% set status = states('binary_sensor.postgresql_health') %}
               {{ 'mdi:database' if status == 'on' else 'mdi:database-off' }}
             '';
           }
@@ -90,11 +90,11 @@
     ];
 
     # ===========================================
-    # Command Line Sensors for Service Status
+    # Command Line Binary Sensors for Service Health
     # ===========================================
     command_line = [
       {
-        sensor = {
+        binary_sensor = {
           name = "wyoming_whisper_health";
           command = "systemctl is-active wyoming-faster-whisper-default";
           value_template = "{{ value == 'active' }}";
@@ -102,7 +102,7 @@
         };
       }
       {
-        sensor = {
+        binary_sensor = {
           name = "wyoming_piper_health";
           command = "systemctl is-active wyoming-piper-default";
           value_template = "{{ value == 'active' }}";
@@ -110,7 +110,7 @@
         };
       }
       {
-        sensor = {
+        binary_sensor = {
           name = "tailscale_health";
           command = "systemctl is-active tailscaled";
           value_template = "{{ value == 'active' }}";
@@ -118,7 +118,7 @@
         };
       }
       {
-        sensor = {
+        binary_sensor = {
           name = "fail2ban_health";
           command = "systemctl is-active fail2ban";
           value_template = "{{ value == 'active' }}";
@@ -126,7 +126,7 @@
         };
       }
       {
-        sensor = {
+        binary_sensor = {
           name = "postgresql_health";
           command = "systemctl is-active postgresql";
           value_template = "{{ value == 'active' }}";
@@ -151,6 +151,7 @@
           name = "comin_last_deployment_time";
           unique_id = "comin_last_deployment_time";
           command = "jq -r '.deployments[0]|select(.error_msg==\"\")|.ended_at//\"none\"' /var/lib/comin/store.json";
+          device_class = "timestamp";
           scan_interval = 30;
         };
       }
@@ -167,6 +168,7 @@
           name = "comin_last_failed_time";
           unique_id = "comin_last_failed_time";
           command = "jq -r '.deployments[0]|select(.error_msg!=\"\")|.ended_at//\"none\"' /var/lib/comin/store.json";
+          device_class = "timestamp";
           scan_interval = 30;
         };
       }
@@ -279,8 +281,8 @@
         trigger = [
           {
             platform = "state";
-            entity_id = "sensor.wyoming_whisper_health";
-            to = "False";
+            entity_id = "binary_sensor.wyoming_whisper_health";
+            to = "off";
             for.minutes = 2;
           }
         ];
@@ -308,8 +310,8 @@
         trigger = [
           {
             platform = "state";
-            entity_id = "sensor.wyoming_piper_health";
-            to = "False";
+            entity_id = "binary_sensor.wyoming_piper_health";
+            to = "off";
             for.minutes = 2;
           }
         ];
@@ -337,8 +339,8 @@
         trigger = [
           {
             platform = "state";
-            entity_id = "sensor.tailscale_health";
-            to = "False";
+            entity_id = "binary_sensor.tailscale_health";
+            to = "off";
             for.minutes = 2;
           }
         ];
@@ -366,8 +368,8 @@
         trigger = [
           {
             platform = "state";
-            entity_id = "sensor.postgresql_health";
-            to = "False";
+            entity_id = "binary_sensor.postgresql_health";
+            to = "off";
             for.minutes = 2;
           }
         ];
