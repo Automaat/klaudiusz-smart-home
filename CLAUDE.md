@@ -731,6 +731,27 @@ ha core check
 tail -f /var/lib/hass/home-assistant.log
 ```
 
+### Secrets Management
+
+**ALWAYS use mise tasks for secrets editing:**
+
+```bash
+# Decrypt to secrets/secrets.decrypted.yaml
+mise run decrypt-secrets
+
+# Edit plaintext
+vim secrets/secrets.decrypted.yaml
+
+# Encrypt back to secrets/secrets.yaml
+mise run encrypt-secrets
+```
+
+**NEVER:**
+
+- Edit secrets/secrets.yaml directly
+- Use raw sops commands (use mise tasks)
+- Commit unencrypted secrets
+
 ## Troubleshooting
 
 ### CI Integration Test Failures
