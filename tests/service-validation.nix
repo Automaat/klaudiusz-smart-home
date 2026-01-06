@@ -220,6 +220,10 @@
       textfileCollector = lib.findFirst (c: lib.hasPrefix "textfile" c) null nodeExporterTextfileDir;
       systemdServiceScript = nixosConfig.systemd.services.prometheus-service-status.serviceConfig.ExecStart or null;
       expectedDir = "/var/lib/prometheus-node-exporter-text";
+      scriptContent =
+        if systemdServiceScript != null
+        then builtins.readFile systemdServiceScript
+        else "";
     in
       if textfileCollector == null
       then
@@ -234,7 +238,7 @@
           FAIL: prometheus-service-status systemd service not configured
           systemd.services.prometheus-service-status.serviceConfig.ExecStart must be set
         ''
-      else if !(lib.hasInfix expectedDir (builtins.toString systemdServiceScript))
+      else if !(lib.hasInfix expectedDir scriptContent)
       then
         throw ''
           FAIL: Textfile collector directory mismatch
