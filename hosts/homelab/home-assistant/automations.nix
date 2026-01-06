@@ -124,8 +124,12 @@
         ];
         action = [
           {
-            service = "light.turn_on";
-            target.entity_id = "light.kitchen";
+            service = "adaptive_lighting.apply";
+            data = {
+              entity_id = "switch.adaptive_lighting_kitchen_lights";
+              lights = ["light.kitchen"];
+              turn_on_lights = true;
+            };
           }
         ];
       }
