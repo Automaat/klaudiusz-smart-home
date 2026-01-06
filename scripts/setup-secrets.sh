@@ -21,7 +21,6 @@ KEY_FILE="$KEY_DIR/key.txt"
 REPO_ROOT="/etc/nixos"
 SOPS_CONFIG="$REPO_ROOT/.sops.yaml"
 SECRETS_FILE="$REPO_ROOT/secrets/secrets.yaml"
-TEMPLATE_FILE="$REPO_ROOT/secrets/secrets.yaml.template"
 
 echo -e "${GREEN}=== SOPS Secrets Setup ===${NC}\n"
 
@@ -38,7 +37,6 @@ if [ ! -d "$REPO_ROOT" ]; then
   REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
   SOPS_CONFIG="$REPO_ROOT/.sops.yaml"
   SECRETS_FILE="$REPO_ROOT/secrets/secrets.yaml"
-  TEMPLATE_FILE="$REPO_ROOT/secrets/secrets.yaml.template"
   echo "Using repo root: $REPO_ROOT"
 fi
 
