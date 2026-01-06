@@ -253,6 +253,10 @@
     if prometheusConfig.enable
     then let
       systemdServiceScript = nixosConfig.systemd.services.prometheus-service-status.serviceConfig.ExecStart or null;
+      scriptContent =
+        if systemdServiceScript != null
+        then builtins.readFile systemdServiceScript
+        else "";
       # Services that should be monitored (hardcoded in shell script)
       expectedServices = [
         "fail2ban"
@@ -264,7 +268,7 @@
       missingServices =
         lib.filter (
           svc:
-            systemdServiceScript == null || !(lib.hasInfix ''"${svc}"'' (builtins.toString systemdServiceScript))
+            systemdServiceScript == null || !(lib.hasInfix ''"${svc}"'' scriptContent)
         )
         expectedServices;
     in
