@@ -165,6 +165,8 @@ in {
         latitude = 50.083;
         longitude = 19.891;
         elevation = 210;
+        # Ignore integrations without Python packages in nixpkgs
+        ignore = ["hue_ble"];
       };
 
       # Enable conversation for voice commands
