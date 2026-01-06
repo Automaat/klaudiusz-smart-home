@@ -387,19 +387,23 @@
           {
             name = "PM2.5 Outdoor vs Indoor (Living Room)";
             unique_id = "pm25_outdoor_indoor_diff_living_room";
-            state = "{{ states('sensor.aleje_pm2_5') | float(0) - states('sensor.zhimi_de_334622045_mb3_pm2_5_density_p_3_6') | float(0) }}";
+            state = "{{ states('sensor.aleje_pm2_5') | float(999) - states('sensor.zhimi_de_334622045_mb3_pm2_5_density_p_3_6') | float(50) }}";
             unit_of_measurement = "µg/m³";
-            device_class = "pm25";
           }
           {
             name = "Air Purifier Recommended Mode";
             unique_id = "air_purifier_recommended_mode";
+            # Thresholds based on air quality impact:
+            # - Indoor < 5 µg/m³: night mode (very clean, quiet operation)
+            # - Outdoor > 75 or indoor > 50: auto mode (heavy pollution)
+            # - Outdoor > 25 or indoor > 15: auto mode (moderate pollution)
+            # WHO guidelines: 0-12 good, 12-35 moderate, 35-55 unhealthy for sensitive groups
             state = ''
-              {% set outdoor = states('sensor.aleje_pm2_5') | float(0) %}
-              {% set indoor = states('sensor.zhimi_de_334622045_mb3_pm2_5_density_p_3_6') | float(0) %}
-              {% if outdoor > 75 or indoor > 50 %}auto
+              {% set outdoor = states('sensor.aleje_pm2_5') | float(999) %}
+              {% set indoor = states('sensor.zhimi_de_334622045_mb3_pm2_5_density_p_3_6') | float(50) %}
+              {% if indoor < 5 %}night
+              {% elif outdoor > 75 or indoor > 50 %}auto
               {% elif outdoor > 25 or indoor > 15 %}auto
-              {% elif indoor < 5 %}night
               {% else %}auto{% endif %}
             '';
           }
@@ -414,9 +418,10 @@
               {% else %}normal{% endif %}
             '';
             icon = ''
-              {% set life = states('sensor.zhimi_de_334622045_mb3_filter_life_level_p_4_3') | int(100) %}
-              {% if life < 5 %}mdi:air-filter-remove
-              {% elif life < 20 %}mdi:air-filter
+              {% set urgency = states(this.entity_id) %}
+              {% if urgency == 'critical' %}mdi:air-filter-remove
+              {% elif urgency == 'urgent' %}mdi:air-filter-alert
+              {% elif urgency == 'soon' %}mdi:air-filter
               {% else %}mdi:air-filter{% endif %}
             '';
           }
@@ -425,7 +430,11 @@
           {
             name = "Safe to Ventilate (Living Room)";
             unique_id = "safe_to_ventilate_living_room";
-            state = "{{ states('sensor.aleje_pm2_5') | float(999) < 15 and states('sensor.aleje_pm2_5') | float(999) < states('sensor.zhimi_de_334622045_mb3_pm2_5_density_p_3_6') | float(0) }}";
+            # Ventilation considered safe when:
+            # - Outdoor PM2.5 < 15 µg/m³ (good/upper-moderate boundary per WHO)
+            # - Outdoor air cleaner than indoor air
+            # Threshold 15 µg/m³ balances health protection with practical ventilation opportunities
+            state = "{{ states('sensor.aleje_pm2_5') | float(999) < 15 and states('sensor.aleje_pm2_5') | float(999) < states('sensor.zhimi_de_334622045_mb3_pm2_5_density_p_3_6') | float(50) }}";
             device_class = "safety";
           }
         ];
