@@ -128,15 +128,16 @@
   # Publish homeassistant.local as alias for Xiaomi integration
   systemd.services.avahi-alias-homeassistant = {
     description = "Publish homeassistant.local mDNS alias";
-    after = ["avahi-daemon.service"];
+    after = ["avahi-daemon.service" "network-online.target"];
+    wants = ["network-online.target"];
     requires = ["avahi-daemon.service"];
     wantedBy = ["multi-user.target"];
     serviceConfig = {
       Type = "simple";
       # Get IP from default route interface, publish homeassistant.local pointing to it
-      ExecStart = "${pkgs.bash}/bin/bash -c '${pkgs.avahi}/bin/avahi-publish-address homeassistant.local $(${pkgs.iproute2}/bin/ip -4 addr show $(${pkgs.iproute2}/bin/ip route show default | ${pkgs.gawk}/bin/awk \"{print \\$5}\") | ${pkgs.gawk}/bin/awk \"/inet / {print \\$2}\" | ${pkgs.gnused}/bin/sed \"s|/.*||\")'";
-      Restart = "always";
-      RestartSec = "10";
+      ExecStart = "${pkgs.bash}/bin/bash -c 'set -euo pipefail\n        iface=$(${pkgs.iproute2}/bin/ip route show default | ${pkgs.gawk}/bin/awk \"NR==1 {print \\$5}\")\n        if [ -z \"\\$iface\" ]; then\n          echo \"avahi-alias-homeassistant: No default network interface found\" >&2\n          exit 1\n        fi\n        ip_addr=$(${pkgs.iproute2}/bin/ip -4 addr show \"\\$iface\" | ${pkgs.gawk}/bin/awk \"/inet / {print \\$2}\" | ${pkgs.gnused}/bin/sed \"s|/.*||\" | head -n1)\n        if [ -z \"\\$ip_addr\" ]; then\n          echo \"avahi-alias-homeassistant: No IPv4 address found for interface \\$iface\" >&2\n          exit 1\n        fi\n        exec ${pkgs.avahi}/bin/avahi-publish-address homeassistant.local \"\\$ip_addr\"'";
+      Restart = "on-failure";
+      RestartSec = "60";
     };
   };
 

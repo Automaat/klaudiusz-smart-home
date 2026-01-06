@@ -91,6 +91,21 @@ except Exception as e:
 # Comin (GitOps)
 homelab.wait_for_unit("comin.service")
 
+# Avahi mDNS Alias (for Xiaomi integration)
+try:
+    homelab.wait_for_unit("avahi-alias-homeassistant.service")
+
+    # Verify homeassistant.local resolves to server IP
+    homelab.succeed("getent hosts homeassistant.local")
+
+    print("✅ Avahi mDNS alias service healthy")
+
+except Exception as e:
+    print(f"Avahi alias failed: {e}")
+    print(homelab.succeed("journalctl -u avahi-alias-homeassistant.service -n 50 --no-pager"))
+    print(homelab.succeed("systemctl status avahi-alias-homeassistant.service --no-pager"))
+    raise
+
 # =============================================
 # Service Health Checks
 # =============================================
