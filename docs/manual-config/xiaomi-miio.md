@@ -1,6 +1,7 @@
 # Xiaomi Miio Integration
 
-**Why manual?** Xiaomi devices require a device token that must be extracted from Mi Home app or via network sniffing. Cannot be configured declaratively.
+**Why manual?** Xiaomi devices require a device token that must be extracted from
+Mi Home app or via network sniffing. Cannot be configured declaratively.
 
 **When to do this:** After adding device to Mi Home app and connecting to WiFi.
 
