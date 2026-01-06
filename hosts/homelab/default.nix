@@ -242,7 +242,10 @@
         } > "$TMPFILE"
 
         # Atomic move
-        mv "$TMPFILE" "$OUTFILE"
+        if ! mv "$TMPFILE" "$OUTFILE"; then
+          echo "Failed to move metrics file from $TMPFILE to $OUTFILE" >&2
+          exit 1
+        fi
       '';
     };
   };

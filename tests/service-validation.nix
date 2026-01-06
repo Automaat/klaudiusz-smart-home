@@ -187,6 +187,91 @@
         ''
       else "PASS: Prometheus datasource configured with correct UID"
     else "PASS: Grafana provisioning not configured";
+
+  # =============================================
+  # Prometheus Exporter Validation
+  # =============================================
+
+  # Test 9: New scrape jobs must exist for self-monitoring
+  prometheusScrapeJobsConfigured =
+    if prometheusConfig.enable
+    then let
+      scrapeConfigs = prometheusConfig.scrapeConfigs or [];
+      jobNames = builtins.map (job: job.job_name) scrapeConfigs;
+      requiredJobs = ["prometheus" "grafana" "influxdb"];
+      missingJobs = lib.filter (name: !builtins.elem name jobNames) requiredJobs;
+    in
+      if builtins.length missingJobs > 0
+      then
+        throw ''
+          FAIL: Prometheus scrape jobs missing
+          Required: ${lib.concatStringsSep ", " requiredJobs}
+          Found: ${lib.concatStringsSep ", " jobNames}
+          Missing: ${lib.concatStringsSep ", " missingJobs}
+        ''
+      else "PASS: All required Prometheus scrape jobs configured"
+    else "PASS: Prometheus not enabled";
+
+  # Test 10: Textfile collector directory must match between node_exporter and systemd service
+  textfileCollectorDirectoryMatches =
+    if prometheusConfig.enable && prometheusConfig.exporters.node.enable
+    then let
+      nodeExporterTextfileDir = prometheusConfig.exporters.node.enabledCollectors or [];
+      textfileCollector = lib.findFirst (c: lib.hasPrefix "textfile" c) null nodeExporterTextfileDir;
+      systemdServiceScript = nixosConfig.systemd.services.prometheus-service-status.serviceConfig.ExecStart or null;
+      expectedDir = "/var/lib/prometheus-node-exporter-text";
+    in
+      if textfileCollector == null
+      then
+        throw ''
+          FAIL: Node exporter textfile collector not configured
+          services.prometheus.exporters.node.enabledCollectors must include textfile collector
+          Current: ${lib.concatStringsSep ", " nodeExporterTextfileDir}
+        ''
+      else if systemdServiceScript == null
+      then
+        throw ''
+          FAIL: prometheus-service-status systemd service not configured
+          systemd.services.prometheus-service-status.serviceConfig.ExecStart must be set
+        ''
+      else if !(lib.hasInfix expectedDir (builtins.toString systemdServiceScript))
+      then
+        throw ''
+          FAIL: Textfile collector directory mismatch
+          Expected directory: ${expectedDir}
+          systemd service script does not reference this directory
+        ''
+      else "PASS: Textfile collector directory matches between node_exporter and systemd service"
+    else "PASS: Prometheus node exporter not enabled";
+
+  # Test 11: Monitored services in textfile exporter must match enabled systemd services
+  monitoredServicesValid =
+    if prometheusConfig.enable
+    then let
+      systemdServiceScript = nixosConfig.systemd.services.prometheus-service-status.serviceConfig.ExecStart or null;
+      # Services that should be monitored (hardcoded in shell script)
+      expectedServices = [
+        "fail2ban"
+        "wyoming-piper-default"
+        "wyoming-faster-whisper-default"
+        "tailscaled"
+      ];
+      # Check if each service is referenced in the script
+      missingServices = lib.filter (svc:
+        systemdServiceScript == null || !(lib.hasInfix ''"${svc}"'' (builtins.toString systemdServiceScript))
+      ) expectedServices;
+    in
+      if systemdServiceScript == null
+      then "PASS: prometheus-service-status not configured"
+      else if builtins.length missingServices > 0
+      then
+        throw ''
+          FAIL: Monitored services not found in textfile exporter script
+          Expected services: ${lib.concatStringsSep ", " expectedServices}
+          Missing from script: ${lib.concatStringsSep ", " missingServices}
+        ''
+      else "PASS: All expected services monitored in textfile exporter"
+    else "PASS: Prometheus not enabled";
 in {
   # Export test results
   inherit
@@ -198,6 +283,9 @@ in {
     grafanaDashboardProvisioningEnabled
     grafanaDashboardProvidersValid
     grafanaPrometheusDataSourceConfigured
+    prometheusScrapeJobsConfigured
+    textfileCollectorDirectoryMatches
+    monitoredServicesValid
     ;
 
   # Summary test that fails if any check fails
@@ -210,5 +298,8 @@ in {
     grafanaDashboardProvisioningEnabled
     grafanaDashboardProvidersValid
     grafanaPrometheusDataSourceConfigured
+    prometheusScrapeJobsConfigured
+    textfileCollectorDirectoryMatches
+    monitoredServicesValid
   ] "PASS: All service validation tests passed";
 }
