@@ -80,6 +80,17 @@
   };
 
   # ===========================================
+  # Custom Conversation (Fallback Agent)
+  # ===========================================
+  customConversationSource = pkgs.fetchFromGitHub {
+    owner = "michelle-avery";
+    repo = "custom-conversation";
+    # renovate: datasource=github-tags depName=michelle-avery/custom-conversation
+    rev = "1.4.0";
+    hash = "sha256-y1vOb/hTMMd1iiYazkiKCUT1pBghvtMMwrcrKgs9U1w=";
+  };
+
+  # ===========================================
   # Custom Python Packages
   # ===========================================
   # Function that builds custom packages with HA's Python environment
@@ -301,6 +312,9 @@ in {
 
       # Create Powercalc symlink
       ln -sfn ${powercalcSource}/custom_components/powercalc /var/lib/hass/custom_components/powercalc
+
+      # Create Custom Conversation symlink
+      ln -sfn ${customConversationSource}/custom_components/custom_conversation /var/lib/hass/custom_components/custom_conversation
     '';
 
     # Force derivation update when HA config changes
