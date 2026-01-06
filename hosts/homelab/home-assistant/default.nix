@@ -130,6 +130,7 @@ in {
 
       # Devices
       "hue" # Philips Hue Bridge
+      "hue_ble" # Philips Hue Bluetooth (autodiscovered)
       "esphome" # ESPHome devices (Voice Preview Edition)
       "webostv" # LG WebOS TV
       "wake_on_lan" # Wake on LAN for TV power-on
