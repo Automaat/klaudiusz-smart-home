@@ -257,9 +257,12 @@
         "tailscaled"
       ];
       # Check if each service is referenced in the script
-      missingServices = lib.filter (svc:
-        systemdServiceScript == null || !(lib.hasInfix ''"${svc}"'' (builtins.toString systemdServiceScript))
-      ) expectedServices;
+      missingServices =
+        lib.filter (
+          svc:
+            systemdServiceScript == null || !(lib.hasInfix ''"${svc}"'' (builtins.toString systemdServiceScript))
+        )
+        expectedServices;
     in
       if systemdServiceScript == null
       then "PASS: prometheus-service-status not configured"
