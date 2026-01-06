@@ -312,7 +312,9 @@ in {
     # Using char-usb_device allows all USB devices (systemd doesn't support path wildcards)
     serviceConfig.DeviceAllow = lib.mkAfter ["char-usb_device rw"];
 
-    # Allow promtail (in hass group) to read log files
+    # Allow promtail (in hass group) to read log files and /var/lib/hass contents
+    # StateDirectory manages /var/lib/hass with specified permissions
+    serviceConfig.StateDirectory = "hass";
     # 0750 = owner: rwx, group: r-x, others: ---
     serviceConfig.StateDirectoryMode = lib.mkForce "0750";
   };

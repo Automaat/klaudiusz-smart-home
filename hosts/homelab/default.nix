@@ -475,8 +475,7 @@
       # Bluetooth capabilities auto-added by NixOS module for bluetooth components
       # UMask for group-readable log files (640) - allows promtail in hass group to read logs
       UMask = lib.mkForce "0027";
-      # StateDirectory permissions: 750 (rwxr-x---) - owner+group can access
-      StateDirectoryMode = "0750";
+      # StateDirectory permissions already configured in home-assistant/default.nix:317
       Restart = "on-failure";
       RestartSec = "10";
     };
