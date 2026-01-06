@@ -186,12 +186,12 @@
       # Override built-in HassShoppingListAddItem to use Todoist
       # -----------------------------------------
       HassShoppingListAddItem = {
-        speech.text = "Dodaję {{ slots.item }} do listy zakupów";
+        speech.text = "Dodaję {{ item }} do listy zakupów";
         action = [
           {
             service = "todo.add_item";
             target.entity_id = "todo.shopping";
-            data.item = "{{ slots.item }}";
+            data.item = "{{ item }}";
           }
         ];
       };
