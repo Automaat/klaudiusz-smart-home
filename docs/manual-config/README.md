@@ -10,6 +10,7 @@ Home Assistant UI.
 - **[Better Thermostat](better-thermostat.md)** - Use external temperature sensors for thermostat control
 - **[GIOŚ Air Quality](gios.md)** - Polish air quality monitoring
 - **[InfluxDB](influxdb.md)** - Time-series database for metrics (365d retention)
+- **[Xiaomi Miio](xiaomi-miio.md)** - Xiaomi Mi devices (air purifiers, vacuums, etc.)
 - **[Loki Log Aggregation](loki-logs.md)** - View HA and system logs in Grafana (365d retention)
 - **[Grafana Loki Explore App](grafana-loki-explore.md)** - Configure default datasource for log drilldown features
 - **[Grafana Alert Rules](grafana-alert-rules.md)** - Update alert queries after Prometheus exporter changes

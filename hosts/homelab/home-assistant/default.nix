@@ -138,6 +138,7 @@ in {
       "homekit" # HomeKit Bridge (expose HA entities to Apple Home)
       "apple_tv" # Apple TV / AirPlay devices
       "cast" # Google Cast / Chromecast
+      "xiaomi_miio" # Xiaomi Mi devices (Air Purifier, etc.)
     ];
 
     extraPackages = ps: let
