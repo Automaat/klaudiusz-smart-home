@@ -24,8 +24,8 @@
       exit 1
     fi
 
-    # Publish homeassistant.local mDNS alias
-    exec ${pkgs.avahi}/bin/avahi-publish-address homeassistant.local "$ip_addr"
+    # Publish homeassistant.local mDNS alias (use -a -R to avoid reverse lookup collision)
+    exec ${pkgs.avahi}/bin/avahi-publish-address -a -R homeassistant.local "$ip_addr"
   '';
 in {
   imports = [
