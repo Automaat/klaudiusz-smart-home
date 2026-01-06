@@ -149,22 +149,39 @@ ssh homelab "journalctl -u home-assistant | grep -E 'openai|ollama'"
 
 **Monitor LLM usage:**
 
-Create automation to track OpenAI API calls and warn when quota approaching:
+To track OpenAI API calls and warn when quota is approaching, add a declarative
+automation to `hosts/homelab/home-assistant/automations.nix` (ensuring the `id`
+is unique across all automations). This example assumes you have already created
+a helper counter entity `counter.openai_daily_calls` in the Home Assistant UI
+(Settings → Devices & Services → Helpers).
 
-```yaml
-automation:
-  - id: openai_usage_warning
-    alias: "Voice - OpenAI Usage Warning"
-    trigger:
-      - platform: state
-        entity_id: counter.openai_daily_calls
-    condition:
-      - condition: template
-        value_template: "{{ states('counter.openai_daily_calls') | int > 50 }}"
-    action:
-      - service: notify.telegram
-        data:
-          message: "OpenAI usage high: {{ states('counter.openai_daily_calls') }} calls today"
+```nix
+[
+  {
+    id = "openai_usage_warning";
+    alias = "Voice - OpenAI usage warning";
+    trigger = [
+      {
+        platform = "state";
+        entity_id = "counter.openai_daily_calls";
+      }
+    ];
+    condition = [
+      {
+        condition = "template";
+        value_template = "{{ states('counter.openai_daily_calls') | int > 50 }}";
+      }
+    ];
+    action = [
+      {
+        service = "notify.telegram";
+        data = {
+          message = "OpenAI usage high: {{ states('counter.openai_daily_calls') }} calls today";
+        };
+      }
+    ];
+  }
+]
 ```
 
 **Rate limiting strategy:**
