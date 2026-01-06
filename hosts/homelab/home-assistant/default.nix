@@ -235,6 +235,9 @@ in {
         precision = "s";
       };
 
+      # Wake on LAN (required for send_magic_packet service)
+      wake_on_lan = {};
+
       # Telegram integration - configured via UI (see docs/manual-config/telegram.md)
       # Entity: notify.klaudiusz_smart_home_system (use with notify.send_message action)
     };
