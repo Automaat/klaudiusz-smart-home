@@ -159,7 +159,8 @@
     exporters.node = {
       enable = true;
       port = 9100;
-      enabledCollectors = ["systemd"];
+      enabledCollectors = ["systemd" "textfile"];
+      extraFlags = ["--collector.textfile.directory=/var/lib/prometheus-node-exporter-text"];
       openFirewall = false;
     };
 
@@ -185,7 +186,74 @@
         job_name = "postgresql";
         static_configs = [{targets = ["localhost:9187"];}];
       }
+      {
+        job_name = "prometheus";
+        static_configs = [{targets = ["localhost:9090"];}];
+      }
+      {
+        job_name = "grafana";
+        static_configs = [{targets = ["localhost:3000"];}];
+      }
+      {
+        job_name = "influxdb";
+        static_configs = [{targets = ["localhost:8086"];}];
+      }
     ];
+  };
+
+  # ===========================================
+  # Service Status Exporter (Textfile Collector)
+  # ===========================================
+  # Creates directory for textfile metrics
+  systemd.tmpfiles.rules = [
+    "d /var/lib/prometheus-node-exporter-text 0755 prometheus prometheus -"
+  ];
+
+  # Periodic service to export monitored service status
+  systemd.services.prometheus-service-status = {
+    description = "Export service status metrics for Prometheus";
+    serviceConfig = {
+      Type = "oneshot";
+      User = "prometheus";
+      ExecStart = pkgs.writeShellScript "export-service-status" ''
+        TEXTFILE_DIR="/var/lib/prometheus-node-exporter-text"
+        TMPFILE="$TEXTFILE_DIR/service_status.prom.$$"
+        OUTFILE="$TEXTFILE_DIR/service_status.prom"
+
+        # Services to monitor
+        SERVICES=(
+          "fail2ban"
+          "wyoming-piper-default"
+          "wyoming-faster-whisper-default"
+          "tailscaled"
+        )
+
+        # Write metrics to temp file
+        {
+          echo "# HELP service_up Service is running (1) or not (0)"
+          echo "# TYPE service_up gauge"
+          for service in "''${SERVICES[@]}"; do
+            if ${pkgs.systemd}/bin/systemctl is-active "$service.service" >/dev/null 2>&1; then
+              echo "service_up{service=\"$service\"} 1"
+            else
+              echo "service_up{service=\"$service\"} 0"
+            fi
+          done
+        } > "$TMPFILE"
+
+        # Atomic move
+        mv "$TMPFILE" "$OUTFILE"
+      '';
+    };
+  };
+
+  systemd.timers.prometheus-service-status = {
+    description = "Timer for service status metrics export";
+    wantedBy = ["timers.target"];
+    timerConfig = {
+      OnBootSec = "1min";
+      OnUnitActiveSec = "30s";
+    };
   };
 
   # ===========================================
