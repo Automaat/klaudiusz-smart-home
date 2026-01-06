@@ -8,6 +8,7 @@ Home Assistant UI.
 
 - **[Zigbee Home Automation (ZHA)](zha.md)** - Zigbee device pairing and setup
 - **[Better Thermostat](better-thermostat.md)** - Use external temperature sensors for thermostat control
+- **[Custom Conversation](custom-conversation.md)** - Fallback conversation agent (local intents → LLM)
 - **[GIOŚ Air Quality](gios.md)** - Polish air quality monitoring
 - **[InfluxDB](influxdb.md)** - Time-series database for metrics (365d retention)
 - **[Xiaomi Home](xiaomi-home.md)** - Xiaomi Mi devices via official OAuth (replaces `xiaomi-miio.md`)
