@@ -89,6 +89,9 @@ pkgs.testers.nixosTest {
     services.wyoming.faster-whisper.servers.default.enable = lib.mkForce false;
     services.wyoming.piper.servers.default.enable = lib.mkForce false;
 
+    # Disable avahi-alias service in VM tests (mDNS conflicts in isolated VM network)
+    systemd.services.avahi-alias-homeassistant.enable = lib.mkForce false;
+
     # Run InfluxDB init in VM tests with hardcoded credentials
     systemd.services.influxdb2-init = {
       serviceConfig = {
