@@ -160,6 +160,7 @@ in {
       "homekit" # HomeKit Bridge (expose HA entities to Apple Home)
       "apple_tv" # Apple TV / AirPlay devices
       "cast" # Google Cast / Chromecast
+      "xiaomi_ble" # Xiaomi Bluetooth devices
     ];
 
     extraPackages = ps: let
@@ -173,6 +174,16 @@ in {
         pyatv # Apple TV integration
         pychromecast # Google Cast integration
         zlib-ng # Fast compression for aiohttp (prevents performance warning)
+
+        # Xiaomi Home integration (custom component)
+        paho-mqtt # MQTT client for Xiaomi Home
+        construct # Binary data parser
+        numpy # Numerical computing
+        cryptography # Encryption support
+        psutil # System utilities
+
+        # Xiaomi BLE integration
+        xiaomi-ble # Xiaomi Bluetooth parser
       ];
 
     config = {
