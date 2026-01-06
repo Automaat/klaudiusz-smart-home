@@ -91,6 +91,17 @@
   };
 
   # ===========================================
+  # Xiaomi Home (Official by Xiaomi)
+  # ===========================================
+  xiaomiHomeSource = pkgs.fetchFromGitHub {
+    owner = "XiaoMi";
+    repo = "ha_xiaomi_home";
+    # renovate: datasource=github-tags depName=XiaoMi/ha_xiaomi_home
+    rev = "v0.4.6";
+    hash = "sha256-YvQ9Fzk+WAIqtYyv6j2terPfR3bLer6GgcK1GBdpctg=";
+  };
+
+  # ===========================================
   # Custom Python Packages
   # ===========================================
   # Function that builds custom packages with HA's Python environment
@@ -149,7 +160,6 @@ in {
       "homekit" # HomeKit Bridge (expose HA entities to Apple Home)
       "apple_tv" # Apple TV / AirPlay devices
       "cast" # Google Cast / Chromecast
-      "xiaomi_miio" # Xiaomi Mi devices (Air Purifier, etc.)
     ];
 
     extraPackages = ps: let
@@ -315,6 +325,9 @@ in {
 
       # Create Custom Conversation symlink
       ln -sfn ${customConversationSource}/custom_components/custom_conversation /var/lib/hass/custom_components/custom_conversation
+
+      # Create Xiaomi Home symlink
+      ln -sfn ${xiaomiHomeSource}/custom_components/xiaomi_home /var/lib/hass/custom_components/xiaomi_home
     '';
 
     # Force derivation update when HA config changes
