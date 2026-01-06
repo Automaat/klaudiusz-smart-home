@@ -3,6 +3,7 @@
 ## Current State
 
 ### ✅ Setup Complete
+
 - Xiaomi Home integration configured (OAuth)
 - Device: `fan.zhimi_de_334622045_mb3_s_2_air_purifier`
 - Location: Living Room (Salon)
@@ -10,11 +11,13 @@
 - Todoist integration: Available for task management
 
 ### ⚠️ Critical Issues
+
 - **Filter at 15% life** (2966h used) - replacement urgent
 - No automations configured - manual operation only
 - Antibacterial filter maintenance not tracked
 
 ### 📊 Current Readings
+
 - **Indoor PM2.5**: 10 µg/m³ (excellent, WHO target <5)
 - **Outdoor PM2.5**: 50.8 µg/m³ (moderate)
 - **Humidity**: 44%
@@ -33,6 +36,7 @@
 ## Architecture: Modular Multi-Room Pattern
 
 **Design for future expansion:**
+
 - Reusable template sensors (parameterized by entity_id)
 - Shared helper: `input_boolean.high_pollution_mode`
 - Room-agnostic automation templates
@@ -47,6 +51,7 @@
 **Add 5 template sensors (modern format):**
 
 1. **PM2.5 Outdoor vs Indoor Differential**
+
    ```nix
    {
      sensor = [{
@@ -60,6 +65,7 @@
    ```
 
 2. **Air Purifier Recommended Mode**
+
    ```nix
    {
      sensor = [{
@@ -78,6 +84,7 @@
    ```
 
 3. **Safe to Open Windows**
+
    ```nix
    {
      binary_sensor = [{
@@ -90,6 +97,7 @@
    ```
 
 4. **Filter Replacement Urgency**
+
    ```nix
    {
      sensor = [{
@@ -113,6 +121,7 @@
    ```
 
 5. **Antibacterial Run Due** (time-based tracking)
+
    ```nix
    {
      sensor = [{
@@ -148,6 +157,7 @@ input_datetime = {
 ### Phase 3: Core Automations (9 total) ⬜
 
 **1. Outdoor-Driven Mode Switching**
+
 ```nix
 {
   id = "air_purifier_outdoor_mode_switch";
@@ -204,6 +214,7 @@ input_datetime = {
 ```
 
 **2. Indoor Quality Boost**
+
 ```nix
 {
   id = "air_purifier_indoor_boost";
@@ -234,6 +245,7 @@ input_datetime = {
 ```
 
 **3. Adaptive Sleep Mode**
+
 ```nix
 {
   id = "air_purifier_sleep_mode";
@@ -281,6 +293,7 @@ input_datetime = {
 ```
 
 **4. Morning/Evening Ventilation Safety**
+
 ```nix
 {
   id = "air_purifier_ventilation_reminder";
@@ -312,6 +325,7 @@ input_datetime = {
 ```
 
 **5. Away Mode Energy Optimization**
+
 ```nix
 {
   id = "air_purifier_away_mode";
@@ -362,6 +376,7 @@ input_datetime = {
 ```
 
 **6. Filter Replacement - Todoist Task**
+
 ```nix
 {
   id = "air_purifier_filter_replacement_todoist";
@@ -402,6 +417,7 @@ Aktualny czas pracy: {{ states('sensor.zhimi_de_334622045_mb3_filter_used_time_p
 ```
 
 **7. Filter Replacement - TTS Alert**
+
 ```nix
 {
   id = "air_purifier_filter_tts_alert";
@@ -428,6 +444,7 @@ Aktualny czas pracy: {{ states('sensor.zhimi_de_334622045_mb3_filter_used_time_p
 ```
 
 **8. Antibacterial Filter - Auto Run**
+
 ```nix
 {
   id = "air_purifier_antibacterial_auto";
@@ -474,6 +491,7 @@ Aktualny czas pracy: {{ states('sensor.zhimi_de_334622045_mb3_filter_used_time_p
 ```
 
 **9. Daily Auto-Start**
+
 ```nix
 {
   id = "air_purifier_daily_start";
@@ -683,8 +701,9 @@ Verify Xiaomi Home component already added (done in Phase 1).
 ## Immediate Actions
 
 **URGENT - Filter Replacement:**
+
 - [ ] Order HEPA filter (current: 15% life, 2966h)
-- [ ] Link: https://allegro.pl/xiaomi-air-purifier-3h-filter
+- [ ] Link: <https://allegro.pl/xiaomi-air-purifier-3h-filter>
 - [ ] Expected delivery: 2 weeks
 - [ ] Install when delivered
 - [ ] Reset filter counter via button entity
