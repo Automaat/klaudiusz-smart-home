@@ -70,12 +70,20 @@ miio discover
 
 **Test control:**
 
-```bash
+Developer Tools → Services:
+
+```yaml
 # Turn on air purifier
-ha_call_service("fan", "turn_on", entity_id="fan.air_purifier_3h")
+service: fan.turn_on
+target:
+  entity_id: fan.air_purifier_3h
 
 # Set fan speed
-ha_call_service("fan", "set_percentage", entity_id="fan.air_purifier_3h", data={"percentage": 50})
+service: fan.set_percentage
+target:
+  entity_id: fan.air_purifier_3h
+data:
+  percentage: 50
 ```
 
 ## Troubleshooting
@@ -120,18 +128,24 @@ ha_call_service("fan", "set_percentage", entity_id="fan.air_purifier_3h", data={
 **Add to intents.nix after setup:**
 
 ```nix
-# Turn on/off
+# Turn on/off air purifier in specific area
+# NOTE: Assumes device renamed per Polish format above (line 111-116).
+# Default entity ID is fan.air_purifier_3h - adjust template accordingly.
 TurnOnAirPurifier = {
-  speech.text = "Włączam oczyszczacz powietrza w {{ area }}";
-  action = [{
-    service = "fan.turn_on";
-    target.entity_id = "fan.{{ area | lower | replace(' ', '_') }}_air_purifier";
-  }];
+  speech.text = "Włączam oczyszczacz powietrza w {{ slots.area }}";
+  action = [
+    {
+      service = "fan.turn_on";
+      target.entity_id = "fan.{{ slots.area | lower | replace(' ', '_') }}_oczyszczacz_powietrza";
+    }
+  ];
 };
 
-# Check air quality
+# Check air quality (read-only intent)
+# NOTE: Adjust sensor entity ID if device renamed (e.g., sensor.salon_oczyszczacz_powietrza_pm25)
 CheckAirQuality = {
   speech.text = "PM2.5 wynosi {{ states('sensor.air_purifier_3h_pm25') }} mikrogramów na metr sześcienny";
+  action = [];
 };
 ```
 
