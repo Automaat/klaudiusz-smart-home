@@ -3,7 +3,31 @@
   pkgs,
   lib,
   ...
-}: {
+}: let
+  # Script to publish homeassistant.local mDNS alias
+  publishMdnsAlias = pkgs.writeShellScript "publish-mdns-alias" ''
+    set -euo pipefail
+
+    # Get default network interface
+    iface=$(${pkgs.iproute2}/bin/ip route show default | ${pkgs.gawk}/bin/awk 'NR==1 {print $5}')
+
+    if [ -z "$iface" ]; then
+      echo "avahi-alias-homeassistant: No default network interface found" >&2
+      exit 1
+    fi
+
+    # Get IPv4 address from interface
+    ip_addr=$(${pkgs.iproute2}/bin/ip -4 addr show "$iface" | ${pkgs.gawk}/bin/awk '/inet / {print $2}' | ${pkgs.gnused}/bin/sed 's|/.*||' | head -n1)
+
+    if [ -z "$ip_addr" ]; then
+      echo "avahi-alias-homeassistant: No IPv4 address found for interface $iface" >&2
+      exit 1
+    fi
+
+    # Publish homeassistant.local mDNS alias
+    exec ${pkgs.avahi}/bin/avahi-publish-address homeassistant.local "$ip_addr"
+  '';
+in {
   imports = [
     ./hardware-configuration.nix
     ./home-assistant
@@ -134,8 +158,7 @@
     wantedBy = ["multi-user.target"];
     serviceConfig = {
       Type = "simple";
-      # Get IP from default route interface, publish homeassistant.local pointing to it
-      ExecStart = "${pkgs.bash}/bin/bash -c 'set -euo pipefail\n        iface=$(${pkgs.iproute2}/bin/ip route show default | ${pkgs.gawk}/bin/awk \"NR==1 {print \\$5}\")\n        if [ -z \"\\$iface\" ]; then\n          echo \"avahi-alias-homeassistant: No default network interface found\" >&2\n          exit 1\n        fi\n        ip_addr=$(${pkgs.iproute2}/bin/ip -4 addr show \"\\$iface\" | ${pkgs.gawk}/bin/awk \"/inet / {print \\$2}\" | ${pkgs.gnused}/bin/sed \"s|/.*||\" | head -n1)\n        if [ -z \"\\$ip_addr\" ]; then\n          echo \"avahi-alias-homeassistant: No IPv4 address found for interface \\$iface\" >&2\n          exit 1\n        fi\n        exec ${pkgs.avahi}/bin/avahi-publish-address homeassistant.local \"\\$ip_addr\"'";
+      ExecStart = "${publishMdnsAlias}";
       Restart = "on-failure";
       RestartSec = "60";
     };
