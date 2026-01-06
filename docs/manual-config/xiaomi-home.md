@@ -2,7 +2,8 @@
 
 ## Why Manual Configuration
 
-Xiaomi Home integration uses OAuth 2.0 authentication which requires interactive login via browser. Cannot be configured declaratively via NixOS.
+Xiaomi Home integration uses OAuth 2.0 authentication which requires interactive login via browser.
+Cannot be configured declaratively via NixOS.
 
 ## Prerequisites
 
@@ -13,12 +14,14 @@ Xiaomi Home integration uses OAuth 2.0 authentication which requires interactive
 ## About This Integration
 
 **Official integration by Xiaomi** - maintained by XiaoMi team
+
 - OAuth 2.0 login (no password stored in HA)
 - Supports most Xiaomi IoT devices except Bluetooth/infrared/virtual
 - Communicates via Xiaomi Cloud (MQTT + HTTP)
 - Tokens stored in clear text in config file (secure your HA instance)
 
 **Known Issues (2025):**
+
 - OAuth redirect may hang for some users
 - Re-authentication issues reported
 - If login fails, see Troubleshooting section
@@ -105,7 +108,8 @@ After successful login:
 
 **Solutions:**
 
-1. **Pre-authenticate:** Log into https://account.xiaomi.com from same network as HA, complete CAPTCHA/2FA, then immediately try integration setup
+1. **Pre-authenticate:** Log into <https://account.xiaomi.com> from same network as HA,
+   complete CAPTCHA/2FA, then immediately try integration setup
 
 2. **Host resolution:** Ensure `homeassistant.local` resolves to your HA server IP (see step 3 above)
 
@@ -140,16 +144,19 @@ After successful login:
 **Solutions:**
 
 1. Verify custom component installed:
+
    ```bash
    ls -la /var/lib/hass/custom_components/xiaomi_home
    ```
 
 2. Check HA logs for errors:
+
    ```bash
    journalctl -u home-assistant | grep -i xiaomi
    ```
 
 3. Restart HA after NixOS deployment:
+
    ```bash
    sudo systemctl restart home-assistant
    ```
@@ -165,6 +172,7 @@ If migrating from `xiaomi_miio` integration:
 5. **Update dashboards:** Replace old entity IDs with new ones
 
 **Entity ID changes:**
+
 - Xiaomi Miio: `fan.xiaomi_air_purifier_3h`
 - Xiaomi Home: `fan.mi_air_purifier_3h` (varies by device)
 
