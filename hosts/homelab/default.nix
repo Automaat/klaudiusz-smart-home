@@ -125,6 +125,21 @@
     };
   };
 
+  # Publish homeassistant.local as alias for Xiaomi integration
+  systemd.services.avahi-alias-homeassistant = {
+    description = "Publish homeassistant.local mDNS alias";
+    after = ["avahi-daemon.service"];
+    requires = ["avahi-daemon.service"];
+    wantedBy = ["multi-user.target"];
+    serviceConfig = {
+      Type = "simple";
+      # Get IP from default route interface, publish homeassistant.local pointing to it
+      ExecStart = "${pkgs.bash}/bin/bash -c '${pkgs.avahi}/bin/avahi-publish-address homeassistant.local $(${pkgs.iproute2}/bin/ip -4 addr show $(${pkgs.iproute2}/bin/ip route show default | ${pkgs.gawk}/bin/awk \"{print \\$5}\") | ${pkgs.gawk}/bin/awk \"/inet / {print \\$2}\" | ${pkgs.gnused}/bin/sed \"s|/.*||\")'";
+      Restart = "always";
+      RestartSec = "10";
+    };
+  };
+
   # ===========================================
   # Tailscale - Secure Remote Access
   # ===========================================
