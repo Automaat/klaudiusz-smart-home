@@ -7,6 +7,7 @@
 ## Executive Summary
 
 Implement beautiful, functional HA dashboards using modern best practices:
+
 - **5 specialized dashboards** (main, monitoring, media, mobile, discovery)
 - **Custom cards** (Mushroom, Mini Graph, Button Card, card-mod, auto-entities)
 - **Responsive design** (desktop + mobile optimized)
@@ -18,12 +19,14 @@ Implement beautiful, functional HA dashboards using modern best practices:
 ### Dashboard Architecture (2024-2025)
 
 **View Types:**
+
 - **Sections** (recommended) - Modern grid-based, drag-and-drop, responsive
 - **Masonry** - Space-saving, less predictable layout
 - **Panel** - Single full-width card (maps, media players)
 - **Sidebar** - Two-column desktop, single mobile
 
 **Modern Best Practices:**
+
 - Tile card as default (2024+)
 - Grid-based layouts for multi-column sections
 - Built-in features (sliders, controls) over separate cards
@@ -196,11 +199,13 @@ EOF
 After rebuild completes on homelab:
 
 **Steps:**
+
 1. Navigate to HA: Settings → Dashboards → Resources
 2. Click "+ Add Resource" for each card
 3. Enter URL (JavaScript Module type)
 
 **Resource URLs:**
+
 - `/local/community/mushroom/mushroom.js`
 - `/local/community/mini-graph-card/mini-graph-card-bundle.js`
 - `/local/community/button-card/button-card.js`
@@ -208,6 +213,7 @@ After rebuild completes on homelab:
 - `/local/community/auto-entities/auto-entities.js`
 
 **Verification:**
+
 - Check browser console for errors (F12)
 - Resources should load without 404s
 - Test by creating sample Mushroom card
@@ -217,6 +223,7 @@ After rebuild completes on homelab:
 **Goal:** Verify card-mod works with existing Catppuccin theme
 
 **Test Pattern:**
+
 1. Create test dashboard view
 2. Add Mushroom light card
 3. Apply card-mod styling:
@@ -232,9 +239,9 @@ card_mod:
     }
 ```
 
-4. Verify styling renders correctly
-5. Test theme switching (Catppuccin variants)
-6. Document working patterns
+1. Verify styling renders correctly
+2. Test theme switching (Catppuccin variants)
+3. Document working patterns
 
 **If successful:** Proceed to create global theme modifications
 **If issues:** Use card-mod per-card basis only
@@ -253,6 +260,7 @@ card_mod:
 **View Type:** Sections
 
 **Sections:**
+
 1. **Living Areas**
    - Salon lights (Mushroom light cards)
    - Kitchen lights
@@ -265,11 +273,13 @@ card_mod:
    - Scene buttons
 
 **Design:**
+
 - Grid cards for 2-3 column layouts in sections
 - Large tap targets (mobile-friendly)
 - Quick actions (no deep navigation)
 
 **Card Types:**
+
 - `custom:mushroom-light-card` - Clean light controls
 - `custom:mushroom-climate-card` - Thermostat
 - `custom:button-card` - Scenes (with templates)
@@ -285,6 +295,7 @@ card_mod:
 **View Type:** Sections
 
 **Sections:**
+
 1. **Salon Sensors**
    - Temperature (Mini Graph Card, 24h)
    - Humidity (Mini Graph Card)
@@ -301,12 +312,14 @@ card_mod:
    - CPU/Memory (if exposed)
 
 **Design:**
+
 - Information density (desktop-focused)
 - Mini Graph Card with 24h history ranges
 - Tile cards with built-in trend charts (2025.9 feature)
 - Group sensors by room/type
 
 **Card Types:**
+
 - `custom:mini-graph-card` - Sensor history
 - `tile` - System sensors with trend charts
 - `entities` - Compact sensor lists
@@ -321,6 +334,7 @@ card_mod:
 **View Type:** Panel (full-screen)
 
 **Content:**
+
 - Main media player (full-width)
 - Mushroom media cards for multi-room audio
 - Volume controls
@@ -328,12 +342,14 @@ card_mod:
 - Playback shortcuts
 
 **Design:**
+
 - Panel view for immersive experience
 - Large album art
 - Quick volume adjustments
 - Room-by-room audio grouping
 
 **Card Types:**
+
 - `media-control` - Built-in full-width player
 - `custom:mushroom-media-card` - Room controls
 - `custom:button-card` - Preset playlists
@@ -348,6 +364,7 @@ card_mod:
 **View Type:** Sections (single column)
 
 **Sections:**
+
 1. **Quick Controls**
    - Most-used lights (large Mushroom cards)
    - Main climate control
@@ -358,6 +375,7 @@ card_mod:
    - Security status
 
 **Design:**
+
 - Single column layout
 - Extra-large tap targets
 - Minimal scrolling
@@ -365,6 +383,7 @@ card_mod:
 - No nested menus
 
 **Card Types:**
+
 - `custom:mushroom-light-card` - Large, touch-friendly
 - `custom:mushroom-climate-card` - Simple thermostat
 - `custom:button-card` - Large scene buttons
@@ -379,6 +398,7 @@ card_mod:
 **View Type:** Sections
 
 **Sections:**
+
 1. **All Lights** (auto-entities)
 2. **All Sensors** (auto-entities)
 3. **All Switches** (auto-entities)
@@ -386,12 +406,14 @@ card_mod:
 5. **All Covers** (auto-entities)
 
 **Design:**
+
 - Auto-populated using `custom:auto-entities`
 - Filters by domain
 - Useful for finding new devices
 - No manual maintenance required
 
 **Example auto-entities card:**
+
 ```yaml
 type: custom:auto-entities
 card:
@@ -411,11 +433,13 @@ sort:
 **Goal:** Create reusable button templates for scenes
 
 **Resources:**
+
 - Base: [creative-button-card-templates](https://github.com/wfurphy/creative-button-card-templates)
 - Customize for Polish language
 - Adapt to Catppuccin colors
 
 **Example Template:**
+
 ```yaml
 button_card_templates:
   scene_button:
@@ -435,6 +459,7 @@ button_card_templates:
 ```
 
 **Apply to scenes:**
+
 ```yaml
 type: custom:button-card
 entity: scene.dobranoc
@@ -448,6 +473,7 @@ icon: mdi:weather-night
 **File:** `docs/manual-config/dashboards.md`
 
 **Content:**
+
 ```markdown
 # Dashboard Configuration
 
@@ -566,7 +592,8 @@ Located in dashboard YAML config (not file-based).
 
 ## Implementation Checklist
 
-### Phase 1: Custom Cards (NixOS)
+### Phase 1: Checklist
+
 - [ ] Check latest stable releases on GitHub
 - [ ] Calculate nix hashes for all 5 cards
 - [ ] Add fetchFromGitHub sources to `default.nix`
@@ -577,7 +604,8 @@ Located in dashboard YAML config (not file-based).
 - [ ] Merge after CI passes
 - [ ] Wait for Comin to deploy
 
-### Phase 2: Register Resources
+### Phase 2: Checklist
+
 - [ ] Navigate to Settings → Dashboards → Resources in HA GUI
 - [ ] Add Mushroom Cards resource
 - [ ] Add Mini Graph Card resource
@@ -586,7 +614,8 @@ Located in dashboard YAML config (not file-based).
 - [ ] Add auto-entities resource
 - [ ] Verify no console errors (F12)
 
-### Phase 3: card-mod Testing
+### Phase 3: Checklist
+
 - [ ] Create test dashboard view
 - [ ] Add Mushroom card with card-mod styling
 - [ ] Test with Catppuccin theme
@@ -594,7 +623,8 @@ Located in dashboard YAML config (not file-based).
 - [ ] Document working patterns
 - [ ] Decide on per-card vs global styling approach
 
-### Phase 4: Create Dashboards
+### Phase 4: Checklist
+
 - [ ] Create Main Control dashboard (sections view)
   - [ ] Living Areas section
   - [ ] Bedrooms section
@@ -619,7 +649,8 @@ Located in dashboard YAML config (not file-based).
   - [ ] All switches (auto-entities)
   - [ ] All climate (auto-entities)
 
-### Phase 5: Button Card Templates
+### Phase 5: Checklist
+
 - [ ] Review creative-button-card-templates repo
 - [ ] Create scene_button template
 - [ ] Customize for Polish language
@@ -627,7 +658,8 @@ Located in dashboard YAML config (not file-based).
 - [ ] Apply to scene buttons in Main Control
 - [ ] Test tap actions
 
-### Phase 6: Documentation
+### Phase 6: Checklist
+
 - [ ] Create `docs/manual-config/dashboards.md`
 - [ ] Document all 5 dashboards
 - [ ] Document custom cards + resource URLs
@@ -637,7 +669,8 @@ Located in dashboard YAML config (not file-based).
 - [ ] Create feature branch `docs/dashboard-guide`
 - [ ] Commit and create PR
 
-### Phase 7: Testing & Optimization
+### Phase 7: Checklist
+
 - [ ] Test Main Control on desktop
 - [ ] Test Main Control on mobile
 - [ ] Test Monitoring dashboard (graphs load)
@@ -648,7 +681,8 @@ Located in dashboard YAML config (not file-based).
 - [ ] Check for console errors
 - [ ] Verify theme consistency across all dashboards
 
-### Phase 8: Refinement
+### Phase 8: Checklist
+
 - [ ] Gather feedback from daily use
 - [ ] Adjust layouts based on usage patterns
 - [ ] Add conditional cards if needed
@@ -661,6 +695,7 @@ Located in dashboard YAML config (not file-based).
 **No specific timeline** - implement at own pace, break into smaller tasks as needed.
 
 **Suggested order:**
+
 1. Phase 1 (NixOS changes) - Single PR, foundational
 2. Phase 2 (Resources) - Quick GUI task
 3. Phase 3 (card-mod test) - Verify compatibility
@@ -672,31 +707,37 @@ Located in dashboard YAML config (not file-based).
 ## Notes
 
 ### Current Project Context
+
 - Dashboard management: GUI (`lovelaceConfigWritable = true`)
 - Theme: Catppuccin (already installed)
 - Voice commands: Polish (Whisper/Piper)
 - Areas: Living areas (Salon, Kitchen) + Bedrooms
 
 ### Design Philosophy
+
 - Clean minimalist (Mushroom cards)
 - Information density when needed (Monitoring)
 - Mobile-friendly (large targets, swipe navigation)
 - Discovery-friendly (auto-entities for new devices)
 
 ### MCP Integration
+
 Per CLAUDE.md pattern for automations, apply same to dashboards:
+
 1. Design/test in HA GUI (quick iteration)
 2. Verify with real devices (mobile + desktop)
 3. Keep in GUI (dashboards not declarative)
 4. Document custom cards in Nix (reproducibility)
 
 ### Resources
+
 All research findings documented in this plan.
 Original research: 2026-01-06 (66K token Task agent output)
 
 ## References
 
 ### Research Sources
+
 - [HA Dashboard Chapter 1: Drag-and-drop & Sections](https://www.home-assistant.io/blog/2024/03/04/dashboard-chapter-1/)
 - [Dashboard Chapter 2: Redesigning Cards](https://www.home-assistant.io/blog/2024/07/26/dashboard-chapter-2/)
 - [2025.9 Release: Tile Card Features](https://www.home-assistant.io/blog/2025/09/03/release-20259)
@@ -704,6 +745,7 @@ Original research: 2026-01-06 (66K token Task agent output)
 - [Dashboard Showcase 2025](https://www.seeedstudio.com/blog/2025/08/27/home-assistant-display-showcase-from-community-designs-to-your-own-setup/)
 
 ### GitHub Repositories
+
 - [piitaya/lovelace-mushroom](https://github.com/piitaya/lovelace-mushroom)
 - [kalkih/mini-graph-card](https://github.com/kalkih/mini-graph-card)
 - [custom-cards/button-card](https://github.com/custom-cards/button-card)
