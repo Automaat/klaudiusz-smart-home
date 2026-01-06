@@ -18,6 +18,10 @@ lists:
       - "teraz"
       - "tam"
 
+  # Shopping list item wildcard
+  item:
+    wildcard: true
+
   # Common area names for better slot matching
   area_names:
     values:
