@@ -2,7 +2,9 @@
 
 ## Why Manual Configuration
 
-Grafana alert rules created via GUI cannot be managed declaratively via NixOS. After adding Prometheus exporters, existing alerts need to be updated to use the correct metrics.
+Grafana alert rules created via GUI cannot be managed declaratively via NixOS.
+After adding Prometheus exporters, existing alerts need to be updated to use the
+correct metrics.
 
 ## When to Perform Setup
 
@@ -13,7 +15,7 @@ After deploying Prometheus exporter changes from this repository.
 The following services are monitored with Prometheus:
 
 | Service | Metric Source | Alert Query Pattern |
-|---------|---------------|-------------------|
+| ------- | ------------- | ------------------- |
 | Home Assistant | Native HA exporter | `up{job="homeassistant"}` |
 | PostgreSQL | postgres_exporter | `up{job="postgresql"}` |
 | Prometheus | Self-scraping | `up{job="prometheus"}` |
@@ -68,7 +70,7 @@ service_up{service="tailscaled"} == 0
 ## Step-by-Step: Update Alert Rules
 
 1. **Access Grafana**
-   - Navigate to http://homelab:3000
+   - Navigate to <http://homelab:3000>
    - Login with admin credentials
 
 2. **Open Alerting Section**
@@ -84,16 +86,21 @@ service_up{service="tailscaled"} == 0
    - Should already be correct if alerts exist
 
    For services using textfile collector (fail2ban, piper, whisper, tailscale):
+
    - Find alert rule (e.g., "fail2ban_down")
    - Click "Edit"
    - Change query from:
-     ```
+
+     ```promql
      up{job="fail2ban"} == 0
      ```
+
      to:
-     ```
+
+     ```promql
      service_up{service="fail2ban"} == 0
      ```
+
    - Click "Save rule and exit"
    - Repeat for other textfile-based services
 
@@ -123,18 +130,21 @@ All services should show `"health": "up"` or `"value": "1"`.
 ## Troubleshooting
 
 **Alert still firing after update:**
+
 - Wait 2-3 minutes for alert evaluation cycle
-- Check Prometheus target health: http://localhost:9090/targets
-- Verify metric exists in Prometheus: http://localhost:9090/graph
+- Check Prometheus target health: <http://localhost:9090/targets>
+- Verify metric exists in Prometheus: <http://localhost:9090/graph>
 
 **service_up metric missing:**
+
 - Check textfile exporter timer: `systemctl status prometheus-service-status.timer`
 - Check textfile content: `cat /var/lib/prometheus-node-exporter-text/service_status.prom`
 - Verify node_exporter is scraping textfile: `journalctl -u prometheus-node-exporter`
 
 **up metric missing for native exporters:**
+
 - Check service is running: `systemctl status servicename`
-- Check Prometheus scrape config: http://localhost:9090/config
+- Check Prometheus scrape config: <http://localhost:9090/config>
 - Check Prometheus logs: `journalctl -u prometheus`
 
 ## Related Documentation
