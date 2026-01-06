@@ -55,7 +55,7 @@
         ];
         action = [
           {
-            service = "wake_on_lan.send_magic_packet";
+            action = "wake_on_lan.send_magic_packet";
             data = {
               mac = "20:28:bc:69:b9:84";
               broadcast_address = "192.168.0.255";
