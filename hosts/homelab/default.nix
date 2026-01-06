@@ -606,9 +606,15 @@
         Type = "oneshot";
         # Load token from file without exposing in argv
         LoadCredential = "ha-token:${config.sops.secrets.home-assistant-prometheus-token.path}";
-        # Call Home Assistant notify service via curl
+        # Call Home Assistant notify service via curl with retry logic
+        # Retries handle HA restarts during Comin deployments
         ExecStart = ''
           ${pkgs.curl}/bin/curl -X POST \
+            --retry 5 \
+            --retry-delay 3 \
+            --retry-connrefused \
+            --retry-all-errors \
+            --max-time 30 \
             -H "Authorization: Bearer $(cat $CREDENTIALS_DIRECTORY/ha-token)" \
             -H "Content-Type: application/json" \
             -d '{"message": "⚠️ Service failure: %i exceeded restart limit (5 attempts in 5 min)", "title": "Homelab Alert"}' \
