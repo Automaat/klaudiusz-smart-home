@@ -172,7 +172,7 @@
                 ];
                 noDataState = "Alerting";
                 execErrState = "Alerting";
-                for = "5m";
+                for = "10m";
                 annotations = {
                   inherit summary description;
                 };
