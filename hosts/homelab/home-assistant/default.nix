@@ -172,6 +172,7 @@ in {
         customPkgs.ibeacon-ble # iBeacon integration
         pyatv # Apple TV integration
         pychromecast # Google Cast integration
+        zlib-ng # Fast compression for aiohttp (prevents performance warning)
       ];
 
     config = {
