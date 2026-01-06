@@ -437,6 +437,14 @@
             state = "{{ states('sensor.aleje_pm2_5') | float(999) < 15 and states('sensor.aleje_pm2_5') | float(999) < states('sensor.zhimi_de_334622045_mb3_pm2_5_density_p_3_6') | float(50) }}";
             device_class = "safety";
           }
+          {
+            name = "Antibacterial Filter Run Due";
+            unique_id = "antibacterial_run_due";
+            # Antibacterial filter maintenance recommended every 7 days
+            # Tracks time since last high-power run for filter sterilization
+            state = "{{ (now() - states.input_datetime.last_antibacterial_run.last_changed).days > 7 }}";
+            device_class = "problem";
+          }
         ];
       }
     ];
@@ -456,6 +464,18 @@
       sleep_mode = {
         name = "Tryb nocny";
         icon = "mdi:sleep";
+      };
+      high_pollution_mode = {
+        name = "High Pollution Mode";
+        icon = "mdi:alert-circle";
+      };
+    };
+
+    input_datetime = {
+      last_antibacterial_run = {
+        name = "Last Antibacterial Filter Run";
+        has_date = true;
+        has_time = true;
       };
     };
 
