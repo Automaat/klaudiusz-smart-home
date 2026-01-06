@@ -53,7 +53,6 @@
           name = "comin_last_deployment_time";
           unique_id = "comin_last_deployment_time";
           command = "jq -r '.deployments[0]|select(.error_msg==\"\")|.ended_at//\"none\"' /var/lib/comin/store.json";
-          device_class = "timestamp";
           scan_interval = 30;
         };
       }
@@ -70,7 +69,6 @@
           name = "comin_last_failed_time";
           unique_id = "comin_last_failed_time";
           command = "jq -r '.deployments[0]|if .error_msg==\"\" then \"none\" else (.ended_at//\"none\") end' /var/lib/comin/store.json";
-          device_class = "timestamp";
           scan_interval = 30;
         };
       }
