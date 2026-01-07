@@ -79,21 +79,6 @@
           to = "on";
         }
       ];
-      condition = [
-        {
-          condition = "or";
-          conditions = [
-            {
-              condition = "sun";
-              after = "sunset";
-            }
-            {
-              condition = "sun";
-              before = "sunrise";
-            }
-          ];
-        }
-      ];
       action = [
         {
           service = "light.turn_on";
