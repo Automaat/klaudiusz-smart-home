@@ -6,7 +6,24 @@ NixOS-based smart home with Home Assistant, Polish voice commands (Whisper/Piper
 
 - **Hardware:** Blackview MP60 mini PC
 - **Stack:** NixOS, Flakes, Home Assistant, Wyoming (faster-whisper, piper)
-- **Language:** Polish (pl)
+
+## Language Policy
+
+**All communication in this repository MUST use English:**
+
+- Code comments
+- Documentation (this file, manual-config docs, READMEs)
+- Git commit messages
+- PR descriptions
+- Technical discussions
+
+**ONLY use Polish for:**
+
+- Voice command responses (speech.text in intents.nix)
+- Voice sentence patterns (custom_sentences/pl/*.yaml)
+- Area/device names in HA GUI (for natural voice interaction)
+
+**Rationale:** English for development/documentation, Polish for end-user voice interaction
 
 ## Hardware Specifications
 
