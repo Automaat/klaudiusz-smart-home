@@ -26,7 +26,7 @@ echo "$check_output" | grep -A2 "hash mismatch" | while IFS= read -r line; do
         echo "Found correct hash: $correct_hash"
 
         # Find files with hash mismatches
-        for file in $(find . -name "*.nix" -type f); do
+        find . -name "*.nix" -type f -print0 | while IFS= read -r -d '' file; do
             # Check if file contains fetchFromGitHub with wrong hash
             if grep -q "fetchFromGitHub" "$file"; then
                 # Replace hash in file
