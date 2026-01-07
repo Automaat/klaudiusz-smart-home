@@ -124,10 +124,10 @@
 
    ```nix
    {
-     sensor = [{
+     binary_sensor = [{
        name = "Antibacterial Filter Run Due";
        unique_id = "antibacterial_run_due";
-       state = "{{ (now() - states.input_datetime.last_antibacterial_run.last_changed).days > 7 }}";
+       state = "{{ (now() - as_datetime(states('input_datetime.last_antibacterial_run'))).days > 7 }}";
        device_class = "problem";
      }];
    }
@@ -464,7 +464,7 @@ Aktualny czas pracy: {{ states('sensor.zhimi_de_334622045_mb3_filter_used_time_p
     }
     {
       condition = "template";
-      value_template = "{{ (now() - states.input_datetime.last_antibacterial_run.last_changed).days >= 7 }}";
+      value_template = "{{ (now() - as_datetime(states('input_datetime.last_antibacterial_run'))).days >= 7 }}";
     }
   ];
 
