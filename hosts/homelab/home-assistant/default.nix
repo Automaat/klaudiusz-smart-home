@@ -286,7 +286,7 @@ in {
       frontend = {
         themes = "!include_dir_merge_named themes/";
         extra_module_url = [
-          "/hacsfiles/hass-hue-icons/hass-hue-icons.js"
+          "/local/community/hass-hue-icons/hass-hue-icons.js"
         ];
       };
 
