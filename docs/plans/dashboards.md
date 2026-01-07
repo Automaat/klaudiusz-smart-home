@@ -634,14 +634,47 @@ All symlinks configured in preStart. Ready for Phase 2 (GUI configuration).
 
 All resources loaded successfully without console errors. Ready for Phase 3 (card-mod + Catppuccin testing).
 
-### Phase 3: Checklist
+### Phase 3: Checklist ✅ COMPLETE
 
-- [ ] Create test dashboard view
-- [ ] Add Mushroom card with card-mod styling
-- [ ] Test with Catppuccin theme
-- [ ] Switch theme variants (Mocha, Latte, etc.)
-- [ ] Document working patterns
-- [ ] Decide on per-card vs global styling approach
+- [x] Create test dashboard view
+- [x] Add Mushroom card with card-mod styling
+- [x] Test with Catppuccin theme
+- [x] Switch theme variants (Mocha, Latte, etc.)
+- [x] Document working patterns
+- [x] Decide on per-card vs global styling approach
+
+**Status:** Phase 3 completed. Test dashboard created at `/lovelace/card-mod-test` with comparison:
+
+**Test Setup:**
+- Dashboard: "card-mod Test" (sections view)
+- Entity: `light.hallway`
+- Two cards: styled (card-mod) vs unstyled (vanilla Mushroom)
+
+**card-mod Configuration (Working):**
+```yaml
+type: custom:mushroom-light-card
+entity: light.hallway
+card_mod:
+  style: |
+    ha-card {
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+```
+
+**Findings:**
+- ✅ card-mod works with Mushroom cards
+- ✅ Compatible with Catppuccin theme
+- ✅ CSS styling applies correctly (rounded corners, shadows)
+- ✅ No console errors
+
+**Recommendation:** Use **per-card styling** approach:
+- Apply card-mod selectively for polish
+- Catppuccin theme provides base colors
+- Per-card styling for rounded corners, shadows, special effects
+- Avoid global theme-mod (keep Catppuccin clean)
+
+Ready for Phase 4 (build production dashboards).
 
 ### Phase 4: Checklist
 
