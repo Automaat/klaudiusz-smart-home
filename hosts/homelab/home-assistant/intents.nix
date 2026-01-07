@@ -3,7 +3,10 @@
   pkgs,
   lib,
   ...
-}: {
+}: let
+  # Air purifier entity constant
+  airPurifier = "fan.zhimi_de_334622045_mb3_s_2_air_purifier";
+in {
   services.home-assistant.config = {
     # ===========================================
     # Polish Voice Command Intents
@@ -192,6 +195,86 @@
             service = "todo.add_item";
             target.entity_id = "todo.shopping";
             data.item = "{{ item }}";
+          }
+        ];
+      };
+
+      # -----------------------------------------
+      # Air Purifier
+      # -----------------------------------------
+      TurnOnAirPurifier = {
+        speech.text = "Włączam oczyszczacz powietrza w salonie";
+        action = [
+          {
+            action = "fan.turn_on";
+            target.entity_id = airPurifier;
+          }
+        ];
+      };
+
+      TurnOffAirPurifier = {
+        speech.text = "Wyłączam oczyszczacz powietrza";
+        action = [
+          {
+            action = "fan.turn_off";
+            target.entity_id = airPurifier;
+          }
+        ];
+      };
+
+      SetAirPurifierNight = {
+        speech.text = "Ustawiam oczyszczacz w tryb nocny";
+        action = [
+          {
+            action = "fan.set_preset_mode";
+            target.entity_id = airPurifier;
+            data.preset_mode = "Night";
+          }
+        ];
+      };
+
+      SetAirPurifierAuto = {
+        speech.text = "Ustawiam oczyszczacz w tryb automatyczny";
+        action = [
+          {
+            action = "fan.set_preset_mode";
+            target.entity_id = airPurifier;
+            data.preset_mode = "Auto";
+          }
+        ];
+      };
+
+      GetAirQuality = {
+        speech.text = ''
+          Jakość powietrza w salonie: wewnątrz {{ states('sensor.zhimi_de_334622045_mb3_pm2_5_density_p_3_6') }} mikrogramów PM2.5,
+          na zewnątrz {{ states('sensor.aleje_pm2_5') }} mikrogramów.
+          {{ 'Możesz otworzyć okno.' if is_state('binary_sensor.safe_to_ventilate_living_room', 'on') else 'Lepiej zostaw okna zamknięte.' }}
+        '';
+      };
+
+      GetFilterStatus = {
+        speech.text = "Filtr oczyszczacza zużyty w {{ 100 - states('sensor.zhimi_de_334622045_mb3_filter_life_level_p_4_3') | int }} procentach. Pozostało {{ states('sensor.zhimi_de_334622045_mb3_filter_life_level_p_4_3') }} procent żywotności.";
+      };
+
+      TriggerAntibacterial = {
+        speech.text = "Uruchamiam tryb antybakteryjny oczyszczacza na 2 godziny";
+        action = [
+          {
+            action = "fan.turn_on";
+            target.entity_id = airPurifier;
+          }
+          {
+            action = "fan.set_preset_mode";
+            target.entity_id = airPurifier;
+            data.preset_mode = "Auto";
+          }
+          {
+            delay.hours = 2;
+          }
+          {
+            action = "input_datetime.set_datetime";
+            target.entity_id = "input_datetime.last_antibacterial_run";
+            data.datetime = "{{ now().isoformat() }}";
           }
         ];
       };
