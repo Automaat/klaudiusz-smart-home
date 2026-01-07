@@ -207,6 +207,26 @@ IntentName = {
 }
 ```
 
+### Todoist Automations
+
+**CRITICAL:** Quote `project` attribute in `todoist.new_task` actions:
+
+```nix
+action = [{
+  action = "todoist.new_task";
+  data = {
+    content = "Task description";
+    "project" = "Home";  # MUST quote - dropped by YAML formatter otherwise
+    priority = 3;
+    labels = "label1,label2";
+  };
+}];
+```
+
+**Why:** NixOS YAML formatter drops unquoted `project` during Nix→YAML conversion, causing `Invalid project name` errors. Quoting forces literal string treatment.
+
+**Reference:** PR #216, hosts/homelab/home-assistant/areas/living-room.nix:320-352
+
 ### Polish Voice Commands
 
 - Use both formal/informal: `(włącz|zapal)`
