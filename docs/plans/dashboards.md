@@ -720,6 +720,7 @@ Ready for Phase 4 (build production dashboards).
 **Status:** Phase 4 completed. All 5 production dashboards created via HA MCP:
 
 **1. Main Control (`/lovelace/main-control`):**
+
 - Sections: Living Areas, Bedrooms, Scenes
 - Mushroom cards for lights (Kitchen), climate controls (Living Room, Bedroom, Office)
 - Air Purifier control (Mushroom fan card)
@@ -728,6 +729,7 @@ Ready for Phase 4 (build production dashboards).
 - card-mod styling (rounded corners, shadows)
 
 **2. Monitoring (`/lovelace/monitoring-sensors`):**
+
 - Sections: Living Room Sensors, Bedroom Sensors, Air Quality, System Health
 - Mini Graph Cards (24h history, 2 points/hour)
   - Living Room: Temperature, Humidity, Indoor PM2.5, Outdoor PM2.5
@@ -736,6 +738,7 @@ Ready for Phase 4 (build production dashboards).
 - System Status entity card (HA status, Comin deployment time, safe to ventilate)
 
 **3. Media (`/lovelace/media-control`):**
+
 - Panel view (full-width)
 - Built-in media-control card for TV
 - Mushroom media player cards (TV, Voice Assistant speaker)
@@ -743,6 +746,7 @@ Ready for Phase 4 (build production dashboards).
 - card-mod styling
 
 **4. Mobile (`/lovelace/mobile-quick`):**
+
 - Single column sections (touch-optimized)
 - Bubble Card horizontal button stacks (lights, scenes)
 - Bubble Card climate controls (Living Room, Bedroom)
@@ -752,13 +756,15 @@ Ready for Phase 4 (build production dashboards).
 - iOS-style modern animations
 
 **5. Discovery (`/lovelace/discovery-entities`):**
+
 - Sections: All Lights, All Sensors, All Switches, All Climate, All Binary Sensors
 - Auto-entities cards (dynamic population by domain)
 - Excludes unavailable/unknown entities
 - Sorted alphabetically by name
 - Zero maintenance (auto-updates when devices added)
 
-All dashboards use modern 2024+ patterns: sections view, Mushroom cards, Mini Graph cards, card-mod styling, Grid layouts. Ready for Phase 5 (Button Card templates).
+All dashboards use modern 2024+ patterns: sections view, Mushroom cards, Mini Graph cards, card-mod styling,
+Grid layouts. Ready for Phase 5 (Button Card templates).
 
 ### Phase 5: Checklist
 
