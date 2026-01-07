@@ -3,7 +3,10 @@
   pkgs,
   lib,
   ...
-}: {
+}: let
+  # Air purifier entity constant
+  airPurifier = "fan.zhimi_de_334622045_mb3_s_2_air_purifier";
+in {
   # ===========================================
   # Living Room
   # ===========================================
@@ -86,7 +89,7 @@
       condition = [
         {
           condition = "state";
-          entity_id = "fan.zhimi_de_334622045_mb3_s_2_air_purifier";
+          entity_id = airPurifier;
           state = "on";
         }
       ];
@@ -104,7 +107,7 @@
               sequence = [
                 {
                   action = "fan.set_preset_mode";
-                  target.entity_id = "fan.zhimi_de_334622045_mb3_s_2_air_purifier";
+                  target.entity_id = airPurifier;
                   data.preset_mode = "Auto";
                 }
               ];
@@ -120,7 +123,7 @@
               sequence = [
                 {
                   action = "fan.set_preset_mode";
-                  target.entity_id = "fan.zhimi_de_334622045_mb3_s_2_air_purifier";
+                  target.entity_id = airPurifier;
                   data.preset_mode = "Night";
                 }
               ];
@@ -129,7 +132,7 @@
           default = [
             {
               action = "fan.set_preset_mode";
-              target.entity_id = "fan.zhimi_de_334622045_mb3_s_2_air_purifier";
+              target.entity_id = airPurifier;
               data.preset_mode = "Auto";
             }
           ];
@@ -153,11 +156,11 @@
       action = [
         {
           action = "fan.turn_on";
-          target.entity_id = "fan.zhimi_de_334622045_mb3_s_2_air_purifier";
+          target.entity_id = airPurifier;
         }
         {
           action = "fan.set_preset_mode";
-          target.entity_id = "fan.zhimi_de_334622045_mb3_s_2_air_purifier";
+          target.entity_id = airPurifier;
           data.preset_mode = "Auto";
         }
       ];
@@ -199,7 +202,7 @@
               sequence = [
                 {
                   action = "fan.set_preset_mode";
-                  target.entity_id = "fan.zhimi_de_334622045_mb3_s_2_air_purifier";
+                  target.entity_id = airPurifier;
                   data.preset_mode = "Auto";
                 }
               ];
@@ -208,7 +211,7 @@
           default = [
             {
               action = "fan.set_preset_mode";
-              target.entity_id = "fan.zhimi_de_334622045_mb3_s_2_air_purifier";
+              target.entity_id = airPurifier;
               data.preset_mode = "Night";
             }
           ];
@@ -276,7 +279,7 @@
               sequence = [
                 {
                   action = "fan.turn_off";
-                  target.entity_id = "fan.zhimi_de_334622045_mb3_s_2_air_purifier";
+                  target.entity_id = airPurifier;
                 }
               ];
             }
@@ -290,8 +293,12 @@
               ];
               sequence = [
                 {
+                  action = "fan.turn_on";
+                  target.entity_id = airPurifier;
+                }
+                {
                   action = "fan.set_preset_mode";
-                  target.entity_id = "fan.zhimi_de_334622045_mb3_s_2_air_purifier";
+                  target.entity_id = airPurifier;
                   data.preset_mode = "Auto";
                 }
               ];
@@ -300,7 +307,7 @@
           default = [
             {
               action = "fan.set_preset_mode";
-              target.entity_id = "fan.zhimi_de_334622045_mb3_s_2_air_purifier";
+              target.entity_id = airPurifier;
               data.preset_mode = "Night";
             }
           ];
@@ -320,9 +327,8 @@
           below = 20;
         }
         {
-          platform = "event";
-          event_type = "filter_eof";
-          event_data.entity_id = "event.zhimi_de_334622045_mb3_filter_eof_e_9_1";
+          platform = "state";
+          entity_id = "event.zhimi_de_334622045_mb3_filter_eof_e_9_1";
         }
       ];
       action = [
@@ -393,11 +399,11 @@ Aktualny czas pracy: {{ states('sensor.zhimi_de_334622045_mb3_filter_used_time_p
       action = [
         {
           action = "fan.turn_on";
-          target.entity_id = "fan.zhimi_de_334622045_mb3_s_2_air_purifier";
+          target.entity_id = airPurifier;
         }
         {
           action = "fan.set_preset_mode";
-          target.entity_id = "fan.zhimi_de_334622045_mb3_s_2_air_purifier";
+          target.entity_id = airPurifier;
           data.preset_mode = "Auto";
         }
         {
@@ -432,11 +438,11 @@ Aktualny czas pracy: {{ states('sensor.zhimi_de_334622045_mb3_filter_used_time_p
       action = [
         {
           action = "fan.turn_on";
-          target.entity_id = "fan.zhimi_de_334622045_mb3_s_2_air_purifier";
+          target.entity_id = airPurifier;
         }
         {
           action = "fan.set_preset_mode";
-          target.entity_id = "fan.zhimi_de_334622045_mb3_s_2_air_purifier";
+          target.entity_id = airPurifier;
           data.preset_mode = "Auto";
         }
       ];
