@@ -47,6 +47,61 @@
   };
 
   # ===========================================
+  # Mushroom Cards
+  # ===========================================
+  mushroomCardSource = pkgs.fetchFromGitHub {
+    owner = "piitaya";
+    repo = "lovelace-mushroom";
+    # renovate: datasource=github-tags depName=piitaya/lovelace-mushroom
+    rev = "v5.0.9";
+    hash = "sha256-E2JHURCRAupP1cKPMA99cBkWnXjDu6uow4hJosqfeHs=";
+  };
+
+  # ===========================================
+  # Mini Graph Card
+  # ===========================================
+  miniGraphCardSource = pkgs.fetchFromGitHub {
+    owner = "kalkih";
+    repo = "mini-graph-card";
+    # renovate: datasource=github-tags depName=kalkih/mini-graph-card
+    rev = "v0.13.0";
+    hash = "sha256-flZfOVY0/xZOL1ZktRGQhRyGAZronLAjpM0zFpc+X1U=";
+  };
+
+  # ===========================================
+  # Button Card
+  # ===========================================
+  buttonCardSource = pkgs.fetchFromGitHub {
+    owner = "custom-cards";
+    repo = "button-card";
+    # renovate: datasource=github-tags depName=custom-cards/button-card
+    rev = "v7.0.1";
+    hash = "sha256-UJ9DzoT0XAWTxUXtnfOrpd0MQihBw9LY7QI0TXEbUNk=";
+  };
+
+  # ===========================================
+  # card-mod
+  # ===========================================
+  cardModSource = pkgs.fetchFromGitHub {
+    owner = "thomasloven";
+    repo = "lovelace-card-mod";
+    # renovate: datasource=github-tags depName=thomasloven/lovelace-card-mod
+    rev = "v4.1.0";
+    hash = "sha256-w2ky3jSHRbIaTzl0b0aJq4pzuCNUV8GqYsI2U/eoGfs=";
+  };
+
+  # ===========================================
+  # auto-entities
+  # ===========================================
+  autoEntitiesSource = pkgs.fetchFromGitHub {
+    owner = "thomasloven";
+    repo = "lovelace-auto-entities";
+    # renovate: datasource=github-tags depName=thomasloven/lovelace-auto-entities
+    rev = "v1.16.1";
+    hash = "sha256-yMqf4LA/fBTIrrYwacUTb2fL758ZB1k471vdsHAiOj8=";
+  };
+
+  # ===========================================
   # Adaptive Lighting
   # ===========================================
   adaptiveLightingSource = pkgs.fetchFromGitHub {
@@ -325,6 +380,13 @@ in {
       # Create Bubble Card symlink (frontend card in www/community)
       mkdir -p /var/lib/hass/www/community
       ln -sfn ${bubbleCardSource}/dist /var/lib/hass/www/community/bubble-card
+
+      # Create custom card symlinks (dashboard cards)
+      ln -sfn ${mushroomCardSource} /var/lib/hass/www/community/mushroom
+      ln -sfn ${miniGraphCardSource}/dist /var/lib/hass/www/community/mini-graph-card
+      ln -sfn ${buttonCardSource}/dist /var/lib/hass/www/community/button-card
+      ln -sfn ${cardModSource} /var/lib/hass/www/community/card-mod
+      ln -sfn ${autoEntitiesSource} /var/lib/hass/www/community/auto-entities
 
       # Create Adaptive Lighting symlink
       ln -sfn ${adaptiveLightingSource}/custom_components/adaptive_lighting /var/lib/hass/custom_components/adaptive_lighting
