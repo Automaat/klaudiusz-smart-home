@@ -60,35 +60,38 @@
   # ===========================================
   # Mushroom Cards
   # ===========================================
-  mushroomCardSource = pkgs.fetchFromGitHub {
-    owner = "piitaya";
-    repo = "lovelace-mushroom";
-    # renovate: datasource=github-tags depName=piitaya/lovelace-mushroom
-    rev = "v5.0.9";
-    hash = "sha256-E2JHURCRAupP1cKPMA99cBkWnXjDu6uow4hJosqfeHs=";
-  };
+  mushroomCardSource = pkgs.runCommand "mushroom-card" {} ''
+    mkdir -p $out
+    ln -s ${pkgs.fetchurl {
+      # renovate: datasource=github-releases depName=piitaya/lovelace-mushroom
+      url = "https://github.com/piitaya/lovelace-mushroom/releases/download/v5.0.9/mushroom.js";
+      hash = "sha256-3R99PKHr264VQR+Wb8hiZXYL4wIxzaANuIZ/SO0T4+Q=";
+    }} $out/mushroom.js
+  '';
 
   # ===========================================
   # Mini Graph Card
   # ===========================================
-  miniGraphCardSource = pkgs.fetchFromGitHub {
-    owner = "kalkih";
-    repo = "mini-graph-card";
-    # renovate: datasource=github-tags depName=kalkih/mini-graph-card
-    rev = "v0.13.0";
-    hash = "sha256-flZfOVY0/xZOL1ZktRGQhRyGAZronLAjpM0zFpc+X1U=";
-  };
+  miniGraphCardSource = pkgs.runCommand "mini-graph-card" {} ''
+    mkdir -p $out
+    ln -s ${pkgs.fetchurl {
+      # renovate: datasource=github-releases depName=kalkih/mini-graph-card
+      url = "https://github.com/kalkih/mini-graph-card/releases/download/v0.13.0/mini-graph-card-bundle.js";
+      hash = "sha256-TYuYbzzWk8D3dx0vVXQAi8OcRey0UK7AZ5BhUL4t+r0=";
+    }} $out/mini-graph-card-bundle.js
+  '';
 
   # ===========================================
   # Button Card
   # ===========================================
-  buttonCardSource = pkgs.fetchFromGitHub {
-    owner = "custom-cards";
-    repo = "button-card";
-    # renovate: datasource=github-tags depName=custom-cards/button-card
-    rev = "v7.0.1";
-    hash = "sha256-UJ9DzoT0XAWTxUXtnfOrpd0MQihBw9LY7QI0TXEbUNk=";
-  };
+  buttonCardSource = pkgs.runCommand "button-card" {} ''
+    mkdir -p $out
+    ln -s ${pkgs.fetchurl {
+      # renovate: datasource=github-releases depName=custom-cards/button-card
+      url = "https://github.com/custom-cards/button-card/releases/download/v7.0.1/button-card.js";
+      hash = "sha256-XW6cavygHoAUZT+la7XWqpJI2DLDT7lEp/LDYym8ItE=";
+    }} $out/button-card.js
+  '';
 
   # ===========================================
   # card-mod
@@ -408,8 +411,8 @@ in {
 
       # Create custom card symlinks (dashboard cards)
       ln -sfn ${mushroomCardSource} /var/lib/hass/www/community/mushroom
-      ln -sfn ${miniGraphCardSource}/dist /var/lib/hass/www/community/mini-graph-card
-      ln -sfn ${buttonCardSource}/dist /var/lib/hass/www/community/button-card
+      ln -sfn ${miniGraphCardSource} /var/lib/hass/www/community/mini-graph-card
+      ln -sfn ${buttonCardSource} /var/lib/hass/www/community/button-card
       ln -sfn ${cardModSource} /var/lib/hass/www/community/card-mod
       ln -sfn ${autoEntitiesSource} /var/lib/hass/www/community/auto-entities
       ln -sfn ${hassHueIconsSource} /var/lib/hass/www/community/hass-hue-icons
