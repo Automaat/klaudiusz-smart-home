@@ -109,7 +109,7 @@
     repo = "adaptive-lighting";
     # renovate: datasource=github-tags depName=basnijholt/adaptive-lighting
     rev = "v1.30.0";
-    hash = "sha256-v10Mrc/sSB09mC0UHMhjoEnPhj5S3tISmMcPQrPHPq8=";
+    hash = "sha256-rKqn6HnSrI0YWCxSIMqI4kQbpxeYwRNTPOi0xfU3CzU=";
   };
 
   # ===========================================
