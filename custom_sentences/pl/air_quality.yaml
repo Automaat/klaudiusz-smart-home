@@ -1,0 +1,63 @@
+# Air Purifier and Air Quality Polish voice commands
+
+language: "pl"
+
+lists:
+  skip_words:
+    values:
+      - "proszę"
+      - "może"
+      - "mi"
+      - "no"
+
+intents:
+  TurnOnAirPurifier:
+    data:
+      - required_keywords: [włącz, oczyszczacz]
+        sentences:
+          - "(włącz|uruchom|zapal) oczyszczacz [powietrza]"
+          - "włącz filtr powietrza"
+
+  TurnOffAirPurifier:
+    data:
+      - required_keywords: [wyłącz, oczyszczacz]
+        sentences:
+          - "(wyłącz|zatrzymaj|zgaś) oczyszczacz [powietrza]"
+          - "wyłącz filtr powietrza"
+
+  SetAirPurifierNight:
+    data:
+      - required_keywords: [oczyszczacz, nocny]
+        sentences:
+          - "oczyszczacz [w] tryb (nocny|cichy)"
+          - "(ustaw|przełącz) oczyszczacz na (nocny|cichy)"
+
+  SetAirPurifierAuto:
+    data:
+      - required_keywords: [oczyszczacz, auto]
+        sentences:
+          - "oczyszczacz [w] tryb (auto|automatyczny)"
+          - "(ustaw|przełącz) oczyszczacz na auto"
+
+  GetAirQuality:
+    data:
+      - required_keywords: [jakość, powietrza]
+        sentences:
+          - "jaka [jest] jakość powietrza"
+          - "sprawdź (jakość powietrza|powietrze)"
+          - "jak (jest|wygląda) powietrze"
+
+  GetFilterStatus:
+    data:
+      - required_keywords: [filtr, stan]
+        sentences:
+          - "(jaki|jak) [jest] stan filtra"
+          - "ile [zostało] filtra"
+          - "sprawdź filtr [oczyszczacza]"
+
+  TriggerAntibacterial:
+    data:
+      - required_keywords: [antybakteryjny, tryb]
+        sentences:
+          - "(włącz|uruchom) tryb antybakteryjny"
+          - "tryb antybakteryjny oczyszczacza"

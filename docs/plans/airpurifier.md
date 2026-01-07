@@ -6,8 +6,8 @@
 | ------- | -------- | ---- | ---- |
 | Phase 1 | ✅ | #189 | Template sensors (PM2.5, filter urgency, ventilation safety) |
 | Phase 2 | ✅ | #189 | Input helpers (away mode, antibacterial tracking) |
-| Phase 3 | 🔄 | #192 | Core automations (9 total) - in CI |
-| Phase 4 | ⬜ | - | Polish voice commands |
+| Phase 3 | ✅ | #192 | Core automations (9 total) |
+| Phase 4 | 🔄 | - | Polish voice commands - in PR |
 | Phase 5 | ✅ | - | Component config (already done) |
 
 ## Current State
@@ -723,13 +723,12 @@ Verify Xiaomi Home component already added (done in Phase 1).
 1. ✅ ~~Create feature branch: `feat/air-purifier-automation`~~
 2. ✅ ~~Add template sensors (Phase 1)~~ - Merged via #189
 3. ✅ ~~Add input helpers (Phase 2)~~ - Merged via #189
-4. 🔄 ~~Add automations incrementally (Phase 3)~~ - PR #192 in CI
-5. ⬜ Wait for PR #192 merge → production deploy
-6. ⬜ Monitor Phase 3 automations (1 week)
-7. ⬜ Add voice commands (Phase 4)
-8. ⬜ Test voice commands with real device
-9. ⬜ Tune thresholds based on monitoring
-10. ⬜ Order replacement filter
+4. ✅ ~~Add automations incrementally (Phase 3)~~ - Merged via #192
+5. 🔄 Add voice commands (Phase 4) - in PR
+6. ⬜ Test voice commands with real device
+7. ⬜ Monitor Phase 3+4 together (1 week)
+8. ⬜ Tune thresholds based on monitoring
+9. ⬜ Order replacement filter
 
 ## Future Enhancements
 
