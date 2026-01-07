@@ -246,7 +246,7 @@ in {
           action = "tts.speak";
           target.entity_id = "tts.piper";
           data = {
-            media_player_entity_id = "media_player.vlc_telnet";
+            media_player_entity_id = "media_player.home_assistant_voice_0a5def_media_player";
             message = "Możesz otworzyć okno w salonie, powietrze na zewnątrz lepsze niż w środku. PM2.5 zewnątrz {{ states('sensor.aleje_pm2_5') }}, wewnątrz {{ states('sensor.zhimi_de_334622045_mb3_pm2_5_density_p_3_6') }} mikrogramów.";
           };
         }
@@ -336,7 +336,7 @@ in {
           action = "todoist.new_task";
           data = {
             content = "Wymień filtr HEPA oczyszczacza powietrza ({{ states('sensor.zhimi_de_334622045_mb3_filter_life_level_p_4_3') }}% pozostało)";
-            project = "Dom";
+            project = "Home";
             priority = 3;
             due_date_string = "za 2 tygodnie";
             due_date_lang = "pl";
@@ -367,7 +367,7 @@ in {
           action = "tts.speak";
           target.entity_id = "tts.piper";
           data = {
-            media_player_entity_id = "media_player.vlc_telnet";
+            media_player_entity_id = "media_player.home_assistant_voice_0a5def_media_player";
             message = "Uwaga! Filtr oczyszczacza powietrza wymaga wymiany. Pozostało tylko {{ states('sensor.zhimi_de_334622045_mb3_filter_life_level_p_4_3') }} procent żywotności.";
           };
         }
