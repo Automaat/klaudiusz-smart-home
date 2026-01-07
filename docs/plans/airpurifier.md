@@ -1,5 +1,15 @@
 # Air Purifier Automation Plan - Xiaomi Air Purifier 3H
 
+## Progress Summary
+
+| Phase | Status | PR | Description |
+|-------|--------|----|----|
+| Phase 1 | ✅ | #189 | Template sensors (PM2.5, filter urgency, ventilation safety) |
+| Phase 2 | ✅ | #189 | Input helpers (away mode, antibacterial tracking) |
+| Phase 3 | 🔄 | #192 | Core automations (9 total) - in CI |
+| Phase 4 | ⬜ | - | Polish voice commands |
+| Phase 5 | ✅ | - | Component config (already done) |
+
 ## Current State
 
 ### ✅ Setup Complete
@@ -13,8 +23,6 @@
 ### ⚠️ Critical Issues
 
 - **Filter at 15% life** (2966h used) - replacement urgent
-- No automations configured - manual operation only
-- Antibacterial filter maintenance not tracked
 
 ### 📊 Current Readings
 
@@ -154,7 +162,9 @@ input_datetime = {
 };
 ```
 
-### Phase 3: Core Automations (9 total) ⬜
+### Phase 3: Core Automations (9 total) 🔄
+
+**Status**: PR #192 created, pending CI/review
 
 #### 1. Outdoor-Driven Mode Switching
 
@@ -710,16 +720,16 @@ Verify Xiaomi Home component already added (done in Phase 1).
 
 ## Next Steps
 
-1. Create feature branch: `feat/air-purifier-automation`
-2. Add template sensors (Phase 1)
-3. Add input helpers (Phase 2)
-4. Add automations incrementally (Phase 3)
-5. Test each automation before next
-6. Add voice commands (Phase 4)
-7. Test rebuild: `nixos-rebuild build --flake .#homelab`
-8. Deploy via PR → CI → production
-9. Monitor for 1 week, tune thresholds
-10. Order replacement filter
+1. ✅ ~~Create feature branch: `feat/air-purifier-automation`~~
+2. ✅ ~~Add template sensors (Phase 1)~~ - Merged via #189
+3. ✅ ~~Add input helpers (Phase 2)~~ - Merged via #189
+4. 🔄 ~~Add automations incrementally (Phase 3)~~ - PR #192 in CI
+5. ⬜ Wait for PR #192 merge → production deploy
+6. ⬜ Monitor Phase 3 automations (1 week)
+7. ⬜ Add voice commands (Phase 4)
+8. ⬜ Test voice commands with real device
+9. ⬜ Tune thresholds based on monitoring
+10. ⬜ Order replacement filter
 
 ## Future Enhancements
 
