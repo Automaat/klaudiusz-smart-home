@@ -6,6 +6,7 @@ Tests transcription performance of different Whisper models on NVIDIA GPU.
 Downloads models on first run, caches for subsequent runs.
 """
 
+import argparse
 import json
 import os
 import platform
@@ -233,10 +234,131 @@ def benchmark_model(
     return results
 
 
+def validate_setup(dry_run: bool = False) -> Dict[str, any]:
+    """Validate benchmark setup without running full benchmark."""
+    print("Validating benchmark setup...")
+    print("=" * 60)
+
+    validation = {"errors": [], "warnings": [], "info": []}
+
+    # Check audio files
+    print("\n✓ Checking audio files...")
+    ground_truth = load_ground_truth()
+    audio_files = load_audio_files()
+
+    if not audio_files:
+        validation["errors"].append("No audio files found in /app/audio/")
+    else:
+        validation["info"].append(f"Found {len(audio_files)} audio files")
+        total_duration = sum(a["duration"] for a in audio_files)
+        validation["info"].append(f"Total audio duration: {total_duration:.2f}s")
+
+        # Validate audio format
+        for audio_info in audio_files:
+            if audio_info["sample_rate"] != 16000:
+                validation["warnings"].append(f"{audio_info['filename']}: sample rate {audio_info['sample_rate']}Hz (expected 16000Hz)")
+            if audio_info["duration"] < 1.0:
+                validation["warnings"].append(f"{audio_info['filename']}: duration {audio_info['duration']:.2f}s (very short)")
+
+    # Check ground truth
+    if ground_truth:
+        validation["info"].append(f"Ground truth available for WER calculation")
+    else:
+        validation["warnings"].append("No ground truth found (WER will not be calculated)")
+
+    # Check GPU (skip in dry-run if no GPU available)
+    if not dry_run:
+        print("\n✓ Checking GPU...")
+        if not torch.cuda.is_available():
+            validation["errors"].append("CUDA not available - GPU required for benchmark")
+        else:
+            gpu_info = get_gpu_info()
+            validation["info"].append(f"GPU: {gpu_info.get('gpu_name', 'Unknown')}")
+            validation["info"].append(f"CUDA: {gpu_info.get('cuda_version', 'N/A')}")
+            validation["info"].append(f"VRAM: {gpu_info.get('vram_total_mb', 0)} MB")
+    else:
+        print("\n⊘ Skipping GPU check (dry-run mode)")
+        validation["info"].append("GPU check skipped (dry-run)")
+
+    # Check cache directory
+    print("\n✓ Checking cache directory...")
+    if not CACHE_DIR.exists():
+        validation["warnings"].append(f"Cache directory {CACHE_DIR} does not exist (will be created)")
+    else:
+        validation["info"].append(f"Cache directory: {CACHE_DIR}")
+
+    # Check models (don't download in dry-run)
+    print("\n✓ Checking models...")
+    validation["info"].append(f"Models to test: {', '.join(MODELS)}")
+    if not dry_run:
+        for model_size in MODELS:
+            model_path = CACHE_DIR / model_size
+            if model_path.exists():
+                validation["info"].append(f"Model {model_size}: cached")
+            else:
+                validation["info"].append(f"Model {model_size}: will download (~{_get_model_size(model_size)})")
+
+    return validation
+
+
+def _get_model_size(model: str) -> str:
+    """Get approximate download size for model."""
+    sizes = {"small": "1GB", "medium": "1.5GB", "large-v3": "2GB"}
+    return sizes.get(model, "unknown")
+
+
 def main():
     """Main benchmark function."""
+    parser = argparse.ArgumentParser(description="Faster-Whisper GPU Benchmark")
+    parser.add_argument("--dry-run", action="store_true",
+                       help="Validate setup without running benchmark")
+    args = parser.parse_args()
+
     print("Faster-Whisper GPU Benchmark")
     print("=" * 60)
+
+    if args.dry_run:
+        print("\n[DRY RUN MODE - Validation Only]\n")
+
+    # Validate setup
+    validation = validate_setup(dry_run=args.dry_run)
+
+    # Print validation results
+    print("\n" + "=" * 60)
+    print("VALIDATION RESULTS")
+    print("=" * 60)
+
+    if validation["info"]:
+        print("\n✓ Info:")
+        for info in validation["info"]:
+            print(f"  • {info}")
+
+    if validation["warnings"]:
+        print("\n⚠ Warnings:")
+        for warning in validation["warnings"]:
+            print(f"  • {warning}")
+
+    if validation["errors"]:
+        print("\n✗ Errors:")
+        for error in validation["errors"]:
+            print(f"  • {error}")
+        print("\n" + "=" * 60)
+        print("VALIDATION FAILED")
+        print("=" * 60)
+        sys.exit(1)
+
+    print("\n" + "=" * 60)
+    print("VALIDATION PASSED")
+    print("=" * 60)
+
+    # Exit if dry-run
+    if args.dry_run:
+        print("\nDry-run complete. Setup is valid.")
+        print("Run without --dry-run to execute benchmark.")
+        sys.exit(0)
+
+    # Continue with actual benchmark
+    print("\nStarting benchmark...")
 
     # Check GPU availability
     if not torch.cuda.is_available():

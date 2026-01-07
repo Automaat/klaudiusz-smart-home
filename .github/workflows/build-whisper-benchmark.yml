@@ -2,14 +2,59 @@ name: Build Whisper Benchmark
 
 on:
   workflow_dispatch:
+  pull_request:
+    paths:
+      - 'benchmarks/faster-whisper/**'
+      - '.github/workflows/build-whisper-benchmark.yml'
 
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository_owner }}/faster-whisper-benchmark
 
 jobs:
-  build-and-push:
+  test:
+    name: Test Docker build and dry-run
     runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Checkout LFS objects
+        run: git lfs pull
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./benchmarks/faster-whisper
+          push: false
+          load: true
+          tags: faster-whisper-benchmark:test
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Run dry-run validation
+        run: |
+          docker run --rm \
+            -v $PWD/test-cache:/cache \
+            -v $PWD/test-results:/results \
+            faster-whisper-benchmark:test --dry-run
+
+      - name: Verify audio files in image
+        run: |
+          echo "Checking audio files in Docker image..."
+          docker run --rm faster-whisper-benchmark:test ls -lh /app/audio/
+
+  build-and-push:
+    name: Build and push to registry
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch'
+    needs: test
     permissions:
       contents: read
       packages: write
