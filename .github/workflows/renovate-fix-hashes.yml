@@ -25,147 +25,29 @@ jobs:
           extra_nix_config: |
             experimental-features = nix-command flakes
 
-      - name: Check for hash mismatches
+      - name: Check flake
         id: check
+        continue-on-error: true
+        run: nix flake check -L
+
+      - name: Fix hash mismatches
+        if: steps.check.outcome == 'failure'
         run: |
-          # Extract URLs from .nix files
-          URLS=$(grep -r 'url = "https://github.com/.*/releases/download/' --include="*.nix" . | sed -E 's/.*url = "([^"]+)".*/\1/' || true)
+          # Install determinate-nixd (includes fix hashes command)
+          nix profile install nixpkgs#determinate-nixd
 
-          if [ -z "$URLS" ]; then
-            echo "No GitHub release URLs found"
-            echo "needs_fix=false" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-
-          NEEDS_FIX=false
-
-          while IFS= read -r url; do
-            if [ -z "$url" ]; then continue; fi
-
-            echo "Checking URL: $url"
-
-            # Find the file containing this URL
-            FILE=$(grep -l "url = \"$url\"" --include="*.nix" -r . | head -1 || true)
-
-            if [ -z "$FILE" ]; then continue; fi
-
-            # Extract current hash from file
-            CURRENT_HASH=$(grep -A1 "url = \"$url\"" "$FILE" | grep 'hash = ' | sed -E 's/.*hash = "([^"]+)".*/\1/' || echo "")
-
-            if [ -z "$CURRENT_HASH" ]; then
-              echo "No hash found for $url in $FILE"
-              continue
-            fi
-
-            echo "Current hash: $CURRENT_HASH"
-
-            # Compute expected hash
-            echo "Computing hash for $url..."
-            HASH_OUTPUT=$(nix-prefetch-url --unpack "$url" 2>/dev/null || echo "")
-            if [ -n "$HASH_OUTPUT" ]; then
-              EXPECTED_HASH=$(echo "$HASH_OUTPUT" | xargs nix hash to-sri --type sha256 2>/dev/null || echo "")
-            else
-              EXPECTED_HASH=""
-            fi
-
-            if [ -z "$EXPECTED_HASH" ]; then
-              echo "::warning::Failed to compute hash for $url"
-              continue
-            fi
-
-            echo "Expected hash: $EXPECTED_HASH"
-
-            # Update if different
-            if [ "$CURRENT_HASH" != "$EXPECTED_HASH" ]; then
-              echo "Hash mismatch! Updating $FILE"
-              sed -i "s|hash = \"${CURRENT_HASH}\";|hash = \"${EXPECTED_HASH}\";|g" "$FILE"
-              NEEDS_FIX=true
-            else
-              echo "Hash matches, no update needed"
-            fi
-          done <<< "$URLS"
-
-          echo "needs_fix=${NEEDS_FIX}" >> "$GITHUB_OUTPUT"
-
-      - name: Check fetchFromGitHub hash mismatches
-        id: check-fetchgithub
-        run: |
-          # Find all .nix files with fetchFromGitHub blocks
-          FILES=$(grep -l "fetchFromGitHub" --include="*.nix" -r . || true)
-
-          if [ -z "$FILES" ]; then
-            echo "No fetchFromGitHub blocks found"
-            echo "needs_fix=false" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-
-          NEEDS_FIX=false
-
-          while IFS= read -r file; do
-            if [ -z "$file" ]; then continue; fi
-
-            echo "Processing file: $file"
-
-            # Extract fetchFromGitHub blocks with context
-            # Pattern: owner = "X"; repo = "Y"; rev = "Z"; hash = "H";
-            while read -r owner_line; do
-              # Read next lines to find repo, rev, hash
-              owner=$(echo "$owner_line" | sed -E 's/.*owner = "([^"]+)".*/\1/')
-
-              # Read surrounding lines to extract repo, rev, hash
-              block=$(grep -A10 "owner = \"$owner\"" "$file" | head -15)
-
-              repo=$(echo "$block" | grep 'repo = ' | head -1 | sed -E 's/.*repo = "([^"]+)".*/\1/' || echo "")
-              rev=$(echo "$block" | grep 'rev = ' | head -1 | sed -E 's/.*rev = "([^"]+)".*/\1/' || echo "")
-              current_hash=$(echo "$block" | grep 'hash = ' | head -1 | sed -E 's/.*hash = "([^"]+)".*/\1/' || echo "")
-
-              if [ -z "$owner" ] || [ -z "$repo" ] || [ -z "$rev" ] || [ -z "$current_hash" ]; then
-                echo "::warning::Incomplete fetchFromGitHub block in $file (owner=$owner, repo=$repo, rev=$rev)"
-                continue
-              fi
-
-              echo "Checking: owner=$owner, repo=$repo, rev=$rev"
-              echo "Current hash: $current_hash"
-
-              # Construct GitHub tarball URL
-              url="https://github.com/${owner}/${repo}/archive/${rev}.tar.gz"
-
-              # Compute expected hash
-              echo "Computing hash for $url..."
-              HASH_OUTPUT=$(nix-prefetch-url --unpack "$url" 2>/dev/null || echo "")
-              if [ -n "$HASH_OUTPUT" ]; then
-                EXPECTED_HASH=$(echo "$HASH_OUTPUT" | xargs nix hash to-sri --type sha256 2>/dev/null || echo "")
-              else
-                EXPECTED_HASH=""
-              fi
-
-              if [ -z "$EXPECTED_HASH" ]; then
-                echo "::warning::Failed to compute hash for $owner/$repo@$rev"
-                continue
-              fi
-
-              echo "Expected hash: $EXPECTED_HASH"
-
-              # Update if different
-              if [ "$current_hash" != "$EXPECTED_HASH" ]; then
-                echo "Hash mismatch! Updating $file"
-                # Replace hash in the specific fetchFromGitHub block
-                # Use more specific pattern to avoid replacing wrong hashes
-                sed -i "/owner = \"${owner}\"/,/hash = /{s|hash = \"${current_hash}\";|hash = \"${EXPECTED_HASH}\";|}" "$file"
-                NEEDS_FIX=true
-              else
-                echo "Hash matches, no update needed"
-              fi
-            done < <(grep -n 'owner = "' "$file" | grep -v '^[[:space:]]*#')
-          done <<< "$FILES"
-
-          echo "needs_fix=${NEEDS_FIX}" >> "$GITHUB_OUTPUT"
+          # Apply hash fixes
+          determinate-nixd fix hashes --auto-apply
 
       - name: Commit hash fixes
-        if: steps.check.outputs.needs_fix == 'true' || steps.check-fetchgithub.outputs.needs_fix == 'true'
+        if: steps.check.outcome == 'failure'
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add -A
-          git commit -m "chore: auto-fix Nix hashes for updated dependencies"
-          git push
+          if ! git diff --quiet; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add -A
+            git commit -m "chore: auto-fix Nix hashes for updated dependencies"
+            git push
+          else
+            echo "No hash changes to commit"
+          fi
