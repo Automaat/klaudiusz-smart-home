@@ -286,7 +286,12 @@ in {
       conversation = {};
 
       # Frontend with themes
-      frontend.themes = "!include_dir_merge_named themes/";
+      frontend = {
+        themes = "!include_dir_merge_named themes/";
+        extra_module_url = [
+          "/local/community/hass-hue-icons/hass-hue-icons.js"
+        ];
+      };
 
       # Database recorder (PostgreSQL)
       recorder = {
