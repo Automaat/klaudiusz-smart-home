@@ -156,7 +156,7 @@ input_datetime = {
 
 ### Phase 3: Core Automations (9 total) ⬜
 
-**1. Outdoor-Driven Mode Switching**
+#### 1. Outdoor-Driven Mode Switching
 
 ```nix
 {
@@ -213,7 +213,7 @@ input_datetime = {
 }
 ```
 
-**2. Indoor Quality Boost**
+#### 2. Indoor Quality Boost
 
 ```nix
 {
@@ -244,7 +244,7 @@ input_datetime = {
 }
 ```
 
-**3. Adaptive Sleep Mode**
+#### 3. Adaptive Sleep Mode
 
 ```nix
 {
@@ -292,7 +292,7 @@ input_datetime = {
 }
 ```
 
-**4. Morning/Evening Ventilation Safety**
+#### 4. Morning/Evening Ventilation Safety
 
 ```nix
 {
@@ -324,7 +324,7 @@ input_datetime = {
 }
 ```
 
-**5. Away Mode Energy Optimization**
+#### 5. Away Mode Energy Optimization
 
 ```nix
 {
@@ -375,7 +375,7 @@ input_datetime = {
 }
 ```
 
-**6. Filter Replacement - Todoist Task**
+#### 6. Filter Replacement - Todoist Task
 
 ```nix
 {
@@ -416,7 +416,7 @@ Aktualny czas pracy: {{ states('sensor.zhimi_de_334622045_mb3_filter_used_time_p
 }
 ```
 
-**7. Filter Replacement - TTS Alert**
+#### 7. Filter Replacement - TTS Alert
 
 ```nix
 {
@@ -443,7 +443,7 @@ Aktualny czas pracy: {{ states('sensor.zhimi_de_334622045_mb3_filter_used_time_p
 }
 ```
 
-**8. Antibacterial Filter - Auto Run**
+#### 8. Antibacterial Filter - Auto Run
 
 ```nix
 {
@@ -490,7 +490,7 @@ Aktualny czas pracy: {{ states('sensor.zhimi_de_334622045_mb3_filter_used_time_p
 }
 ```
 
-**9. Daily Auto-Start**
+#### 9. Daily Auto-Start
 
 ```nix
 {
@@ -668,7 +668,7 @@ Verify Xiaomi Home component already added (done in Phase 1).
 ## Key Thresholds & Logic
 
 | Metric | Threshold | Action |
-|--------|-----------|--------|
+| ------ | --------- | ------ |
 | Outdoor PM2.5 | <15 µg/m³ | Night mode if indoor good |
 | Outdoor PM2.5 | 15-75 µg/m³ | Auto mode |
 | Outdoor PM2.5 | >75 µg/m³ | Auto mode (even during sleep) |
