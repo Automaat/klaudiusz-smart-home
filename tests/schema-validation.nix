@@ -16,12 +16,19 @@
       buildInputs = [pkgs.yq-go];
     } ''
       echo "Validating custom_sentences YAML syntax..."
-      if yq eval '.' ${../custom_sentences/pl/intents.yaml} > /dev/null; then
-        echo "PASS: YAML syntax is valid" > $out
-      else
-        echo "FAIL: YAML syntax errors" > $out
+      failed=0
+      for yaml_file in ${../custom_sentences/pl}/*.yaml; do
+        filename=$(basename "$yaml_file")
+        echo "Checking $filename..."
+        if ! yq eval '.' "$yaml_file" > /dev/null; then
+          echo "FAIL: YAML syntax errors in $filename"
+          failed=1
+        fi
+      done
+      if [ $failed -eq 1 ]; then
         exit 1
       fi
+      echo "PASS: All YAML files have valid syntax" > $out
     '';
 
   # =============================================
@@ -192,12 +199,19 @@
       buildInputs = [pkgs.yq-go];
     } ''
       echo "Checking YAML language setting..."
-      lang=$(yq eval '.language' ${../custom_sentences/pl/intents.yaml})
-      if [ "$lang" != "pl" ]; then
-        echo "FAIL: YAML language should be 'pl', got '$lang'"
+      failed=0
+      for yaml_file in ${../custom_sentences/pl}/*.yaml; do
+        filename=$(basename "$yaml_file")
+        lang=$(yq eval '.language' "$yaml_file")
+        if [ "$lang" != "pl" ]; then
+          echo "FAIL: $filename language should be 'pl', got '$lang'"
+          failed=1
+        fi
+      done
+      if [ $failed -eq 1 ]; then
         exit 1
       fi
-      echo "PASS: YAML language is correctly set to 'pl'" > $out
+      echo "PASS: All YAML files have language set to 'pl'" > $out
     '';
 
   # =============================================
@@ -212,18 +226,24 @@
     } ''
       echo "Checking YAML intents match Nix intents..."
 
-      # Extract YAML intent names
-      yaml_intents=$(yq eval '.intents | keys' -o=json ${../custom_sentences/pl/intents.yaml})
-
       # Use temp file to track failures
       error_file=$(mktemp)
 
-      # Compare with Nix intents
-      echo "$yaml_intents" | jq -r '.[]' | while read intent; do
-        if ! echo "$nixIntents" | jq -e --arg i "$intent" 'index($i)' > /dev/null; then
-          echo "ERROR: Intent '$intent' defined in YAML but missing in intents.nix"
-          echo "1" > "$error_file"
-        fi
+      # Extract and check intents from all YAML files
+      for yaml_file in ${../custom_sentences/pl}/*.yaml; do
+        filename=$(basename "$yaml_file")
+        echo "Checking intents in $filename..."
+
+        # Extract YAML intent names
+        yaml_intents=$(yq eval '.intents | keys' -o=json "$yaml_file")
+
+        # Compare with Nix intents
+        echo "$yaml_intents" | jq -r '.[]' | while read intent; do
+          if ! echo "$nixIntents" | jq -e --arg i "$intent" 'index($i)' > /dev/null; then
+            echo "ERROR: Intent '$intent' defined in $filename but missing in intents.nix"
+            echo "1" > "$error_file"
+          fi
+        done
       done
 
       if [ -f "$error_file" ] && [ "$(cat "$error_file")" = "1" ]; then

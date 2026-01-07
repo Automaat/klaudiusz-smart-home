@@ -3,7 +3,10 @@
   pkgs,
   lib,
   ...
-}: {
+}: let
+  # Air purifier entity constant
+  airPurifier = "fan.zhimi_de_334622045_mb3_s_2_air_purifier";
+in {
   services.home-assistant.config = {
     # ===========================================
     # Polish Voice Command Intents
@@ -204,7 +207,7 @@
         action = [
           {
             action = "fan.turn_on";
-            target.entity_id = "fan.zhimi_de_334622045_mb3_s_2_air_purifier";
+            target.entity_id = airPurifier;
           }
         ];
       };
@@ -214,7 +217,7 @@
         action = [
           {
             action = "fan.turn_off";
-            target.entity_id = "fan.zhimi_de_334622045_mb3_s_2_air_purifier";
+            target.entity_id = airPurifier;
           }
         ];
       };
@@ -224,7 +227,7 @@
         action = [
           {
             action = "fan.set_preset_mode";
-            target.entity_id = "fan.zhimi_de_334622045_mb3_s_2_air_purifier";
+            target.entity_id = airPurifier;
             data.preset_mode = "Night";
           }
         ];
@@ -235,7 +238,7 @@
         action = [
           {
             action = "fan.set_preset_mode";
-            target.entity_id = "fan.zhimi_de_334622045_mb3_s_2_air_purifier";
+            target.entity_id = airPurifier;
             data.preset_mode = "Auto";
           }
         ];
@@ -257,9 +260,16 @@
         speech.text = "Uruchamiam tryb antybakteryjny oczyszczacza na 2 godziny";
         action = [
           {
+            action = "fan.turn_on";
+            target.entity_id = airPurifier;
+          }
+          {
             action = "fan.set_preset_mode";
-            target.entity_id = "fan.zhimi_de_334622045_mb3_s_2_air_purifier";
+            target.entity_id = airPurifier;
             data.preset_mode = "Auto";
+          }
+          {
+            delay.hours = 2;
           }
           {
             action = "input_datetime.set_datetime";
