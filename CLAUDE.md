@@ -223,7 +223,8 @@ action = [{
 }];
 ```
 
-**Why:** NixOS YAML formatter drops unquoted `project` during Nix→YAML conversion, causing `Invalid project name` errors. Quoting forces literal string treatment.
+**Why:** NixOS YAML formatter drops unquoted `project` during Nix→YAML conversion, causing
+`Invalid project name` errors. Quoting forces literal string treatment.
 
 **Reference:** PR #216, hosts/homelab/home-assistant/areas/living-room.nix:320-352
 
