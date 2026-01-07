@@ -288,6 +288,7 @@ in {
       # Frontend with themes
       frontend = {
         themes = "!include_dir_merge_named themes/";
+        default_theme = "Catppuccin Latte";
         extra_module_url = [
           "/local/community/hass-hue-icons/hass-hue-icons.js"
         ];
