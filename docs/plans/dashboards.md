@@ -605,6 +605,7 @@ Located in dashboard YAML config (not file-based).
 - [x] Wait for Comin to deploy
 
 **Status:** Phase 1 completed. Custom cards installed in `hosts/homelab/home-assistant/default.nix` with:
+
 - Mushroom Cards v5.0.9
 - Mini Graph Card v0.13.0
 - Button Card v7.0.1
