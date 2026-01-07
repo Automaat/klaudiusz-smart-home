@@ -1,22 +1,28 @@
-# Faster-Whisper GPU Benchmark
+# Faster-Whisper Benchmark
 
-Benchmark tool for testing faster-whisper transcription performance with NVIDIA GPUs.
+Benchmark tool for testing faster-whisper transcription performance with NVIDIA GPUs or CPU.
 
-Tests multiple Whisper models (small, medium, large-v3) on GPU with Polish voice commands.
+Tests multiple Whisper models (small, medium, large-v3) with Polish voice commands.
 
 ## Prerequisites
 
-**Required:**
+**GPU Mode (recommended):**
 - Docker Desktop for Windows/Linux
 - NVIDIA GPU with CUDA support
 - NVIDIA GPU drivers (version 495.29+)
+- NVIDIA Container Toolkit (included with Docker Desktop)
+
+**CPU Mode (baseline comparison):**
+- Docker Desktop for Windows/Linux/macOS
+- No GPU required
 
 **Automatic:**
-- NVIDIA Container Toolkit (included with Docker Desktop)
-- CUDA 12.1 (included in Docker image)
+- CUDA 12.1 (included in Docker image, for GPU mode)
 - Python dependencies (included in Docker image)
 
 ## Quick Start
+
+### GPU Mode (recommended)
 
 ```bash
 # 1. Pull Docker image
@@ -25,12 +31,24 @@ docker pull ghcr.io/mskalski/faster-whisper-benchmark:latest
 # 2. Create directories
 mkdir cache results
 
-# 3. Run benchmark
+# 3. Run GPU benchmark
 docker run --gpus all \
   -v ./cache:/cache \
   -v ./results:/results \
   ghcr.io/mskalski/faster-whisper-benchmark:latest
 ```
+
+### CPU Mode (baseline comparison)
+
+```bash
+# Run CPU benchmark (no GPU required)
+docker run --rm \
+  -v ./cache:/cache \
+  -v ./results:/results \
+  ghcr.io/mskalski/faster-whisper-benchmark:latest --cpu
+```
+
+**Note:** CPU mode uses int8 quantization and is significantly slower than GPU (for baseline comparison with homelab/non-GPU systems).
 
 ## First Run
 
@@ -47,16 +65,21 @@ This takes approximately 3-5 minutes depending on network speed.
 
 Cached models are reused automatically. No download needed.
 
-To run again:
+**GPU:**
 ```bash
 docker run --gpus all -v ./cache:/cache -v ./results:/results ghcr.io/mskalski/faster-whisper-benchmark:latest
+```
+
+**CPU:**
+```bash
+docker run --rm -v ./cache:/cache -v ./results:/results ghcr.io/mskalski/faster-whisper-benchmark:latest --cpu
 ```
 
 ## Output
 
 Results saved to `./results/benchmark_YYYYMMDD_HHMMSS.json`
 
-**Example output:**
+**GPU example output:**
 ```
 GPU: NVIDIA RTX 4090 (24GB)
 Testing 10 audio samples (32.5s total)
@@ -64,6 +87,19 @@ Testing 10 audio samples (32.5s total)
 small:     0.12s avg (270x realtime) | 1.2GB VRAM | WER: 0%
 medium:    0.35s avg (93x realtime)  | 2.8GB VRAM | WER: 0%
 large-v3:  0.95s avg (34x realtime)  | 5.1GB VRAM | WER: 0%
+
+Results: ./results/benchmark_20260107_143022.json
+```
+
+**CPU example output:**
+```
+CPU: Intel Celeron N5095
+Platform: Linux-6.1.0-26-amd64-x86_64-with-glibc2.35
+Testing 10 audio samples (11.8s total)
+
+small:     2.5s avg (4.7x realtime) | WER: 0%
+medium:    7.8s avg (1.5x realtime) | WER: 0%
+large-v3:  18.2s avg (0.6x realtime) | WER: 0%
 
 Results: ./results/benchmark_20260107_143022.json
 ```
@@ -79,6 +115,10 @@ Results: ./results/benchmark_20260107_143022.json
     "driver_version": "545.29",
     "vram_total_mb": 24576
   },
+  "config": {
+    "device": "cuda",
+    "compute_type": "float16"
+  },
   "results": [
     {
       "model": "small",
@@ -93,6 +133,8 @@ Results: ./results/benchmark_20260107_143022.json
   ]
 }
 ```
+
+**CPU mode:** `vram_used_mb` is `null`, `device` is `"cpu"`, `compute_type` is `"int8"`
 
 ## Disk Usage
 
@@ -119,6 +161,22 @@ Remove Docker image:
 docker rmi ghcr.io/mskalski/faster-whisper-benchmark:latest
 ```
 
+## Validation Mode
+
+Test setup without running full benchmark:
+
+```bash
+docker run --rm -v ./cache:/cache -v ./results:/results ghcr.io/mskalski/faster-whisper-benchmark:latest --dry-run
+```
+
+Validates:
+- Audio files present and correct format
+- Ground truth file available
+- Cache directory accessible
+- Docker image configuration
+
+**Note:** Dry-run skips GPU/CPU check, making it safe to run anywhere.
+
 ## Troubleshooting
 
 ### GPU not detected
@@ -131,6 +189,7 @@ ERROR: CUDA is not available
 2. Check Docker has GPU access: `docker run --gpus all nvidia/cuda:12.1.0-base-ubuntu22.04 nvidia-smi`
 3. Restart Docker Desktop
 4. Update NVIDIA drivers to 495.29+
+5. **Alternative:** Use `--cpu` flag for CPU-only benchmark
 
 ### Out of VRAM
 
@@ -179,7 +238,9 @@ Format: 16kHz, mono, WAV
 **VRAM Used:** GPU memory consumed by model
 **WER:** Word Error Rate (0% = perfect transcription)
 
-## Expected Performance (RTX 3060+)
+## Expected Performance
+
+**GPU (RTX 3060+) - float16:**
 
 | Model | Latency | Real-time | VRAM |
 |-------|---------|-----------|------|
@@ -187,7 +248,15 @@ Format: 16kHz, mono, WAV
 | medium | 0.3-0.5s | 6-10x | 2-3GB |
 | large-v3 | 0.8-1.2s | 2-4x | 5-6GB |
 
-*For ~3s audio clips*
+**CPU (Intel N5095 quad-core) - int8:**
+
+| Model | Latency | Real-time | VRAM |
+|-------|---------|-----------|------|
+| small | 2-3s | 4-6x | N/A |
+| medium | 7-9s | 1-2x | N/A |
+| large-v3 | 16-20s | 0.5-0.8x | N/A |
+
+*For ~1.2s audio clips (10 samples, 11.8s total)*
 
 ## Building from Source
 

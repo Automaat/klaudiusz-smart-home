@@ -26,8 +26,6 @@ from tqdm import tqdm
 
 # Configuration
 MODELS = ["small", "medium", "large-v3"]
-DEVICE = "cuda"
-COMPUTE_TYPE = "float16"
 ITERATIONS = 5
 CACHE_DIR = Path("/cache/models")
 AUDIO_DIR = Path("/app/audio")
@@ -125,29 +123,35 @@ def download_model(model_size: str) -> None:
 def benchmark_model(
     model_size: str,
     audio_files: List[Dict[str, any]],
+    device: str,
+    compute_type: str,
     iterations: int = ITERATIONS
 ) -> Dict[str, any]:
     """Benchmark a single model."""
     print(f"\n{'='*60}")
-    print(f"Benchmarking: {model_size} (device={DEVICE}, compute_type={COMPUTE_TYPE})")
+    print(f"Benchmarking: {model_size} (device={device}, compute_type={compute_type})")
     print(f"{'='*60}")
 
     # Load model
     print(f"Loading model...")
-    torch.cuda.empty_cache()
-    vram_before = get_vram_usage()
+    if device == "cuda":
+        torch.cuda.empty_cache()
+    vram_before = get_vram_usage() if device == "cuda" else 0
 
     model = WhisperModel(
         model_size,
-        device=DEVICE,
-        compute_type=COMPUTE_TYPE,
+        device=device,
+        compute_type=compute_type,
         download_root=str(CACHE_DIR)
     )
 
-    vram_after = get_vram_usage()
+    vram_after = get_vram_usage() if device == "cuda" else 0
     vram_model = vram_after - vram_before
 
-    print(f"Model loaded (VRAM: {vram_model} MB)")
+    if device == "cuda":
+        print(f"Model loaded (VRAM: {vram_model} MB)")
+    else:
+        print(f"Model loaded (CPU mode)")
 
     # Warm-up run
     print("Warming up...")
@@ -201,8 +205,8 @@ def benchmark_model(
 
     results = {
         "model": model_size,
-        "device": DEVICE,
-        "compute_type": COMPUTE_TYPE,
+        "device": device,
+        "compute_type": compute_type,
         "iterations": iterations,
         "audio_files_count": len(audio_files),
         "total_audio_duration_sec": round(total_audio_duration, 2),
@@ -213,7 +217,7 @@ def benchmark_model(
         "p99_latency_ms": round(float(np.percentile(latencies, 99)), 2),
         "std_latency_ms": round(float(np.std(latencies)), 2),
         "realtime_factor": round(realtime_factor, 2),
-        "vram_used_mb": vram_model,
+        "vram_used_mb": vram_model if device == "cuda" else None,
         "wer": round(wer_score, 4) if wer_score is not None else None,
         "transcriptions": all_transcriptions
     }
@@ -223,18 +227,20 @@ def benchmark_model(
     print(f"  Mean latency:     {results['mean_latency_ms']:.2f} ms")
     print(f"  P95 latency:      {results['p95_latency_ms']:.2f} ms")
     print(f"  Real-time factor: {results['realtime_factor']:.1f}x")
-    print(f"  VRAM used:        {results['vram_used_mb']} MB")
+    if device == "cuda":
+        print(f"  VRAM used:        {results['vram_used_mb']} MB")
     if wer_score is not None:
         print(f"  WER:              {results['wer']:.2%}")
 
     # Cleanup
     del model
-    torch.cuda.empty_cache()
+    if device == "cuda":
+        torch.cuda.empty_cache()
 
     return results
 
 
-def validate_setup(dry_run: bool = False) -> Dict[str, any]:
+def validate_setup(dry_run: bool = False, device: str = "cuda") -> Dict[str, any]:
     """Validate benchmark setup without running full benchmark."""
     print("Validating benchmark setup...")
     print("=" * 60)
@@ -266,19 +272,24 @@ def validate_setup(dry_run: bool = False) -> Dict[str, any]:
     else:
         validation["warnings"].append("No ground truth found (WER will not be calculated)")
 
-    # Check GPU (skip in dry-run if no GPU available)
+    # Check device (GPU or CPU)
     if not dry_run:
-        print("\n✓ Checking GPU...")
-        if not torch.cuda.is_available():
-            validation["errors"].append("CUDA not available - GPU required for benchmark")
+        if device == "cuda":
+            print("\n✓ Checking GPU...")
+            if not torch.cuda.is_available():
+                validation["errors"].append("CUDA not available - GPU required for GPU benchmark")
+            else:
+                gpu_info = get_gpu_info()
+                validation["info"].append(f"GPU: {gpu_info.get('gpu_name', 'Unknown')}")
+                validation["info"].append(f"CUDA: {gpu_info.get('cuda_version', 'N/A')}")
+                validation["info"].append(f"VRAM: {gpu_info.get('vram_total_mb', 0)} MB")
         else:
-            gpu_info = get_gpu_info()
-            validation["info"].append(f"GPU: {gpu_info.get('gpu_name', 'Unknown')}")
-            validation["info"].append(f"CUDA: {gpu_info.get('cuda_version', 'N/A')}")
-            validation["info"].append(f"VRAM: {gpu_info.get('vram_total_mb', 0)} MB")
+            print("\n✓ Checking CPU...")
+            validation["info"].append(f"CPU mode enabled")
+            validation["info"].append(f"Platform: {platform.platform()}")
     else:
-        print("\n⊘ Skipping GPU check (dry-run mode)")
-        validation["info"].append("GPU check skipped (dry-run)")
+        print("\n⊘ Skipping device check (dry-run mode)")
+        validation["info"].append("Device check skipped (dry-run)")
 
     # Check cache directory
     print("\n✓ Checking cache directory...")
@@ -309,19 +320,31 @@ def _get_model_size(model: str) -> str:
 
 def main():
     """Main benchmark function."""
-    parser = argparse.ArgumentParser(description="Faster-Whisper GPU Benchmark")
+    parser = argparse.ArgumentParser(description="Faster-Whisper Benchmark")
     parser.add_argument("--dry-run", action="store_true",
                        help="Validate setup without running benchmark")
+    parser.add_argument("--cpu", action="store_true",
+                       help="Run benchmark on CPU instead of GPU (for baseline comparison)")
     args = parser.parse_args()
 
-    print("Faster-Whisper GPU Benchmark")
+    # Determine device and compute type
+    if args.cpu:
+        device = "cpu"
+        compute_type = "int8"
+        device_label = "CPU"
+    else:
+        device = "cuda"
+        compute_type = "float16"
+        device_label = "GPU"
+
+    print(f"Faster-Whisper Benchmark ({device_label})")
     print("=" * 60)
 
     if args.dry_run:
         print("\n[DRY RUN MODE - Validation Only]\n")
 
     # Validate setup
-    validation = validate_setup(dry_run=args.dry_run)
+    validation = validate_setup(dry_run=args.dry_run, device=device)
 
     # Print validation results
     print("\n" + "=" * 60)
@@ -358,19 +381,23 @@ def main():
         sys.exit(0)
 
     # Continue with actual benchmark
-    print("\nStarting benchmark...")
+    print(f"\nStarting benchmark on {device_label}...")
 
-    # Check GPU availability
-    if not torch.cuda.is_available():
-        print("ERROR: CUDA is not available. This benchmark requires an NVIDIA GPU.")
-        sys.exit(1)
+    # Print system info
+    if device == "cuda":
+        # Check GPU availability
+        if not torch.cuda.is_available():
+            print("ERROR: CUDA is not available. Use --cpu for CPU benchmark or install CUDA drivers.")
+            sys.exit(1)
 
-    # Get system info
-    gpu_info = get_gpu_info()
-    print(f"\nGPU: {gpu_info.get('gpu_name', 'Unknown')}")
-    print(f"CUDA Version: {gpu_info.get('cuda_version', 'N/A')}")
-    print(f"Driver Version: {gpu_info.get('driver_version', 'N/A')}")
-    print(f"VRAM: {gpu_info.get('vram_total_mb', 0)} MB")
+        gpu_info = get_gpu_info()
+        print(f"\nGPU: {gpu_info.get('gpu_name', 'Unknown')}")
+        print(f"CUDA Version: {gpu_info.get('cuda_version', 'N/A')}")
+        print(f"Driver Version: {gpu_info.get('driver_version', 'N/A')}")
+        print(f"VRAM: {gpu_info.get('vram_total_mb', 0)} MB")
+    else:
+        print(f"\nCPU: {platform.processor() or platform.machine()}")
+        print(f"Platform: {platform.platform()}")
 
     # Create output directory
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)
@@ -400,7 +427,7 @@ def main():
     all_results = []
     for model_size in MODELS:
         try:
-            result = benchmark_model(model_size, audio_files)
+            result = benchmark_model(model_size, audio_files, device, compute_type)
             all_results.append(result)
         except Exception as e:
             print(f"\nERROR benchmarking {model_size}: {e}")
@@ -411,16 +438,22 @@ def main():
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     output_file = RESULTS_DIR / f"benchmark_{timestamp}.json"
 
+    # Build system info
+    system_info = {
+        "platform": platform.platform(),
+        "python_version": platform.python_version()
+    }
+    if device == "cuda":
+        system_info.update(get_gpu_info())
+    else:
+        system_info["cpu"] = platform.processor() or platform.machine()
+
     output_data = {
         "timestamp": timestamp,
-        "system": {
-            **gpu_info,
-            "platform": platform.platform(),
-            "python_version": platform.python_version()
-        },
+        "system": system_info,
         "config": {
-            "device": DEVICE,
-            "compute_type": COMPUTE_TYPE,
+            "device": device,
+            "compute_type": compute_type,
             "iterations": ITERATIONS,
             "models": MODELS
         },
@@ -451,7 +484,8 @@ def main():
         print(f"\n{result['model']}:")
         print(f"  Latency:      {result['mean_latency_ms']:.2f} ms (mean)")
         print(f"  Throughput:   {result['realtime_factor']:.1f}x realtime")
-        print(f"  VRAM:         {result['vram_used_mb']} MB")
+        if result['vram_used_mb'] is not None:
+            print(f"  VRAM:         {result['vram_used_mb']} MB")
         if result['wer'] is not None:
             print(f"  WER:          {result['wer']:.2%}")
 
