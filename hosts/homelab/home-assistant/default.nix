@@ -97,7 +97,7 @@
     owner = "XiaoMi";
     repo = "ha_xiaomi_home";
     # renovate: datasource=github-tags depName=XiaoMi/ha_xiaomi_home
-    rev = "v0.4.6";
+    rev = "v0.4.7";
     hash = "sha256-YvQ9Fzk+WAIqtYyv6j2terPfR3bLer6GgcK1GBdpctg=";
   };
 
