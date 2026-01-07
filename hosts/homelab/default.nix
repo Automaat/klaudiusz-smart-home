@@ -96,6 +96,14 @@ in {
   };
 
   # ===========================================
+  # Docker (Rootless)
+  # ===========================================
+  virtualisation.docker.rootless = {
+    enable = true;
+    setSocketVariable = true;
+  };
+
+  # ===========================================
   # Security
   # ===========================================
   security.sudo.wheelNeedsPassword = false;
