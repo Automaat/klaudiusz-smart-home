@@ -21,17 +21,9 @@
       ];
       condition = [
         {
-          condition = "or";
-          conditions = [
-            {
-              condition = "sun";
-              after = "sunset";
-            }
-            {
-              condition = "sun";
-              before = "sunrise";
-            }
-          ];
+          condition = "numeric_state";
+          entity_id = "sensor.presence_sensor_fp2_fac2_light_sensor_light_level";
+          below = 30;
         }
       ];
       action = [
