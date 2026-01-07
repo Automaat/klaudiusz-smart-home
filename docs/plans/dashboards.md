@@ -614,15 +614,25 @@ Located in dashboard YAML config (not file-based).
 
 All symlinks configured in preStart. Ready for Phase 2 (GUI configuration).
 
-### Phase 2: Checklist
+### Phase 2: Checklist ✅ COMPLETE
 
-- [ ] Navigate to Settings → Dashboards → Resources in HA GUI
-- [ ] Add Mushroom Cards resource
-- [ ] Add Mini Graph Card resource
-- [ ] Add Button Card resource
-- [ ] Add card-mod resource
-- [ ] Add auto-entities resource
-- [ ] Verify no console errors (F12)
+- [x] Navigate to Settings → Dashboards → Resources in HA GUI
+- [x] Add Mushroom Cards resource
+- [x] Add Mini Graph Card resource
+- [x] Add Button Card resource
+- [x] Add card-mod resource
+- [x] Add auto-entities resource
+- [x] Verify no console errors (F12)
+
+**Status:** Phase 2 completed. All 5 custom card resources registered via HA GUI:
+
+- Mushroom Cards: `/local/community/mushroom/mushroom.js`
+- Mini Graph Card: `/local/community/mini-graph-card/mini-graph-card-bundle.js`
+- Button Card: `/local/community/button-card/button-card.js`
+- card-mod: `/local/community/card-mod/card-mod.js`
+- auto-entities: `/local/community/auto-entities/auto-entities.js`
+
+All resources loaded successfully without console errors. Ready for Phase 3 (card-mod + Catppuccin testing).
 
 ### Phase 3: Checklist
 
