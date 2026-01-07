@@ -126,7 +126,7 @@
                   {
                     refId = "A";
                     relativeTimeRange = {
-                      from = 300;
+                      from = 600;
                       to = 0;
                     };
                     datasourceUid = "prometheus";
@@ -141,7 +141,7 @@
                   {
                     refId = "C";
                     relativeTimeRange = {
-                      from = 300;
+                      from = 600;
                       to = 0;
                     };
                     datasourceUid = "-100";
@@ -170,8 +170,8 @@
                     };
                   }
                 ];
-                noDataState = "Alerting";
-                execErrState = "Alerting";
+                noDataState = "NoData";
+                execErrState = "NoData";
                 for = "10m";
                 annotations = {
                   inherit summary description;
