@@ -77,7 +77,7 @@ def load_ground_truth() -> Dict[str, str]:
     return ground_truth
 
 
-def load_audio_files() -> List[Dict[str, any]]:
+def load_audio_files() -> List[Dict[str, Any]]:
     """Load all WAV files from audio directory."""
     audio_files = []
     ground_truth = load_ground_truth()
@@ -122,11 +122,11 @@ def download_model(model_size: str) -> None:
 
 def benchmark_model(
     model_size: str,
-    audio_files: List[Dict[str, any]],
+    audio_files: List[Dict[str, Any]],
     device: str,
     compute_type: str,
     iterations: int = ITERATIONS
-) -> Dict[str, any]:
+) -> Dict[str, Any]:
     """Benchmark a single model."""
     print(f"\n{'='*60}")
     print(f"Benchmarking: {model_size} (device={device}, compute_type={compute_type})")
@@ -194,7 +194,7 @@ def benchmark_model(
     latencies = np.array(all_latencies)
     total_audio_duration = sum(a["duration"] for a in audio_files) * iterations
     total_processing_time = latencies.sum() / 1000  # Convert to seconds
-    realtime_factor = total_audio_duration / total_processing_time
+    realtime_factor = total_audio_duration / total_processing_time if total_processing_time > 0 else 0
 
     # Calculate WER if ground truth available
     wer_score = None
@@ -240,7 +240,7 @@ def benchmark_model(
     return results
 
 
-def validate_setup(dry_run: bool = False, device: str = "cuda") -> Dict[str, any]:
+def validate_setup(dry_run: bool = False, device: str = "cuda") -> Dict[str, Any]:
     """Validate benchmark setup without running full benchmark."""
     print("Validating benchmark setup...")
     print("=" * 60)

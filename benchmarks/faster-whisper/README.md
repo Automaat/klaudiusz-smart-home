@@ -29,7 +29,7 @@ Tests multiple Whisper models (small, medium, large-v3) with Polish voice comman
 
 ```bash
 # 1. Pull Docker image
-docker pull ghcr.io/mskalski/faster-whisper-benchmark:latest
+docker pull ghcr.io/automaat/faster-whisper-benchmark:latest
 
 # 2. Create directories
 mkdir cache results
@@ -38,7 +38,7 @@ mkdir cache results
 docker run --gpus all \
   -v ./cache:/cache \
   -v ./results:/results \
-  ghcr.io/mskalski/faster-whisper-benchmark:latest
+  ghcr.io/automaat/faster-whisper-benchmark:latest
 ```
 
 ### CPU Mode (baseline comparison)
@@ -48,7 +48,7 @@ docker run --gpus all \
 docker run --rm \
   -v ./cache:/cache \
   -v ./results:/results \
-  ghcr.io/mskalski/faster-whisper-benchmark:latest --cpu
+  ghcr.io/automaat/faster-whisper-benchmark:latest --cpu
 ```
 
 **Note:** CPU mode uses int8 quantization and is significantly slower than GPU
@@ -73,13 +73,13 @@ Cached models are reused automatically. No download needed.
 **GPU:**
 
 ```bash
-docker run --gpus all -v ./cache:/cache -v ./results:/results ghcr.io/mskalski/faster-whisper-benchmark:latest
+docker run --gpus all -v ./cache:/cache -v ./results:/results ghcr.io/automaat/faster-whisper-benchmark:latest
 ```
 
 **CPU:**
 
 ```bash
-docker run --rm -v ./cache:/cache -v ./results:/results ghcr.io/mskalski/faster-whisper-benchmark:latest --cpu
+docker run --rm -v ./cache:/cache -v ./results:/results ghcr.io/automaat/faster-whisper-benchmark:latest --cpu
 ```
 
 ## Output
@@ -170,7 +170,7 @@ rm -rf results/
 Remove Docker image:
 
 ```bash
-docker rmi ghcr.io/mskalski/faster-whisper-benchmark:latest
+docker rmi ghcr.io/automaat/faster-whisper-benchmark:latest
 ```
 
 ## Validation Mode
@@ -178,7 +178,7 @@ docker rmi ghcr.io/mskalski/faster-whisper-benchmark:latest
 Test setup without running full benchmark:
 
 ```bash
-docker run --rm -v ./cache:/cache -v ./results:/results ghcr.io/mskalski/faster-whisper-benchmark:latest --dry-run
+docker run --rm -v ./cache:/cache -v ./results:/results ghcr.io/automaat/faster-whisper-benchmark:latest --dry-run
 ```
 
 Validates:

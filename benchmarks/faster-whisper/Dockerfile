@@ -33,5 +33,12 @@ COPY test-commands.txt /app/
 # Create cache directory
 RUN mkdir -p /cache/models
 
+# Create non-root user for running benchmarks and fix permissions
+RUN useradd -m -u 1000 benchmark && \
+    chown -R benchmark:benchmark /app /cache
+
+# Run benchmark as non-root user
+USER benchmark
+
 # Set entrypoint
 ENTRYPOINT ["python", "benchmark.py"]
