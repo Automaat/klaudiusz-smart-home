@@ -36,6 +36,17 @@
   };
 
   # ===========================================
+  # Versatile Thermostat
+  # ===========================================
+  versatileThermostatSource = pkgs.fetchFromGitHub {
+    owner = "jmcollin78";
+    repo = "versatile_thermostat";
+    # renovate: datasource=github-tags depName=jmcollin78/versatile_thermostat
+    rev = "8.5.0";
+    hash = "sha256-YTil0wFniMbTUjM62oJS6wnGvhaHUlcUSJvsasmlrXw=";
+  };
+
+  # ===========================================
   # Bubble Card
   # ===========================================
   bubbleCardSource = pkgs.fetchFromGitHub {
@@ -376,6 +387,9 @@ in {
 
       # Create Better Thermostat symlink (component is in custom_components/better_thermostat)
       ln -sfn ${betterThermostatSource}/custom_components/better_thermostat /var/lib/hass/custom_components/better_thermostat
+
+      # Create Versatile Thermostat symlink (component is in custom_components/versatile_thermostat)
+      ln -sfn ${versatileThermostatSource}/custom_components/versatile_thermostat /var/lib/hass/custom_components/versatile_thermostat
 
       # Create Bubble Card symlink (frontend card in www/community)
       mkdir -p /var/lib/hass/www/community
