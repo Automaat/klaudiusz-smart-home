@@ -60,31 +60,37 @@
   # ===========================================
   # Mushroom Cards
   # ===========================================
-  # Download pre-built mushroom.js from release assets
   mushroomCardSource = pkgs.runCommand "mushroom-card" {} ''
     mkdir -p $out
-    ${pkgs.curl}/bin/curl -L -o $out/mushroom.js \
-      https://github.com/piitaya/lovelace-mushroom/releases/download/v5.0.9/mushroom.js
+    ln -s ${pkgs.fetchurl {
+      # renovate: datasource=github-releases depName=piitaya/lovelace-mushroom
+      url = "https://github.com/piitaya/lovelace-mushroom/releases/download/v5.0.9/mushroom.js";
+      hash = "sha256-3R99PKHr264VQR+Wb8hiZXYL4wIxzaANuIZ/SO0T4+Q=";
+    }} $out/mushroom.js
   '';
 
   # ===========================================
   # Mini Graph Card
   # ===========================================
-  # Download pre-built mini-graph-card-bundle.js from release assets
   miniGraphCardSource = pkgs.runCommand "mini-graph-card" {} ''
     mkdir -p $out
-    ${pkgs.curl}/bin/curl -L -o $out/mini-graph-card-bundle.js \
-      https://github.com/kalkih/mini-graph-card/releases/download/v0.13.0/mini-graph-card-bundle.js
+    ln -s ${pkgs.fetchurl {
+      # renovate: datasource=github-releases depName=kalkih/mini-graph-card
+      url = "https://github.com/kalkih/mini-graph-card/releases/download/v0.13.0/mini-graph-card-bundle.js";
+      hash = "sha256-TYuYbzzWk8D3dx0vVXQAi8OcRey0UK7AZ5BhUL4t+r0=";
+    }} $out/mini-graph-card-bundle.js
   '';
 
   # ===========================================
   # Button Card
   # ===========================================
-  # Download pre-built button-card.js from release assets
   buttonCardSource = pkgs.runCommand "button-card" {} ''
     mkdir -p $out
-    ${pkgs.curl}/bin/curl -L -o $out/button-card.js \
-      https://github.com/custom-cards/button-card/releases/download/v7.0.1/button-card.js
+    ln -s ${pkgs.fetchurl {
+      # renovate: datasource=github-releases depName=custom-cards/button-card
+      url = "https://github.com/custom-cards/button-card/releases/download/v7.0.1/button-card.js";
+      hash = "sha256-XW6cavygHoAUZT+la7XWqpJI2DLDT7lEp/LDYym8ItE=";
+    }} $out/button-card.js
   '';
 
   # ===========================================
