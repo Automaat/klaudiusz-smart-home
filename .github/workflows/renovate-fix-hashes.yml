@@ -25,22 +25,15 @@ jobs:
           extra_nix_config: |
             experimental-features = nix-command flakes
 
-      - name: Check flake
-        id: check
-        continue-on-error: true
-        run: nix flake check -L
-
       - name: Fix hash mismatches
-        if: steps.check.outcome == 'failure'
         run: |
           # Install determinate-nixd (includes fix hashes command)
           nix profile install nixpkgs#determinate-nixd
 
-          # Apply hash fixes
+          # Apply hash fixes (safe to run even when no issues)
           determinate-nixd fix hashes --auto-apply
 
       - name: Commit hash fixes
-        if: steps.check.outcome == 'failure'
         run: |
           if ! git diff --quiet; then
             git config user.name "github-actions[bot]"
