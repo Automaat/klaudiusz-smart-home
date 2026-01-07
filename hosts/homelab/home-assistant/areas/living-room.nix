@@ -336,7 +336,7 @@ in {
           action = "todoist.new_task";
           data = {
             content = "Wymień filtr HEPA oczyszczacza powietrza ({{ states('sensor.zhimi_de_334622045_mb3_filter_life_level_p_4_3') }}% pozostało)";
-            project = "Home";
+            "project" = "Home";
             priority = 3;
             due_date_string = "za 2 tygodnie";
             due_date_lang = "pl";
