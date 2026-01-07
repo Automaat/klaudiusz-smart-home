@@ -1,0 +1,313 @@
+{
+  "timestamp": "20260107_145720",
+  "system": {
+    "platform": "Linux-6.12.63-x86_64-with-glibc2.35",
+    "python_version": "3.11.0rc1",
+    "cpu": "x86_64"
+  },
+  "config": {
+    "device": "cpu",
+    "compute_type": "int8",
+    "iterations": 5,
+    "models": [
+      "small",
+      "medium",
+      "large-v3"
+    ]
+  },
+  "audio": {
+    "count": 10,
+    "total_duration_sec": 11.78,
+    "files": [
+      {
+        "filename": "01.wav",
+        "duration": 1.22,
+        "sample_rate": 16000
+      },
+      {
+        "filename": "02.wav",
+        "duration": 1.3,
+        "sample_rate": 16000
+      },
+      {
+        "filename": "03.wav",
+        "duration": 1.88,
+        "sample_rate": 16000
+      },
+      {
+        "filename": "04.wav",
+        "duration": 1.29,
+        "sample_rate": 16000
+      },
+      {
+        "filename": "05.wav",
+        "duration": 1.33,
+        "sample_rate": 16000
+      },
+      {
+        "filename": "06.wav",
+        "duration": 0.87,
+        "sample_rate": 16000
+      },
+      {
+        "filename": "07.wav",
+        "duration": 0.7,
+        "sample_rate": 16000
+      },
+      {
+        "filename": "08.wav",
+        "duration": 0.84,
+        "sample_rate": 16000
+      },
+      {
+        "filename": "09.wav",
+        "duration": 1.43,
+        "sample_rate": 16000
+      },
+      {
+        "filename": "10.wav",
+        "duration": 0.94,
+        "sample_rate": 16000
+      }
+    ]
+  },
+  "results": [
+    {
+      "model": "small",
+      "device": "cpu",
+      "compute_type": "int8",
+      "iterations": 5,
+      "audio_files_count": 10,
+      "total_audio_duration_sec": 58.89,
+      "total_processing_time_sec": 191.27,
+      "mean_latency_ms": 3825.47,
+      "median_latency_ms": 3810.22,
+      "p95_latency_ms": 3977.26,
+      "p99_latency_ms": 3994.26,
+      "std_latency_ms": 89.51,
+      "realtime_factor": 0.31,
+      "vram_used_mb": null,
+      "wer": 0.6857,
+      "transcriptions": [
+        {
+          "filename": "01.wav",
+          "transcription": "Włącz światło w salonie.",
+          "ground_truth": "włącz światło w salonie",
+          "duration": 1.219625
+        },
+        {
+          "filename": "02.wav",
+          "transcription": "wyłącz wszystkie światła.",
+          "ground_truth": "wyłącz wszystkie światła",
+          "duration": 1.2950625
+        },
+        {
+          "filename": "03.wav",
+          "transcription": "wjazdność w kuchni na 50%.",
+          "ground_truth": "ustaw jasność kuchnia na pięćdziesiąt procent",
+          "duration": 1.8765625
+        },
+        {
+          "filename": "04.wav",
+          "transcription": "Włącz stanę wiatrzu.",
+          "ground_truth": "włącz scenę wieczór",
+          "duration": 1.2926875
+        },
+        {
+          "filename": "05.wav",
+          "transcription": "Otwórz rolety wsypialni.",
+          "ground_truth": "otwórz rolety w sypialni",
+          "duration": 1.3250625
+        },
+        {
+          "filename": "06.wav",
+          "transcription": "i zamknij zaluzję.",
+          "ground_truth": "zamknij żaluzje",
+          "duration": 0.8669375
+        },
+        {
+          "filename": "07.wav",
+          "transcription": "Dobra, jedna godzina.",
+          "ground_truth": "która jest godzina",
+          "duration": 0.6950625
+        },
+        {
+          "filename": "08.wav",
+          "transcription": "jaka jest data.",
+          "ground_truth": "jaka jest data",
+          "duration": 0.835125
+        },
+        {
+          "filename": "09.wav",
+          "transcription": "dodajmy leko do listy zakupów.",
+          "ground_truth": "dodaj mleko do listy zakupów",
+          "duration": 1.4291875
+        },
+        {
+          "filename": "10.wav",
+          "transcription": "wyłącz światło.",
+          "ground_truth": "wyłącz światło",
+          "duration": 0.9435
+        }
+      ]
+    },
+    {
+      "model": "medium",
+      "device": "cpu",
+      "compute_type": "int8",
+      "iterations": 5,
+      "audio_files_count": 10,
+      "total_audio_duration_sec": 58.89,
+      "total_processing_time_sec": 642.92,
+      "mean_latency_ms": 12858.37,
+      "median_latency_ms": 10746.78,
+      "p95_latency_ms": 29130.38,
+      "p99_latency_ms": 36261.14,
+      "std_latency_ms": 6449.66,
+      "realtime_factor": 0.09,
+      "vram_used_mb": null,
+      "wer": 0.7429,
+      "transcriptions": [
+        {
+          "filename": "01.wav",
+          "transcription": "łącz światło w salonie.",
+          "ground_truth": "włącz światło w salonie",
+          "duration": 1.219625
+        },
+        {
+          "filename": "02.wav",
+          "transcription": "Wyłącz wszystkie światła.",
+          "ground_truth": "wyłącz wszystkie światła",
+          "duration": 1.2950625
+        },
+        {
+          "filename": "03.wav",
+          "transcription": "a wiasność w kuchni na 50%.",
+          "ground_truth": "ustaw jasność kuchnia na pięćdziesiąt procent",
+          "duration": 1.8765625
+        },
+        {
+          "filename": "04.wav",
+          "transcription": "Włącz stanowiaczun.",
+          "ground_truth": "włącz scenę wieczór",
+          "duration": 1.2926875
+        },
+        {
+          "filename": "05.wav",
+          "transcription": "a odwróćcie na latach w Cepialni.",
+          "ground_truth": "otwórz rolety w sypialni",
+          "duration": 1.3250625
+        },
+        {
+          "filename": "06.wav",
+          "transcription": "zamknij żaluzję.",
+          "ground_truth": "zamknij żaluzje",
+          "duration": 0.8669375
+        },
+        {
+          "filename": "07.wav",
+          "transcription": "Pora jest kadzina.",
+          "ground_truth": "która jest godzina",
+          "duration": 0.6950625
+        },
+        {
+          "filename": "08.wav",
+          "transcription": "jaka instytutata.",
+          "ground_truth": "jaka jest data",
+          "duration": 0.835125
+        },
+        {
+          "filename": "09.wav",
+          "transcription": "dodaj mleko do listy zakupów.",
+          "ground_truth": "dodaj mleko do listy zakupów",
+          "duration": 1.4291875
+        },
+        {
+          "filename": "10.wav",
+          "transcription": "Wyłącz światło.",
+          "ground_truth": "wyłącz światło",
+          "duration": 0.9435
+        }
+      ]
+    },
+    {
+      "model": "large-v3",
+      "device": "cpu",
+      "compute_type": "int8",
+      "iterations": 5,
+      "audio_files_count": 10,
+      "total_audio_duration_sec": 58.89,
+      "total_processing_time_sec": 956.9,
+      "mean_latency_ms": 19138.07,
+      "median_latency_ms": 19087.45,
+      "p95_latency_ms": 19640.51,
+      "p99_latency_ms": 19800.83,
+      "std_latency_ms": 372.66,
+      "realtime_factor": 0.06,
+      "vram_used_mb": null,
+      "wer": 0.6571,
+      "transcriptions": [
+        {
+          "filename": "01.wav",
+          "transcription": "Łącz światło w salonie.",
+          "ground_truth": "włącz światło w salonie",
+          "duration": 1.219625
+        },
+        {
+          "filename": "02.wav",
+          "transcription": "Wyłącz wszystkie światła.",
+          "ground_truth": "wyłącz wszystkie światła",
+          "duration": 1.2950625
+        },
+        {
+          "filename": "03.wav",
+          "transcription": "w jasność w kuchni na 50%.",
+          "ground_truth": "ustaw jasność kuchnia na pięćdziesiąt procent",
+          "duration": 1.8765625
+        },
+        {
+          "filename": "04.wav",
+          "transcription": "Włącz stan wiatru.",
+          "ground_truth": "włącz scenę wieczór",
+          "duration": 1.2926875
+        },
+        {
+          "filename": "05.wav",
+          "transcription": "Otwórz rolety w sypialni.",
+          "ground_truth": "otwórz rolety w sypialni",
+          "duration": 1.3250625
+        },
+        {
+          "filename": "06.wav",
+          "transcription": "Zamknij żaluzję.",
+          "ground_truth": "zamknij żaluzje",
+          "duration": 0.8669375
+        },
+        {
+          "filename": "07.wav",
+          "transcription": "Która jest godzina?",
+          "ground_truth": "która jest godzina",
+          "duration": 0.6950625
+        },
+        {
+          "filename": "08.wav",
+          "transcription": "jaka jest data.",
+          "ground_truth": "jaka jest data",
+          "duration": 0.835125
+        },
+        {
+          "filename": "09.wav",
+          "transcription": "Dodaj mleko do listy zakupów.",
+          "ground_truth": "dodaj mleko do listy zakupów",
+          "duration": 1.4291875
+        },
+        {
+          "filename": "10.wav",
+          "transcription": "Wyłącz światło.",
+          "ground_truth": "wyłącz światło",
+          "duration": 0.9435
+        }
+      ]
+    }
+  ]
+}
