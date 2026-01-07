@@ -420,7 +420,7 @@ in {
       ln -sfn ${buttonCardSource} /var/lib/hass/www/community/button-card
       ln -sfn ${cardModSource} /var/lib/hass/www/community/card-mod
       ln -sfn ${autoEntitiesSource} /var/lib/hass/www/community/auto-entities
-      ln -sfn ${hassHueIconsSource} /var/lib/hass/www/community/hass-hue-icons
+      ln -sfn ${hassHueIconsSource}/dist /var/lib/hass/www/community/hass-hue-icons
 
       # Create Adaptive Lighting symlink
       ln -sfn ${adaptiveLightingSource}/custom_components/adaptive_lighting /var/lib/hass/custom_components/adaptive_lighting
