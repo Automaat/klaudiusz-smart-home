@@ -9,7 +9,7 @@
 Implement beautiful, functional HA dashboards using modern best practices:
 
 - **5 specialized dashboards** (main, monitoring, media, mobile, discovery)
-- **Custom cards** (Mushroom, Mini Graph, Button Card, card-mod, auto-entities)
+- **Custom cards** (Bubble Card, Mushroom, Mini Graph, Button Card, card-mod, auto-entities)
 - **Responsive design** (desktop + mobile optimized)
 - **Areas covered** (living areas, bedrooms)
 - **Catppuccin theme** (already installed)
@@ -34,25 +34,31 @@ Implement beautiful, functional HA dashboards using modern best practices:
 
 ### Top Custom Cards
 
-1. **Mushroom Cards** ⭐ Most popular
+1. **Bubble Card** ⭐ Mobile-optimized
+   - iOS-style pop-ups, horizontal button stacks
+   - Modern animations, touch-optimized
+   - Perfect for mobile/tablet interfaces
+   - Repository: `Clooos/Bubble-Card`
+
+2. **Mushroom Cards** ⭐ Most popular
    - Zero dependencies, visual editor, minimalistic
    - Clean modern UI without coding
    - Repository: `piitaya/lovelace-mushroom`
 
-2. **Mini Graph Card**
+3. **Mini Graph Card**
    - Compact sensor history graphs
    - 24h trends, customizable
    - Repository: `kalkih/mini-graph-card`
 
-3. **Button Card** (custom)
+4. **Button Card** (custom)
    - Advanced customization, templates, state-based styling
    - Repository: `custom-cards/button-card`
 
-4. **card-mod**
+5. **card-mod**
    - Custom CSS for any card/global theme styling
    - Repository: `thomasloven/lovelace-card-mod`
 
-5. **auto-entities**
+6. **auto-entities**
    - Dynamic entity lists with filters
    - Discovery dashboard helper
    - Repository: `thomasloven/lovelace-auto-entities`
@@ -206,6 +212,7 @@ After rebuild completes on homelab:
 
 **Resource URLs:**
 
+- `/local/community/bubble-card/bubble-card.js`
 - `/local/community/mushroom/mushroom.js`
 - `/local/community/mini-graph-card/mini-graph-card-bundle.js`
 - `/local/community/button-card/button-card.js`
@@ -606,6 +613,7 @@ Located in dashboard YAML config (not file-based).
 
 **Status:** Phase 1 completed. Custom cards installed in `hosts/homelab/home-assistant/default.nix` with:
 
+- Bubble Card v3.1.0-rc.2 (pre-installed)
 - Mushroom Cards v5.0.9
 - Mini Graph Card v0.13.0
 - Button Card v7.0.1
@@ -617,6 +625,7 @@ All symlinks configured in preStart. Ready for Phase 2 (GUI configuration).
 ### Phase 2: Checklist ✅ COMPLETE
 
 - [x] Navigate to Settings → Dashboards → Resources in HA GUI
+- [x] Add Bubble Card resource
 - [x] Add Mushroom Cards resource
 - [x] Add Mini Graph Card resource
 - [x] Add Button Card resource
@@ -624,8 +633,9 @@ All symlinks configured in preStart. Ready for Phase 2 (GUI configuration).
 - [x] Add auto-entities resource
 - [x] Verify no console errors (F12)
 
-**Status:** Phase 2 completed. All 5 custom card resources registered via HA GUI:
+**Status:** Phase 2 completed. All 6 custom card resources registered via HA GUI:
 
+- Bubble Card: `/local/community/bubble-card/bubble-card.js`
 - Mushroom Cards: `/local/community/mushroom/mushroom.js`
 - Mini Graph Card: `/local/community/mini-graph-card/mini-graph-card-bundle.js`
 - Button Card: `/local/community/button-card/button-card.js`
@@ -681,31 +691,80 @@ card_mod:
 
 Ready for Phase 4 (build production dashboards).
 
-### Phase 4: Checklist
+### Phase 4: Checklist ✅ COMPLETE
 
-- [ ] Create Main Control dashboard (sections view)
-  - [ ] Living Areas section
-  - [ ] Bedrooms section
-  - [ ] Add Mushroom light cards
-  - [ ] Add climate controls
-  - [ ] Add scene buttons
-- [ ] Create Monitoring dashboard (sections view)
-  - [ ] Salon sensors section (Mini Graph Cards)
-  - [ ] Bedroom sensors section
-  - [ ] System health section
-- [ ] Create Media dashboard (panel view)
-  - [ ] Full-width media player
-  - [ ] Mushroom media cards
-  - [ ] Volume controls
-- [ ] Create Mobile dashboard (sections, single column)
-  - [ ] Quick controls section (large cards)
-  - [ ] Status section (critical info)
-  - [ ] Hide from sidebar
-- [ ] Create Discovery dashboard (sections view)
-  - [ ] All lights (auto-entities)
-  - [ ] All sensors (auto-entities)
-  - [ ] All switches (auto-entities)
-  - [ ] All climate (auto-entities)
+- [x] Create Main Control dashboard (sections view)
+  - [x] Living Areas section
+  - [x] Bedrooms section
+  - [x] Add Mushroom light cards
+  - [x] Add climate controls
+  - [x] Add scene buttons
+- [x] Create Monitoring dashboard (sections view)
+  - [x] Salon sensors section (Mini Graph Cards)
+  - [x] Bedroom sensors section
+  - [x] System health section
+- [x] Create Media dashboard (panel view)
+  - [x] Full-width media player
+  - [x] Mushroom media cards
+  - [x] Volume controls
+- [x] Create Mobile dashboard (sections, single column)
+  - [x] Quick controls section (large cards)
+  - [x] Status section (critical info)
+  - [x] Hide from sidebar
+- [x] Create Discovery dashboard (sections view)
+  - [x] All lights (auto-entities)
+  - [x] All sensors (auto-entities)
+  - [x] All switches (auto-entities)
+  - [x] All climate (auto-entities)
+
+**Status:** Phase 4 completed. All 5 production dashboards created via HA MCP:
+
+**1. Main Control (`/lovelace/main-control`):**
+
+- Sections: Living Areas, Bedrooms, Scenes
+- Mushroom cards for lights (Kitchen), climate controls (Living Room, Bedroom, Office)
+- Air Purifier control (Mushroom fan card)
+- Scene buttons (Kitchen Read/Bright, Bathroom Energize/Relax/Neutral, All Off)
+- Grid layouts (2 columns) for responsive design
+- card-mod styling (rounded corners, shadows)
+
+**2. Monitoring (`/lovelace/monitoring-sensors`):**
+
+- Sections: Living Room Sensors, Bedroom Sensors, Air Quality, System Health
+- Mini Graph Cards (24h history, 2 points/hour)
+  - Living Room: Temperature, Humidity, Indoor PM2.5, Outdoor PM2.5
+  - Bedroom: Temperature, Humidity
+  - Air Quality: AQI Index, PM2.5 Outdoor vs Indoor comparison
+- System Status entity card (HA status, Comin deployment time, safe to ventilate)
+
+**3. Media (`/lovelace/media-control`):**
+
+- Panel view (full-width)
+- Built-in media-control card for TV
+- Mushroom media player cards (TV, Voice Assistant speaker)
+- Volume controls, playback controls
+- card-mod styling
+
+**4. Mobile (`/lovelace/mobile-quick`):**
+
+- Single column sections (touch-optimized)
+- Bubble Card horizontal button stacks (lights, scenes)
+- Bubble Card climate controls (Living Room, Bedroom)
+- Bubble Card button with sub-buttons (Air Purifier + PM2.5)
+- Status entity card (Temperature, Safe to Ventilate)
+- Hidden from sidebar (direct link only)
+- iOS-style modern animations
+
+**5. Discovery (`/lovelace/discovery-entities`):**
+
+- Sections: All Lights, All Sensors, All Switches, All Climate, All Binary Sensors
+- Auto-entities cards (dynamic population by domain)
+- Excludes unavailable/unknown entities
+- Sorted alphabetically by name
+- Zero maintenance (auto-updates when devices added)
+
+All dashboards use modern 2024+ patterns: sections view, Mushroom cards, Mini Graph cards, card-mod styling,
+Grid layouts. Ready for Phase 5 (Button Card templates).
 
 ### Phase 5: Checklist
 
