@@ -681,31 +681,72 @@ card_mod:
 
 Ready for Phase 4 (build production dashboards).
 
-### Phase 4: Checklist
+### Phase 4: Checklist ✅ COMPLETE
 
-- [ ] Create Main Control dashboard (sections view)
-  - [ ] Living Areas section
-  - [ ] Bedrooms section
-  - [ ] Add Mushroom light cards
-  - [ ] Add climate controls
-  - [ ] Add scene buttons
-- [ ] Create Monitoring dashboard (sections view)
-  - [ ] Salon sensors section (Mini Graph Cards)
-  - [ ] Bedroom sensors section
-  - [ ] System health section
-- [ ] Create Media dashboard (panel view)
-  - [ ] Full-width media player
-  - [ ] Mushroom media cards
-  - [ ] Volume controls
-- [ ] Create Mobile dashboard (sections, single column)
-  - [ ] Quick controls section (large cards)
-  - [ ] Status section (critical info)
-  - [ ] Hide from sidebar
-- [ ] Create Discovery dashboard (sections view)
-  - [ ] All lights (auto-entities)
-  - [ ] All sensors (auto-entities)
-  - [ ] All switches (auto-entities)
-  - [ ] All climate (auto-entities)
+- [x] Create Main Control dashboard (sections view)
+  - [x] Living Areas section
+  - [x] Bedrooms section
+  - [x] Add Mushroom light cards
+  - [x] Add climate controls
+  - [x] Add scene buttons
+- [x] Create Monitoring dashboard (sections view)
+  - [x] Salon sensors section (Mini Graph Cards)
+  - [x] Bedroom sensors section
+  - [x] System health section
+- [x] Create Media dashboard (panel view)
+  - [x] Full-width media player
+  - [x] Mushroom media cards
+  - [x] Volume controls
+- [x] Create Mobile dashboard (sections, single column)
+  - [x] Quick controls section (large cards)
+  - [x] Status section (critical info)
+  - [x] Hide from sidebar
+- [x] Create Discovery dashboard (sections view)
+  - [x] All lights (auto-entities)
+  - [x] All sensors (auto-entities)
+  - [x] All switches (auto-entities)
+  - [x] All climate (auto-entities)
+
+**Status:** Phase 4 completed. All 5 production dashboards created via HA MCP:
+
+**1. Main Control (`/lovelace/main-control`):**
+- Sections: Living Areas, Bedrooms, Scenes
+- Mushroom cards for lights (Kitchen), climate controls (Living Room, Bedroom, Office)
+- Air Purifier control (Mushroom fan card)
+- Scene buttons (Kitchen Read/Bright, Bathroom Energize/Relax/Neutral, All Off)
+- Grid layouts (2 columns) for responsive design
+- card-mod styling (rounded corners, shadows)
+
+**2. Monitoring (`/lovelace/monitoring-sensors`):**
+- Sections: Living Room Sensors, Bedroom Sensors, Air Quality, System Health
+- Mini Graph Cards (24h history, 2 points/hour)
+  - Living Room: Temperature, Humidity, Indoor PM2.5, Outdoor PM2.5
+  - Bedroom: Temperature, Humidity
+  - Air Quality: AQI Index, PM2.5 Outdoor vs Indoor comparison
+- System Status entity card (HA status, Comin deployment time, safe to ventilate)
+
+**3. Media (`/lovelace/media-control`):**
+- Panel view (full-width)
+- Built-in media-control card for TV
+- Mushroom media player cards (TV, Voice Assistant speaker)
+- Volume controls, playback controls
+- card-mod styling
+
+**4. Mobile (`/lovelace/mobile-quick`):**
+- Single column sections (touch-optimized)
+- Quick Controls: Kitchen/Hallway lights, Living Room climate, All Off button
+- Status section: Temperature, Indoor PM2.5, Safe to Ventilate
+- Hidden from sidebar (direct link only)
+- Large cards with vertical layout
+
+**5. Discovery (`/lovelace/discovery-entities`):**
+- Sections: All Lights, All Sensors, All Switches, All Climate, All Binary Sensors
+- Auto-entities cards (dynamic population by domain)
+- Excludes unavailable/unknown entities
+- Sorted alphabetically by name
+- Zero maintenance (auto-updates when devices added)
+
+All dashboards use modern 2024+ patterns: sections view, Mushroom cards, Mini Graph cards, card-mod styling, Grid layouts. Ready for Phase 5 (Button Card templates).
 
 ### Phase 5: Checklist
 
