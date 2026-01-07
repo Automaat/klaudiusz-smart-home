@@ -113,6 +113,17 @@
   };
 
   # ===========================================
+  # Hass Hue Icons
+  # ===========================================
+  hassHueIconsSource = pkgs.fetchFromGitHub {
+    owner = "arallsopp";
+    repo = "hass-hue-icons";
+    # renovate: datasource=github-tags depName=arallsopp/hass-hue-icons
+    rev = "v1.2.53";
+    hash = "sha256-7ZkaZd4XkGbzb0MA4V/qXJDvSXDq2EsogtsvgJGxNCU=";
+  };
+
+  # ===========================================
   # Adaptive Lighting
   # ===========================================
   adaptiveLightingSource = pkgs.fetchFromGitHub {
@@ -401,6 +412,7 @@ in {
       ln -sfn ${buttonCardSource}/dist /var/lib/hass/www/community/button-card
       ln -sfn ${cardModSource} /var/lib/hass/www/community/card-mod
       ln -sfn ${autoEntitiesSource} /var/lib/hass/www/community/auto-entities
+      ln -sfn ${hassHueIconsSource} /var/lib/hass/www/community/hass-hue-icons
 
       # Create Adaptive Lighting symlink
       ln -sfn ${adaptiveLightingSource}/custom_components/adaptive_lighting /var/lib/hass/custom_components/adaptive_lighting
