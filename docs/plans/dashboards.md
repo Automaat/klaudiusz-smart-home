@@ -646,11 +646,13 @@ All resources loaded successfully without console errors. Ready for Phase 3 (car
 **Status:** Phase 3 completed. Test dashboard verified and removed after successful testing.
 
 **Test Results:**
+
 - Created test dashboard with styled vs unstyled Mushroom cards
 - Entity tested: `light.hallway`
 - card-mod styling applied: rounded corners + shadow
 
 **card-mod Configuration (Verified Working):**
+
 ```yaml
 type: custom:mushroom-light-card
 entity: light.hallway
@@ -663,6 +665,7 @@ card_mod:
 ```
 
 **Findings:**
+
 - ✅ card-mod works with Mushroom cards
 - ✅ Compatible with Catppuccin theme
 - ✅ CSS styling applies correctly (rounded corners, shadows)
@@ -670,6 +673,7 @@ card_mod:
 - ✅ Test dashboard removed after verification
 
 **Recommendation:** Use **per-card styling** approach:
+
 - Apply card-mod selectively for polish
 - Catppuccin theme provides base colors
 - Per-card styling for rounded corners, shadows, special effects
