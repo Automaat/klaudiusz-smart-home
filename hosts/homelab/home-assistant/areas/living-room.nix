@@ -330,7 +330,7 @@ in {
       condition = [
         {
           condition = "template";
-          value_template = "{{ (now() - as_datetime(states('input_datetime.last_filter_task_living_room'))).days >= 30 or states('input_datetime.last_filter_task_living_room') == 'unknown' }}";
+          value_template = "{{ states('input_datetime.last_filter_task_living_room') == 'unknown' or (now() - as_datetime(states('input_datetime.last_filter_task_living_room'))).days >= 30 }}";
         }
       ];
       action = [
