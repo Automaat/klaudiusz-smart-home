@@ -32,6 +32,11 @@
       has_date = true;
       has_time = true;
     };
+    last_filter_task_living_room = {
+      name = "Last Filter Task - Living Room";
+      has_date = true;
+      has_time = true;
+    };
   };
 
   input_number = {

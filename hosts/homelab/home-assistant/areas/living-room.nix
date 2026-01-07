@@ -318,7 +318,7 @@ in {
 
     {
       id = "air_purifier_filter_replacement_todoist";
-      alias = "Air Purifier - Filter replacement Todoist";
+      alias = "Air Purifier - Filter replacement Todoist (Living Room)";
       description = "Create Todoist task when filter needs replacement";
       trigger = [
         {
@@ -326,26 +326,30 @@ in {
           entity_id = "sensor.zhimi_de_334622045_mb3_filter_life_level_p_4_3";
           below = 20;
         }
+      ];
+      condition = [
         {
-          platform = "state";
-          entity_id = "event.zhimi_de_334622045_mb3_filter_eof_e_9_1";
+          condition = "template";
+          value_template = "{{ states('input_datetime.last_filter_task_living_room') == 'unknown' or (now() - as_datetime(states('input_datetime.last_filter_task_living_room'))).days >= 30 }}";
         }
       ];
       action = [
         {
           action = "todoist.new_task";
           data = {
-            content = "Wymień filtr HEPA oczyszczacza powietrza ({{ states('sensor.zhimi_de_334622045_mb3_filter_life_level_p_4_3') }}% pozostało)";
+            content = "Wymień filtr HEPA oczyszczacza (Salon) - {{ states('sensor.zhimi_de_334622045_mb3_filter_life_level_p_4_3') }}% pozostało";
             "project" = "Home";
             priority = 3;
             due_date_string = "za 2 tygodnie";
             due_date_lang = "pl";
             labels = "dom,konserwacja";
-            description = ''              Filtr zużyty w {{ 100 - states('sensor.zhimi_de_334622045_mb3_filter_life_level_p_4_3') | int }}%.
-
-              Link do filtra: https://allegro.pl/xiaomi-air-purifier-3h-filter
-              Aktualny czas pracy: {{ states('sensor.zhimi_de_334622045_mb3_filter_used_time_p_4_5') }}h'';
+            description = "Filtr zużyty w {{ 100 - states('sensor.zhimi_de_334622045_mb3_filter_life_level_p_4_3') | int }}%. Aktualny czas pracy: {{ states('sensor.zhimi_de_334622045_mb3_filter_used_time_p_4_5') }}h";
           };
+        }
+        {
+          action = "input_datetime.set_datetime";
+          target.entity_id = "input_datetime.last_filter_task_living_room";
+          data.datetime = "{{ now().isoformat() }}";
         }
       ];
       mode = "single";
