@@ -27,11 +27,8 @@ jobs:
 
       - name: Fix hash mismatches
         run: |
-          # Install determinate-nixd (includes fix hashes command)
-          nix profile install nixpkgs#determinate-nixd
-
-          # Apply hash fixes (safe to run even when no issues)
-          determinate-nixd fix hashes --auto-apply
+          chmod +x .github/scripts/fix-nix-hashes.sh
+          .github/scripts/fix-nix-hashes.sh
 
       - name: Commit hash fixes
         run: |
