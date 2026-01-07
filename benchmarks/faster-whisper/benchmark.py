@@ -1,0 +1,338 @@
+#!/usr/bin/env python3
+"""
+Faster-Whisper GPU Benchmark
+
+Tests transcription performance of different Whisper models on NVIDIA GPU.
+Downloads models on first run, caches for subsequent runs.
+"""
+
+import json
+import os
+import platform
+import subprocess
+import sys
+import time
+from datetime import datetime
+from pathlib import Path
+from typing import Dict, List, Optional
+
+import numpy as np
+import soundfile as sf
+import torch
+from faster_whisper import WhisperModel
+from jiwer import wer
+from tqdm import tqdm
+
+# Configuration
+MODELS = ["small", "medium", "large-v3"]
+DEVICE = "cuda"
+COMPUTE_TYPE = "float16"
+ITERATIONS = 5
+CACHE_DIR = Path("/cache/models")
+AUDIO_DIR = Path("/app/audio")
+RESULTS_DIR = Path("/results")
+TEST_COMMANDS_FILE = Path("/app/test-commands.txt")
+
+
+def get_gpu_info() -> Dict[str, str]:
+    """Get NVIDIA GPU information."""
+    try:
+        result = subprocess.run(
+            ["nvidia-smi", "--query-gpu=name,driver_version,memory.total", "--format=csv,noheader"],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        gpu_name, driver_version, vram_total = result.stdout.strip().split(", ")
+
+        cuda_version = torch.version.cuda if torch.cuda.is_available() else "N/A"
+
+        return {
+            "gpu_name": gpu_name,
+            "driver_version": driver_version,
+            "vram_total_mb": int(vram_total.replace(" MiB", "")),
+            "cuda_version": cuda_version,
+            "cuda_available": torch.cuda.is_available()
+        }
+    except Exception as e:
+        return {
+            "error": str(e),
+            "cuda_available": torch.cuda.is_available()
+        }
+
+
+def get_vram_usage() -> int:
+    """Get current VRAM usage in MB."""
+    if torch.cuda.is_available():
+        return torch.cuda.memory_allocated() // (1024 * 1024)
+    return 0
+
+
+def load_ground_truth() -> Dict[str, str]:
+    """Load ground truth transcriptions from test-commands.txt."""
+    ground_truth = {}
+    if TEST_COMMANDS_FILE.exists():
+        with open(TEST_COMMANDS_FILE, "r", encoding="utf-8") as f:
+            for i, line in enumerate(f, start=1):
+                ground_truth[f"{i:02d}.wav"] = line.strip()
+    return ground_truth
+
+
+def load_audio_files() -> List[Dict[str, any]]:
+    """Load all WAV files from audio directory."""
+    audio_files = []
+    ground_truth = load_ground_truth()
+
+    for wav_file in sorted(AUDIO_DIR.glob("*.wav")):
+        try:
+            audio, sample_rate = sf.read(wav_file)
+            duration = len(audio) / sample_rate
+
+            audio_files.append({
+                "filename": wav_file.name,
+                "path": wav_file,
+                "duration": duration,
+                "sample_rate": sample_rate,
+                "ground_truth": ground_truth.get(wav_file.name, "")
+            })
+        except Exception as e:
+            print(f"Warning: Could not load {wav_file}: {e}")
+
+    return audio_files
+
+
+def download_model(model_size: str) -> None:
+    """Download and cache a Whisper model."""
+    print(f"\nDownloading model: {model_size}")
+    model_path = CACHE_DIR / model_size
+
+    if model_path.exists():
+        print(f"Model {model_size} already cached")
+        return
+
+    # Create a temporary model to trigger download
+    print(f"Downloading {model_size} model (this may take a few minutes)...")
+    _ = WhisperModel(
+        model_size,
+        device="cpu",  # Use CPU for download to avoid VRAM allocation
+        compute_type="int8",
+        download_root=str(CACHE_DIR)
+    )
+    print(f"✓ Model {model_size} downloaded and cached")
+
+
+def benchmark_model(
+    model_size: str,
+    audio_files: List[Dict[str, any]],
+    iterations: int = ITERATIONS
+) -> Dict[str, any]:
+    """Benchmark a single model."""
+    print(f"\n{'='*60}")
+    print(f"Benchmarking: {model_size} (device={DEVICE}, compute_type={COMPUTE_TYPE})")
+    print(f"{'='*60}")
+
+    # Load model
+    print(f"Loading model...")
+    torch.cuda.empty_cache()
+    vram_before = get_vram_usage()
+
+    model = WhisperModel(
+        model_size,
+        device=DEVICE,
+        compute_type=COMPUTE_TYPE,
+        download_root=str(CACHE_DIR)
+    )
+
+    vram_after = get_vram_usage()
+    vram_model = vram_after - vram_before
+
+    print(f"Model loaded (VRAM: {vram_model} MB)")
+
+    # Warm-up run
+    print("Warming up...")
+    segments, _ = model.transcribe(str(audio_files[0]["path"]), language="pl", beam_size=5)
+    list(segments)  # Force execution
+
+    # Benchmark runs
+    all_latencies = []
+    all_transcriptions = []
+
+    print(f"\nRunning {iterations} iterations on {len(audio_files)} audio files...")
+
+    for iteration in range(iterations):
+        for audio_info in tqdm(audio_files, desc=f"Iteration {iteration + 1}/{iterations}", leave=False):
+            start_time = time.time()
+
+            segments, info = model.transcribe(
+                str(audio_info["path"]),
+                language="pl",
+                beam_size=5
+            )
+
+            # Force execution and collect transcription
+            transcription = " ".join(segment.text for segment in segments).strip()
+
+            end_time = time.time()
+            latency = (end_time - start_time) * 1000  # Convert to ms
+
+            all_latencies.append(latency)
+
+            if iteration == 0:  # Only save transcriptions from first iteration
+                all_transcriptions.append({
+                    "filename": audio_info["filename"],
+                    "transcription": transcription,
+                    "ground_truth": audio_info["ground_truth"],
+                    "duration": audio_info["duration"]
+                })
+
+    # Calculate metrics
+    latencies = np.array(all_latencies)
+    total_audio_duration = sum(a["duration"] for a in audio_files) * iterations
+    total_processing_time = latencies.sum() / 1000  # Convert to seconds
+    realtime_factor = total_audio_duration / total_processing_time
+
+    # Calculate WER if ground truth available
+    wer_score = None
+    if all(t["ground_truth"] for t in all_transcriptions):
+        references = [t["ground_truth"] for t in all_transcriptions]
+        hypotheses = [t["transcription"] for t in all_transcriptions]
+        wer_score = wer(references, hypotheses)
+
+    results = {
+        "model": model_size,
+        "device": DEVICE,
+        "compute_type": COMPUTE_TYPE,
+        "iterations": iterations,
+        "audio_files_count": len(audio_files),
+        "total_audio_duration_sec": round(total_audio_duration, 2),
+        "total_processing_time_sec": round(total_processing_time, 2),
+        "mean_latency_ms": round(float(np.mean(latencies)), 2),
+        "median_latency_ms": round(float(np.median(latencies)), 2),
+        "p95_latency_ms": round(float(np.percentile(latencies, 95)), 2),
+        "p99_latency_ms": round(float(np.percentile(latencies, 99)), 2),
+        "std_latency_ms": round(float(np.std(latencies)), 2),
+        "realtime_factor": round(realtime_factor, 2),
+        "vram_used_mb": vram_model,
+        "wer": round(wer_score, 4) if wer_score is not None else None,
+        "transcriptions": all_transcriptions
+    }
+
+    # Print summary
+    print(f"\nResults:")
+    print(f"  Mean latency:     {results['mean_latency_ms']:.2f} ms")
+    print(f"  P95 latency:      {results['p95_latency_ms']:.2f} ms")
+    print(f"  Real-time factor: {results['realtime_factor']:.1f}x")
+    print(f"  VRAM used:        {results['vram_used_mb']} MB")
+    if wer_score is not None:
+        print(f"  WER:              {results['wer']:.2%}")
+
+    # Cleanup
+    del model
+    torch.cuda.empty_cache()
+
+    return results
+
+
+def main():
+    """Main benchmark function."""
+    print("Faster-Whisper GPU Benchmark")
+    print("=" * 60)
+
+    # Check GPU availability
+    if not torch.cuda.is_available():
+        print("ERROR: CUDA is not available. This benchmark requires an NVIDIA GPU.")
+        sys.exit(1)
+
+    # Get system info
+    gpu_info = get_gpu_info()
+    print(f"\nGPU: {gpu_info.get('gpu_name', 'Unknown')}")
+    print(f"CUDA Version: {gpu_info.get('cuda_version', 'N/A')}")
+    print(f"Driver Version: {gpu_info.get('driver_version', 'N/A')}")
+    print(f"VRAM: {gpu_info.get('vram_total_mb', 0)} MB")
+
+    # Create output directory
+    RESULTS_DIR.mkdir(parents=True, exist_ok=True)
+
+    # Download models if needed
+    print("\n" + "=" * 60)
+    print("Checking model cache...")
+    print("=" * 60)
+    for model_size in MODELS:
+        download_model(model_size)
+
+    # Load audio files
+    print("\n" + "=" * 60)
+    print("Loading audio files...")
+    print("=" * 60)
+    audio_files = load_audio_files()
+
+    if not audio_files:
+        print("ERROR: No audio files found in /app/audio/")
+        sys.exit(1)
+
+    print(f"Loaded {len(audio_files)} audio files")
+    total_duration = sum(a["duration"] for a in audio_files)
+    print(f"Total audio duration: {total_duration:.2f} seconds")
+
+    # Run benchmarks
+    all_results = []
+    for model_size in MODELS:
+        try:
+            result = benchmark_model(model_size, audio_files)
+            all_results.append(result)
+        except Exception as e:
+            print(f"\nERROR benchmarking {model_size}: {e}")
+            import traceback
+            traceback.print_exc()
+
+    # Save results
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    output_file = RESULTS_DIR / f"benchmark_{timestamp}.json"
+
+    output_data = {
+        "timestamp": timestamp,
+        "system": {
+            **gpu_info,
+            "platform": platform.platform(),
+            "python_version": platform.python_version()
+        },
+        "config": {
+            "device": DEVICE,
+            "compute_type": COMPUTE_TYPE,
+            "iterations": ITERATIONS,
+            "models": MODELS
+        },
+        "audio": {
+            "count": len(audio_files),
+            "total_duration_sec": round(total_duration, 2),
+            "files": [
+                {
+                    "filename": a["filename"],
+                    "duration": round(a["duration"], 2),
+                    "sample_rate": a["sample_rate"]
+                }
+                for a in audio_files
+            ]
+        },
+        "results": all_results
+    }
+
+    with open(output_file, "w", encoding="utf-8") as f:
+        json.dump(output_data, f, indent=2, ensure_ascii=False)
+
+    print("\n" + "=" * 60)
+    print("BENCHMARK COMPLETE")
+    print("=" * 60)
+    print(f"\nResults saved to: {output_file}")
+    print("\nSummary:")
+    for result in all_results:
+        print(f"\n{result['model']}:")
+        print(f"  Latency:      {result['mean_latency_ms']:.2f} ms (mean)")
+        print(f"  Throughput:   {result['realtime_factor']:.1f}x realtime")
+        print(f"  VRAM:         {result['vram_used_mb']} MB")
+        if result['wer'] is not None:
+            print(f"  WER:          {result['wer']:.2%}")
+
+
+if __name__ == "__main__":
+    main()
