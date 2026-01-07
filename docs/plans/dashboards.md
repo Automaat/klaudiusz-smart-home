@@ -614,24 +614,72 @@ Located in dashboard YAML config (not file-based).
 
 All symlinks configured in preStart. Ready for Phase 2 (GUI configuration).
 
-### Phase 2: Checklist
+### Phase 2: Checklist ✅ COMPLETE
 
-- [ ] Navigate to Settings → Dashboards → Resources in HA GUI
-- [ ] Add Mushroom Cards resource
-- [ ] Add Mini Graph Card resource
-- [ ] Add Button Card resource
-- [ ] Add card-mod resource
-- [ ] Add auto-entities resource
-- [ ] Verify no console errors (F12)
+- [x] Navigate to Settings → Dashboards → Resources in HA GUI
+- [x] Add Mushroom Cards resource
+- [x] Add Mini Graph Card resource
+- [x] Add Button Card resource
+- [x] Add card-mod resource
+- [x] Add auto-entities resource
+- [x] Verify no console errors (F12)
 
-### Phase 3: Checklist
+**Status:** Phase 2 completed. All 5 custom card resources registered via HA GUI:
 
-- [ ] Create test dashboard view
-- [ ] Add Mushroom card with card-mod styling
-- [ ] Test with Catppuccin theme
-- [ ] Switch theme variants (Mocha, Latte, etc.)
-- [ ] Document working patterns
-- [ ] Decide on per-card vs global styling approach
+- Mushroom Cards: `/local/community/mushroom/mushroom.js`
+- Mini Graph Card: `/local/community/mini-graph-card/mini-graph-card-bundle.js`
+- Button Card: `/local/community/button-card/button-card.js`
+- card-mod: `/local/community/card-mod/card-mod.js`
+- auto-entities: `/local/community/auto-entities/auto-entities.js`
+
+All resources loaded successfully without console errors. Ready for Phase 3 (card-mod + Catppuccin testing).
+
+### Phase 3: Checklist ✅ COMPLETE
+
+- [x] Create test dashboard view
+- [x] Add Mushroom card with card-mod styling
+- [x] Test with Catppuccin theme
+- [x] Switch theme variants (Mocha, Latte, etc.)
+- [x] Document working patterns
+- [x] Decide on per-card vs global styling approach
+
+**Status:** Phase 3 completed. Test dashboard verified and removed after successful testing.
+
+**Test Results:**
+
+- Created test dashboard with styled vs unstyled Mushroom cards
+- Entity tested: `light.hallway`
+- card-mod styling applied: rounded corners + shadow
+
+**card-mod Configuration (Verified Working):**
+
+```yaml
+type: custom:mushroom-light-card
+entity: light.hallway
+card_mod:
+  style: |
+    ha-card {
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+```
+
+**Findings:**
+
+- ✅ card-mod works with Mushroom cards
+- ✅ Compatible with Catppuccin theme
+- ✅ CSS styling applies correctly (rounded corners, shadows)
+- ✅ No console errors
+- ✅ Test dashboard removed after verification
+
+**Recommendation:** Use **per-card styling** approach:
+
+- Apply card-mod selectively for polish
+- Catppuccin theme provides base colors
+- Per-card styling for rounded corners, shadows, special effects
+- Avoid global theme-mod (keep Catppuccin clean)
+
+Ready for Phase 4 (build production dashboards).
 
 ### Phase 4: Checklist
 
