@@ -97,7 +97,7 @@
     owner = "thomasloven";
     repo = "lovelace-auto-entities";
     # renovate: datasource=github-tags depName=thomasloven/lovelace-auto-entities
-    rev = "v1.16.1";
+    rev = "16";
     hash = "sha256-yMqf4LA/fBTIrrYwacUTb2fL758ZB1k471vdsHAiOj8=";
   };
 
