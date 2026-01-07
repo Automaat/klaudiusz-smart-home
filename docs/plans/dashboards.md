@@ -592,17 +592,27 @@ Located in dashboard YAML config (not file-based).
 
 ## Implementation Checklist
 
-### Phase 1: Checklist
+### Phase 1: Checklist ✅ COMPLETE
 
-- [ ] Check latest stable releases on GitHub
-- [ ] Calculate nix hashes for all 5 cards
-- [ ] Add fetchFromGitHub sources to `default.nix`
-- [ ] Add symlinks in preStart
-- [ ] Create feature branch `feat/dashboard-custom-cards`
-- [ ] Commit with `-s -S`
-- [ ] Push and create PR
-- [ ] Merge after CI passes
-- [ ] Wait for Comin to deploy
+- [x] Check latest stable releases on GitHub
+- [x] Calculate nix hashes for all 5 cards
+- [x] Add fetchFromGitHub sources to `default.nix`
+- [x] Add symlinks in preStart
+- [x] Create feature branch `feat/dashboard-custom-cards`
+- [x] Commit with `-s -S`
+- [x] Push and create PR
+- [x] Merge after CI passes
+- [x] Wait for Comin to deploy
+
+**Status:** Phase 1 completed. Custom cards installed in `hosts/homelab/home-assistant/default.nix` with:
+
+- Mushroom Cards v5.0.9
+- Mini Graph Card v0.13.0
+- Button Card v7.0.1
+- card-mod v4.1.0
+- auto-entities v1.16.1
+
+All symlinks configured in preStart. Ready for Phase 2 (GUI configuration).
 
 ### Phase 2: Checklist
 
