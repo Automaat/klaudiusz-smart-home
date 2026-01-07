@@ -341,10 +341,10 @@ in {
             due_date_string = "za 2 tygodnie";
             due_date_lang = "pl";
             labels = "dom,konserwacja";
-            description = ''Filtr zużyty w {{ 100 - states('sensor.zhimi_de_334622045_mb3_filter_life_level_p_4_3') | int }}%.
+            description = ''              Filtr zużyty w {{ 100 - states('sensor.zhimi_de_334622045_mb3_filter_life_level_p_4_3') | int }}%.
 
-Link do filtra: https://allegro.pl/xiaomi-air-purifier-3h-filter
-Aktualny czas pracy: {{ states('sensor.zhimi_de_334622045_mb3_filter_used_time_p_4_5') }}h'';
+              Link do filtra: https://allegro.pl/xiaomi-air-purifier-3h-filter
+              Aktualny czas pracy: {{ states('sensor.zhimi_de_334622045_mb3_filter_used_time_p_4_5') }}h'';
           };
         }
       ];

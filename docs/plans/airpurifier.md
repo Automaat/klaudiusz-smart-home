@@ -3,7 +3,7 @@
 ## Progress Summary
 
 | Phase | Status | PR | Description |
-|-------|--------|----|----|
+| ------- | -------- | ---- | ---- |
 | Phase 1 | ✅ | #189 | Template sensors (PM2.5, filter urgency, ventilation safety) |
 | Phase 2 | ✅ | #189 | Input helpers (away mode, antibacterial tracking) |
 | Phase 3 | 🔄 | #192 | Core automations (9 total) - in CI |
