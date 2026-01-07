@@ -22,6 +22,12 @@
       ];
       action = [
         {
+          service = "frontend.set_theme";
+          data = {
+            name = "Catppuccin Latte";
+          };
+        }
+        {
           service = "persistent_notification.create";
           data = {
             title = "Home Assistant";
