@@ -57,7 +57,7 @@ jobs:
       - name: Verify audio files in image
         run: |
           echo "Checking audio files in Docker image..."
-          docker run --rm faster-whisper-benchmark:test ls -lh /app/audio/
+          docker run --rm --entrypoint ls faster-whisper-benchmark:test -lh /app/audio/
 
   build-and-push:
     name: Build and push to registry
