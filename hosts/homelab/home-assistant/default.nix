@@ -25,6 +25,17 @@
   };
 
   # ===========================================
+  # iOS Themes
+  # ===========================================
+  iosTheme = pkgs.fetchFromGitHub {
+    owner = "basnijholt";
+    repo = "lovelace-ios-themes";
+    # renovate: datasource=github-tags depName=basnijholt/lovelace-ios-themes
+    rev = "v3.0.1";
+    hash = "sha256-b3AX714qJwJoju9USH2JjUeKp7izgk0p7wqJqvS7J7U=";
+  };
+
+  # ===========================================
   # Better Thermostat
   # ===========================================
   betterThermostatSource = pkgs.fetchFromGitHub {
@@ -371,8 +382,10 @@ in {
   # Additional Themes & Directories
   # ===========================================
   systemd.tmpfiles.rules = [
-    # HACS symlink managed by customComponents above
-    "L+ /var/lib/hass/themes - - - - ${catppuccinTheme}/themes"
+    # Themes directory
+    "d /var/lib/hass/themes 0755 hass hass -"
+    "L+ /var/lib/hass/themes/catppuccin - - - - ${catppuccinTheme}/themes"
+    "L+ /var/lib/hass/themes/ios - - - - ${iosTheme}/themes"
     "d /var/lib/hass/blueprints 0755 hass hass -"
     # Create secrets.yaml with correct ownership (written by preStart)
     "f /var/lib/hass/secrets.yaml 0600 hass hass -"
