@@ -476,7 +476,7 @@ in {
       ln -sfn ${hassHueIconsSource}/dist /var/lib/hass/www/community/hass-hue-icons
       ln -sfn ${historyExplorerSource} /var/lib/hass/www/community/history-explorer-card
       ln -sfn ${layoutCardSource} /var/lib/hass/www/community/layout-card
-      ln -sfn ${miniMediaPlayerSource}/dist /var/lib/hass/www/community/mini-media-player
+      ln -sfn ${miniMediaPlayerSource} /var/lib/hass/www/community/mini-media-player
 
       # Create Adaptive Lighting symlink
       ln -sfn ${adaptiveLightingSource}/custom_components/adaptive_lighting /var/lib/hass/custom_components/adaptive_lighting

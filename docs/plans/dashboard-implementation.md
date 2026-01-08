@@ -569,7 +569,7 @@ color_thresholds:
 
 - Primary actions prominent (Tile/Mushroom cards)
 - Status/monitoring secondary (Entity cards, graphs)
-- Detailed data tertiary (History Explorer, ApexCharts)
+- Detailed data tertiary (History Explorer, Grafana panels)
 
 #### 7. Entity Reference
 
@@ -951,30 +951,36 @@ Add section after "Home Assistant Patterns":
 5. ✅ CI tests pass on production branch
 
 **Documentation:**
-6. ✅ HA dashboard documentation created (docs/manual-config/dashboards.md)
-7. ✅ Grafana dashboard documentation created (docs/manual-config/grafana-dashboards.md)
-8. ✅ Manual config README updated with both guides
+6. ⬜ HA dashboard documentation created (docs/manual-config/dashboards.md)
+7. ⬜ Grafana dashboard documentation created (docs/manual-config/grafana-dashboards.md)
+8. ⬜ Manual config README updated with both guides
 
 **HA Dashboards:**
-9. ✅ Overview + room-based views created
-10. ✅ Dashboards responsive on mobile and desktop
-11. ✅ Performance acceptable (no lag, quick load times)
+9. ⬜ Overview + room-based views created
+10. ⬜ Dashboards responsive on mobile and desktop
+11. ⬜ Performance acceptable (no lag, quick load times)
 
 **Grafana Dashboards:**
-12. ✅ Environmental Monitoring dashboard (temp, PM2.5, humidity)
-13. ✅ System Health dashboard (CPU, disk, memory, alerts)
-14. ✅ Automation Monitoring dashboard (triggers, failures, execution time)
-15. ✅ Dashboard JSON exported to docs/grafana/
+12. ⬜ Environmental Monitoring dashboard (temp, PM2.5, humidity)
+13. ⬜ System Health dashboard (CPU, disk, memory, alerts)
+14. ⬜ Automation Monitoring dashboard (triggers, failures, execution time)
+15. ⬜ Dashboard JSON exported to docs/grafana/
 
 **Usability:**
-16. ✅ Family members can use HA dashboards effectively
-17. ✅ Historical data accessible via Grafana
+16. ⬜ Family members can use HA dashboards effectively
+17. ⬜ Historical data accessible via Grafana
 
 ---
 
 ## Unresolved Questions
 
-**None currently** - all aspects covered based on:
+While the overall direction is clear, some aspects remain to be validated during Phases 2–7:
+
+- How system monitoring and environmental template sensors will impact storage and performance in practice
+- Which specific HA and Grafana views are most useful for day-to-day family usage
+- How much documentation detail is needed for non-technical users vs. maintainers
+
+These will be refined based on:
 
 - User preferences (GUI management, environmental focus, Grafana for advanced graphing)
 - Current codebase state (HACS enabled, InfluxDB/Prometheus configured, Grafana available)
