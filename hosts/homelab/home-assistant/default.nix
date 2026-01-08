@@ -338,9 +338,12 @@ in {
       };
 
       # Logger
+      # Enable debug logging for automation monitoring dashboard
+      # Storage impact: ~5-10 MB/day additional log volume
       logger = {
         default = "info";
         logs = {
+          "homeassistant.components.automation" = "debug";
           "homeassistant.components.intent_script" = "debug";
           "homeassistant.components.assist_pipeline" = "debug";
           "homeassistant.components.wyoming" = "debug";
