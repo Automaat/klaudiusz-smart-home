@@ -3,6 +3,7 @@
 ## Overview
 
 Build comprehensive smart home analytics using InfluxDB 2 and Grafana to track:
+
 - Room utilization and occupancy patterns
 - Lighting efficiency and waste detection
 - Climate optimization opportunities
@@ -19,15 +20,17 @@ Build comprehensive smart home analytics using InfluxDB 2 and Grafana to track:
 
 **Goal:** Establish baseline metrics and data quality validation
 
-### Tasks
+### Phase 1 Tasks
 
 #### 1.1 Data Audit (2-3 hours)
+
 - [ ] Query InfluxDB for all presence sensor entities
 - [ ] Verify continuous data collection (check gaps >10min)
 - [ ] Document entity mapping: sensors → rooms
 - [ ] Test query performance with 30-day ranges
 
 **Queries to validate:**
+
 ```flux
 // List all presence sensors
 from(bucket: "home-assistant")
@@ -46,12 +49,14 @@ from(bucket: "home-assistant")
 ```
 
 #### 1.2 Build Occupancy Duration Queries (3-4 hours)
+
 - [ ] Daily occupancy hours per room
 - [ ] Hourly occupancy rate (for heatmaps)
 - [ ] Weekly aggregates for trend analysis
 - [ ] Handle timezone conversion (UTC → Europe/Warsaw)
 
 **Core query pattern:**
+
 ```flux
 // Daily occupancy hours per room
 from(bucket: "home-assistant")
@@ -75,6 +80,7 @@ from(bucket: "home-assistant")
 ```
 
 #### 1.3 Create Basic Room Utilization Dashboard (4-5 hours)
+
 - [ ] **Panel 1:** Daily occupancy bar chart (stacked by room)
 - [ ] **Panel 2:** Room ranking (total hours past 30 days)
 - [ ] **Panel 3:** Occupancy heatmap (24h × 7 days)
@@ -82,6 +88,7 @@ from(bucket: "home-assistant")
 - [ ] Add dashboard to `hosts/homelab/grafana/dashboards/smart-home/`
 
 **Dashboard structure:**
+
 ```json
 {
   "title": "Room Utilization Analytics",
@@ -106,6 +113,7 @@ from(bucket: "home-assistant")
 ```
 
 #### 1.4 Establish Baseline Metrics (1 hour)
+
 - [ ] Document current state:
   - Most/least used rooms
   - Peak activity hours
@@ -113,6 +121,7 @@ from(bucket: "home-assistant")
 - [ ] Save findings to `docs/baseline-metrics.md`
 
 **Expected outputs:**
+
 - Baseline dashboard operational
 - 30-day historical occupancy data visualized
 - Data quality report (gaps, sensor reliability)
@@ -124,15 +133,17 @@ from(bucket: "home-assistant")
 
 **Goal:** Identify waste and optimization opportunities
 
-### Tasks
+### Phase 2 Tasks
 
 #### 2.1 Light Waste Detection (5-6 hours)
+
 - [ ] Build time-aligned join query (light state + presence state)
 - [ ] Calculate waste duration (light on + room vacant)
 - [ ] Daily/weekly waste aggregates per room
 - [ ] Test query performance (optimize with sampling if needed)
 
 **Challenge:** Time-series alignment for join
+
 ```flux
 // Approach 1: Window-based join
 light_states = from(bucket: "home-assistant")
@@ -162,6 +173,7 @@ join(tables: {light: light_states, presence: presence_states}, on: ["_time"])
 ```
 
 #### 2.2 Create Lighting Efficiency Dashboard (3-4 hours)
+
 - [ ] **Panel 1:** Daily waste stat (hours, with threshold alert)
 - [ ] **Panel 2:** Waste by room (pie chart or bar gauge)
 - [ ] **Panel 3:** Lights on timeline (state visualization)
@@ -169,6 +181,7 @@ join(tables: {light: light_states, presence: presence_states}, on: ["_time"])
 - [ ] **Panel 5:** Weekly trend (improvement tracking)
 
 **Alert configuration:**
+
 ```json
 {
   "alert": {
@@ -191,12 +204,14 @@ join(tables: {light: light_states, presence: presence_states}, on: ["_time"])
 ```
 
 #### 2.3 Climate Efficiency Analysis (4-5 hours)
+
 - [ ] Temperature when occupied vs vacant (per room)
 - [ ] Heating schedule alignment (scheduled hours vs actual occupancy)
 - [ ] Setpoint performance (actual vs target delta)
 - [ ] Occupancy-weighted comfort score
 
 **Key queries:**
+
 ```flux
 // Temperature by occupancy state
 occupancy = from(bucket: "home-assistant")
@@ -223,6 +238,7 @@ vacant_heating = join(tables: {occ: occupancy, temp: temperature}, on: ["_time"]
 ```
 
 #### 2.4 Add Climate Efficiency Dashboard (3-4 hours)
+
 - [ ] **Panel 1:** Efficiency score gauge (% heating during occupancy)
 - [ ] **Panel 2:** Temp by occupancy comparison (bar chart)
 - [ ] **Panel 3:** Schedule vs actual occupancy (Gantt-style)
@@ -230,12 +246,14 @@ vacant_heating = join(tables: {occ: occupancy, temp: temperature}, on: ["_time"]
 - [ ] **Panel 5:** Room-to-room temperature delta (heatmap)
 
 #### 2.5 Implement Alerting (2-3 hours)
+
 - [ ] Light waste >2h/day → Telegram notification
 - [ ] Heating vacant room >1h → Alert
 - [ ] Weekly efficiency report (summary stats)
 - [ ] Test notification delivery and deduplication
 
 **Notification automation example:**
+
 ```yaml
 automation:
   - id: lighting_waste_alert
@@ -257,6 +275,7 @@ automation:
 ```
 
 **Expected outputs:**
+
 - Light waste quantified per room
 - Climate efficiency score established
 - Active alerting for high-waste patterns
@@ -268,15 +287,17 @@ automation:
 
 **Goal:** Understand routines and patterns for predictive automation
 
-### Tasks
+### Phase 3 Tasks
 
 #### 3.1 Routine Detection Queries (4-5 hours)
+
 - [ ] Morning sequence: bedroom → bathroom → kitchen (timing + duration)
 - [ ] Evening wind-down: activity decline pattern
 - [ ] Room transition flow (Sankey diagram data)
 - [ ] Weekday vs weekend comparison
 
 **Morning routine query:**
+
 ```flux
 // Detect first occupancy time per room per day
 bedroom_wake = from(bucket: "home-assistant")
@@ -302,6 +323,7 @@ union(tables: [bedroom_wake, bathroom_entry, kitchen_entry])
 ```
 
 #### 3.2 Build Behavioral Insights Dashboard (5-6 hours)
+
 - [ ] **Panel 1:** Routine timeline (multi-series line: wake/sleep times)
 - [ ] **Panel 2:** Weekday vs weekend comparison (grouped bars)
 - [ ] **Panel 3:** Room transition flow (Sankey or state timeline)
@@ -309,12 +331,14 @@ union(tables: [bedroom_wake, bathroom_entry, kitchen_entry])
 - [ ] **Panel 5:** Anomaly detector (alert list: unusual patterns)
 
 #### 3.3 Seasonal Trend Analysis (3-4 hours)
+
 - [ ] Month-over-month occupancy pattern changes
 - [ ] Correlation with daylight hours (sun integration data)
 - [ ] Temperature impact on room usage
 - [ ] Long-term trend visualization (12-month view)
 
 **Seasonal comparison:**
+
 ```flux
 // Compare occupancy patterns across months
 from(bucket: "home-assistant")
@@ -327,12 +351,14 @@ from(bucket: "home-assistant")
 ```
 
 #### 3.4 Anomaly Detection Logic (4-5 hours)
+
 - [ ] Define "normal" ranges (baseline from Phase 1)
 - [ ] Detect deviations: unexpected absence, odd-hour activity
 - [ ] Historical anomaly review (past 30 days)
 - [ ] Alert configuration for real-time detection
 
 **Anomaly types:**
+
 - **Unexpected absence:** Room typically occupied at time T but vacant
 - **Unusual activity:** Room occupied during typical sleep hours
 - **Pattern break:** Routine timing shift >1h
@@ -352,6 +378,7 @@ join(tables: {expected: expected_pattern, actual: actual_occupancy}, on: ["hour"
 ```
 
 **Expected outputs:**
+
 - Morning/evening routine timing quantified
 - Weekday vs weekend behavioral differences identified
 - Seasonal pattern trends visible
@@ -363,15 +390,17 @@ join(tables: {expected: expected_pattern, actual: actual_occupancy}, on: ["hour"
 
 **Goal:** Optimize air quality management and ventilation
 
-### Tasks
+### Phase 4 Tasks
 
 #### 4.1 Purifier Effectiveness Analysis (3-4 hours)
+
 - [ ] Outdoor → indoor PM2.5 reduction rate
 - [ ] Effectiveness by purifier mode (auto/night/favorite)
 - [ ] Filter performance degradation over time
 - [ ] Optimal mode selection logic
 
 **Effectiveness calculation:**
+
 ```flux
 outdoor = from(bucket: "home-assistant")
   |> range(start: -30d)
@@ -393,12 +422,14 @@ join(tables: {outdoor: outdoor, indoor: indoor}, on: ["_time"])
 ```
 
 #### 4.2 Ventilation Window Detection (2-3 hours)
+
 - [ ] Safe ventilation periods (outdoor PM2.5 <15 µg/m³)
 - [ ] Duration and frequency analysis
 - [ ] Best times for ventilation (historical patterns)
 - [ ] Correlation with weather data (optional)
 
 #### 4.3 Build Air Quality Dashboard (4-5 hours)
+
 - [ ] **Panel 1:** Purifier impact (dual-axis: outdoor + indoor PM2.5)
 - [ ] **Panel 2:** Ventilation windows timeline (green/red states)
 - [ ] **Panel 3:** Filter performance tracking (scatter plot)
@@ -406,12 +437,14 @@ join(tables: {outdoor: outdoor, indoor: indoor}, on: ["_time"])
 - [ ] **Panel 5:** Health score gauge (WHO guideline compliance)
 
 #### 4.4 Create Ventilation Optimizer Automation (3-4 hours)
+
 - [ ] Notification: "Safe to ventilate now" (good outdoor air + indoor worse)
 - [ ] Predicted ventilation windows (based on historical patterns)
 - [ ] Bedroom-specific alerts (sleep time optimization)
 - [ ] Override logic for manual control
 
 **Automation example:**
+
 ```yaml
 automation:
   - id: ventilation_opportunity_alert
@@ -438,6 +471,7 @@ automation:
 ```
 
 **Expected outputs:**
+
 - Purifier effectiveness quantified
 - Optimal ventilation times identified
 - Proactive ventilation suggestions operational
@@ -449,9 +483,10 @@ automation:
 
 **Goal:** Apply analytics insights to improve automations
 
-### Tasks
+### Phase 5 Tasks
 
 #### 5.1 Adaptive Lighting Implementation (4-5 hours)
+
 - [ ] Adjust timeouts based on room usage patterns
   - Kitchen: 5min (high turnover)
   - Bedroom: 30min (longer stays)
@@ -460,6 +495,7 @@ automation:
 - [ ] Weekend schedule adjustments (based on Phase 3 findings)
 
 **Dynamic timeout example:**
+
 ```yaml
 automation:
   - id: adaptive_kitchen_lights
@@ -490,12 +526,14 @@ automation:
 ```
 
 #### 5.2 Predictive Climate Control (5-6 hours)
+
 - [ ] Learn wake time from bathroom occupancy patterns
 - [ ] Pre-heat bedroom 30min before typical wake
 - [ ] Weekend schedule auto-adjustment
 - [ ] Reduce temp if room vacant >1h (reversible)
 
 **Predictive heating:**
+
 ```yaml
 # Template sensor: predicted wake time
 template:
@@ -523,12 +561,14 @@ automation:
 ```
 
 #### 5.3 Smart Air Purifier Scheduling (3-4 hours)
+
 - [ ] Night mode during typical sleep hours (from Phase 3 data)
 - [ ] Anticipatory mode boost (pre-spike based on patterns)
 - [ ] Auto-antibacterial runs during absence windows
 - [ ] Mode override based on real-time indoor PM2.5
 
 #### 5.4 Measure Improvement Impact (3-4 hours)
+
 - [ ] A/B test: old vs new automation logic
 - [ ] Metrics to track:
   - Light waste reduction (hours saved)
@@ -538,6 +578,7 @@ automation:
 - [ ] Document findings in `docs/optimization-results.md`
 
 **Comparison dashboard:**
+
 ```json
 {
   "panels": [
@@ -559,12 +600,14 @@ automation:
 ```
 
 #### 5.5 Energy Savings Estimation (2-3 hours)
+
 - [ ] Calculate kWh saved (lighting + heating)
 - [ ] Cost savings estimate (kWh × electricity rate)
 - [ ] ROI on smart home investment
 - [ ] Environmental impact (CO2 reduction)
 
 **Energy calculation:**
+
 ```flux
 // Lighting energy savings
 light_waste_before = // Baseline waste hours
@@ -576,6 +619,7 @@ savings_pln = savings_kwh * 0.80  // ~0.80 PLN/kWh (Poland 2024)
 ```
 
 **Expected outputs:**
+
 - Automations tuned to actual behavior patterns
 - Measurable efficiency improvements
 - Quantified energy/cost savings
@@ -587,27 +631,31 @@ savings_pln = savings_kwh * 0.80  // ~0.80 PLN/kWh (Poland 2024)
 
 **Goal:** Maintain and evolve analytics over time
 
-### Tasks
+### Phase 6 Tasks
 
 #### 6.1 Data Quality Monitoring (Weekly)
+
 - [ ] Check for sensor gaps (>10min outages)
 - [ ] Validate query performance (execution time)
 - [ ] Review alert false positive rate
 - [ ] Update entity mappings (new devices)
 
 #### 6.2 Dashboard Maintenance (Monthly)
+
 - [ ] Archive old panels (unused views)
 - [ ] Update time ranges (12-month trends → 18-month)
 - [ ] Refresh baselines (seasonal adjustments)
 - [ ] Add new metrics as needed
 
 #### 6.3 Automation Tuning (Quarterly)
+
 - [ ] Review efficiency scores (targets met?)
 - [ ] Adjust thresholds based on seasonal changes
 - [ ] Incorporate new sensors/devices
 - [ ] Test alternative optimization strategies
 
 #### 6.4 Privacy Review (Semi-annual)
+
 - [ ] Audit data retention policies (raw vs aggregated)
 - [ ] Purge old granular data (>7 days raw → daily summaries)
 - [ ] Verify access controls (Grafana users)
@@ -620,6 +668,7 @@ savings_pln = savings_kwh * 0.80  // ~0.80 PLN/kWh (Poland 2024)
 ### InfluxDB Performance Optimization
 
 **Pre-aggregation Strategy:**
+
 ```flux
 // Use continuous queries for frequently-accessed aggregates
 // Example: Daily occupancy (runs every night)
@@ -634,6 +683,7 @@ from(bucket: "home-assistant")
 ```
 
 **Query Optimization Tips:**
+
 - Use `createEmpty: false` in aggregateWindow (avoid null points)
 - Filter early (domain/entity_id before calculations)
 - Sample large datasets (every: 5m for 30-day ranges)
@@ -642,6 +692,7 @@ from(bucket: "home-assistant")
 ### Grafana Best Practices
 
 **Variable Templates:**
+
 ```json
 {
   "templating": {
@@ -662,6 +713,7 @@ from(bucket: "home-assistant")
 ```
 
 **Drill-down Links:**
+
 - Room utilization → detailed room dashboard
 - Waste alert → specific light timeline
 - Anomaly → historical pattern comparison
@@ -669,6 +721,7 @@ from(bucket: "home-assistant")
 ### Home Assistant Sensor Integration
 
 **Template sensors for Grafana:**
+
 ```yaml
 # hosts/homelab/home-assistant/sensors.nix
 template:
@@ -691,12 +744,14 @@ template:
 ### Privacy & Data Retention
 
 **Retention policy:**
+
 - Raw data: 7 days (second-level precision)
 - Hourly aggregates: 90 days
 - Daily summaries: 2 years
 - Monthly rollups: Indefinite
 
 **InfluxDB retention config:**
+
 ```nix
 # hosts/homelab/influxdb.nix (future enhancement)
 services.influxdb2.settings = {
@@ -713,18 +768,21 @@ services.influxdb2.settings = {
 ## Success Metrics
 
 ### Phase 1-2 (Foundation + Efficiency)
+
 - [ ] Occupancy tracked for all rooms (>95% uptime)
 - [ ] Light waste quantified (baseline established)
 - [ ] Climate efficiency score calculated
 - [ ] 3+ dashboards operational
 
 ### Phase 3-4 (Behavioral + Air Quality)
+
 - [ ] Morning/evening routines detected
 - [ ] Weekday vs weekend patterns identified
 - [ ] Purifier effectiveness measured
 - [ ] Ventilation optimizer operational
 
 ### Phase 5-6 (Optimization + Maintenance)
+
 - [ ] Light waste reduced 50%+ from baseline
 - [ ] Heating efficiency improved 20%+
 - [ ] Automation satisfaction score >8/10 (subjective)
@@ -735,17 +793,20 @@ services.influxdb2.settings = {
 ## Resources & References
 
 ### Documentation
+
 - [InfluxDB Flux Language](https://docs.influxdata.com/flux/v0/)
 - [stateDuration() function](https://docs.influxdata.com/flux/v0/stdlib/universe/stateduration/)
 - [Grafana Dashboard JSON Schema](https://grafana.com/docs/grafana/latest/dashboards/json-model/)
 - [Home Assistant InfluxDB Integration](https://www.home-assistant.io/integrations/influxdb/)
 
 ### Community Examples
+
 - [Home Assistant + Grafana Guide](https://vdbrink.github.io/homeassistant/homeassistant_dashboard_grafana.html)
 - [Smart Home Analytics Patterns](https://thesmarthomejourney.com/2021/05/02/grafana-influxdb-home-assistant/)
 - [Occupancy Detection Best Practices](https://github.com/Hankanman/Area-Occupancy-Detection)
 
 ### Tools
+
 - [Flux Query Tester](https://docs.influxdata.com/influxdb/v2/tools/flux-vscode/)
 - [Grafana Dashboard Exporter](https://grafana.com/docs/grafana/latest/dashboards/share-dashboards-panels/)
 - [InfluxDB Data Explorer](http://homelab:8086) (local instance)
@@ -755,16 +816,19 @@ services.influxdb2.settings = {
 ## Next Steps
 
 **Immediate actions:**
+
 1. Review plan and adjust timeline based on availability
 2. Start Phase 1.1: Data audit (validate sensor data quality)
 3. Set up project tracking (optional: GitHub project or similar)
 
 **Questions to answer:**
+
 - Which rooms are priority for analytics? (Focus on high-traffic areas first)
 - What's the comfort/efficiency trade-off? (How much automation vs manual control?)
 - Privacy preferences? (Retention policies, data access)
 
 **Potential blockers:**
+
 - Sensor reliability issues (FP2 firmware, connectivity)
 - Query performance with large datasets (may need sampling)
 - Dashboard complexity (balance detail vs usability)
