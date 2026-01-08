@@ -80,7 +80,7 @@
       owner = "bluetooth-devices";
       repo = "kegtron-ble";
       rev = "v${version}";
-      hash = "sha256-oOrUzIe6DKdlqN9HhDq6LVxNwE7S0rL+aTu3/bXqj5k=";
+      hash = "sha256-aPWf+EHr6Et4OHJ8ZN9M1NxKhaf7piEQilzAsBO3d5E=";
     };
 
     nativeBuildInputs = with python3Packages; [
