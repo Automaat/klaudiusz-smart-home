@@ -127,5 +127,49 @@ in {
         }
       ];
     }
+
+    # -----------------------------------------
+    # Leaving Home
+    # -----------------------------------------
+    {
+      id = "leaving_home";
+      alias = "System - Leaving home";
+      description = "Turn off all lights, TV, and smart plugs when leaving home. Can be triggered via voice command, location change, or manual toggle.";
+      trigger = [
+        # Location based
+        {
+          platform = "state";
+          entity_id = "person.marcin";
+          to = "not_home";
+        }
+        # Manual toggle
+        {
+          platform = "state";
+          entity_id = "input_boolean.away_mode";
+          to = "on";
+        }
+      ];
+      action = [
+        # Turn off all lights
+        {
+          action = "light.turn_off";
+          target.entity_id = "all";
+        }
+        # Turn off TV
+        {
+          action = "media_player.turn_off";
+          target.entity_id = "media_player.tv";
+        }
+        # Turn off smart plugs
+        {
+          action = "switch.turn_off";
+          target.entity_id = [
+            "switch.sonoff_plug"
+            "switch.sonoff_plug_2"
+          ];
+        }
+      ];
+      mode = "single";
+    }
   ];
 }
