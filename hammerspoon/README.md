@@ -14,7 +14,7 @@ Automatically controls office smart plug based on Zoom meeting state.
 **Requirements:**
 - [Hammerspoon](https://www.hammerspoon.org/) installed on macOS
 - Zoom client installed
-- Network access to Home Assistant (192.168.0.241:8123)
+- Network access to Home Assistant (homeassistant.local:8123)
 
 **Installation:**
 
@@ -44,7 +44,8 @@ Edit `~/.hammerspoon/zoom-smart-plug.lua` if needed:
 
 ```lua
 local config = {
-    ha_webhook_url = "http://192.168.0.241:8123/api/webhook/zoom_meeting",
+    -- Update webhook_id to match your Home Assistant installation
+    ha_webhook_url = "http://homeassistant.local:8123/api/webhook/zoom_meeting_7cca0951_0a49_4bdc_a8d3_cc46ea7d8980",
     check_interval = 5,  -- seconds
     zoom_process = "zoom.us",
 }
@@ -61,7 +62,7 @@ local config = {
 **Troubleshooting:**
 
 - **Script not loading:** Check `~/.hammerspoon/init.lua` for syntax errors
-- **Webhook fails:** Verify HA accessible at 192.168.0.241:8123
+- **Webhook fails:** Verify HA accessible at homeassistant.local:8123 (check mDNS resolution)
 - **Meeting not detected:** Check Hammerspoon console for logs (`hs.console()`)
 - **Permissions:** Grant Hammerspoon accessibility permissions in System Preferences
 

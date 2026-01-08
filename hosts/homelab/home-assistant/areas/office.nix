@@ -18,9 +18,9 @@
       trigger = [
         {
           platform = "webhook";
-          webhook_id = "zoom_meeting";
+          webhook_id = "zoom_meeting_7cca0951_0a49_4bdc_a8d3_cc46ea7d8980";
           allowed_methods = ["POST"];
-          local_only = false;
+          local_only = true;
         }
       ];
       action = [
@@ -55,6 +55,15 @@
                   target.entity_id = "switch.sonoff_plug";
                 }
               ];
+            }
+          ];
+          default = [
+            {
+              action = "logbook.log";
+              data = {
+                name = "Office - Zoom webhook invalid state";
+                message = "Received unexpected Zoom webhook payload: {{ trigger.json | tojson }}";
+              };
             }
           ];
         }

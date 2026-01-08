@@ -17,7 +17,9 @@ local log = hs.logger.new('zoom-smart-plug', 'info')
 -- ========================================
 local config = {
     -- Home Assistant webhook URL
-    ha_webhook_url = "http://192.168.0.241:8123/api/webhook/zoom_meeting",
+    -- NOTE: Update webhook_id to match your installation
+    -- Using mDNS hostname (homeassistant.local) for network flexibility
+    ha_webhook_url = "http://homeassistant.local:8123/api/webhook/zoom_meeting_7cca0951_0a49_4bdc_a8d3_cc46ea7d8980",
 
     -- Check interval (seconds)
     check_interval = 5,
@@ -58,10 +60,9 @@ local function isInMeeting()
     for _, window in ipairs(windows) do
         local title = window:title()
         if title then
-            -- Meeting windows typically have these patterns
+            -- Meeting windows typically have these specific patterns
             if string.match(title:lower(), "zoom meeting") or
-               string.match(title:lower(), "participant") or
-               (string.match(title:lower(), "zoom") and not string.match(title:lower(), "home")) then
+               string.match(title:lower(), "participant") then
                 return true
             end
         end
@@ -80,7 +81,7 @@ end
 -- ========================================
 -- Home Assistant Webhook
 -- ========================================
-local function sendWebhook(meeting_state)
+local function sendWebhook(meeting_state, on_success)
     local json = hs.json.encode({state = meeting_state})
 
     local headers = {
@@ -96,8 +97,11 @@ local function sendWebhook(meeting_state)
         function(status, body, headers)
             if status == 200 then
                 log.i(string.format("Webhook sent successfully: %s", meeting_state))
+                if on_success then
+                    on_success()
+                end
             else
-                log.e(string.format("Webhook failed (status %d): %s", status, body))
+                log.e(string.format("Webhook failed (status %d): %s", status or "nil", body or "no response"))
             end
         end
     )
@@ -112,26 +116,30 @@ local function checkMeetingState()
     -- State transition: not in meeting → in meeting
     if currently_in_meeting and not state.in_meeting then
         log.i("Meeting started - turning on smart plug")
-        sendWebhook("started")
-        state.in_meeting = true
+        sendWebhook("started", function()
+            -- Only update state after successful webhook
+            state.in_meeting = true
 
-        -- Optional: show notification
-        hs.notify.new({
-            title = "Zoom Meeting",
-            informativeText = "Smart plug turned ON",
-        }):send()
+            -- Optional: show notification
+            hs.notify.new({
+                title = "Zoom Meeting",
+                informativeText = "Smart plug turned ON",
+            }):send()
+        end)
 
     -- State transition: in meeting → not in meeting
     elseif not currently_in_meeting and state.in_meeting then
         log.i("Meeting ended - turning off smart plug")
-        sendWebhook("ended")
-        state.in_meeting = false
+        sendWebhook("ended", function()
+            -- Only update state after successful webhook
+            state.in_meeting = false
 
-        -- Optional: show notification
-        hs.notify.new({
-            title = "Zoom Meeting",
-            informativeText = "Smart plug turned OFF",
-        }):send()
+            -- Optional: show notification
+            hs.notify.new({
+                title = "Zoom Meeting",
+                informativeText = "Smart plug turned OFF",
+            }):send()
+        end)
     end
 end
 
