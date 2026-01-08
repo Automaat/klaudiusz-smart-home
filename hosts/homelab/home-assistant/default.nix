@@ -210,7 +210,7 @@
     owner = "thomasloven";
     repo = "lovelace-layout-card";
     # renovate: datasource=github-tags depName=thomasloven/lovelace-layout-card
-    rev = "v2.4.7";
+    rev = "16";
     hash = "sha256-xni9cTgv5rdpr+Oo4Zh/d/2ERMiqDiTFGAiXEnigqjc=";
   };
 
