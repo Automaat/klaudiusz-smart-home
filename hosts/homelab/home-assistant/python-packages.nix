@@ -70,4 +70,39 @@
       maintainers = with maintainers; [];
     };
   };
+
+  kegtron-ble = python3Packages.buildPythonPackage rec {
+    pname = "kegtron-ble";
+    version = "1.0.2";
+    format = "pyproject";
+
+    src = pkgs.fetchFromGitHub {
+      owner = "bluetooth-devices";
+      repo = "kegtron-ble";
+      rev = "v${version}";
+      hash = "sha256-aPWf+EHr6Et4OHJ8ZN9M1NxKhaf7piEQilzAsBO3d5E=";
+    };
+
+    nativeBuildInputs = with python3Packages; [
+      poetry-core
+    ];
+
+    propagatedBuildInputs = with python3Packages; [
+      bluetooth-sensor-state-data
+      sensor-state-data
+      bluetooth-data-tools
+    ];
+
+    pythonImportsCheck = ["kegtron_ble"];
+
+    # Tests require additional test dependencies
+    doCheck = false;
+
+    meta = with lib; {
+      description = "Kegtron BLE support";
+      homepage = "https://github.com/bluetooth-devices/kegtron-ble";
+      license = licenses.mit;
+      maintainers = with maintainers; [];
+    };
+  };
 }

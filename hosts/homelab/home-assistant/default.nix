@@ -296,6 +296,7 @@ in {
         aiogithubapi # Required by HACS
         prettytable # Required by Watchman
         customPkgs.ibeacon-ble # iBeacon integration
+        customPkgs.kegtron-ble # Kegtron BLE integration
         pyatv # Apple TV integration
         pychromecast # Google Cast integration
         zlib-ng # Fast compression for aiohttp (prevents performance warning)
