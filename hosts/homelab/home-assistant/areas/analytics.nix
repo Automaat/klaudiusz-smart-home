@@ -163,11 +163,11 @@
               📊 Dzienne podsumowanie efektywności
 
               🏠 Salon:
-              Obecność dzisiaj: {{ state_attr('binary_sensor.presence_livingroom', 'last_changed') }}
+              Obecność dzisiaj: {{ relative_time(states.binary_sensor.presence_livingroom.last_changed) }}
               Temperatura: {{ state_attr('climate.livingroom_thermostat', 'current_temperature') }}°C
 
               🍳 Kuchnia:
-              Obecność dzisiaj: {{ state_attr('binary_sensor.presence_kitchen', 'last_changed') }}
+              Obecność dzisiaj: {{ relative_time(states.binary_sensor.presence_kitchen.last_changed) }}
               Światło: {{ states('light.kitchen') }}
 
               💡 Sprawdź szczegóły w Grafana:

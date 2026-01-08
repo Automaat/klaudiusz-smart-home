@@ -121,7 +121,9 @@
         "orientation": "auto",
         "reduceOptions": {
           "values": false,
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": ""
         },
         "textMode": "auto"
@@ -186,7 +188,9 @@
         "orientation": "auto",
         "reduceOptions": {
           "values": false,
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": ""
         },
         "textMode": "auto"
@@ -198,7 +202,7 @@
             "type": "influxdb",
             "uid": "${DS_INFLUXDB}"
           },
-          "query": "// Daily light waste - Hallway\n\nlight_states = from(bucket: \"home-assistant\")\n  |> range(start: -1d)\n  |> filter(fn: (r) => r[\"entity_id\"] == \"light.hallway\")\n  |> filter(fn: (r) => r[\"_field\"] == \"state\")\n  |> aggregateWindow(every: 1m, fn: last, createEmpty: false)\n  |> map(fn: (r) => ({r with _value: if r._value == \"on\" then 1.0 else 0.0}))\n  |> keep(columns: [\"_time\", \"_value\"])\n\n// Hallway doesn't have direct presence sensor, use any FP2 zone activity\npresence_states = from(bucket: \"home-assistant\")\n  |> range(start: -1d)\n  |> filter(fn: (r) => r[\"entity_id\"] =~ /presence_sensor_fp2.*presence_sensor/)\n  |> filter(fn: (r) => r[\"_field\"] == \"state\")\n  |> aggregateWindow(every: 1m, fn: last, createEmpty: false)\n  |> map(fn: (r) => ({r with _value: if r._value == \"on\" then 1.0 else 0.0}))\n  |> max()\n  |> map(fn: (r) => ({r with _value: if r._value > 0.0 then 0.0 else 1.0}))\n  |> keep(columns: [\"_time\", \"_value\"])\n\njoin(tables: {light: light_states, presence: presence_states}, on: [\"_time\"])\n  |> map(fn: (r) => ({\n      _time: r._time,\n      _value: r._value_light * r._value_presence,\n      _field: \"waste\"\n  }))\n  |> aggregateWindow(every: 1d, fn: sum, createEmpty: false)\n  |> map(fn: (r) => ({r with _value: r._value / 60.0}))\n  |> yield(name: \"hallway_waste\")",
+          "query": "// Daily light waste - Hallway\n\nlight_states = from(bucket: \"home-assistant\")\n  |> range(start: -1d)\n  |> filter(fn: (r) => r[\"entity_id\"] == \"light.hallway\")\n  |> filter(fn: (r) => r[\"_field\"] == \"state\")\n  |> aggregateWindow(every: 1m, fn: last, createEmpty: false)\n  |> map(fn: (r) => ({r with _value: if r._value == \"on\" then 1.0 else 0.0}))\n  |> keep(columns: [\"_time\", \"_value\"])\n\n// Hallway doesn't have direct presence sensor, use any FP2 zone activity\npresence_states = from(bucket: \"home-assistant\")\n  |> range(start: -1d)\n  |> filter(fn: (r) => r[\"entity_id\"] =~ /presence_sensor_fp2.*presence_sensor/)\n  |> filter(fn: (r) => r[\"_field\"] == \"state\")\n  |> aggregateWindow(every: 1m, fn: last, createEmpty: false)\n  |> map(fn: (r) => ({r with _value: if r._value == \"on\" then 1.0 else 0.0}))\n  |> group(columns: [\"_time\"])\n  |> max()\n  |> map(fn: (r) => ({r with _value: if r._value > 0.0 then 0.0 else 1.0}))\n  |> keep(columns: [\"_time\", \"_value\"])\n\njoin(tables: {light: light_states, presence: presence_states}, on: [\"_time\"])\n  |> map(fn: (r) => ({\n      _time: r._time,\n      _value: r._value_light * r._value_presence,\n      _field: \"waste\"\n  }))\n  |> aggregateWindow(every: 1d, fn: sum, createEmpty: false)\n  |> map(fn: (r) => ({r with _value: r._value / 60.0}))\n  |> yield(name: \"hallway_waste\")",
           "refId": "A"
         }
       ],
@@ -251,7 +255,9 @@
         "orientation": "auto",
         "reduceOptions": {
           "values": false,
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": ""
         },
         "textMode": "auto"
@@ -263,11 +269,11 @@
             "type": "influxdb",
             "uid": "${DS_INFLUXDB}"
           },
-          "query": "// Total daily waste across all rooms\n\nimport \"contrib/tomhollingworth/events\"\n\n// Kitchen waste\nkitchen_light = from(bucket: \"home-assistant\")\n  |> range(start: -1d)\n  |> filter(fn: (r) => r[\"entity_id\"] == \"light.kitchen\")\n  |> filter(fn: (r) => r[\"_field\"] == \"state\")\n  |> aggregateWindow(every: 1m, fn: last, createEmpty: false)\n  |> map(fn: (r) => ({r with _value: if r._value == \"on\" then 1.0 else 0.0}))\n\nkitchen_presence = from(bucket: \"home-assistant\")\n  |> range(start: -1d)\n  |> filter(fn: (r) => r[\"entity_id\"] == \"binary_sensor.presence_kitchen\")\n  |> filter(fn: (r) => r[\"_field\"] == \"state\")\n  |> aggregateWindow(every: 1m, fn: last, createEmpty: false)\n  |> map(fn: (r) => ({r with _value: if r._value == \"on\" then 0.0 else 1.0}))\n\nkitchen_waste = join(tables: {light: kitchen_light, presence: kitchen_presence}, on: [\"_time\"])\n  |> map(fn: (r) => ({\n      _time: r._time,\n      _value: r._value_light * r._value_presence,\n      room: \"kitchen\"\n  }))\n  |> aggregateWindow(every: 1d, fn: sum, createEmpty: false)\n  |> map(fn: (r) => ({r with _value: r._value / 60.0}))\n\nkitchen_waste\n  |> yield(name: \"total_waste\")",
+          "query": "// Total daily waste across all rooms\n\n// Kitchen waste\nkitchen_light = from(bucket: \"home-assistant\")\n  |> range(start: -1d)\n  |> filter(fn: (r) => r[\"entity_id\"] == \"light.kitchen\")\n  |> filter(fn: (r) => r[\"_field\"] == \"state\")\n  |> aggregateWindow(every: 1m, fn: last, createEmpty: false)\n  |> map(fn: (r) => ({r with _value: if r._value == \"on\" then 1.0 else 0.0}))\n\nkitchen_presence = from(bucket: \"home-assistant\")\n  |> range(start: -1d)\n  |> filter(fn: (r) => r[\"entity_id\"] == \"binary_sensor.presence_kitchen\")\n  |> filter(fn: (r) => r[\"_field\"] == \"state\")\n  |> aggregateWindow(every: 1m, fn: last, createEmpty: false)\n  |> map(fn: (r) => ({r with _value: if r._value == \"on\" then 0.0 else 1.0}))\n\nkitchen_waste = join(tables: {light: kitchen_light, presence: kitchen_presence}, on: [\"_time\"])\n  |> map(fn: (r) => ({\n      _time: r._time,\n      _value: r._value_light * r._value_presence,\n      room: \"kitchen\"\n  }))\n  |> aggregateWindow(every: 1d, fn: sum, createEmpty: false)\n  |> map(fn: (r) => ({r with _value: r._value / 60.0}))\n\nkitchen_waste\n  |> yield(name: \"total_waste\")",
           "refId": "A"
         }
       ],
-      "title": "Total Waste (Today)",
+      "title": "Kitchen Waste (Today)",
       "type": "stat"
     },
     {
@@ -344,7 +350,10 @@
       "id": 6,
       "options": {
         "legend": {
-          "calcs": ["mean", "max"],
+          "calcs": [
+            "mean",
+            "max"
+          ],
           "displayMode": "table",
           "placement": "right"
         },
@@ -359,7 +368,7 @@
             "type": "influxdb",
             "uid": "${DS_INFLUXDB}"
           },
-          "query": "// 7-day waste trend - Kitchen\n\nlight_states = from(bucket: \"home-assistant\")\n  |> range(start: -7d)\n  |> filter(fn: (r) => r[\"entity_id\"] == \"light.kitchen\")\n  |> filter(fn: (r) => r[\"_field\"] == \"state\")\n  |> aggregateWindow(every: 1m, fn: last, createEmpty: false)\n  |> map(fn: (r) => ({r with _value: if r._value == \"on\" then 1.0 else 0.0}))\n  |> keep(columns: [\"_time\", \"_value\"])\n\npresence_states = from(bucket: \"home-assistant\")\n  |> range(start: -7d)\n  |> filter(fn: (r) => r[\"entity_id\"] == \"binary_sensor.presence_kitchen\")\n  |> filter(fn: (r) => r[\"_field\"] == \"state\")\n  |> aggregateWindow(every: 1m, fn: last, createEmpty: false)\n  |> map(fn: (r) => ({r with _value: if r._value == \"on\" then 0.0 else 1.0}))\n  |> keep(columns: [\"_time\", \"_value\"])\n\njoin(tables: {light: light_states, presence: presence_states}, on: [\"_time\"])\n  |> map(fn: (r) => ({\n      _time: r._time,\n      _value: r._value_light * r._value_presence,\n      _field: \"waste\"\n  }))\n  |> aggregateWindow(every: 1d, fn: sum, createEmpty: false)\n  |> map(fn: (r) => ({r with _value: r._value / 60.0, _measurement: \"kitchen\"}))\n  |> yield(name: \"kitchen\")",
+          "query": "// 7-day waste trend - Kitchen\n\nlight_states = from(bucket: \"home-assistant\")\n  |> range(start: -7d)\n  |> filter(fn: (r) => r[\"entity_id\"] == \"light.kitchen\")\n  |> filter(fn: (r) => r[\"_field\"] == \"state\")\n  |> aggregateWindow(every: 5m, fn: last, createEmpty: false)\n  |> map(fn: (r) => ({r with _value: if r._value == \"on\" then 1.0 else 0.0}))\n  |> keep(columns: [\"_time\", \"_value\"])\n\npresence_states = from(bucket: \"home-assistant\")\n  |> range(start: -7d)\n  |> filter(fn: (r) => r[\"entity_id\"] == \"binary_sensor.presence_kitchen\")\n  |> filter(fn: (r) => r[\"_field\"] == \"state\")\n  |> aggregateWindow(every: 5m, fn: last, createEmpty: false)\n  |> map(fn: (r) => ({r with _value: if r._value == \"on\" then 0.0 else 1.0}))\n  |> keep(columns: [\"_time\", \"_value\"])\n\njoin(tables: {light: light_states, presence: presence_states}, on: [\"_time\"])\n  |> map(fn: (r) => ({\n      _time: r._time,\n      _value: r._value_light * r._value_presence * 5.0,\n      _field: \"waste\"\n  }))\n  |> aggregateWindow(every: 1d, fn: sum, createEmpty: false)\n  |> map(fn: (r) => ({r with _value: r._value / 60.0, _measurement: \"kitchen\"}))\n  |> yield(name: \"kitchen\")",
           "refId": "A"
         }
       ],
@@ -412,13 +421,17 @@
         "legend": {
           "displayMode": "table",
           "placement": "right",
-          "values": ["value"]
+          "values": [
+            "value"
+          ]
         },
         "pieType": "pie",
         "tooltip": {
           "mode": "single"
         },
-        "displayLabels": ["percent"]
+        "displayLabels": [
+          "percent"
+        ]
       },
       "pluginVersion": "8.4.2",
       "targets": [
@@ -431,7 +444,7 @@
           "refId": "A"
         }
       ],
-      "title": "Waste Distribution by Room",
+      "title": "Kitchen Waste Distribution",
       "type": "piechart"
     },
     {
@@ -493,7 +506,9 @@
       "options": {
         "footer": {
           "fields": "",
-          "reducer": ["sum"],
+          "reducer": [
+            "sum"
+          ],
           "show": true
         },
         "showHeader": true,
@@ -515,13 +530,17 @@
           "refId": "A"
         }
       ],
-      "title": "Room Ranking (Total Waste Hours)",
+      "title": "Kitchen Ranking (Total Waste Hours)",
       "type": "table"
     }
   ],
   "schemaVersion": 35,
   "style": "dark",
-  "tags": ["analytics", "efficiency", "lights"],
+  "tags": [
+    "analytics",
+    "efficiency",
+    "lights"
+  ],
   "templating": {
     "list": []
   },
