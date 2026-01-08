@@ -989,16 +989,20 @@ Add section after "Home Assistant Patterns":
 ## Unresolved Questions
 
 **Resolved (Phase 4 completion):**
+
 - ✅ Dashboard structure validated: Overview → room-based → specialty views works well
 - ✅ Custom cards verified: Mushroom, Mini Graph, History Explorer, Mini Media Player all functional
 - ✅ Entity organization confirmed: Climate, air quality, presence sensors properly grouped
 
 **Remaining (Phases 5-7):**
-- How system monitoring sensors (CPU, disk, memory) will impact storage and performance in practice (Phase 2 skipped for now)
+
+- How system monitoring sensors (CPU, disk, memory) will impact storage and performance
+  in practice (Phase 2 skipped for now)
 - Which Grafana dashboards are most useful for long-term historical analysis
 - Whether Grafana alerting provides value over existing HA automations
 
 These will be refined based on:
+
 - Real-world usage patterns with current dashboard implementation
 - InfluxDB data retention and query performance (365-day retention configured)
 - Family feedback on dashboard usability and information density
