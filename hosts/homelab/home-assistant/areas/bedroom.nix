@@ -64,14 +64,12 @@
           condition = "or";
           conditions = [
             {
-              condition = "state";
-              entity_id = "sensor.aleje_pm2_5_index";
-              state = "very_good";
+              condition = "template";
+              value_template = "{{ state_attr('sensor.airly_home_ogolny_indeks_jakosci_powietrza', 'level') == 'very_low' }}";
             }
             {
-              condition = "state";
-              entity_id = "sensor.aleje_pm2_5_index";
-              state = "good";
+              condition = "template";
+              value_template = "{{ state_attr('sensor.airly_home_ogolny_indeks_jakosci_powietrza', 'level') == 'low' }}";
             }
           ];
         }
