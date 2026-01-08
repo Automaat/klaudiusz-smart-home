@@ -3,6 +3,7 @@
 **Purpose:** Historical data analysis and advanced metrics visualization for Klaudiusz smart home.
 
 **Why Grafana?** Home Assistant dashboards excel at quick trends (24h max) and interactive controls, but Grafana provides:
+
 - 365-day data retention via InfluxDB
 - Advanced Flux queries for aggregation and analysis
 - Alert configuration with thresholds
@@ -11,7 +12,7 @@
 
 ## Access
 
-- **URL:** http://homelab:3000 (local network)
+- **URL:** <http://homelab:3000> (local network)
 - **Tailscale:** Access via Tailscale IP when remote
 - **Credentials:** admin (password in sops secrets)
 
@@ -22,6 +23,7 @@ Dashboards auto-provisioned from `hosts/homelab/grafana/dashboards/`:
 ### Smart Home (`smart-home/`)
 
 **1. Home Assistant System Metrics** (`home-assistant.json`)
+
 - CPU usage, load average (1m/5m/15m)
 - Memory usage trends
 - Disk usage with 90% alert threshold
@@ -33,6 +35,7 @@ Dashboards auto-provisioned from `hosts/homelab/grafana/dashboards/`:
 **Alerts:** Disk >90%, Memory >90%
 
 **2. Environmental Monitoring** (`environmental-monitoring.json`)
+
 - Temperature comparison (living room, bedroom, bathroom)
 - Average/max/min home temperature stats
 - PM2.5 outdoor vs indoor trends
@@ -45,6 +48,7 @@ Dashboards auto-provisioned from `hosts/homelab/grafana/dashboards/`:
 **Status:** ✅ Deployed
 **Time Range:** 7d default
 **Sensors Required:**
+
 - `sensor.average_home_temperature`
 - `sensor.max_home_temperature`
 - `sensor.min_home_temperature`
@@ -55,6 +59,7 @@ Dashboards auto-provisioned from `hosts/homelab/grafana/dashboards/`:
 ### Services (`services/`)
 
 **3. Service Health & Comin Deployments** (`service-health.json`)
+
 - Service status indicators (Whisper, Piper, Tailscale, PostgreSQL, fail2ban)
 - Comin last deployment UUID
 - Time since last deployment
@@ -67,6 +72,7 @@ Dashboards auto-provisioned from `hosts/homelab/grafana/dashboards/`:
 ### Infrastructure (`infrastructure/`)
 
 **4. Node Exporter** (`node-exporter.json`)
+
 - System-level metrics (Prometheus node_exporter)
 - Comprehensive CPU/memory/disk/network stats
 - Process monitoring
@@ -75,6 +81,7 @@ Dashboards auto-provisioned from `hosts/homelab/grafana/dashboards/`:
 **Data Source:** Prometheus
 
 **5. PostgreSQL** (`postgresql.json`)
+
 - Database performance metrics
 - Connection pool stats
 - Query performance
@@ -85,14 +92,16 @@ Dashboards auto-provisioned from `hosts/homelab/grafana/dashboards/`:
 ## Data Sources
 
 ### InfluxDB (UID: `influxdb`)
-- **URL:** http://localhost:8086
+
+- **URL:** <http://localhost:8086>
 - **Database:** home-assistant
 - **Query Language:** Flux
 - **Retention:** 365 days
 - **Use For:** Home Assistant entity history (sensors, climate, binary_sensors)
 
 ### Prometheus (UID: `prometheus`)
-- **URL:** http://localhost:9090
+
+- **URL:** <http://localhost:9090>
 - **Retention:** 15 days
 - **Use For:** Real-time service health, system metrics via node_exporter
 
@@ -153,13 +162,15 @@ from(bucket: "home-assistant")
 3. Select data sources (InfluxDB/Prometheus)
 4. Click **Import**
 
-**Note:** Auto-provisioned dashboards (from `/hosts/homelab/grafana/dashboards/`) are read-only in GUI. Edit JSON directly and rebuild NixOS.
+**Note:** Auto-provisioned dashboards (from `/hosts/homelab/grafana/dashboards/`)
+are read-only in GUI. Edit JSON directly and rebuild NixOS.
 
 ## Alert Configuration
 
 **Current:** No alerts configured in Grafana (using HA automations instead).
 
 **Future:** Can add Grafana alerts for:
+
 - CPU temperature >80°C for 5m
 - Disk >90% for 30m
 - Memory >90% for 10m
@@ -174,7 +185,8 @@ from(bucket: "home-assistant")
 1. Check data source connection: **Configuration** → **Data Sources**
 2. Verify InfluxDB token: `systemctl status influxdb2`
 3. Check entity exists in HA: **Developer Tools** → **States**
-4. Verify InfluxDB recording: `influx query 'from(bucket:"home-assistant") |> range(start:-1h) |> filter(fn: (r) => r["entity_id"] == "ENTITY_ID") |> limit(n:10)'`
+4. Verify InfluxDB recording: `influx query 'from(bucket:"home-assistant") |> range(start:-1h)
+   |> filter(fn: (r) => r["entity_id"] == "ENTITY_ID") |> limit(n:10)'`
 
 ### Panels Show "Unknown" or N/A
 
