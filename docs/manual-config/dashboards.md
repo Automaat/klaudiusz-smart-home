@@ -5,12 +5,14 @@
 This guide covers creating GUI-managed dashboards in Home Assistant for day-to-day controls and quick status views.
 
 **Why GUI-managed:**
+
 - Rapid iteration without rebuilds
 - Visual design and layout tweaking
 - Responsive sections view (modern HA default)
 - No Nix complexity for visual changes
 
 **Philosophy:**
+
 - Progressive disclosure (overview → detailed views)
 - Context-aware (show only relevant info)
 - Mobile-first (test on actual devices)
@@ -25,6 +27,7 @@ This guide covers creating GUI-managed dashboards in Home Assistant for day-to-d
 All cards available via HACS + Nix configuration:
 
 **Already Installed:**
+
 - **Mushroom Cards** v5.0.9 - Modern minimalist, UI editor
 - **Mini Graph Card** v0.13.0 - Simple sensor graphs (quick trends)
 - **Button Card** v7.0.1 - Extreme customization
@@ -55,24 +58,29 @@ All cards available via HACS + Nix configuration:
 **Recommended hybrid approach:**
 
 ### 1. Overview (Default View)
+
 At-a-glance status and most-used controls
 
 **Sections:**
+
 - Quick Actions (scenes, frequent toggles)
 - Climate Status (temperature summary)
 - Air Quality (PM2.5, ventilation status)
 - System Status (alerts, critical metrics)
 
 ### 2. Room-Based Views
+
 Per-area detailed controls
 
 **Pattern:**
+
 - Climate controls (thermostat, temperature trends)
 - Lighting (switches, scenes)
 - Room-specific devices
 - Mini graphs for quick trends (24h max)
 
 **Views:**
+
 - Living Room (climate, purifier, TV, Apple TV)
 - Bedroom (climate, ventilation, sleep)
 - Bathroom (climate)
@@ -82,6 +90,7 @@ Per-area detailed controls
 ### 3. Specialty Views
 
 **Environmental Monitoring:**
+
 - Temperature comparison across rooms
 - Air quality trends (outdoor vs indoor)
 - Humidity levels (if sensors available)
@@ -89,12 +98,14 @@ Per-area detailed controls
 - **Note:** Advanced analysis in Grafana (see `grafana-dashboards.md`)
 
 **Media:**
+
 - TV controls (LG WebOS)
 - Apple TV
 - Media player grouping
 - Now playing
 
 **System Health:**
+
 - Service status indicators
 - Critical alerts
 - **Note:** Long-term metrics in Grafana
@@ -110,30 +121,35 @@ Per-area detailed controls
 
 ### Overview Dashboard
 
-**Section: Quick Actions**
+#### Quick Actions
+
 - Tile cards for most-used lights
 - Scene buttons (Morning, Evening, Night)
 - Quick toggles (Air purifier modes)
 
-**Section: Climate Status**
+#### Climate Status
+
 - Mushroom entity cards for each thermostat
 - Mini Graph Card: Average home temperature (24h)
 - Conditional: heating alerts
 
-**Section: Air Quality**
+#### Air Quality
+
 - Tile: Outdoor PM2.5 with color thresholds
 - Tile: Indoor PM2.5
 - Conditional: "Safe to ventilate" indicator
 - Mini Graph: PM2.5 24h trend
 
-**Section: System Status**
+#### System Status
+
 - Auto-entities: Low battery devices
 - Auto-entities: Unavailable entities
 - Conditional alerts (appears only when needed)
 
 ### Living Room View
 
-**Section: Climate**
+#### Living Room Climate
+
 ```yaml
 # Mushroom climate card
 type: custom:mushroom-climate-card
@@ -159,29 +175,34 @@ points_per_hour: 2
 line_width: 2
 ```
 
-**Section: Air Purifier**
+#### Air Purifier
+
 - Tile cards for fan controls
 - Filter status indicators
 - PM2.5 display (indoor sensor)
 
-**Section: Media**
+#### Media
+
 - Mini Media Player: Living Room TV
 - Mini Media Player: Apple TV (Salon)
 - Grouping if multiple active
 
 ### Bedroom View
 
-**Section: Climate**
+#### Bedroom Climate
+
 - Mushroom climate card: `climate.bedroom_thermostat`
 - Mini Graph: bedroom temperature (24h)
 
-**Section: Ventilation**
+#### Ventilation
+
 - Conditional: safe to ventilate indicator
 - Manual override buttons
 
 ### Environmental Monitoring View
 
 **Multi-Room Temperature Comparison:**
+
 ```yaml
 type: custom:mini-graph-card
 entities:
@@ -203,6 +224,7 @@ group_by: hour
 ```
 
 **PM2.5 Timeline:**
+
 ```yaml
 type: custom:history-explorer-card
 cardName: PM2.5 History
@@ -215,6 +237,7 @@ defaultTimeRange: 7d
 ```
 
 **Air Quality Alert (Conditional):**
+
 ```yaml
 type: conditional
 conditions:
@@ -232,6 +255,7 @@ card:
 ### Auto-Entities Patterns
 
 **Low Battery Devices:**
+
 ```yaml
 type: custom:auto-entities
 card:
@@ -247,6 +271,7 @@ show_empty: false
 ```
 
 **Open Windows/Doors:**
+
 ```yaml
 type: custom:auto-entities
 card:
@@ -267,6 +292,7 @@ show_empty: false
 ```
 
 **Unavailable Entities:**
+
 ```yaml
 type: custom:auto-entities
 card:
@@ -354,6 +380,7 @@ cards:
 ### Context-Aware
 
 **Hide inactive devices:**
+
 ```yaml
 type: conditional
 conditions:
@@ -365,6 +392,7 @@ card:
 ```
 
 **Show alerts only when relevant:**
+
 ```yaml
 type: conditional
 conditions:
@@ -376,6 +404,7 @@ card:
 ```
 
 **Time-based visibility:**
+
 ```yaml
 type: conditional
 conditions:
@@ -389,16 +418,19 @@ card:
 ### Visual Hierarchy
 
 **Primary actions prominent:**
+
 - Use Tile cards or large Mushroom cards
 - Top of sections
 - Frequently accessed controls
 
 **Status/monitoring secondary:**
+
 - Entity cards
 - Mini graphs below controls
 - Auto-entities lists
 
 **Detailed data tertiary:**
+
 - History Explorer for deep dives
 - Links to Grafana dashboards
 - Collapsible sections
@@ -406,6 +438,7 @@ card:
 ## Entity Reference
 
 ### Living Room
+
 - `climate.livingroom_thermostat` - Thermostat
 - `sensor.zhimi_de_334622045_mb3_pm2_5_density_p_3_6` - Indoor PM2.5
 - `media_player.living_room_tv` - LG WebOS TV
@@ -413,21 +446,26 @@ card:
 - Air purifier entities (see `hosts/homelab/home-assistant/areas/living-room.nix`)
 
 ### Bedroom
+
 - `climate.bedroom_thermostat` - Thermostat
 - `climate.thermostat_bedroom` - Alternate thermostat
 - Ventilation automation entities
 
 ### Bathroom
+
 - `climate.bathroom_thermostat` - Thermostat
 
 ### Kitchen
+
 - Kettle automation entities (see `hosts/homelab/home-assistant/areas/kitchen.nix`)
 
 ### Hallway
+
 - `binary_sensor.aqara_fp2_3dfc_presence_sensor_1` - FP2 presence
 - Adaptive lighting entities
 
 ### Environmental
+
 - `sensor.aleje_pm2_5` - Outdoor PM2.5 (GIOŚ, Kraków station 400)
 - `sensor.aleje_pm2_5_index` - Air quality index
 - `binary_sensor.safe_to_ventilate_living_room` - Ventilation safety indicator
@@ -437,6 +475,7 @@ card:
 - `sensor.pm25_24h_average` - 24-hour PM2.5 average (template)
 
 ### System
+
 - Service status indicators (configured separately)
 - System monitoring sensors (if Phase 2 implemented)
 
@@ -447,15 +486,20 @@ card:
 **Symptom:** Custom card shows as "Custom element doesn't exist"
 
 **Solutions:**
+
 1. Clear browser cache: Ctrl+Shift+R (Windows/Linux) or Cmd+Shift+R (Mac)
 2. Check symlinks exist on server:
+
    ```bash
    ls -la /var/lib/hass/www/community/
    ```
+
 3. Verify HA logs:
+
    ```bash
    journalctl -u home-assistant -f | grep -i "custom card"
    ```
+
 4. Check card installed in HACS (Settings → HACS → Frontend)
 5. Restart Home Assistant: `systemctl restart home-assistant`
 
@@ -464,11 +508,13 @@ card:
 **Symptom:** Mini Graph Card shows no data or "Unknown"
 
 **Causes:**
+
 - Entity doesn't have `state_class` for statistics
 - Entity attribute doesn't exist
 - Time range has no data
 
 **Solutions:**
+
 1. Check entity attributes in Developer Tools → States
 2. Verify entity has `state_class: measurement` or `state_class: total_increasing`
 3. For climate temperature, use `attribute: current_temperature`
@@ -479,13 +525,16 @@ card:
 **Symptom:** Dashboard looks good on desktop, broken on mobile
 
 **Solutions:**
+
 1. Use Sections view (default, responsive)
 2. Avoid fixed-width cards or custom CSS with px units
 3. Test with HA Companion app and mobile browser
 4. Use Layout Card with `auto-fit` for grids:
+
    ```yaml
    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr))
    ```
+
 5. Enable "Dense mode" in dashboard settings for smaller screens
 
 ### Performance Issues
@@ -493,11 +542,13 @@ card:
 **Symptom:** Dashboard slow to load, lag when scrolling
 
 **Solutions:**
+
 1. Reduce cards per view (aim for 20-30 max)
 2. Limit Mini Graph Card time ranges (24h recommended)
 3. Use conditional cards to hide non-essential content
 4. Check CPU usage: `htop` on homelab server
 5. Consider pagination for long auto-entities lists:
+
    ```yaml
    type: custom:auto-entities
    card:
@@ -511,6 +562,7 @@ card:
    # Limit results
    max: 10
    ```
+
 6. Move historical analysis to Grafana
 
 ### Conditional Cards Not Showing
@@ -518,14 +570,18 @@ card:
 **Symptom:** Conditional card never appears despite meeting conditions
 
 **Solutions:**
+
 1. Verify entity_id is correct (check in Developer Tools)
 2. Check condition syntax (numeric_state needs numbers, not strings)
 3. Test condition in Developer Tools → Template:
+
    ```jinja2
    {{ states('sensor.example') | float > 50 }}
    ```
+
 4. Check entity state: `unavailable` doesn't match any condition
 5. Add multiple cards with different thresholds to debug:
+
    ```yaml
    # Debug card - always show
    type: markdown
@@ -539,11 +595,13 @@ card:
 **Symptom:** Auto-entities card says "No entities found"
 
 **Solutions:**
+
 1. Verify filter matches existing entities (check domain, attributes)
 2. Test in Developer Tools → States (filter manually)
 3. Check `show_empty: false` setting
 4. Add exclusions carefully - might be filtering too much
 5. Example working filter:
+
    ```yaml
    filter:
      include:
@@ -558,6 +616,7 @@ card:
 **Symptom:** Dashboard shows default HA theme
 
 **Solutions:**
+
 1. Select theme: Profile (bottom left) → Theme dropdown
 2. Verify theme installed via HACS
 3. Clear browser cache
@@ -567,12 +626,14 @@ card:
 ## Related Documentation
 
 ### Official Home Assistant
+
 - [Dashboard Documentation](https://www.home-assistant.io/dashboards/)
 - [Sections View Guide](https://www.home-assistant.io/blog/2024/03/04/dashboard-chapter-1/)
 - [Card Types Reference](https://www.home-assistant.io/dashboards/cards/)
 - [Conditional Card](https://www.home-assistant.io/dashboards/conditional/)
 
 ### Custom Cards
+
 - [Mushroom Cards](https://github.com/piitaya/lovelace-mushroom)
 - [Mini Graph Card](https://github.com/kalkih/mini-graph-card)
 - [Button Card](https://github.com/custom-cards/button-card)
@@ -583,9 +644,11 @@ card:
 - [card-mod](https://github.com/thomasloven/lovelace-card-mod)
 
 ### Advanced Monitoring
+
 - [Grafana Dashboards](./grafana-dashboards.md) - For long-term trends and advanced analysis
 - [InfluxDB Integration](https://www.home-assistant.io/integrations/influxdb/)
 
 ### Community Resources
+
 - [r/homeassistant Dashboard Examples](https://www.reddit.com/r/homeassistant/)
 - [Home Assistant Community Forum - Dashboards](https://community.home-assistant.io/c/projects/dashboards/)
