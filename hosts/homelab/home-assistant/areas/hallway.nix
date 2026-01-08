@@ -28,12 +28,16 @@
       ];
       action = [
         {
-          service = "light.turn_on";
-          target.entity_id = [
-            "light.hue_essential_spot_4_2" # h-3
-            "light.hue_essential_spot_1_2" # h-4
-            "light.hue_essential_spot_2_2" # h-5
-          ];
+          service = "adaptive_lighting.apply";
+          data = {
+            entity_id = "switch.adaptive_lighting_hallway_lights";
+            lights = [
+              "light.hue_essential_spot_4_2" # h-3
+              "light.hue_essential_spot_1_2" # h-4
+              "light.hue_essential_spot_2_2" # h-5
+            ];
+            turn_on_lights = true;
+          };
         }
       ];
     }
@@ -83,12 +87,16 @@
       ];
       action = [
         {
-          service = "light.turn_on";
-          target.entity_id = [
-            "light.hue_essential_spot_3_2" # h-1
-            "light.hue_essential_spot_5" # h-2
-            "light.hue_essential_spot_4_2" # h-3
-          ];
+          service = "adaptive_lighting.apply";
+          data = {
+            entity_id = "switch.adaptive_lighting_hallway_lights";
+            lights = [
+              "light.hue_essential_spot_3_2" # h-1
+              "light.hue_essential_spot_5" # h-2
+              "light.hue_essential_spot_4_2" # h-3
+            ];
+            turn_on_lights = true;
+          };
         }
       ];
     }
