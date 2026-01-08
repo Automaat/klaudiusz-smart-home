@@ -13,6 +13,7 @@
   bedroomAutomations = import ./areas/bedroom.nix {inherit config pkgs lib;};
   livingRoomAutomations = import ./areas/living-room.nix {inherit config pkgs lib;};
   hallwayAutomations = import ./areas/hallway.nix {inherit config pkgs lib;};
+  officeAutomations = import ./areas/office.nix {inherit config pkgs lib;};
 
   # ===========================================
   # Import Other Components
@@ -31,7 +32,8 @@ in {
       ++ bathroomAutomations.automation
       ++ bedroomAutomations.automation
       ++ livingRoomAutomations.automation
-      ++ hallwayAutomations.automation;
+      ++ hallwayAutomations.automation
+      ++ officeAutomations.automation;
 
     # ===========================================
     # Template Sensors
