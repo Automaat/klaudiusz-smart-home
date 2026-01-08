@@ -83,7 +83,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "sum(count_over_time({job=~\"homeassistant|systemd-journal\"} |~ \"(?i)(error|critical|fatal|exception)\" [$__range]))",
+          "expr": "sum(count_over_time({job=~\"homeassistant|systemd\"} |~ \"(?i)(error|critical|fatal|exception)\" [$__range]))",
           "refId": "A"
         }
       ],
@@ -219,7 +219,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "sum by (level) (count_over_time({job=~\"homeassistant|systemd-journal\"} | json | level =~ \"ERROR|CRITICAL|FATAL\" [$__auto]))",
+          "expr": "sum by (level) (count_over_time({job=\"homeassistant\"} | level =~ \"ERROR|CRITICAL|FATAL\" [$__auto]))",
           "legendFormat": "{{level}}",
           "refId": "A"
         },
@@ -228,7 +228,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "sum by (level) (count_over_time({job=\"systemd-journal\"} |~ \"(?i)error|critical|fatal\" | level = \"\" [$__auto]))",
+          "expr": "sum by (unit) (count_over_time({job=\"systemd\"} |~ \"(?i)error|critical|fatal\" [$__auto]))",
           "legendFormat": "SYSTEMD ERROR",
           "refId": "B"
         },
@@ -237,7 +237,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "sum by (level) (count_over_time({job=~\"homeassistant|systemd-journal\"} | json | level = \"WARNING\" [$__auto]))",
+          "expr": "sum by (level) (count_over_time({job=\"homeassistant\"} | level = \"WARNING\" [$__auto]))",
           "legendFormat": "{{level}}",
           "refId": "C"
         }
@@ -376,7 +376,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "{job=~\"homeassistant|systemd-journal\"} |~ \"(?i)(error|critical|fatal|exception)\" | json | level =~ \"ERROR|CRITICAL|FATAL|WARNING\" or level = \"\" | line_format \"{{.message}}\"",
+          "expr": "{job=~\"homeassistant|systemd\"} |~ \"(?i)(error|critical|fatal|exception)\" | line_format \"{{.message}}\"",
           "refId": "A"
         }
       ],
@@ -451,7 +451,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "sum by (unit) (count_over_time({job=\"systemd-journal\"} |~ \"(?i)(error|critical|fatal)\" [$__range]))",
+          "expr": "sum by (unit) (count_over_time({job=\"systemd\"} |~ \"(?i)(error|critical|fatal)\" [$__range]))",
           "legendFormat": "{{unit}}",
           "refId": "A"
         }
@@ -587,7 +587,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "sum by (level) (count_over_time({job=~\"homeassistant|systemd-journal\"} | json | level =~ \"ERROR|CRITICAL|FATAL|WARNING\" [$__range]))",
+          "expr": "sum by (level) (count_over_time({job=\"homeassistant\"} | level =~ \"ERROR|CRITICAL|FATAL|WARNING\" [$__range]))",
           "legendFormat": "{{level}}",
           "refId": "A"
         }
@@ -660,7 +660,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "{job=\"systemd-journal\", unit=\"prometheus.service\"} |~ \"(?i)(error|critical|fatal|fail)\"",
+          "expr": "{job=\"systemd\", unit=\"prometheus.service\"} |~ \"(?i)(error|critical|fatal|fail)\"",
           "refId": "A"
         }
       ],
@@ -696,7 +696,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "{job=\"systemd-journal\", unit=\"grafana.service\"} |~ \"(?i)(error|critical|fatal|fail)\"",
+          "expr": "{job=\"systemd\", unit=\"grafana.service\"} |~ \"(?i)(error|critical|fatal|fail)\"",
           "refId": "A"
         }
       ],
@@ -732,7 +732,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "{job=\"systemd-journal\", unit=\"postgresql.service\"} |~ \"(?i)(error|critical|fatal|fail)\"",
+          "expr": "{job=\"systemd\", unit=\"postgresql.service\"} |~ \"(?i)(error|critical|fatal|fail)\"",
           "refId": "A"
         }
       ],
@@ -768,7 +768,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "{job=\"systemd-journal\", unit=\"influxdb2.service\"} |~ \"(?i)(error|critical|fatal|fail)\"",
+          "expr": "{job=\"systemd\", unit=\"influxdb2.service\"} |~ \"(?i)(error|critical|fatal|fail)\"",
           "refId": "A"
         }
       ],
@@ -804,7 +804,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "{job=\"systemd-journal\", unit=~\"wyoming-.*\"} |~ \"(?i)(error|critical|fatal|fail)\"",
+          "expr": "{job=\"systemd\", unit=~\"wyoming-.*\"} |~ \"(?i)(error|critical|fatal|fail)\"",
           "refId": "A"
         }
       ],
@@ -840,7 +840,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "{job=\"systemd-journal\", unit=\"comin.service\"} |~ \"(?i)(error|critical|fatal|fail)\"",
+          "expr": "{job=\"systemd\", unit=\"comin.service\"} |~ \"(?i)(error|critical|fatal|fail)\"",
           "refId": "A"
         }
       ],
@@ -876,7 +876,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "{job=\"systemd-journal\", unit=\"loki.service\"} |~ \"(?i)(error|critical|fatal|fail)\"",
+          "expr": "{job=\"systemd\", unit=\"loki.service\"} |~ \"(?i)(error|critical|fatal|fail)\"",
           "refId": "A"
         }
       ],
