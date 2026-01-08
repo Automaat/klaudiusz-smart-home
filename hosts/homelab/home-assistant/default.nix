@@ -366,7 +366,6 @@ in {
 
       # HTTP config (for reverse proxy if needed)
       http = {
-        server_host = "0.0.0.0"; # Listen on all interfaces (required for iOS app)
         server_port = 8123;
         # Uncomment for reverse proxy
         # use_x_forwarded_for = true;
