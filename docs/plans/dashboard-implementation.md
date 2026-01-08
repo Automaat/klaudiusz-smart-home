@@ -1,22 +1,28 @@
 # Home Assistant Dashboard Implementation Plan
 
 **Date:** 2026-01-08
-**Status:** Phase 1 Complete (PR #229)
+**Status:** Phase 3 Complete (PR #233)
 **Last Updated:** 2026-01-08
 
 ## Progress Summary
 
 **✅ Completed:**
 
-- Phase 1: Custom Cards (PR #229 pending merge)
+- Phase 1: Custom Cards (PR #229 merged)
   - History Explorer Card v1.0.51
   - Layout Card v2.4.7
   - Mini Media Player v1.16.10
 
+- Phase 3: Environmental template sensors (PR #233 pending merge)
+  - Average/max/min home temperature
+  - PM2.5 24h average
+
+**⏭️ Skipped:**
+
+- Phase 2: System monitoring sensors - not needed, stats already in Grafana
+
 **🔄 Next:**
 
-- Phase 2: System monitoring sensors (CPU, disk, memory)
-- Phase 3: Environmental template sensors
 - Phase 4: HA dashboard documentation
 - Phase 5: Grafana dashboards
 - Phase 6-7: Documentation updates
@@ -850,23 +856,18 @@ Add section after "Home Assistant Patterns":
 ### Development Phase
 
 - [x] Create feature branch: `feat/dashboard-custom-cards` ✅
-- [x] Phase 1: Add 3 custom cards to default.nix ✅ **PR #229**
+- [x] Phase 1: Add 3 custom cards to default.nix ✅ **PR #229 (merged)**
   - [x] History Explorer Card v1.0.51
   - [x] Layout Card v2.4.7
   - [x] Mini Media Player v1.16.10
   - [x] Get SHA256 hashes via nix-prefetch-url
   - [x] Update symlink commands in preStart
-- [ ] Phase 2: Add system monitoring sensors
-  - [ ] Create system-monitoring.nix or update sensors.nix
-  - [ ] CPU temperature sensor
-  - [ ] Disk usage sensor
-  - [ ] Memory usage sensor
-  - [ ] Add to imports in default.nix
-- [ ] Phase 3: Add environmental template sensors
-  - [ ] Average home temperature
-  - [ ] Max/min home temperature
-  - [ ] PM2.5 24h average
-  - [ ] Check for humidity sensors (add if available)
+- [x] Phase 2: Add system monitoring sensors ✅ **SKIPPED - stats already in Grafana**
+- [x] Phase 3: Add environmental template sensors ✅ **PR #233**
+  - [x] Average home temperature
+  - [x] Max/min home temperature
+  - [x] PM2.5 24h average
+  - [x] Check for humidity sensors (none available)
 - [ ] Phase 4: Create docs/manual-config/dashboards.md
   - [ ] Overview & prerequisites
   - [ ] Dashboard structure
@@ -944,11 +945,11 @@ Add section after "Home Assistant Patterns":
 
 **Infrastructure:**
 
-1. ✅ All custom cards installed and accessible (3 cards: History Explorer, Layout, Mini Media Player)
-2. ✅ System monitoring sensors reporting correctly (CPU temp, disk, memory)
-3. ✅ Environmental template sensors calculating properly (avg temp, PM2.5 24h)
+1. ✅ All custom cards installed and accessible (3 cards: History Explorer, Layout, Mini Media Player) - PR #229
+2. ⏭️ System monitoring sensors - SKIPPED (stats in Grafana)
+3. ✅ Environmental template sensors calculating properly (avg temp, PM2.5 24h) - PR #233
 4. ✅ All Nix changes rebuild without errors
-5. ✅ CI tests pass on production branch
+5. ⬜ CI tests pass on production branch (pending PR #233 merge)
 
 **Documentation:**
 6. ⬜ HA dashboard documentation created (docs/manual-config/dashboards.md)
