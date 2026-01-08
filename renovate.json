@@ -52,7 +52,11 @@
     },
     {
       "description": "thomasloven repos: only semver tags (ignore numeric 11-16)",
-      "matchDepNames": ["thomasloven/lovelace-card-mod", "thomasloven/lovelace-auto-entities"],
+      "matchDepNames": [
+        "thomasloven/lovelace-card-mod",
+        "thomasloven/lovelace-auto-entities",
+        "thomasloven/lovelace-layout-card"
+      ],
       "allowedVersions": "/^v/"
     }
   ],
