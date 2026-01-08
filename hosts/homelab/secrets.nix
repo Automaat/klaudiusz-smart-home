@@ -60,5 +60,12 @@
       mode = "0400";
       restartUnits = ["influxdb2.service"];
     };
+
+    # Airly API key
+    "airly-api-key" = {
+      owner = "hass";
+      mode = "0400";
+      restartUnits = ["home-assistant.service"];
+    };
   };
 }

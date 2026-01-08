@@ -217,6 +217,7 @@ in {
       "zeroconf" # mDNS/Bonjour for device discovery (HomeKit, etc.)
       "met" # Weather
       "gios" # Polish air quality (GIOŚ)
+      "airly" # Polish air quality (Airly)
       "radio_browser" # Internet radio
 
       # Database
@@ -288,8 +289,8 @@ in {
         country = "PL";
         language = "pl";
         time_zone = "Europe/Warsaw";
-        latitude = 50.083;
-        longitude = 19.891;
+        latitude = 50.085195506756605;
+        longitude = 19.887608898901583;
         elevation = 210;
       };
 
@@ -372,6 +373,13 @@ in {
       # Wake on LAN (required for send_magic_packet service)
       wake_on_lan = {};
 
+      # Airly air quality sensor
+      airly = {
+        api_key = "!secret airly_api_key";
+        latitude = 50.085195506756605;
+        longitude = 19.887608898901583;
+      };
+
       # Telegram integration - configured via UI (see docs/manual-config/telegram.md)
       # Entity: notify.klaudiusz_smart_home_system (use with notify.send_message action)
     };
@@ -415,6 +423,7 @@ in {
       telegram_bot_token: "123456789:ABCdefGHIjklMNOpqrsTUVwxyz-DUMMY"
       telegram_chat_id: "123456789"
       influxdb_token: "$(cat ${config.sops.secrets.influxdb-admin-token.path})"
+      airly_api_key: "$(cat ${config.sops.secrets.airly-api-key.path})"
       EOF
 
       # Create HACS symlink (release zip extracts to root)
