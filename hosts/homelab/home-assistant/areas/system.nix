@@ -9,6 +9,11 @@
     "switch.adaptive_lighting_kitchen_lights"
     "switch.adaptive_lighting_bathroom_lights"
   ];
+  adaptiveLightingSleepModeSwitches = [
+    "switch.adaptive_lighting_sleep_mode_hallway_lights"
+    "switch.adaptive_lighting_sleep_mode_kitchen_lights"
+    "switch.adaptive_lighting_sleep_mode_bathroom_lights"
+  ];
 in {
   # ===========================================
   # System & Task Management
@@ -55,24 +60,38 @@ in {
     # -----------------------------------------
     {
       id = "adaptive_lighting_enable_sleep_mode";
-      alias = "Adaptive Lighting - Enable sleep mode all";
-      description = "Enable sleep mode on all adaptive lighting switches. Trigger manually via automation.trigger service";
-      trigger = [];
+      alias = "Adaptive Lighting - Enable sleep mode on sleep";
+      description = "Enable sleep mode on all adaptive lighting switches when sleep mode is activated";
+      trigger = [
+        {
+          platform = "state";
+          entity_id = "input_boolean.sleep_mode";
+          to = "on";
+        }
+      ];
       action = [
         {
-          action = "adaptive_lighting.set_manual_control";
-          target.entity_id = adaptiveLightingSwitches;
-          data = {
-            manual_control = false;
-          };
+          action = "switch.turn_on";
+          target.entity_id = adaptiveLightingSleepModeSwitches;
         }
+      ];
+    }
+
+    {
+      id = "adaptive_lighting_disable_sleep_mode_manual";
+      alias = "Adaptive Lighting - Disable sleep mode on wake";
+      description = "Disable sleep mode on all adaptive lighting switches when sleep mode is deactivated";
+      trigger = [
         {
-          action = "adaptive_lighting.change_switch_settings";
-          target.entity_id = adaptiveLightingSwitches;
-          data = {
-            use_defaults = "current";
-            sleep_mode_switch = true;
-          };
+          platform = "state";
+          entity_id = "input_boolean.sleep_mode";
+          to = "off";
+        }
+      ];
+      action = [
+        {
+          action = "switch.turn_off";
+          target.entity_id = adaptiveLightingSleepModeSwitches;
         }
       ];
     }
@@ -88,12 +107,8 @@ in {
       ];
       action = [
         {
-          action = "adaptive_lighting.change_switch_settings";
-          target.entity_id = adaptiveLightingSwitches;
-          data = {
-            use_defaults = "current";
-            sleep_mode_switch = false;
-          };
+          action = "switch.turn_off";
+          target.entity_id = adaptiveLightingSleepModeSwitches;
         }
       ];
     }
