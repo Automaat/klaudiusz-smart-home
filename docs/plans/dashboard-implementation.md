@@ -7,12 +7,14 @@
 ## Progress Summary
 
 **✅ Completed:**
+
 - Phase 1: Custom Cards (PR #229 pending merge)
   - History Explorer Card v1.0.51
   - Layout Card v2.4.7
   - Mini Media Player v1.16.10
 
 **🔄 Next:**
+
 - Phase 2: System monitoring sensors (CPU, disk, memory)
 - Phase 3: Environmental template sensors
 - Phase 4: HA dashboard documentation
@@ -24,6 +26,7 @@
 ## Executive Summary
 
 Comprehensive dashboard implementation for Home Assistant covering:
+
 - Overview dashboard (at-a-glance status)
 - Room-based views (per-area detailed controls)
 - Environmental monitoring via Grafana (temp, humidity, air quality)
@@ -31,6 +34,7 @@ Comprehensive dashboard implementation for Home Assistant covering:
 - Essential custom cards via HACS for HA UI
 
 **Approach:**
+
 - HA dashboards: GUI-managed (not declarative in Nix) for controls + quick trends
 - Grafana dashboards: Historical analysis, advanced metrics (365-day InfluxDB data)
 
@@ -41,12 +45,14 @@ Comprehensive dashboard implementation for Home Assistant covering:
 ### Modern Dashboard Trends (2024/2025)
 
 **Sections View (default since Nov 2024):**
+
 - 12-column responsive grid
 - Drag-and-drop interface
 - Auto-adjusts per screen size
 - Dense layout option fills gaps
 
 **Popular UI Patterns:**
+
 - **Tile cards** - Primary for visual, interactive controls
 - **Mushroom cards** - Minimalist aesthetic, GUI editor support
 - **Button card** - Extreme customization via templates
@@ -55,6 +61,7 @@ Comprehensive dashboard implementation for Home Assistant covering:
 ### What People Monitor
 
 **Environmental (Most Common):**
+
 - Temp/humidity in every room ($5-10 sensors)
 - Air quality: CO2, VOCs, PM2.5
 - Recommended devices:
@@ -63,12 +70,14 @@ Comprehensive dashboard implementation for Home Assistant covering:
   - Aqara S1 (Zigbee, economical)
 
 **Energy/Power:**
+
 - Whole-home consumption (Emporia Vue, Sense)
 - Per-device tracking (smart plugs + Powercalc)
 - Solar production
 - Cost tracking via tariff configuration
 
 **System Health:**
+
 - CPU, disk, memory, network (system_monitor integration)
 - CPU temperature (requires command_line sensor)
 - Glances integration for comprehensive monitoring
@@ -76,15 +85,18 @@ Comprehensive dashboard implementation for Home Assistant covering:
 ### Organization Patterns
 
 **Room-Based (Most Popular):**
+
 - Overview tab → individual room tabs
 - Conditional cards based on presence
 - Best for families/multiple users
 
 **Function-Based:**
+
 - Climate, Lighting, Security, Media tabs
 - All similar devices grouped together
 
 **Hybrid (Most Flexible - RECOMMENDED):**
+
 - Overview dashboard (most-used controls)
 - Room views (detailed per-area)
 - Specialty views (energy, security, system)
@@ -104,23 +116,27 @@ Comprehensive dashboard implementation for Home Assistant covering:
 ### Best Practices
 
 **Performance:**
+
 - 20-30 cards per view max
 - Use conditional cards vs loading everything
 - Limit graph time ranges
 - Trigger-based templates over state-based
 
 **Mobile-Friendly:**
+
 - Single column layouts
 - Larger tap targets (44x44px minimum)
 - Reduce scrolling with tabs/conditional cards
 - Test on actual devices
 
 **Progressive Disclosure:**
+
 - Overview → drill-down structure
 - Hide complexity until needed
 - Action-oriented design (quick toggles prominent)
 
 **Context-Aware:**
+
 - Show based on time/presence/state
 - Dynamic filtering (auto-entities)
 - Room-based conditional displays
@@ -134,6 +150,7 @@ Comprehensive dashboard implementation for Home Assistant covering:
 **HACS Installed:** v2.0.5 (configured in `hosts/homelab/home-assistant/default.nix`)
 
 **Custom Cards Already Installed:**
+
 - **Mushroom Cards** v5.0.9 ✅
 - **Mini Graph Card** v0.13.0 ✅
 - **Button Card** v7.0.1 ✅
@@ -143,6 +160,7 @@ Comprehensive dashboard implementation for Home Assistant covering:
 - **Hass Hue Icons** v1.2.53 ✅
 
 **Missing Cards to Add:**
+
 - History Explorer Card (interactive timeline)
 - Layout Card (responsive grid layouts)
 - Mini Media Player (compact media controls)
@@ -152,6 +170,7 @@ Comprehensive dashboard implementation for Home Assistant covering:
 ### Areas/Rooms Defined
 
 Configuration in `hosts/homelab/home-assistant/areas/`:
+
 - Living Room (`living-room.nix`)
 - Bedroom (`bedroom.nix`)
 - Bathroom (`bathroom.nix`)
@@ -162,24 +181,28 @@ Configuration in `hosts/homelab/home-assistant/areas/`:
 ### Environmental Sensors
 
 **Air Quality:**
+
 - `sensor.aleje_pm2_5` - Outdoor PM2.5 (GIOŚ, Kraków station 400)
 - `sensor.aleje_pm2_5_index` - Air quality index
 - `sensor.zhimi_de_334622045_mb3_pm2_5_density_p_3_6` - Indoor PM2.5 (Xiaomi purifier)
 - `binary_sensor.safe_to_ventilate_living_room` - Template (outdoor < 15 µg/m³)
 
 **Temperature:**
+
 - `climate.livingroom_thermostat` - Living room
 - `climate.bedroom_thermostat` - Bedroom
 - `climate.bathroom_thermostat` - Bathroom
 - `climate.thermostat_bedroom` - Alternate bedroom sensor
 
 **Template Sensors** (`sensors.nix`):
+
 - PM2.5 outdoor vs indoor difference
 - Air purifier recommended mode
 - Air purifier filter urgency
 - Antibacterial filter run due
 
 **Missing:**
+
 - Humidity sensors (check if Zigbee devices report)
 - Room temperature averages/comparisons
 - CO2/VOC sensors (if hardware available)
@@ -189,6 +212,7 @@ Configuration in `hosts/homelab/home-assistant/areas/`:
 **Current:** None (needs implementation)
 
 **Required:**
+
 - CPU temperature
 - Disk usage percentage
 - Memory usage percentage
@@ -197,11 +221,13 @@ Configuration in `hosts/homelab/home-assistant/areas/`:
 ### Dashboard Configuration
 
 **Current State:**
+
 - `lovelaceConfigWritable = true` - GUI editing enabled ✅
 - No declarative Lovelace config in Nix ✅
 - Custom cards available but not pre-configured ✅
 
 **Themes Available:**
+
 - Catppuccin v2.1.2
 - iOS Themes v3.0.1
 
@@ -305,6 +331,7 @@ ln -sfn ${miniMediaPlayerSource}/dist /var/lib/hass/www/community/mini-media-pla
 ```
 
 Add to `hosts/homelab/home-assistant/default.nix` imports:
+
 ```nix
 imports = [
   ./system-monitoring.nix
@@ -313,6 +340,7 @@ imports = [
 ```
 
 **Alternative:** Consider Glances integration for comprehensive monitoring.
+
 - Add to `extraComponents`
 - Create `docs/manual-config/glances.md` with setup steps
 
@@ -393,11 +421,13 @@ Add to existing template section:
 Content structure:
 
 #### 1. Overview
+
 - Why GUI-managed (rapid iteration, visual design)
 - Reference to research findings
 - Dashboard philosophy (progressive disclosure, context-aware)
 
 #### 2. Prerequisites
+
 - Custom cards installed (list with versions)
 - Entities available per area
 - Themes installed
@@ -405,6 +435,7 @@ Content structure:
 #### 3. Dashboard Structure
 
 **Recommended Views:**
+
 1. **Overview** - At-a-glance status (default view)
 2. **Living Room** - Detailed controls + graphs
 3. **Bedroom** - Climate, sleep tracking
@@ -419,16 +450,19 @@ Content structure:
 #### 4. Step-by-Step Setup
 
 **Overview Dashboard:**
+
 - Sections: Quick Actions, Climate Status, Air Quality, System Status
 - Cards: Tile (lights, scenes), Mushroom entity (climate), Mini Graph (trends), Conditional (alerts)
 
 **Room Views:**
+
 - Pattern: Climate controls → Lighting → Specific devices → Graphs
 - Use area filtering for auto-entities
 - Mushroom cards for primary controls
 - Mini Graph Card for temperature trends
 
 **Environmental Monitoring:**
+
 - Mini Graph Card for quick temperature trends
 - History Explorer for PM2.5 timeline
 - Auto-entities for low humidity alerts
@@ -436,6 +470,7 @@ Content structure:
 - **Note:** Advanced graphs in Grafana (see Phase 5)
 
 **System Health:**
+
 - Tile cards for CPU/disk/memory with thresholds
 - Mini Graph Card for 24h trends
 - Service status indicators
@@ -446,6 +481,7 @@ Content structure:
 **Note:** For advanced graphing (temperature comparisons, historical analysis), see Phase 5 Grafana dashboards.
 
 **Mushroom Climate Card:**
+
 ```yaml
 type: custom:mushroom-climate-card
 entity: climate.livingroom_thermostat
@@ -457,6 +493,7 @@ hvac_modes:
 ```
 
 **Auto-Entities - Open Windows:**
+
 ```yaml
 type: custom:auto-entities-card
 card:
@@ -473,6 +510,7 @@ show_empty: false
 ```
 
 **Conditional - Air Quality Alert:**
+
 ```yaml
 type: conditional
 conditions:
@@ -488,6 +526,7 @@ card:
 ```
 
 **Mini Graph Card - CPU Temperature:**
+
 ```yaml
 type: custom:mini-graph-card
 entities:
@@ -506,24 +545,28 @@ color_thresholds:
 #### 6. Best Practices
 
 **Performance:**
+
 - Keep views to 20-30 cards max
 - Use conditional cards to reduce load
 - Limit graph history ranges (24h typical, 7d max)
 - Avoid auto-refresh entities where possible
 
 **Mobile-Friendly:**
+
 - Test on actual phone/tablet
 - Single column layouts preferred
 - Larger tap targets (Tile cards > Entity cards)
 - Collapsible sections for less-used controls
 
 **Context-Aware:**
+
 - Hide inactive devices (conditional cards)
 - Show alerts only when relevant
 - Use auto-entities for dynamic lists
 - Time-based visibility (scenes, automations)
 
 **Visual Hierarchy:**
+
 - Primary actions prominent (Tile/Mushroom cards)
 - Status/monitoring secondary (Entity cards, graphs)
 - Detailed data tertiary (History Explorer, ApexCharts)
@@ -531,6 +574,7 @@ color_thresholds:
 #### 7. Entity Reference
 
 **Living Room:**
+
 - `climate.livingroom_thermostat`
 - `sensor.zhimi_de_334622045_mb3_pm2_5_density_p_3_6` (indoor PM2.5)
 - `media_player.living_room_tv` (LG WebOS)
@@ -538,27 +582,33 @@ color_thresholds:
 - Air purifier entities (see living-room.nix)
 
 **Bedroom:**
+
 - `climate.bedroom_thermostat`
 - `climate.thermostat_bedroom`
 - Ventilation automations
 
 **Bathroom:**
+
 - `climate.bathroom_thermostat`
 
 **Kitchen:**
+
 - Kettle automation entities
 
 **Hallway:**
+
 - `binary_sensor.aqara_fp2_3dfc_presence_sensor_1` (FP2 presence)
 - Adaptive lighting entities
 
 **Environmental:**
+
 - `sensor.aleje_pm2_5` (outdoor PM2.5)
 - `sensor.aleje_pm2_5_index`
 - `binary_sensor.safe_to_ventilate_living_room`
 - Temperature template sensors (after Phase 3)
 
 **System:**
+
 - `sensor.cpu_temperature` (after Phase 2)
 - `sensor.disk_usage_root` (after Phase 2)
 - `sensor.memory_usage` (after Phase 2)
@@ -566,21 +616,25 @@ color_thresholds:
 #### 8. Troubleshooting
 
 **Cards not loading:**
+
 - Clear browser cache (Ctrl+Shift+R)
 - Check `/var/lib/hass/www/community/` symlinks exist
 - Verify HA logs: `journalctl -u home-assistant -f`
 
 **Graphs showing "Unknown":**
+
 - Entity doesn't have state_class for statistics
 - Check entity attributes in Developer Tools
 - Use state_class: measurement for sensors
 
 **Mobile layout broken:**
+
 - Test Sections view (default, responsive)
 - Avoid fixed-width cards
 - Use Layout Card for responsive grids
 
 **Performance issues:**
+
 - Reduce cards per view
 - Limit graph time ranges
 - Check CPU usage on homelab
@@ -597,6 +651,7 @@ color_thresholds:
 ### Phase 5: Create Grafana Dashboards
 
 **Prerequisites:**
+
 - InfluxDB configured (365-day retention) ✅
 - Prometheus metrics export enabled ✅
 - Grafana installed and accessible ✅
@@ -608,6 +663,7 @@ color_thresholds:
 **Data Source:** InfluxDB (long-term historical data)
 
 **Panels:**
+
 1. **Temperature Comparison (Multi-line)**
    - Living Room, Bedroom, Bathroom thermostats
    - Time range: 7 days (configurable)
@@ -631,6 +687,7 @@ color_thresholds:
    - Indicates heating efficiency
 
 **Variables:**
+
 - Time range selector (24h, 7d, 30d, 90d)
 - Room selector (filter by area)
 
@@ -639,6 +696,7 @@ color_thresholds:
 **Data Sources:** Prometheus + InfluxDB
 
 **Panels:**
+
 1. **CPU Metrics**
    - Temperature gauge (thresholds: 70°C warning, 80°C critical)
    - Usage percentage over time
@@ -663,6 +721,7 @@ color_thresholds:
    - Database size growth
 
 **Alerts:**
+
 - CPU > 80°C for 5m
 - Disk > 90% for 30m
 - Memory > 90% for 10m
@@ -673,6 +732,7 @@ color_thresholds:
 **Data Source:** InfluxDB (automation metrics from monitoring.nix)
 
 **Panels:**
+
 1. **Automation Triggers (24h)**
    - Bar chart: trigger count per automation
    - Identify most active automations
@@ -693,11 +753,11 @@ color_thresholds:
 
 1. **Access Grafana**
    - Already configured (from PR #225)
-   - URL: http://homelab:3000 (or configured URL)
+   - URL: <http://homelab:3000> (or configured URL)
 
 2. **Add InfluxDB Data Source (if not exists)**
    - Settings → Data Sources → Add InfluxDB
-   - URL: http://localhost:8086
+   - URL: <http://localhost:8086>
    - Database: homeassistant
    - Token: from secrets
    - Query Language: Flux
@@ -719,6 +779,7 @@ color_thresholds:
 **Documentation:**
 
 Create `docs/manual-config/grafana-dashboards.md`:
+
 - Why Grafana for historical analysis
 - Dashboard structure
 - How to import/export
@@ -845,6 +906,7 @@ Add section after "Home Assistant Patterns":
 ### GUI Implementation Phase (Manual)
 
 **Home Assistant Dashboards:**
+
 - [ ] Follow docs/manual-config/dashboards.md step-by-step
 - [ ] Create Overview dashboard
 - [ ] Create room-based views (Living Room, Bedroom, Bathroom, Kitchen, Hallway)
@@ -853,6 +915,7 @@ Add section after "Home Assistant Patterns":
 - [ ] Adjust based on usage patterns
 
 **Grafana Dashboards:**
+
 - [ ] Follow docs/manual-config/grafana-dashboards.md
 - [ ] Create Environmental Monitoring dashboard
 - [ ] Create System Health dashboard
@@ -868,6 +931,7 @@ Add section after "Home Assistant Patterns":
 **Not provided** - per CLAUDE.md policy, focus on what needs to be done, not when.
 
 **Complexity:**
+
 - Phase 1-3: Low (Nix config additions)
 - Phase 4: Medium (comprehensive HA dashboard documentation)
 - Phase 5: Medium (Grafana dashboard creation + documentation)
@@ -879,6 +943,7 @@ Add section after "Home Assistant Patterns":
 ## Success Criteria
 
 **Infrastructure:**
+
 1. ✅ All custom cards installed and accessible (3 cards: History Explorer, Layout, Mini Media Player)
 2. ✅ System monitoring sensors reporting correctly (CPU temp, disk, memory)
 3. ✅ Environmental template sensors calculating properly (avg temp, PM2.5 24h)
@@ -910,6 +975,7 @@ Add section after "Home Assistant Patterns":
 ## Unresolved Questions
 
 **None currently** - all aspects covered based on:
+
 - User preferences (GUI management, environmental focus, Grafana for advanced graphing)
 - Current codebase state (HACS enabled, InfluxDB/Prometheus configured, Grafana available)
 - Research findings (modern patterns, best practices, Grafana recommended over ApexCharts)
