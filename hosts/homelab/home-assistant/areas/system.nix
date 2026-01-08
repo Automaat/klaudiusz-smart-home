@@ -67,6 +67,7 @@
           service = "tts.speak";
           target.entity_id = "tts.piper";
           data = {
+            media_player_entity_id = "media_player.home_assistant_voice_0a5def_media_player";
             message = "Zadanie dodane do listy";
           };
         }

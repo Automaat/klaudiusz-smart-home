@@ -71,7 +71,7 @@
           unique_id = "antibacterial_run_due";
           # Antibacterial filter maintenance recommended every 7 days
           # Tracks time since last high-power run for filter sterilization
-          state = "{{ (now() - as_datetime(states('input_datetime.last_antibacterial_run'))).days > 7 }}";
+          state = "{{ (now() - as_local(as_datetime(states('input_datetime.last_antibacterial_run')))).days > 7 }}";
           device_class = "problem";
         }
       ];
