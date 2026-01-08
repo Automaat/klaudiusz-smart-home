@@ -330,6 +330,7 @@ in {
       logger = {
         default = "info";
         logs = {
+          "homeassistant.components.automation" = "debug";
           "homeassistant.components.intent_script" = "debug";
           "homeassistant.components.assist_pipeline" = "debug";
           "homeassistant.components.wyoming" = "debug";
