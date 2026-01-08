@@ -9,6 +9,65 @@
   # ===========================================
   template = [
     # -----------------------------------------
+    # Temperature Monitoring
+    # -----------------------------------------
+    {
+      sensor = [
+        {
+          name = "Average Home Temperature";
+          unique_id = "average_home_temperature";
+          state = ''
+            {% set temps = [
+              states('climate.livingroom_thermostat') | float(0),
+              states('climate.bedroom_thermostat') | float(0),
+              states('climate.bathroom_thermostat') | float(0)
+            ] %}
+            {{ (temps | sum / temps | length) | round(1) }}
+          '';
+          unit_of_measurement = "°C";
+          device_class = "temperature";
+        }
+        {
+          name = "Max Home Temperature";
+          unique_id = "max_home_temperature";
+          state = ''
+            {% set temps = [
+              states('climate.livingroom_thermostat') | float(0),
+              states('climate.bedroom_thermostat') | float(0),
+              states('climate.bathroom_thermostat') | float(0)
+            ] %}
+            {{ temps | max | round(1) }}
+          '';
+          unit_of_measurement = "°C";
+          device_class = "temperature";
+        }
+        {
+          name = "Min Home Temperature";
+          unique_id = "min_home_temperature";
+          state = ''
+            {% set temps = [
+              states('climate.livingroom_thermostat') | float(0),
+              states('climate.bedroom_thermostat') | float(0),
+              states('climate.bathroom_thermostat') | float(0)
+            ] %}
+            {{ temps | min | round(1) }}
+          '';
+          unit_of_measurement = "°C";
+          device_class = "temperature";
+        }
+        {
+          name = "PM2.5 24h Average";
+          unique_id = "pm25_24h_average";
+          state = ''
+            {{ state_attr('sensor.aleje_pm2_5', 'mean_24h') | float(0) | round(1) }}
+          '';
+          unit_of_measurement = "µg/m³";
+          device_class = "pm25";
+        }
+      ];
+    }
+
+    # -----------------------------------------
     # Air Quality Monitoring
     # -----------------------------------------
     {
