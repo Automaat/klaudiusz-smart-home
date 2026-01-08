@@ -7,11 +7,13 @@ Hammerspoon scripts for macOS integration with Home Assistant.
 Automatically controls office smart plug based on Zoom meeting state.
 
 **What it does:**
+
 - Monitors Zoom meeting status
 - Turns ON office smart plug when meeting starts
 - Turns OFF when meeting ends
 
 **Requirements:**
+
 - [Hammerspoon](https://www.hammerspoon.org/) installed on macOS
 - Zoom client installed
 - Network access to Home Assistant (homeassistant.local:8123)
@@ -19,17 +21,20 @@ Automatically controls office smart plug based on Zoom meeting state.
 **Installation:**
 
 1. **Install Hammerspoon** (if not already):
+
    ```bash
    brew install --cask hammerspoon
    ```
 
 2. **Copy script to Hammerspoon config directory:**
+
    ```bash
    mkdir -p ~/.hammerspoon
    cp zoom-smart-plug.lua ~/.hammerspoon/
    ```
 
 3. **Add to init.lua:**
+
    ```bash
    echo 'require("zoom-smart-plug")' >> ~/.hammerspoon/init.lua
    ```
