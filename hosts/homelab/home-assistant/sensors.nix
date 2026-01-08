@@ -59,7 +59,12 @@
           name = "PM2.5 24h Average";
           unique_id = "pm25_24h_average";
           state = ''
-            {{ state_attr('sensor.airly_home_pm2_5', 'mean_24h') | float(0) | round(1) }}
+            {% set mean = state_attr('sensor.airly_home_pm2_5', 'mean_24h') %}
+            {% if mean is not none %}
+              {{ mean | float | round(1) }}
+            {% else %}
+              {{ states('sensor.airly_home_pm2_5') | float(0) | round(1) }}
+            {% endif %}
           '';
           unit_of_measurement = "µg/m³";
           device_class = "pm25";
