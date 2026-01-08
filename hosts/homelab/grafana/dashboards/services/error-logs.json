@@ -519,7 +519,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "sum by (logger) (count_over_time({job=\"homeassistant\"} | json | level =~ \"ERROR|CRITICAL|FATAL\" [$__range]))",
+          "expr": "sum by (logger) (count_over_time({job=\"homeassistant\"} | level =~ \"ERROR|CRITICAL|FATAL\" [$__range]))",
           "legendFormat": "{{logger}}",
           "refId": "A"
         }
@@ -624,7 +624,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "{job=\"homeassistant\"} | json | level =~ \"ERROR|CRITICAL|FATAL\" | line_format \"[{{.level}}] {{.logger}}: {{.message}}\"",
+          "expr": "{job=\"homeassistant\"} | level =~ \"ERROR|CRITICAL|FATAL\" | line_format \"[{{.level}}] {{.logger}}: {{.message}}\"",
           "refId": "A"
         }
       ],

@@ -8,6 +8,7 @@
     ../hosts/homelab/grafana/dashboards/infrastructure/postgresql.json
     ../hosts/homelab/grafana/dashboards/smart-home/home-assistant.json
     ../hosts/homelab/grafana/dashboards/services/service-health.json
+    ../hosts/homelab/grafana/dashboards/services/error-logs.json
   ];
 
   # Validate JSON syntax
