@@ -1,7 +1,7 @@
 # Home Assistant Dashboard Implementation Plan
 
 **Date:** 2026-01-08
-**Status:** Phase 1-4 Complete
+**Status:** Phase 1-5 Complete
 **Last Updated:** 2026-01-08
 
 ## Progress Summary
@@ -19,6 +19,11 @@
   - Created docs/manual-config/dashboards.md
   - Created "Dom" dashboard with 8 views via MCP
   - All custom cards registered and verified
+- Phase 5: Grafana dashboards (PR pending)
+  - Environmental Monitoring dashboard (temperature, PM2.5)
+  - System Health dashboard (existing: CPU, memory, disk, network)
+  - Automation Monitoring dashboard (existing: Comin, services)
+  - Created docs/manual-config/grafana-dashboards.md
 
 **⏭️ Skipped:**
 
@@ -26,8 +31,8 @@
 
 **🔄 Next:**
 
-- Phase 5: Grafana dashboards
-- Phase 6-7: Documentation updates
+- Phase 6: Update manual-config README (✅ done in this PR)
+- Phase 7: Update CLAUDE.md (optional)
 
 ---
 
@@ -889,17 +894,17 @@ Add section after "Home Assistant Patterns":
     - [x] Media view (TV, casting)
   - [x] Registered History Explorer Card and Mini Media Player resources
   - [x] Verified all entities exist and cards load without errors
-- [ ] Phase 5: Create Grafana dashboards
-  - [ ] Access Grafana (verify InfluxDB data source)
-  - [ ] Environmental Monitoring dashboard
-  - [ ] System Health dashboard
-  - [ ] Automation Monitoring dashboard
-  - [ ] Configure alerts (optional)
-  - [ ] Export dashboard JSON to docs/grafana/
-  - [ ] Create docs/manual-config/grafana-dashboards.md
-- [ ] Phase 6: Update docs/manual-config/README.md
-  - [ ] Add dashboards.md link
-  - [ ] Add grafana-dashboards.md link
+- [x] Phase 5: Create Grafana dashboards
+  - [x] Access Grafana (verify InfluxDB data source)
+  - [x] Environmental Monitoring dashboard (NEW)
+  - [x] System Health dashboard (existed: home-assistant.json)
+  - [x] Automation Monitoring dashboard (existed: service-health.json)
+  - [ ] Configure alerts (skipped - using HA automations)
+  - [x] Dashboard JSON in hosts/homelab/grafana/dashboards/smart-home/
+  - [x] Create docs/manual-config/grafana-dashboards.md
+- [x] Phase 6: Update docs/manual-config/README.md
+  - [x] Add dashboards.md link
+  - [x] Add grafana-dashboards.md link
 - [ ] Phase 7 (optional): Update CLAUDE.md
   - [ ] Add dashboard design patterns section (HA + Grafana)
 
@@ -966,8 +971,8 @@ Add section after "Home Assistant Patterns":
 
 **Documentation:**
 6. ✅ HA dashboard documentation created (docs/manual-config/dashboards.md)
-7. ⬜ Grafana dashboard documentation created (docs/manual-config/grafana-dashboards.md)
-8. ⬜ Manual config README updated with both guides
+7. ✅ Grafana dashboard documentation created (docs/manual-config/grafana-dashboards.md)
+8. ✅ Manual config README updated with both guides
 
 **HA Dashboards:**
 9. ✅ Overview + room-based views created (8 views total)
@@ -975,10 +980,10 @@ Add section after "Home Assistant Patterns":
 11. ✅ Performance acceptable (no lag, quick load times)
 
 **Grafana Dashboards:**
-12. ⬜ Environmental Monitoring dashboard (temp, PM2.5, humidity)
-13. ⬜ System Health dashboard (CPU, disk, memory, alerts)
-14. ⬜ Automation Monitoring dashboard (triggers, failures, execution time)
-15. ⬜ Dashboard JSON exported to docs/grafana/
+12. ✅ Environmental Monitoring dashboard (temp, PM2.5)
+13. ✅ System Health dashboard (CPU, disk, memory, network)
+14. ✅ Automation Monitoring dashboard (Comin deployments, service health)
+15. ✅ Dashboard JSON in hosts/homelab/grafana/dashboards/
 
 **Usability:**
 16. ⬜ Family members can use HA dashboards effectively
