@@ -3,7 +3,13 @@
   pkgs,
   lib,
   ...
-}: {
+}: let
+  adaptiveLightingSwitches = [
+    "switch.adaptive_lighting_hallway_lights"
+    "switch.adaptive_lighting_kitchen_lights"
+    "switch.adaptive_lighting_bathroom_lights"
+  ];
+in {
   # ===========================================
   # System & Task Management
   # ===========================================
@@ -85,22 +91,14 @@
       action = [
         {
           action = "adaptive_lighting.set_manual_control";
-          target.entity_id = [
-            "switch.adaptive_lighting_hallway_lights"
-            "switch.adaptive_lighting_kitchen_lights"
-            "switch.adaptive_lighting_bathroom_lights"
-          ];
+          target.entity_id = adaptiveLightingSwitches;
           data = {
             manual_control = false;
           };
         }
         {
           action = "adaptive_lighting.change_switch_settings";
-          target.entity_id = [
-            "switch.adaptive_lighting_hallway_lights"
-            "switch.adaptive_lighting_kitchen_lights"
-            "switch.adaptive_lighting_bathroom_lights"
-          ];
+          target.entity_id = adaptiveLightingSwitches;
           data = {
             use_defaults = "current";
             sleep_mode_switch = true;
@@ -121,11 +119,7 @@
       action = [
         {
           action = "adaptive_lighting.change_switch_settings";
-          target.entity_id = [
-            "switch.adaptive_lighting_hallway_lights"
-            "switch.adaptive_lighting_kitchen_lights"
-            "switch.adaptive_lighting_bathroom_lights"
-          ];
+          target.entity_id = adaptiveLightingSwitches;
           data = {
             use_defaults = "current";
             sleep_mode_switch = false;
