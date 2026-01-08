@@ -45,6 +45,66 @@
       (config.intent_script or {})
     );
 
+    # Extract from template sensors
+    templateSensorTemplates = lib.flatten (
+      lib.imap0 (idx: tmpl: let
+        sensors = tmpl.sensor or [];
+        binarySensors = tmpl.binary_sensor or [];
+
+        sensorTemplates = lib.flatten (
+          lib.imap0 (sensorIdx: sensor: let
+            stateTemplate =
+              if sensor ? state && builtins.isString sensor.state && (lib.hasInfix "{{" sensor.state || lib.hasInfix "{%" sensor.state)
+              then [
+                {
+                  source = "template[${toString idx}].sensor[${toString sensorIdx}].state";
+                  template = sensor.state;
+                }
+              ]
+              else [];
+            iconTemplate =
+              if sensor ? icon && builtins.isString sensor.icon && (lib.hasInfix "{{" sensor.icon || lib.hasInfix "{%" sensor.icon)
+              then [
+                {
+                  source = "template[${toString idx}].sensor[${toString sensorIdx}].icon";
+                  template = sensor.icon;
+                }
+              ]
+              else [];
+          in
+            stateTemplate ++ iconTemplate)
+          sensors
+        );
+
+        binarySensorTemplates = lib.flatten (
+          lib.imap0 (sensorIdx: sensor: let
+            stateTemplate =
+              if sensor ? state && builtins.isString sensor.state && (lib.hasInfix "{{" sensor.state || lib.hasInfix "{%" sensor.state)
+              then [
+                {
+                  source = "template[${toString idx}].binary_sensor[${toString sensorIdx}].state";
+                  template = sensor.state;
+                }
+              ]
+              else [];
+            iconTemplate =
+              if sensor ? icon && builtins.isString sensor.icon && (lib.hasInfix "{{" sensor.icon || lib.hasInfix "{%" sensor.icon)
+              then [
+                {
+                  source = "template[${toString idx}].binary_sensor[${toString sensorIdx}].icon";
+                  template = sensor.icon;
+                }
+              ]
+              else [];
+          in
+            stateTemplate ++ iconTemplate)
+          binarySensors
+        );
+      in
+        sensorTemplates ++ binarySensorTemplates)
+      (config.template or [])
+    );
+
     # Extract from automation conditions and actions
     automationTemplates = lib.flatten (
       builtins.map (auto: let
@@ -86,7 +146,7 @@
       (config.automation or [])
     );
   in
-    intentTemplates ++ automationTemplates;
+    intentTemplates ++ templateSensorTemplates ++ automationTemplates;
 
   templates = extractTemplates haConfig;
 

@@ -18,11 +18,11 @@
           unique_id = "average_home_temperature";
           state = ''
             {% set temps = [
-              states('climate.livingroom_thermostat') | float(0),
-              states('climate.bedroom_thermostat') | float(0),
-              states('climate.bathroom_thermostat') | float(0)
+              state_attr('climate.livingroom_thermostat', 'current_temperature') | float(0),
+              state_attr('climate.bedroom_thermostat', 'current_temperature') | float(0),
+              state_attr('climate.bathroom_thermostat', 'current_temperature') | float(0)
             ] %}
-            {{ (temps | sum / temps | length) | round(1) }}
+            {{ ((temps | sum) / (temps | length)) | round(1) }}
           '';
           unit_of_measurement = "°C";
           device_class = "temperature";
@@ -32,9 +32,9 @@
           unique_id = "max_home_temperature";
           state = ''
             {% set temps = [
-              states('climate.livingroom_thermostat') | float(0),
-              states('climate.bedroom_thermostat') | float(0),
-              states('climate.bathroom_thermostat') | float(0)
+              state_attr('climate.livingroom_thermostat', 'current_temperature') | float(0),
+              state_attr('climate.bedroom_thermostat', 'current_temperature') | float(0),
+              state_attr('climate.bathroom_thermostat', 'current_temperature') | float(0)
             ] %}
             {{ temps | max | round(1) }}
           '';
@@ -46,9 +46,9 @@
           unique_id = "min_home_temperature";
           state = ''
             {% set temps = [
-              states('climate.livingroom_thermostat') | float(0),
-              states('climate.bedroom_thermostat') | float(0),
-              states('climate.bathroom_thermostat') | float(0)
+              state_attr('climate.livingroom_thermostat', 'current_temperature') | float(0),
+              state_attr('climate.bedroom_thermostat', 'current_temperature') | float(0),
+              state_attr('climate.bathroom_thermostat', 'current_temperature') | float(0)
             ] %}
             {{ temps | min | round(1) }}
           '';
