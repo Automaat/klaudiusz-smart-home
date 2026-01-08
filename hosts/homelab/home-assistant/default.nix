@@ -289,8 +289,8 @@ in {
         country = "PL";
         language = "pl";
         time_zone = "Europe/Warsaw";
-        latitude = 50.085195506756605;
-        longitude = 19.887608898901583;
+        latitude = 50.085196;
+        longitude = 19.887609;
         elevation = 210;
       };
 
@@ -373,11 +373,12 @@ in {
       # Wake on LAN (required for send_magic_packet service)
       wake_on_lan = {};
 
-      # Airly air quality sensor
+      # Airly air quality sensor (API key from developer.airly.org, free tier: 1000 req/day)
+      # Coordinates should match home location for accurate air quality readings
       airly = {
         api_key = "!secret airly_api_key";
-        latitude = 50.085195506756605;
-        longitude = 19.887608898901583;
+        latitude = 50.085196;
+        longitude = 19.887609;
       };
 
       # Telegram integration - configured via UI (see docs/manual-config/telegram.md)
