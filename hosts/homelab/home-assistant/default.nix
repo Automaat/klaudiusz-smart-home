@@ -193,6 +193,39 @@
   };
 
   # ===========================================
+  # History Explorer Card
+  # ===========================================
+  historyExplorerSource = pkgs.fetchFromGitHub {
+    owner = "alexarch21";
+    repo = "history-explorer-card";
+    # renovate: datasource=github-tags depName=alexarch21/history-explorer-card
+    rev = "v1.0.51";
+    hash = "sha256-/bPFW6/vqL1aK30WOQxxRV3fuIk7FYnZA+l4ihHpToM=";
+  };
+
+  # ===========================================
+  # Layout Card
+  # ===========================================
+  layoutCardSource = pkgs.fetchFromGitHub {
+    owner = "thomasloven";
+    repo = "lovelace-layout-card";
+    # renovate: datasource=github-tags depName=thomasloven/lovelace-layout-card
+    rev = "v2.4.7";
+    hash = "sha256-xni9cTgv5rdpr+Oo4Zh/d/2ERMiqDiTFGAiXEnigqjc=";
+  };
+
+  # ===========================================
+  # Mini Media Player
+  # ===========================================
+  miniMediaPlayerSource = pkgs.fetchFromGitHub {
+    owner = "kalkih";
+    repo = "mini-media-player";
+    # renovate: datasource=github-tags depName=kalkih/mini-media-player
+    rev = "v1.16.10";
+    hash = "sha256-nUZL+zYZoWjhs0Xc/3EeuwewryEl4/g3Dv70Q/85bQc=";
+  };
+
+  # ===========================================
   # Custom Python Packages
   # ===========================================
   # Function that builds custom packages with HA's Python environment
@@ -441,6 +474,9 @@ in {
       ln -sfn ${cardModSource} /var/lib/hass/www/community/card-mod
       ln -sfn ${autoEntitiesSource} /var/lib/hass/www/community/auto-entities
       ln -sfn ${hassHueIconsSource}/dist /var/lib/hass/www/community/hass-hue-icons
+      ln -sfn ${historyExplorerSource} /var/lib/hass/www/community/history-explorer-card
+      ln -sfn ${layoutCardSource} /var/lib/hass/www/community/layout-card
+      ln -sfn ${miniMediaPlayerSource}/dist /var/lib/hass/www/community/mini-media-player
 
       # Create Adaptive Lighting symlink
       ln -sfn ${adaptiveLightingSource}/custom_components/adaptive_lighting /var/lib/hass/custom_components/adaptive_lighting
