@@ -16,6 +16,8 @@ Home Assistant UI.
 - **[Loki Log Aggregation](loki-logs.md)** - View HA and system logs in Grafana (365d retention)
 - **[Grafana Loki Explore App](grafana-loki-explore.md)** - Configure default datasource for log drilldown features
 - **[Grafana Alert Rules](grafana-alert-rules.md)** - Update alert queries after Prometheus exporter changes
+- **[Grafana Dashboards](grafana-dashboards.md)** - Historical analysis dashboards for environmental and system metrics
+- **[Dashboard Configuration](dashboards.md)** - Home Assistant GUI dashboard setup guide
 - **[System Monitor](system-monitor.md)** - System resource monitoring
 - **[Wyoming Protocol](wyoming-protocol.md)** - Speech-to-text and text-to-speech services
 - **[Voice Assistant Preview Edition](voice-assistant-preview.md)** - Voice hardware setup
