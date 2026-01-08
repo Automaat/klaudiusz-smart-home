@@ -247,7 +247,7 @@ in {
       GetAirQuality = {
         speech.text = ''
           Jakość powietrza w salonie: wewnątrz {{ states('sensor.zhimi_de_334622045_mb3_pm2_5_density_p_3_6') }} mikrogramów PM2.5,
-          na zewnątrz {{ states('sensor.aleje_pm2_5') }} mikrogramów.
+          na zewnątrz {{ states('sensor.airly_home_pm2_5') }} mikrogramów.
           {{ 'Możesz otworzyć okno.' if is_state('binary_sensor.safe_to_ventilate_living_room', 'on') else 'Lepiej zostaw okna zamknięte.' }}
         '';
       };

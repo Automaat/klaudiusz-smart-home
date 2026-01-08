@@ -83,7 +83,7 @@ in {
       trigger = [
         {
           platform = "state";
-          entity_id = "sensor.aleje_pm2_5";
+          entity_id = "sensor.airly_home_pm2_5";
         }
       ];
       condition = [
@@ -100,7 +100,7 @@ in {
               conditions = [
                 {
                   condition = "numeric_state";
-                  entity_id = "sensor.aleje_pm2_5";
+                  entity_id = "sensor.airly_home_pm2_5";
                   above = 75;
                 }
               ];
@@ -116,7 +116,7 @@ in {
               conditions = [
                 {
                   condition = "numeric_state";
-                  entity_id = "sensor.aleje_pm2_5";
+                  entity_id = "sensor.airly_home_pm2_5";
                   below = 15;
                 }
               ];
@@ -138,7 +138,7 @@ in {
           ];
         }
       ];
-      mode = "restart";
+      mode = "single";
     }
 
     {
@@ -178,7 +178,7 @@ in {
         }
         {
           platform = "state";
-          entity_id = "sensor.aleje_pm2_5";
+          entity_id = "sensor.airly_home_pm2_5";
         }
       ];
       condition = [
@@ -195,7 +195,7 @@ in {
               conditions = [
                 {
                   condition = "numeric_state";
-                  entity_id = "sensor.aleje_pm2_5";
+                  entity_id = "sensor.airly_home_pm2_5";
                   above = 75;
                 }
               ];
@@ -217,7 +217,7 @@ in {
           ];
         }
       ];
-      mode = "restart";
+      mode = "single";
     }
 
     {
@@ -247,7 +247,7 @@ in {
           target.entity_id = "tts.piper";
           data = {
             media_player_entity_id = "media_player.home_assistant_voice_0a5def_media_player";
-            message = "Możesz otworzyć okno w salonie, powietrze na zewnątrz lepsze niż w środku. PM2.5 zewnątrz {{ states('sensor.aleje_pm2_5') }}, wewnątrz {{ states('sensor.zhimi_de_334622045_mb3_pm2_5_density_p_3_6') }} mikrogramów.";
+            message = "Możesz otworzyć okno w salonie, powietrze na zewnątrz lepsze niż w środku. PM2.5 zewnątrz {{ states('sensor.airly_home_pm2_5') }}, wewnątrz {{ states('sensor.zhimi_de_334622045_mb3_pm2_5_density_p_3_6') }} mikrogramów.";
           };
         }
       ];
@@ -272,7 +272,7 @@ in {
               conditions = [
                 {
                   condition = "numeric_state";
-                  entity_id = "sensor.aleje_pm2_5";
+                  entity_id = "sensor.airly_home_pm2_5";
                   below = 25;
                 }
               ];
@@ -287,7 +287,7 @@ in {
               conditions = [
                 {
                   condition = "numeric_state";
-                  entity_id = "sensor.aleje_pm2_5";
+                  entity_id = "sensor.airly_home_pm2_5";
                   above = 50;
                 }
               ];
@@ -313,7 +313,7 @@ in {
           ];
         }
       ];
-      mode = "restart";
+      mode = "single";
     }
 
     {

@@ -59,7 +59,12 @@
           name = "PM2.5 24h Average";
           unique_id = "pm25_24h_average";
           state = ''
-            {{ state_attr('sensor.aleje_pm2_5', 'mean_24h') | float(0) | round(1) }}
+            {% set mean = state_attr('sensor.airly_home_pm2_5', 'mean_24h') %}
+            {% if mean is not none %}
+              {{ mean | float | round(1) }}
+            {% else %}
+              {{ states('sensor.airly_home_pm2_5') | float(0) | round(1) }}
+            {% endif %}
           '';
           unit_of_measurement = "µg/m³";
           device_class = "pm25";
@@ -75,7 +80,7 @@
         {
           name = "PM2.5 Outdoor vs Indoor (Living Room)";
           unique_id = "pm25_outdoor_indoor_diff_living_room";
-          state = "{{ states('sensor.aleje_pm2_5') | float(999) - states('sensor.zhimi_de_334622045_mb3_pm2_5_density_p_3_6') | float(50) }}";
+          state = "{{ states('sensor.airly_home_pm2_5') | float(999) - states('sensor.zhimi_de_334622045_mb3_pm2_5_density_p_3_6') | float(50) }}";
           unit_of_measurement = "µg/m³";
         }
         {
@@ -87,7 +92,7 @@
           # - Outdoor > 25 or indoor > 15: auto mode (moderate pollution)
           # WHO guidelines: 0-12 good, 12-35 moderate, 35-55 unhealthy for sensitive groups
           state = ''
-            {% set outdoor = states('sensor.aleje_pm2_5') | float(999) %}
+            {% set outdoor = states('sensor.airly_home_pm2_5') | float(999) %}
             {% set indoor = states('sensor.zhimi_de_334622045_mb3_pm2_5_density_p_3_6') | float(50) %}
             {% if indoor < 5 %}night
             {% elif outdoor > 75 or indoor > 50 %}auto
@@ -122,7 +127,7 @@
           # - Outdoor PM2.5 < 15 µg/m³ (good/upper-moderate boundary per WHO)
           # - Outdoor air cleaner than indoor air
           # Threshold 15 µg/m³ balances health protection with practical ventilation opportunities
-          state = "{{ states('sensor.aleje_pm2_5') | float(999) < 15 and states('sensor.aleje_pm2_5') | float(999) < states('sensor.zhimi_de_334622045_mb3_pm2_5_density_p_3_6') | float(50) }}";
+          state = "{{ states('sensor.airly_home_pm2_5') | float(999) < 15 and states('sensor.airly_home_pm2_5') | float(999) < states('sensor.zhimi_de_334622045_mb3_pm2_5_density_p_3_6') | float(50) }}";
           device_class = "safety";
         }
         {
