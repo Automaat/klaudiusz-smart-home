@@ -327,6 +327,8 @@ in {
       };
 
       # Logger
+      # Enable debug logging for automation monitoring dashboard
+      # Storage impact: ~5-10 MB/day additional log volume
       logger = {
         default = "info";
         logs = {

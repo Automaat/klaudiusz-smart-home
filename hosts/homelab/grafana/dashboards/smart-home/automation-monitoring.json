@@ -348,18 +348,6 @@
                 "value": 180
               }
             ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Automation"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 300
-              }
-            ]
           }
         ]
       },
@@ -677,7 +665,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "{job=\"homeassistant\", logger=~\".*automation${automation}.*\", level=~\"${level}\"}",
+          "expr": "{job=\"homeassistant\", logger=~\".*automation.*${automation:regex}.*\", level=~\"${level}\"}",
           "legendFormat": "",
           "refId": "A"
         }
@@ -710,10 +698,14 @@
         "multi": true,
         "name": "automation",
         "options": [],
-        "query": "",
-        "queryValue": "",
+        "query": "label_values(logger)",
+        "regex": "homeassistant\\.components\\.automation\\.(.*)",
         "skipUrlSync": false,
-        "type": "custom"
+        "type": "query",
+        "datasource": {
+          "type": "loki",
+          "uid": "loki"
+        }
       },
       {
         "current": {
