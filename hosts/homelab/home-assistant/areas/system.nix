@@ -134,7 +134,7 @@ in {
     {
       id = "leaving_home";
       alias = "System - Leaving home";
-      description = "Turn off all lights, TV, and smart plugs when leaving home. Can be triggered via voice command, location change, or manual toggle.";
+      description = "Turn off all lights, TV, and smart plugs when leaving home. Can be triggered via location change or manual toggle.";
       trigger = [
         # Location based
         {
