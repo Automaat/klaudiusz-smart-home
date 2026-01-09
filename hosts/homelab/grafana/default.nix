@@ -132,7 +132,7 @@
                     datasourceUid = "prometheus";
                     model = {
                       expr = ''node_systemd_unit_state{name="${unitName}",state="active"}'';
-                      instant = true;
+                      instant = false;
                       intervalMs = 1000;
                       maxDataPoints = 43200;
                       refId = "A";
