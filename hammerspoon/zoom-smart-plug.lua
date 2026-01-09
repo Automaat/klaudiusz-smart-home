@@ -51,7 +51,7 @@ local function isInMeeting()
 
     -- Method 1: Check for CptHost process (Zoom meeting component)
     -- This is the most reliable method - CptHost only runs during active meetings
-    local output, status = hs.execute("pgrep -x CptHost")
+    local _, status = hs.execute("pgrep -x CptHost")
     if status then
         log.d("CptHost process detected - in meeting")
         return true
