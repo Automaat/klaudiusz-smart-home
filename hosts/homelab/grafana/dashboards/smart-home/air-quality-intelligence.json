@@ -626,7 +626,7 @@
             "type": "influxdb",
             "uid": "${DS_INFLUXDB}"
           },
-          "query": "from(bucket: \"home-assistant\")\n  |> range(start: -7d)\n  |> filter(fn: (r) => r[\"entity_id\"] == \"sensor.airly_home_pm2_5\")\n  |> filter(fn: (r) => r[\"_field\"] == \"value\")\n  |> aggregateWindow(every: 1h, fn: mean, createEmpty: false)\n  |> map(fn: (r) => ({r with hour: uint(v: date.hour(t: r._time))}))\n  |> group(columns: [\"hour\"])\n  |> mean()\n  |> group()\n  |> sort(columns: [\"hour\"])\n  |> yield(name: \"avg_by_hour\")",
+          "query": "import \"date\"\nfrom(bucket: \"home-assistant\")\n  |> range(start: -7d)\n  |> filter(fn: (r) => r[\"entity_id\"] == \"sensor.airly_home_pm2_5\")\n  |> filter(fn: (r) => r[\"_field\"] == \"value\")\n  |> aggregateWindow(every: 1h, fn: mean, createEmpty: false)\n  |> map(fn: (r) => ({r with hour: uint(v: date.hour(t: r._time))}))\n  |> group(columns: [\"hour\"])\n  |> mean()\n  |> group()\n  |> sort(columns: [\"hour\"])\n  |> yield(name: \"avg_by_hour\")",
           "refId": "A"
         }
       ],
@@ -720,7 +720,7 @@
             "type": "influxdb",
             "uid": "${DS_INFLUXDB}"
           },
-          "query": "from(bucket: \"home-assistant\")\n  |> range(start: -7d)\n  |> filter(fn: (r) => r[\"entity_id\"] == \"sensor.zhimi_de_334622045_mb3_pm2_5_density_p_3_6\")\n  |> filter(fn: (r) => r[\"_field\"] == \"value\")\n  |> map(fn: (r) => ({r with hour: date.hour(t: r._time)}))\n  |> filter(fn: (r) => r.hour >= 22 or r.hour <= 6)\n  |> aggregateWindow(every: 1d, fn: mean, createEmpty: false)\n  |> keep(columns: [\"_time\", \"_value\"])\n  |> rename(columns: {_time: \"Date\", _value: \"Sleep Hours Avg PM2.5\"})",
+          "query": "import \"date\"\nfrom(bucket: \"home-assistant\")\n  |> range(start: -7d)\n  |> filter(fn: (r) => r[\"entity_id\"] == \"sensor.zhimi_de_334622045_mb3_pm2_5_density_p_3_6\")\n  |> filter(fn: (r) => r[\"_field\"] == \"value\")\n  |> map(fn: (r) => ({r with hour: date.hour(t: r._time)}))\n  |> filter(fn: (r) => r.hour >= 22 or r.hour <= 6)\n  |> aggregateWindow(every: 1d, fn: mean, createEmpty: false)\n  |> keep(columns: [\"_time\", \"_value\"])\n  |> rename(columns: {_time: \"Date\", _value: \"Sleep Hours Avg PM2.5\"})",
           "refId": "A"
         }
       ],
