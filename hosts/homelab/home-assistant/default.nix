@@ -166,7 +166,7 @@
     owner = "bramstroker";
     repo = "homeassistant-powercalc";
     # renovate: datasource=github-tags depName=bramstroker/homeassistant-powercalc
-    rev = "v1.20.1";
+    rev = "v1.20.2";
     hash = "sha256-LzXLsKFBDC/Lcdv62kAiQeyc/fu/eH6ukV76jwSb/Es=";
   };
 
