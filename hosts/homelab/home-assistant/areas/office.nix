@@ -93,6 +93,10 @@
               conditions = [
                 {
                   condition = "template";
+                  value_template = "{{ trigger.json.iphone_battery is defined and trigger.json.airpods_battery is defined and trigger.json.iphone_battery is number and trigger.json.airpods_battery is number }}";
+                }
+                {
+                  condition = "template";
                   value_template = "{{ trigger.json.iphone_battery < 50 or trigger.json.airpods_battery < 20 }}";
                 }
               ];
@@ -113,6 +117,10 @@
             # Stop charging: BOTH iPhone >= 80% AND AirPods case >= 80%
             {
               conditions = [
+                {
+                  condition = "template";
+                  value_template = "{{ trigger.json.iphone_battery is defined and trigger.json.airpods_battery is defined and trigger.json.iphone_battery is number and trigger.json.airpods_battery is number }}";
+                }
                 {
                   condition = "template";
                   value_template = "{{ trigger.json.iphone_battery >= 80 and trigger.json.airpods_battery >= 80 }}";
@@ -137,8 +145,14 @@
             {
               action = "logbook.log";
               data = {
-                name = "Office - Desk charger unchanged";
-                message = "Battery levels in hysteresis zone: iPhone {{ trigger.json.iphone_battery }}%, AirPods case {{ trigger.json.airpods_battery }}%";
+                name = "Office - Desk charger webhook";
+                message = ''
+                  {% if trigger.json.iphone_battery is not defined or trigger.json.airpods_battery is not defined or trigger.json.iphone_battery is not number or trigger.json.airpods_battery is not number %}
+                  Invalid payload: missing or non-numeric battery fields - {{ trigger.json | tojson }}
+                  {% else %}
+                  Battery levels in hysteresis zone: iPhone {{ trigger.json.iphone_battery }}%, AirPods case {{ trigger.json.airpods_battery }}%
+                  {% endif %}
+                '';
               };
             }
           ];
