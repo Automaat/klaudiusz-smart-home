@@ -189,7 +189,7 @@
             "type": "influxdb",
             "uid": "${DS_INFLUXDB}"
           },
-          "query": "// Morning wake time: first bathroom occupancy each day\nbathroom_wake = from(bucket: \"home-assistant\")\n  |> range(start: -30d)\n  |> filter(fn: (r) => r[\"entity_id\"] == \"binary_sensor.presence_bathroom\")\n  |> filter(fn: (r) => r[\"_field\"] == \"state\")\n  |> filter(fn: (r) => r[\"_value\"] == \"on\")\n  |> aggregateWindow(every: 1d, fn: first, createEmpty: false)\n  |> map(fn: (r) => ({\n      r with\n      _value: uint(v: r._time) % uint(v: 86400000000000),\n      _field: \"Wake Time (Bathroom)\"\n  }))\n  |> yield(name: \"wake\")",
+          "query": "// Morning wake time: first kitchen occupancy each day\nimport \"timezone\"\n\nkitchen_wake = from(bucket: \"home-assistant\")\n  |> range(start: -30d)\n  |> filter(fn: (r) => r[\"entity_id\"] == \"binary_sensor.presence_kitchen\")\n  |> filter(fn: (r) => r[\"_field\"] == \"state\")\n  |> filter(fn: (r) => r[\"_value\"] == \"on\")\n  |> aggregateWindow(every: 1d, fn: first, createEmpty: false)\n  |> map(fn: (r) => {\n      // Convert to Europe/Warsaw timezone\n      local_time = timezone.time(t: r._time, location: timezone.fixed(offset: 1h))\n      hours = uint(v: date.hour(t: local_time))\n      minutes = uint(v: date.minute(t: local_time))\n      // Store as nanoseconds since midnight for graph\n      return {r with\n        _value: (hours * 3600000000000) + (minutes * 60000000000),\n        _field: \"Wake Time (Kitchen)\"\n      }\n  })\n  |> yield(name: \"wake\")",
           "refId": "A"
         },
         {
@@ -197,7 +197,7 @@
             "type": "influxdb",
             "uid": "${DS_INFLUXDB}"
           },
-          "query": "// Evening sleep time: last bedroom occupancy transition to off\nbedroom_sleep = from(bucket: \"home-assistant\")\n  |> range(start: -30d)\n  |> filter(fn: (r) => r[\"entity_id\"] == \"binary_sensor.presence_bedroom\")\n  |> filter(fn: (r) => r[\"_field\"] == \"state\")\n  |> filter(fn: (r) => r[\"_value\"] == \"off\")\n  |> aggregateWindow(every: 1d, fn: last, createEmpty: false)\n  |> map(fn: (r) => ({\n      r with\n      _value: uint(v: r._time) % uint(v: 86400000000000),\n      _field: \"Sleep Time (Bedroom)\"\n  }))\n  |> yield(name: \"sleep\")",
+          "query": "// Evening sleep time: last living room occupancy transition to off\nimport \"timezone\"\n\nlivingroom_sleep = from(bucket: \"home-assistant\")\n  |> range(start: -30d)\n  |> filter(fn: (r) => r[\"entity_id\"] == \"binary_sensor.presence_livingroom\")\n  |> filter(fn: (r) => r[\"_field\"] == \"state\")\n  |> filter(fn: (r) => r[\"_value\"] == \"off\")\n  |> aggregateWindow(every: 1d, fn: last, createEmpty: false)\n  |> map(fn: (r) => {\n      // Convert to Europe/Warsaw timezone\n      local_time = timezone.time(t: r._time, location: timezone.fixed(offset: 1h))\n      hours = uint(v: date.hour(t: local_time))\n      minutes = uint(v: date.minute(t: local_time))\n      // Store as nanoseconds since midnight for graph\n      return {r with\n        _value: (hours * 3600000000000) + (minutes * 60000000000),\n        _field: \"Sleep Time (Living Room)\"\n      }\n  })\n  |> yield(name: \"sleep\")",
           "refId": "B"
         }
       ],
