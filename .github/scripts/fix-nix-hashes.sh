@@ -2,10 +2,11 @@
 set -euo pipefail
 
 # Fix hash mismatches in fetchFromGitHub calls
-# Parses nix flake check errors and automatically updates hashes
+# Builds configuration to force source fetching and hash verification
 
-echo "Running nix flake check to detect hash mismatches..."
-check_output=$(nix flake check -L 2>&1) || true
+echo "Building NixOS configuration to detect hash mismatches..."
+# Use --keep-going to try all sources even if one fails
+check_output=$(nix build .#nixosConfigurations.homelab.config.system.build.toplevel --keep-going -L 2>&1) || true
 
 if ! echo "$check_output" | grep -q "hash mismatch"; then
     echo "No hash mismatches found"
