@@ -49,29 +49,39 @@ local function isInMeeting()
         return false
     end
 
-    -- Check Zoom windows for meeting indicators
+    -- Method 1: Check for CptHost process (Zoom meeting component)
+    -- This is the most reliable method - CptHost only runs during active meetings
+    local output, status = hs.execute("pgrep -x CptHost")
+    if status then
+        log.d("CptHost process detected - in meeting")
+        return true
+    end
+
+    -- Method 2: Check for meeting window patterns (fallback)
     local app = hs.application.find(config.zoom_process)
     if not app then
         return false
     end
 
-    -- Method 1: Check for meeting window title patterns
     local windows = app:allWindows()
     for _, window in ipairs(windows) do
         local title = window:title()
-        if title then
-            -- Meeting windows typically have these specific patterns
-            if string.match(title:lower(), "zoom meeting") or
-               string.match(title:lower(), "participant") then
+        if title and title ~= "" then
+            local lower_title = title:lower()
+            if string.match(lower_title, "zoom meeting") or
+               string.match(lower_title, "zoom cloud meeting") or
+               string.match(lower_title, "'s meeting") or
+               string.match(lower_title, "participant") then
+                log.d("Meeting window detected: " .. title)
                 return true
             end
         end
     end
 
-    -- Method 2: Check menu bar extra
+    -- Method 3: Check for "Meeting" menu
     local menuItems = app:getMenuItems()
     if menuItems and menuItems["Meeting"] then
-        -- If "Meeting" menu exists, we're in a meeting
+        log.d("Meeting menu detected")
         return true
     end
 
