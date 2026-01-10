@@ -64,5 +64,6 @@
   "timezone": "Europe/Warsaw",
   "dependencyDashboard": true,
   "prConcurrentLimit": 10,
-  "prHourlyLimit": 10
+  "prHourlyLimit": 10,
+  "reviewers": ["Automaat"]
 }
