@@ -9,21 +9,21 @@ echo "Checking for fetchFromGitHub with outdated hashes..."
 tmpfile=$(mktemp)
 trap 'rm -f "$tmpfile"' EXIT
 
-# Find all .nix files with fetchFromGitHub
-find . -name "*.nix" -type f -exec grep -l "fetchFromGitHub" {} \; | while IFS= read -r file; do
+# Find all .nix files with fetchFromGitHub, ignoring binaries and .git directory
+find . -path './.git' -prune -o -name "*.nix" -type f -exec grep -Il "fetchFromGitHub" {} + | while IFS= read -r file; do
     echo "Processing $file..."
 
     # Read file content and extract fetchFromGitHub blocks
     owner="" repo="" rev="" current_hash=""
 
     while IFS= read -r line; do
-        if [[ $line =~ owner\ =\ \"([^\"]+)\" ]]; then
+        if [[ $line =~ owner[[:space:]]*=[[:space:]]*\"([^\"]+)\" ]]; then
             owner="${BASH_REMATCH[1]}"
-        elif [[ $line =~ repo\ =\ \"([^\"]+)\" ]]; then
+        elif [[ $line =~ repo[[:space:]]*=[[:space:]]*\"([^\"]+)\" ]]; then
             repo="${BASH_REMATCH[1]}"
-        elif [[ $line =~ rev\ =\ \"([^\"]+)\" ]]; then
+        elif [[ $line =~ rev[[:space:]]*=[[:space:]]*\"([^\"]+)\" ]]; then
             rev="${BASH_REMATCH[1]}"
-        elif [[ $line =~ hash\ =\ \"(sha256-[A-Za-z0-9+/=]+)\" ]]; then
+        elif [[ $line =~ hash[[:space:]]*=[[:space:]]*\"(sha256-[A-Za-z0-9+/=]+)\" ]]; then
             current_hash="${BASH_REMATCH[1]}"
 
             # We have a complete block, process it
@@ -31,7 +31,13 @@ find . -name "*.nix" -type f -exec grep -l "fetchFromGitHub" {} \; | while IFS= 
                 echo "  Checking $owner/$repo@$rev"
 
                 # Prefetch the correct hash for this rev
-                correct_hash=$(nix-shell -p nix-prefetch-github --run "nix-prefetch-github '$owner' '$repo' --rev '$rev' 2>/dev/null" | grep '"hash"' | sed 's/.*"hash": "\(.*\)".*/\1/' || echo "")
+                correct_hash=$(nix run nixpkgs#nix-prefetch-github -- "$owner" "$repo" --rev "$rev" 2>/dev/null | grep '"hash"' | sed 's/.*"hash": "\(.*\)".*/\1/' || echo "")
+
+                # Validate the format of the prefetched hash before using it
+                if [[ -n "$correct_hash" && ! "$correct_hash" =~ ^sha256-[A-Za-z0-9+/=]+$ ]]; then
+                    echo "  WARNING: Invalid hash format returned: $correct_hash"
+                    correct_hash=""
+                fi
 
                 if [ -z "$correct_hash" ]; then
                     echo "  WARNING: Could not prefetch hash for $owner/$repo@$rev"
@@ -41,7 +47,7 @@ find . -name "*.nix" -type f -exec grep -l "fetchFromGitHub" {} \; | while IFS= 
                     echo "    Correct:  $correct_hash"
 
                     # Replace the hash in the file
-                    if sed -i.bak "s|hash = \"$current_hash\"|hash = \"$correct_hash\"|g" "$file"; then
+                    if sed -i.bak "s|hash[[:space:]]*=[[:space:]]*\"$current_hash\"|hash = \"$correct_hash\"|g" "$file"; then
                         rm -f "$file.bak"
                         echo "  ✓ Updated hash in $file"
                         echo "$file" >> "$tmpfile"
@@ -57,7 +63,7 @@ find . -name "*.nix" -type f -exec grep -l "fetchFromGitHub" {} \; | while IFS= 
     done < "$file"
 done
 
-changed_files=$(wc -l < "$tmpfile" | tr -d ' ')
+changed_files=$(sort -u "$tmpfile" | wc -l | tr -d ' ')
 
 echo ""
 if [ "$changed_files" -eq 0 ]; then
