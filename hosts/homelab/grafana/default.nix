@@ -170,8 +170,8 @@
                     };
                   }
                 ];
-                noDataState = "Alerting";
-                execErrState = "Alerting";
+                noDataState = "OK";
+                execErrState = "Error";
                 for = "10m";
                 annotations = {
                   inherit summary description;
@@ -255,6 +255,80 @@
               ];
             in
               map mkSystemdAlertRule services;
+          }
+
+          # Prometheus scrape health monitoring
+          {
+            name = "prometheus_scrape_health";
+            folder = "Services";
+            interval = "1m";
+            rules = [
+              {
+                uid = "node_exporter_down";
+                title = "Node Exporter Scrape Failing";
+                condition = "C";
+                data = [
+                  {
+                    refId = "A";
+                    relativeTimeRange = {
+                      from = 300;
+                      to = 0;
+                    };
+                    datasourceUid = "prometheus";
+                    model = {
+                      expr = ''up{job="node"}'';
+                      instant = false;
+                      intervalMs = 1000;
+                      maxDataPoints = 43200;
+                      refId = "A";
+                    };
+                  }
+                  {
+                    refId = "C";
+                    relativeTimeRange = {
+                      from = 300;
+                      to = 0;
+                    };
+                    datasourceUid = "-100";
+                    model = {
+                      conditions = [
+                        {
+                          evaluator = {
+                            params = [1];
+                            type = "lt";
+                          };
+                          operator = {type = "and";};
+                          query = {params = ["A"];};
+                          type = "query";
+                        }
+                      ];
+                      datasource = {
+                        type = "__expr__";
+                        uid = "-100";
+                      };
+                      expression = "A";
+                      intervalMs = 1000;
+                      maxDataPoints = 43200;
+                      reducer = "last";
+                      refId = "C";
+                      type = "reduce";
+                    };
+                  }
+                ];
+                noDataState = "Alerting";
+                execErrState = "Alerting";
+                for = "5m";
+                annotations = {
+                  summary = "Prometheus cannot scrape node_exporter metrics";
+                  description = "The node_exporter target has been down for more than 5 minutes. Systemd service metrics unavailable. Check: systemctl status prometheus-node-exporter";
+                };
+                labels = {
+                  severity = "critical";
+                  service = "prometheus_scraping";
+                };
+                isPaused = false;
+              }
+            ];
           }
         ];
 
