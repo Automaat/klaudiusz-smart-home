@@ -31,7 +31,7 @@ find . -path './.git' -prune -o -name "*.nix" -type f -exec grep -Il "fetchFromG
                 echo "  Checking $owner/$repo@$rev"
 
                 # Prefetch the correct hash for this rev
-                correct_hash=$(nix run nixpkgs#nix-prefetch-github -- "$owner" "$repo" --rev "$rev" 2>/dev/null | grep '"hash"' | sed 's/.*"hash": "\(.*\)".*/\1/' || echo "")
+                correct_hash=$(nix-shell -p nix-prefetch-github --run "nix-prefetch-github '$owner' '$repo' --rev '$rev' 2>/dev/null" | grep '"hash"' | sed 's/.*"hash": "\(.*\)".*/\1/' || echo "")
 
                 # Validate the format of the prefetched hash before using it
                 if [[ -n "$correct_hash" && ! "$correct_hash" =~ ^sha256-[A-Za-z0-9+/=]+$ ]]; then
