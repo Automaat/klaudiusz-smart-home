@@ -164,7 +164,7 @@
                       expression = "A";
                       intervalMs = 1000;
                       maxDataPoints = 43200;
-                      reducer = "last";
+                      reducer = "max";
                       refId = "C";
                       type = "reduce";
                     };
@@ -309,7 +309,7 @@
                       expression = "A";
                       intervalMs = 1000;
                       maxDataPoints = 43200;
-                      reducer = "last";
+                      reducer = "max";
                       refId = "C";
                       type = "reduce";
                     };
