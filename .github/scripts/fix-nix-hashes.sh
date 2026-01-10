@@ -5,8 +5,13 @@ set -euo pipefail
 # Builds configuration to force source fetching and hash verification
 
 echo "Building NixOS configuration to detect hash mismatches..."
-# Use --keep-going to try all sources even if one fails
-check_output=$(nix build .#nixosConfigurations.homelab.config.system.build.toplevel --keep-going -L 2>&1) || true
+# Force fresh source fetching without using substitutes or cache
+# This ensures hash mismatches are actually detected
+check_output=$(nix build .#nixosConfigurations.homelab.config.system.build.toplevel \
+    --no-substitute \
+    --rebuild \
+    --keep-going \
+    -L 2>&1) || true
 
 if ! echo "$check_output" | grep -q "hash mismatch"; then
     echo "No hash mismatches found"
