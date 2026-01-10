@@ -50,52 +50,6 @@
     }
 
     # -------------------------------------------
-    # Light Waste Detection - Hallway
-    # -------------------------------------------
-    {
-      id = "analytics_hallway_light_waste_alert";
-      alias = "Analytics - Hallway Light Waste Alert";
-      description = "Alert when hallway lights left on for extended period";
-
-      trigger = [
-        {
-          platform = "state";
-          entity_id = "light.hallway";
-          to = "on";
-          "for" = {
-            hours = 1;
-          };
-        }
-      ];
-
-      condition = [
-        # Check if any presence sensors detect activity
-        {
-          condition = "state";
-          entity_id = "binary_sensor.presence_kitchen";
-          state = "off";
-        }
-        {
-          condition = "state";
-          entity_id = "binary_sensor.presence_livingroom";
-          state = "off";
-        }
-      ];
-
-      action = [
-        {
-          action = "notify.telegram";
-          data = {
-            message = "⚡ Oszczędność: Światło w korytarzu pali się >1h bez ruchu";
-            title = "Light Waste Alert";
-          };
-        }
-      ];
-
-      mode = "single";
-    }
-
-    # -------------------------------------------
     # Climate Waste Detection - Living Room
     # -------------------------------------------
     {
