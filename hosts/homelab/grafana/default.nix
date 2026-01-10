@@ -139,6 +139,24 @@
                     };
                   }
                   {
+                    refId = "B";
+                    relativeTimeRange = {
+                      from = 600;
+                      to = 0;
+                    };
+                    datasourceUid = "-100";
+                    model = {
+                      datasource = {
+                        type = "__expr__";
+                        uid = "-100";
+                      };
+                      expression = "A";
+                      reducer = "max";
+                      refId = "B";
+                      type = "reduce";
+                    };
+                  }
+                  {
                     refId = "C";
                     relativeTimeRange = {
                       from = 600;
@@ -146,27 +164,21 @@
                     };
                     datasourceUid = "-100";
                     model = {
+                      datasource = {
+                        type = "__expr__";
+                        uid = "-100";
+                      };
+                      expression = "B";
+                      refId = "C";
+                      type = "threshold";
                       conditions = [
                         {
                           evaluator = {
                             params = [1];
                             type = "lt";
                           };
-                          operator = {type = "and";};
-                          query = {params = ["A"];};
-                          type = "query";
                         }
                       ];
-                      datasource = {
-                        type = "__expr__";
-                        uid = "-100";
-                      };
-                      expression = "A";
-                      intervalMs = 1000;
-                      maxDataPoints = 43200;
-                      reducer = "max";
-                      refId = "C";
-                      type = "reduce";
                     };
                   }
                 ];
@@ -284,6 +296,24 @@
                     };
                   }
                   {
+                    refId = "B";
+                    relativeTimeRange = {
+                      from = 300;
+                      to = 0;
+                    };
+                    datasourceUid = "-100";
+                    model = {
+                      datasource = {
+                        type = "__expr__";
+                        uid = "-100";
+                      };
+                      expression = "A";
+                      reducer = "max";
+                      refId = "B";
+                      type = "reduce";
+                    };
+                  }
+                  {
                     refId = "C";
                     relativeTimeRange = {
                       from = 300;
@@ -291,27 +321,21 @@
                     };
                     datasourceUid = "-100";
                     model = {
+                      datasource = {
+                        type = "__expr__";
+                        uid = "-100";
+                      };
+                      expression = "B";
+                      refId = "C";
+                      type = "threshold";
                       conditions = [
                         {
                           evaluator = {
                             params = [1];
                             type = "lt";
                           };
-                          operator = {type = "and";};
-                          query = {params = ["A"];};
-                          type = "query";
                         }
                       ];
-                      datasource = {
-                        type = "__expr__";
-                        uid = "-100";
-                      };
-                      expression = "A";
-                      intervalMs = 1000;
-                      maxDataPoints = 43200;
-                      reducer = "max";
-                      refId = "C";
-                      type = "reduce";
                     };
                   }
                 ];
