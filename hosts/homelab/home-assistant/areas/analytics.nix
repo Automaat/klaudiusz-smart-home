@@ -50,51 +50,6 @@
     }
 
     # -------------------------------------------
-    # Climate Waste Detection - Living Room
-    # -------------------------------------------
-    {
-      id = "analytics_livingroom_heating_waste_alert";
-      alias = "Analytics - Living Room Heating Waste Alert";
-      description = "Alert when living room heated while vacant >1h";
-
-      trigger = [
-        {
-          platform = "state";
-          entity_id = "binary_sensor.presence_livingroom";
-          to = "off";
-          "for" = {
-            hours = 1;
-          };
-        }
-      ];
-
-      condition = [
-        # Check if room is being heated (temp > 20°C)
-        {
-          condition = "numeric_state";
-          entity_id = "climate.livingroom_thermostat";
-          attribute = "current_temperature";
-          above = 20;
-        }
-      ];
-
-      action = [
-        {
-          action = "notify.telegram";
-          data = {
-            message = ''
-              🔥 Oszczędność: Salon jest ogrzewany od >1h bez obecności
-              Temperatura: {{ state_attr('climate.livingroom_thermostat', 'current_temperature') }}°C
-            '';
-            title = "Heating Waste Alert";
-          };
-        }
-      ];
-
-      mode = "single";
-    }
-
-    # -------------------------------------------
     # Daily Efficiency Summary
     # -------------------------------------------
     {
