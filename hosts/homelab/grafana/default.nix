@@ -170,8 +170,8 @@
                     };
                   }
                 ];
-                noDataState = "Alerting";
-                execErrState = "Alerting";
+                noDataState = "OK";
+                execErrState = "Error";
                 for = "10m";
                 annotations = {
                   inherit summary description;
