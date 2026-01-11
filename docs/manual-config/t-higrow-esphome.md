@@ -14,6 +14,7 @@ ESP32-based plant monitoring board with built-in sensors:
 ## Integration Path: ESPHome
 
 **Why ESPHome:**
+
 - Native HA integration (auto-discovery)
 - OTA updates
 - YAML configuration
@@ -25,7 +26,7 @@ ESP32-based plant monitoring board with built-in sensors:
 
 1. Connect T-Higrow via USB
 2. Open Chrome/Edge
-3. Go to: https://bruvv.github.io/LILYGO-T-Higrow-Esphome/
+3. Go to: <https://bruvv.github.io/LILYGO-T-Higrow-Esphome/>
 4. Flash firmware
 5. Configure WiFi
 6. Auto-discovered in HA
@@ -33,6 +34,7 @@ ESP32-based plant monitoring board with built-in sensors:
 ### Custom ESPHome Config
 
 Community configs:
+
 - **Main:** [bruvv/LILYGO-T-Higrow-Esphome](https://github.com/bruvv/LILYGO-T-Higrow-Esphome)
 - **Example:** [WoLpH's config](https://gist.github.com/WoLpH/bc284ba9aeb5d1263f72d6294e239c1a)
 
@@ -167,16 +169,19 @@ CheckPlantStatus = {
 ## Troubleshooting
 
 **Device not discovered:**
+
 - Check WiFi credentials
 - Verify ESPHome component in HA
 - Check `journalctl -u home-assistant -f`
 
 **Sensors show 0/unavailable:**
+
 - GPIO4 must be HIGH (sensor power)
 - Check I2C address (0x23, 0x5C)
 - Verify attenuation (11db) on ADC pins
 
 **Battery drains fast:**
+
 - Enable deep sleep
 - Reduce wake duration
 - Increase sleep interval (1h+)
