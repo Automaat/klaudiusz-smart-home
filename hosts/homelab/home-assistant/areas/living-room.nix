@@ -108,7 +108,34 @@ in {
                 {
                   action = "fan.set_preset_mode";
                   target.entity_id = airPurifier;
-                  data.preset_mode = "Auto";
+                  data.preset_mode = "Manual";
+                }
+                {
+                  action = "fan.set_percentage";
+                  target.entity_id = airPurifier;
+                  data.percentage = 100;
+                }
+              ];
+            }
+            {
+              conditions = [
+                {
+                  condition = "numeric_state";
+                  entity_id = "sensor.airly_home_pm2_5";
+                  above = 50;
+                  below = 76;
+                }
+              ];
+              sequence = [
+                {
+                  action = "fan.set_preset_mode";
+                  target.entity_id = airPurifier;
+                  data.preset_mode = "Manual";
+                }
+                {
+                  action = "fan.set_percentage";
+                  target.entity_id = airPurifier;
+                  data.percentage = 66;
                 }
               ];
             }
@@ -133,7 +160,12 @@ in {
             {
               action = "fan.set_preset_mode";
               target.entity_id = airPurifier;
-              data.preset_mode = "Auto";
+              data.preset_mode = "Manual";
+            }
+            {
+              action = "fan.set_percentage";
+              target.entity_id = airPurifier;
+              data.percentage = 33;
             }
           ];
         }
@@ -161,7 +193,51 @@ in {
         {
           action = "fan.set_preset_mode";
           target.entity_id = airPurifier;
-          data.preset_mode = "Auto";
+          data.preset_mode = "Manual";
+        }
+        {
+          choose = [
+            {
+              conditions = [
+                {
+                  condition = "numeric_state";
+                  entity_id = "sensor.zhimi_de_334622045_mb3_pm2_5_density_p_3_6";
+                  above = 50;
+                }
+              ];
+              sequence = [
+                {
+                  action = "fan.set_percentage";
+                  target.entity_id = airPurifier;
+                  data.percentage = 100;
+                }
+              ];
+            }
+            {
+              conditions = [
+                {
+                  condition = "numeric_state";
+                  entity_id = "sensor.zhimi_de_334622045_mb3_pm2_5_density_p_3_6";
+                  above = 25;
+                  below = 51;
+                }
+              ];
+              sequence = [
+                {
+                  action = "fan.set_percentage";
+                  target.entity_id = airPurifier;
+                  data.percentage = 66;
+                }
+              ];
+            }
+          ];
+          default = [
+            {
+              action = "fan.set_percentage";
+              target.entity_id = airPurifier;
+              data.percentage = 66;
+            }
+          ];
         }
       ];
       mode = "single";
@@ -170,7 +246,7 @@ in {
     {
       id = "air_purifier_sleep_mode";
       alias = "Air Purifier - Adaptive sleep mode";
-      description = "Auto if outdoor PM2.5 >75, else Night mode during sleep hours";
+      description = "Manual 66% if outdoor PM2.5 >75, else Night mode during sleep hours";
       trigger = [
         {
           platform = "time";
@@ -203,7 +279,12 @@ in {
                 {
                   action = "fan.set_preset_mode";
                   target.entity_id = airPurifier;
-                  data.preset_mode = "Auto";
+                  data.preset_mode = "Manual";
+                }
+                {
+                  action = "fan.set_percentage";
+                  target.entity_id = airPurifier;
+                  data.percentage = 66;
                 }
               ];
             }
@@ -299,7 +380,12 @@ in {
                 {
                   action = "fan.set_preset_mode";
                   target.entity_id = airPurifier;
-                  data.preset_mode = "Auto";
+                  data.preset_mode = "Manual";
+                }
+                {
+                  action = "fan.set_percentage";
+                  target.entity_id = airPurifier;
+                  data.percentage = 66;
                 }
               ];
             }
@@ -308,7 +394,12 @@ in {
             {
               action = "fan.set_preset_mode";
               target.entity_id = airPurifier;
-              data.preset_mode = "Night";
+              data.preset_mode = "Manual";
+            }
+            {
+              action = "fan.set_percentage";
+              target.entity_id = airPurifier;
+              data.percentage = 33;
             }
           ];
         }
@@ -385,19 +476,14 @@ in {
       description = "Automatic weekly antibacterial filter activation (high power run)";
       trigger = [
         {
-          platform = "time_pattern";
-          hours = "3";
-          minutes = "0";
+          platform = "time";
+          at = "03:00:00";
         }
       ];
       condition = [
         {
           condition = "time";
           weekday = ["sun"];
-        }
-        {
-          condition = "template";
-          value_template = "{{ (now() - as_datetime(states('input_datetime.last_antibacterial_run'))).days >= 7 }}";
         }
       ];
       action = [
@@ -408,7 +494,12 @@ in {
         {
           action = "fan.set_preset_mode";
           target.entity_id = airPurifier;
-          data.preset_mode = "Auto";
+          data.preset_mode = "Manual";
+        }
+        {
+          action = "fan.set_percentage";
+          target.entity_id = airPurifier;
+          data.percentage = 100;
         }
         {
           delay.hours = 2;
@@ -447,7 +538,12 @@ in {
         {
           action = "fan.set_preset_mode";
           target.entity_id = airPurifier;
-          data.preset_mode = "Auto";
+          data.preset_mode = "Manual";
+        }
+        {
+          action = "fan.set_percentage";
+          target.entity_id = airPurifier;
+          data.percentage = 33;
         }
       ];
       mode = "single";
