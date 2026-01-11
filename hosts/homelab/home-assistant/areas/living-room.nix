@@ -459,19 +459,14 @@ in {
       description = "Automatic weekly antibacterial filter activation (high power run)";
       trigger = [
         {
-          platform = "time_pattern";
-          hours = "3";
-          minutes = "0";
+          platform = "time";
+          at = "03:00:00";
         }
       ];
       condition = [
         {
           condition = "time";
           weekday = ["sun"];
-        }
-        {
-          condition = "template";
-          value_template = "{{ (now() - as_datetime(states('input_datetime.last_antibacterial_run'))).days >= 7 }}";
         }
       ];
       action = [
