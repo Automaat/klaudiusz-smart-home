@@ -123,11 +123,10 @@
         {
           name = "Safe to Ventilate (Living Room)";
           unique_id = "safe_to_ventilate_living_room";
-          # Ventilation considered safe when:
-          # - Outdoor PM2.5 < 15 µg/m³ (good/upper-moderate boundary per WHO)
-          # - Outdoor air cleaner than indoor air
-          # Threshold 15 µg/m³ balances health protection with practical ventilation opportunities
-          state = "{{ states('sensor.airly_home_pm2_5') | float(999) < 15 and states('sensor.airly_home_pm2_5') | float(999) < states('sensor.zhimi_de_334622045_mb3_pm2_5_density_p_3_6') | float(50) }}";
+          # Ventilation considered safe when outdoor PM2.5 < 15 µg/m³
+          # (good/upper-moderate boundary per WHO guidelines)
+          # Based solely on Airly outdoor sensor for simplicity
+          state = "{{ states('sensor.airly_home_pm2_5') | float(999) < 15 }}";
           device_class = "safety";
         }
         {
