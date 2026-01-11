@@ -123,7 +123,7 @@ in {
                   condition = "numeric_state";
                   entity_id = "sensor.airly_home_pm2_5";
                   above = 50;
-                  below = 75;
+                  below = 76;
                 }
               ];
               sequence = [
@@ -210,6 +210,23 @@ in {
                   action = "fan.set_percentage";
                   target.entity_id = airPurifier;
                   data.percentage = 100;
+                }
+              ];
+            }
+            {
+              conditions = [
+                {
+                  condition = "numeric_state";
+                  entity_id = "sensor.zhimi_de_334622045_mb3_pm2_5_density_p_3_6";
+                  above = 25;
+                  below = 51;
+                }
+              ];
+              sequence = [
+                {
+                  action = "fan.set_percentage";
+                  target.entity_id = airPurifier;
+                  data.percentage = 66;
                 }
               ];
             }
