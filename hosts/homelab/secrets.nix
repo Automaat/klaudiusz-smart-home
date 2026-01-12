@@ -60,5 +60,12 @@
       mode = "0400";
       restartUnits = ["influxdb2.service"];
     };
+
+    # Cloudflared tunnel credentials
+    "cloudflared/credentials" = {
+      owner = "cloudflared";
+      mode = "0400";
+      restartUnits = ["cloudflared-tunnel-c0350983-f7b9-4770-ac96-34b8a5184c91.service"];
+    };
   };
 }

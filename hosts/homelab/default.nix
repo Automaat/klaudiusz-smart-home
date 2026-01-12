@@ -181,6 +181,20 @@ in {
   };
 
   # ===========================================
+  # Cloudflared - External HA Access
+  # ===========================================
+  services.cloudflared = {
+    enable = true;
+    tunnels."c0350983-f7b9-4770-ac96-34b8a5184c91" = {
+      credentialsFile = config.sops.secrets."cloudflared/credentials".path;
+      default = "http_status:404";
+      ingress = {
+        "ha.mskalski.dev" = "http://localhost:8123";
+      };
+    };
+  };
+
+  # ===========================================
   # GitOps with Comin
   # ===========================================
   services.comin = {
