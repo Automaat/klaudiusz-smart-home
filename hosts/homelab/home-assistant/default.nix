@@ -144,7 +144,7 @@
     owner = "basnijholt";
     repo = "adaptive-lighting";
     # renovate: datasource=github-tags depName=basnijholt/adaptive-lighting
-    rev = "v1.30.0";
+    rev = "v1.30.1";
     hash = "sha256-rKqn6HnSrI0YWCxSIMqI4kQbpxeYwRNTPOi0xfU3CzU=";
   };
 
