@@ -1,5 +1,7 @@
 # Air Purifier Automation Plan - Xiaomi Air Purifier 3H
 
+> **Note (2026-01-12):** Outdoor air quality sensor migrated from GIOŚ (`sensor.aleje_pm2_5`) to Airly (`sensor.airly_home_pm2_5`). Historical references in this document preserved for context.
+
 ## Progress Summary
 
 | Phase | Status | PR | Description |
