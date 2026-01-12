@@ -2,7 +2,7 @@
   pkgs,
   lib,
   python3Packages,
-}: {
+}: rec {
   # Custom Python packages not in nixpkgs
   # Required by auto-discovered Home Assistant integrations
 
