@@ -143,16 +143,7 @@ in {
   # ===========================================
   services.crowdsec = {
     enable = true;
-    settings = {
-      # Enable Local API server (required for agent-LAPI communication)
-      general = {
-        api = {
-          server = {
-            enable = true;
-          };
-        };
-      };
-    };
+    settings.general.api.server.enable = lib.mkForce true;
     localConfig.acquisitions = [
       {
         source = "file";
