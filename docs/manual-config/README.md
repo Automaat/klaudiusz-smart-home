@@ -24,6 +24,7 @@ Home Assistant UI.
 - **[LG WebOS TV](lg-webos-tv.md)** - Smart TV integration
 - **[MCP Server (Claude Code)](mcp-server.md)** - AI assistant API access
 - **[Todoist](todoist.md)** - Todo list integration with OAuth setup
+- **[T-Higrow ESPHome](t-higrow-esphome.md)** - LilyGO T-Higrow plant sensor setup
 
 ## When to Add New Documentation
 
