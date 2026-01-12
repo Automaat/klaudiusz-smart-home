@@ -3,7 +3,10 @@
   pkgs,
   lib,
   ...
-}: {
+}: let
+  # Air purifier entity constant
+  airPurifier = "fan.zhimi_de_334622045_mb3_s_2_air_purifier";
+in {
   services.home-assistant.config = {
     # ===========================================
     # Polish Voice Command Intents
@@ -13,21 +16,21 @@
       # Lights
       # -----------------------------------------
       TurnOnLight = {
-        speech.text = "Włączam {{ slots.name }}";
+        speech.text = "Włączam {{ slots.get('name', slots.area) }}";
         action = [
           {
             service = "light.turn_on";
-            target.entity_id = "light.{{ slots.name | lower | replace(' ', '_') }}";
+            target.area_id = "{{ area_id(slots.get('name', slots.area)) }}";
           }
         ];
       };
 
       TurnOffLight = {
-        speech.text = "Wyłączam {{ slots.name }}";
+        speech.text = "Wyłączam {{ slots.get('name', slots.area) }}";
         action = [
           {
             service = "light.turn_off";
-            target.entity_id = "light.{{ slots.name | lower | replace(' ', '_') }}";
+            target.area_id = "{{ area_id(slots.get('name', slots.area)) }}";
           }
         ];
       };
@@ -42,39 +45,49 @@
         ];
       };
 
-      SetBrightness = {
-        speech.text = "Ustawiam jasność {{ slots.name }} na {{ slots.brightness }} procent";
+      TurnOnKitchenLight = {
+        speech.text = "Włączam światło w kuchni";
         action = [
           {
             service = "light.turn_on";
-            target.entity_id = "light.{{ slots.name | lower | replace(' ', '_') }}";
+            target.entity_id = "light.kitchen";
+          }
+        ];
+      };
+
+      TurnOffKitchenLight = {
+        speech.text = "Wyłączam światło w kuchni";
+        action = [
+          {
+            service = "light.turn_off";
+            target.entity_id = "light.kitchen";
+          }
+        ];
+      };
+
+      SetBrightness = {
+        speech.text = "Ustawiam jasność {{ slots.get('name', slots.area) }} na {{ slots.brightness }} procent";
+        action = [
+          {
+            service = "light.turn_on";
+            target.area_id = "{{ area_id(slots.get('name', slots.area)) }}";
             data.brightness_pct = "{{ slots.brightness }}";
           }
         ];
       };
 
       # -----------------------------------------
-      # Scenes / Routines (Placeholder - no devices yet)
+      # Scenes
       # -----------------------------------------
-      # GoodMorning = {
-      #   speech.text = "Dzień dobry! Włączam poranny scenariusz.";
-      #   action = [];
-      # };
-      #
-      # GoodNight = {
-      #   speech.text = "Dobranoc! Wyłączam wszystko.";
-      #   action = [];
-      # };
-      #
-      # LeavingHome = {
-      #   speech.text = "Do zobaczenia! Zabezpieczam dom.";
-      #   action = [];
-      # };
-      #
-      # ComingHome = {
-      #   speech.text = "Witaj w domu!";
-      #   action = [];
-      # };
+      ActivateScene = {
+        speech.text = "Włączam scenę {{ slots.name }}";
+        action = [
+          {
+            service = "scene.turn_on";
+            target.entity_id = "scene.{{ slots.name | lower | replace(' ', '_') }}";
+          }
+        ];
+      };
 
       # -----------------------------------------
       # Climate (Placeholder - configure after device setup)
@@ -98,21 +111,21 @@
       # Covers / Blinds
       # -----------------------------------------
       OpenCover = {
-        speech.text = "Otwieram {{ slots.name }}";
+        speech.text = "Otwieram {{ slots.get('name', slots.area) }}";
         action = [
           {
             service = "cover.open_cover";
-            target.entity_id = "cover.{{ slots.name | lower | replace(' ', '_') }}";
+            target.area_id = "{{ area_id(slots.get('name', slots.area)) }}";
           }
         ];
       };
 
       CloseCover = {
-        speech.text = "Zamykam {{ slots.name }}";
+        speech.text = "Zamykam {{ slots.get('name', slots.area) }}";
         action = [
           {
             service = "cover.close_cover";
-            target.entity_id = "cover.{{ slots.name | lower | replace(' ', '_') }}";
+            target.area_id = "{{ area_id(slots.get('name', slots.area)) }}";
           }
         ];
       };
@@ -121,21 +134,21 @@
       # Media
       # -----------------------------------------
       TurnOnMedia = {
-        speech.text = "Włączam {{ slots.name }}";
+        speech.text = "Włączam {{ slots.get('name', slots.area) }}";
         action = [
           {
             service = "media_player.turn_on";
-            target.entity_id = "media_player.{{ slots.name | lower | replace(' ', '_') }}";
+            target.area_id = "{{ area_id(slots.get('name', slots.area)) }}";
           }
         ];
       };
 
       TurnOffMedia = {
-        speech.text = "Wyłączam {{ slots.name }}";
+        speech.text = "Wyłączam {{ slots.get('name', slots.area) }}";
         action = [
           {
             service = "media_player.turn_off";
-            target.entity_id = "media_player.{{ slots.name | lower | replace(' ', '_') }}";
+            target.area_id = "{{ area_id(slots.get('name', slots.area)) }}";
           }
         ];
       };
@@ -169,6 +182,101 @@
 
       WhatDate = {
         speech.text = "Dzisiaj jest {{ now().strftime('%A, %d %B %Y') }}";
+      };
+
+      # -----------------------------------------
+      # Shopping List (Todoist)
+      # Override built-in HassShoppingListAddItem to use Todoist
+      # -----------------------------------------
+      HassShoppingListAddItem = {
+        speech.text = "Dodaję {{ item }} do listy zakupów";
+        action = [
+          {
+            service = "todo.add_item";
+            target.entity_id = "todo.shopping";
+            data.item = "{{ item }}";
+          }
+        ];
+      };
+
+      # -----------------------------------------
+      # Air Purifier
+      # -----------------------------------------
+      TurnOnAirPurifier = {
+        speech.text = "Włączam oczyszczacz powietrza w salonie";
+        action = [
+          {
+            action = "fan.turn_on";
+            target.entity_id = airPurifier;
+          }
+        ];
+      };
+
+      TurnOffAirPurifier = {
+        speech.text = "Wyłączam oczyszczacz powietrza";
+        action = [
+          {
+            action = "fan.turn_off";
+            target.entity_id = airPurifier;
+          }
+        ];
+      };
+
+      SetAirPurifierNight = {
+        speech.text = "Ustawiam oczyszczacz w tryb nocny";
+        action = [
+          {
+            action = "fan.set_preset_mode";
+            target.entity_id = airPurifier;
+            data.preset_mode = "Night";
+          }
+        ];
+      };
+
+      SetAirPurifierAuto = {
+        speech.text = "Ustawiam oczyszczacz w tryb automatyczny";
+        action = [
+          {
+            action = "fan.set_preset_mode";
+            target.entity_id = airPurifier;
+            data.preset_mode = "Auto";
+          }
+        ];
+      };
+
+      GetAirQuality = {
+        speech.text = ''
+          Jakość powietrza w salonie: wewnątrz {{ states('sensor.zhimi_de_334622045_mb3_pm2_5_density_p_3_6') }} mikrogramów PM2.5,
+          na zewnątrz {{ states('sensor.airly_home_pm2_5') }} mikrogramów.
+          {{ 'Możesz otworzyć okno.' if is_state('binary_sensor.safe_to_ventilate_living_room', 'on') else 'Lepiej zostaw okna zamknięte.' }}
+        '';
+      };
+
+      GetFilterStatus = {
+        speech.text = "Filtr oczyszczacza zużyty w {{ 100 - states('sensor.zhimi_de_334622045_mb3_filter_life_level_p_4_3') | int }} procentach. Pozostało {{ states('sensor.zhimi_de_334622045_mb3_filter_life_level_p_4_3') }} procent żywotności.";
+      };
+
+      TriggerAntibacterial = {
+        speech.text = "Uruchamiam tryb antybakteryjny oczyszczacza na 2 godziny";
+        action = [
+          {
+            action = "fan.turn_on";
+            target.entity_id = airPurifier;
+          }
+          {
+            action = "fan.set_preset_mode";
+            target.entity_id = airPurifier;
+            data.preset_mode = "Auto";
+          }
+          {
+            delay.hours = 2;
+          }
+          {
+            action = "input_datetime.set_datetime";
+            target.entity_id = "input_datetime.last_antibacterial_run";
+            data.datetime = "{{ now().isoformat() }}";
+          }
+        ];
       };
 
       # -----------------------------------------

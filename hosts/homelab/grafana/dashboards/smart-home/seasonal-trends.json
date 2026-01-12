@@ -1,0 +1,634 @@
+{
+  "__inputs": [
+    {
+      "name": "DS_INFLUXDB",
+      "label": "InfluxDB",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "influxdb",
+      "pluginName": "InfluxDB"
+    }
+  ],
+  "__elements": [],
+  "__requires": [
+    {
+      "type": "panel",
+      "id": "timeseries",
+      "name": "Time series",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "barchart",
+      "name": "Bar chart",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "stat",
+      "name": "Stat",
+      "version": ""
+    },
+    {
+      "type": "datasource",
+      "id": "influxdb",
+      "name": "InfluxDB",
+      "version": "1.0.0"
+    },
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "8.4.2"
+    }
+  ],
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "panels": [],
+      "title": "Long-term Occupancy Trends",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB}"
+      },
+      "description": "Monthly occupancy hours across all rooms (12-month view)",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "Hours Occupied",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 30,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "tooltip": false,
+              "viz": false,
+              "legend": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 1
+      },
+      "id": 2,
+      "options": {
+        "legend": {
+          "calcs": ["mean", "lastNotNull"],
+          "displayMode": "table",
+          "placement": "right"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB}"
+          },
+          "query": "// Month-over-month occupancy pattern comparison\nfrom(bucket: \"home-assistant\")\n  |> range(start: -12mo)\n  |> filter(fn: (r) => r[\"domain\"] == \"binary_sensor\")\n  |> filter(fn: (r) => r[\"entity_id\"] =~ /presence/)\n  |> filter(fn: (r) => r[\"_field\"] == \"state\")\n  |> stateDuration(fn: (r) => r._value == \"on\", unit: 1h)\n  |> aggregateWindow(every: 1mo, fn: sum, createEmpty: false)\n  |> group(columns: [\"entity_id\"])\n  |> yield(name: \"monthly_occupancy\")",
+          "refId": "A"
+        }
+      ],
+      "title": "Monthly Occupancy Trends (12 Months)",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 11
+      },
+      "id": 3,
+      "panels": [],
+      "title": "Environmental Correlations",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB}"
+      },
+      "description": "Correlation between daylight hours and occupancy patterns",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 20,
+            "gradientMode": "none",
+            "hideFrom": {
+              "tooltip": false,
+              "viz": false,
+              "legend": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Daylight Hours"
+            },
+            "properties": [
+              {
+                "id": "custom.axisPlacement",
+                "value": "right"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "yellow",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 10
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 0,
+        "y": 12
+      },
+      "id": 4,
+      "options": {
+        "legend": {
+          "calcs": ["mean"],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB}"
+          },
+          "query": "import \"experimental\"\n\n// Living room occupancy hours per day\noccupancy = from(bucket: \"home-assistant\")\n  |> range(start: -90d)\n  |> filter(fn: (r) => r[\"entity_id\"] == \"binary_sensor.presence_livingroom\")\n  |> filter(fn: (r) => r[\"_field\"] == \"state\")\n  |> stateDuration(fn: (r) => r._value == \"on\", unit: 1h)\n  |> aggregateWindow(every: 1d, fn: sum, createEmpty: false)\n  |> set(key: \"_field\", value: \"Living Room Hours\")\n  |> yield(name: \"occupancy\")",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB}"
+          },
+          "query": "import \"experimental\"\nimport \"date\"\n\n// Sun above horizon duration (daylight hours)\nfrom(bucket: \"home-assistant\")\n  |> range(start: -90d)\n  |> filter(fn: (r) => r[\"entity_id\"] == \"sun.sun\")\n  |> filter(fn: (r) => r[\"_field\"] == \"state\")\n  |> stateDuration(fn: (r) => r._value == \"above_horizon\", unit: 1h)\n  |> aggregateWindow(every: 1d, fn: sum, createEmpty: false)\n  |> set(key: \"_field\", value: \"Daylight Hours\")\n  |> yield(name: \"daylight\")",
+          "refId": "B"
+        }
+      ],
+      "title": "Daylight vs Occupancy Correlation",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB}"
+      },
+      "description": "Temperature impact on room usage patterns",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "points",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "tooltip": false,
+              "viz": false,
+              "legend": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 12,
+        "y": 12
+      },
+      "id": 5,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB}"
+          },
+          "query": "// Temperature vs occupancy scatter plot\nimport \"join\"\n\n// Daily average outdoor temperature from Met weather integration\ntemp = from(bucket: \"home-assistant\")\n  |> range(start: -90d)\n  |> filter(fn: (r) => r[\"entity_id\"] == \"weather.home\")\n  |> filter(fn: (r) => r[\"_field\"] == \"temperature\")\n  |> aggregateWindow(every: 1d, fn: mean, createEmpty: false)\n  |> set(key: \"metric\", value: \"temperature\")\n\n// Daily occupancy hours\noccupancy = from(bucket: \"home-assistant\")\n  |> range(start: -90d)\n  |> filter(fn: (r) => r[\"entity_id\"] == \"binary_sensor.presence_livingroom\")\n  |> filter(fn: (r) => r[\"_field\"] == \"state\")\n  |> stateDuration(fn: (r) => r._value == \"on\", unit: 1h)\n  |> aggregateWindow(every: 1d, fn: sum, createEmpty: false)\n  |> set(key: \"metric\", value: \"occupancy\")\n\n// Join and display\njoin.time(\n    left: temp,\n    right: occupancy,\n    as: (l, r) => ({l with occupancy: r._value})\n  )\n  |> keep(columns: [\"_time\", \"_value\", \"occupancy\"])\n  |> yield(name: \"correlation\")",
+          "refId": "A"
+        }
+      ],
+      "title": "Temperature Impact on Room Usage",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 21
+      },
+      "id": 6,
+      "panels": [],
+      "title": "Seasonal Summaries",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB}"
+      },
+      "description": "Year-over-year comparison of total occupancy",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 0,
+        "y": 22
+      },
+      "id": 7,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "values": false,
+          "calcs": ["lastNotNull"],
+          "fields": ""
+        },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB}"
+          },
+          "query": "// Total occupancy hours this year\nfrom(bucket: \"home-assistant\")\n  |> range(start: -1y)\n  |> filter(fn: (r) => r[\"domain\"] == \"binary_sensor\")\n  |> filter(fn: (r) => r[\"entity_id\"] =~ /presence/)\n  |> filter(fn: (r) => r[\"_field\"] == \"state\")\n  |> stateDuration(fn: (r) => r._value == \"on\", unit: 1h)\n  |> sum()\n  |> yield(name: \"total\")",
+          "refId": "A"
+        }
+      ],
+      "title": "Total Occupancy Hours (12mo)",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB}"
+      },
+      "description": "Average daily occupancy over past year",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 6,
+        "y": 22
+      },
+      "id": 8,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "values": false,
+          "calcs": ["mean"],
+          "fields": ""
+        },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB}"
+          },
+          "query": "// Average daily occupancy hours\nfrom(bucket: \"home-assistant\")\n  |> range(start: -1y)\n  |> filter(fn: (r) => r[\"domain\"] == \"binary_sensor\")\n  |> filter(fn: (r) => r[\"entity_id\"] =~ /presence/)\n  |> filter(fn: (r) => r[\"_field\"] == \"state\")\n  |> stateDuration(fn: (r) => r._value == \"on\", unit: 1h)\n  |> aggregateWindow(every: 1d, fn: sum, createEmpty: false)\n  |> mean()\n  |> yield(name: \"avg_daily\")",
+          "refId": "A"
+        }
+      ],
+      "title": "Average Daily Occupancy",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB}"
+      },
+      "description": "Most occupied room over past year",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "orange",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 12,
+        "y": 22
+      },
+      "id": 9,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "values": false,
+          "calcs": ["lastNotNull"],
+          "fields": ""
+        },
+        "textMode": "name"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB}"
+          },
+          "query": "// Most occupied room\nfrom(bucket: \"home-assistant\")\n  |> range(start: -1y)\n  |> filter(fn: (r) => r[\"domain\"] == \"binary_sensor\")\n  |> filter(fn: (r) => r[\"entity_id\"] =~ /presence/)\n  |> filter(fn: (r) => r[\"_field\"] == \"state\")\n  |> stateDuration(fn: (r) => r._value == \"on\", unit: 1h)\n  |> group(columns: [\"entity_id\"])\n  |> sum()\n  |> group()\n  |> top(n: 1)\n  |> yield(name: \"top_room\")",
+          "refId": "A"
+        }
+      ],
+      "title": "Most Occupied Room",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB}"
+      },
+      "description": "Least occupied room over past year",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "purple",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 18,
+        "y": 22
+      },
+      "id": 10,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "values": false,
+          "calcs": ["lastNotNull"],
+          "fields": ""
+        },
+        "textMode": "name"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB}"
+          },
+          "query": "// Least occupied room\nfrom(bucket: \"home-assistant\")\n  |> range(start: -1y)\n  |> filter(fn: (r) => r[\"domain\"] == \"binary_sensor\")\n  |> filter(fn: (r) => r[\"entity_id\"] =~ /presence/)\n  |> filter(fn: (r) => r[\"_field\"] == \"state\")\n  |> stateDuration(fn: (r) => r._value == \"on\", unit: 1h)\n  |> group(columns: [\"entity_id\"])\n  |> sum()\n  |> group()\n  |> bottom(n: 1)\n  |> yield(name: \"bottom_room\")",
+          "refId": "A"
+        }
+      ],
+      "title": "Least Occupied Room",
+      "type": "stat"
+    }
+  ],
+  "refresh": "",
+  "schemaVersion": 35,
+  "style": "dark",
+  "tags": ["smart-home", "analytics", "seasonal"],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-1y",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "Europe/Warsaw",
+  "title": "Seasonal Trends",
+  "uid": "seasonal-trends",
+  "version": 1,
+  "weekStart": "monday"
+}

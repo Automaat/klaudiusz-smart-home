@@ -1,0 +1,12 @@
+# Benchmark results
+results/*.json
+
+# Cache directory
+cache/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python

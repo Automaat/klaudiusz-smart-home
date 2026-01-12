@@ -2,7 +2,10 @@
   config,
   lib,
   ...
-}: {
+}: let
+  # Cloudflare Tunnel ID (must match hosts/homelab/default.nix)
+  cloudflareTunnelId = "c0350983-f7b9-4770-ac96-34b8a5184c91";
+in {
   # ===========================================
   # SOPS Secrets Management
   # ===========================================
@@ -16,6 +19,7 @@
   sops.defaultSopsFile = ../../secrets/secrets.yaml;
 
   # Define secrets and their target paths
+  # User/group memberships configured in users.nix
   sops.secrets = {
     # Grafana admin password
     "grafana-admin-password" = {
@@ -43,6 +47,27 @@
       owner = "hass";
       mode = "0400";
       restartUnits = ["home-assistant.service"];
+    };
+
+    # InfluxDB admin token (API authentication)
+    # Group: influxdb-readers (hass + grafana)
+    "influxdb-admin-token" = {
+      group = "influxdb-readers";
+      mode = "0440";
+      restartUnits = ["influxdb2.service" "grafana.service" "home-assistant.service"];
+    };
+
+    # InfluxDB admin password (user authentication, separate for independent rotation)
+    "influxdb-admin-password" = {
+      owner = "influxdb2";
+      mode = "0400";
+      restartUnits = ["influxdb2.service"];
+    };
+
+    # Cloudflared tunnel credentials (root-owned, service has access)
+    "cloudflared/credentials" = {
+      mode = "0400";
+      restartUnits = ["cloudflared-tunnel-${cloudflareTunnelId}.service"];
     };
   };
 }

@@ -17,13 +17,13 @@
     intentServices = lib.flatten (
       lib.mapAttrsToList (_: intent:
         if intent ? action
-        then lib.flatten (builtins.map (a: a.service or null) intent.action)
+        then lib.flatten (builtins.map (a: a.service or a.action or null) intent.action)
         else [])
       config.intent_script
     );
     automationServices = lib.flatten (
       builtins.map (auto:
-        lib.flatten (builtins.map (a: a.service or null) auto.action))
+        lib.flatten (builtins.map (a: a.service or a.action or null) auto.action))
       config.automation
     );
   in
@@ -107,10 +107,12 @@
   # This is a basic check - only for non-templated entity IDs
   # Note: homeassistant.* services work across all entity domains
   incompatibleCalls = let
-    checkAction = action:
-      if action ? service && action ? target && action.target ? entity_id
+    checkAction = action: let
+      serviceCall = action.service or action.action or null;
+    in
+      if serviceCall != null && action ? target && action.target ? entity_id
       then let
-        serviceDomain = testLib.getDomain action.service;
+        serviceDomain = testLib.getDomain serviceCall;
         entityId = action.target.entity_id;
         # Only check static entity IDs
         isStatic = builtins.isString entityId && !(lib.hasInfix "{{" entityId) && !(lib.hasInfix "{%" entityId) && entityId != "all";
@@ -124,7 +126,7 @@
           then [
             {
               inherit serviceDomain entityDomain;
-              service = action.service;
+              service = serviceCall;
               entity = entityId;
             }
           ]

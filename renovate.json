@@ -49,11 +49,21 @@
       "description": "GitHub Actions with pinned digests",
       "matchManagers": ["github-actions"],
       "pinDigests": true
+    },
+    {
+      "description": "thomasloven repos: only semver tags (ignore numeric 11-16)",
+      "matchDepNames": [
+        "thomasloven/lovelace-card-mod",
+        "thomasloven/lovelace-auto-entities",
+        "thomasloven/lovelace-layout-card"
+      ],
+      "allowedVersions": "/^v/"
     }
   ],
   "schedule": ["at any time"],
   "timezone": "Europe/Warsaw",
   "dependencyDashboard": true,
   "prConcurrentLimit": 10,
-  "prHourlyLimit": 10
+  "prHourlyLimit": 10,
+  "reviewers": ["Automaat"]
 }

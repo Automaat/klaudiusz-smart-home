@@ -34,9 +34,10 @@ jobs:
           mkdir -p .ha-config
           # Generate config from Nix
           # Filter: null values (deprecated), frontend.themes (!include directive incompatible with validator)
+          # Use Python yaml instead of yq to avoid conversion bugs with large nested structures
           nix eval --raw .#nixosConfigurations.homelab.config.services.home-assistant.config --apply 'x: builtins.toJSON x' | \
             nix run nixpkgs#jq -- 'del(..|select(. == null)) | del(.frontend.themes)' | \
-            nix run nixpkgs#yq-go -- -P > .ha-config/configuration.yaml
+            python3 .github/scripts/json-to-yaml.py > .ha-config/configuration.yaml
 
       - name: Run Home Assistant Config Check
         if: steps.changes.outputs.ha_config == 'true'
@@ -73,12 +74,6 @@ jobs:
             substituters = https://cache.nixos.org https://nix-community.cachix.org
             trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=
 
-      - name: Setup Nix cache
-        if: steps.changes.outputs.nix == 'true'
-        uses: DeterminateSystems/magic-nix-cache-action@565684385bcd71bad329742eefe8d12f2e765b39 # v13
-        with:
-          use-gha-cache: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
-
       - name: Run Jinja2 Template Validation
         if: steps.changes.outputs.nix == 'true'
         run: nix build .#checks.x86_64-linux.jinja2-validation --show-trace --max-jobs auto
@@ -111,12 +106,6 @@ jobs:
             substituters = https://cache.nixos.org https://nix-community.cachix.org
             trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=
 
-      - name: Setup Nix cache
-        if: steps.changes.outputs.nix == 'true'
-        uses: DeterminateSystems/magic-nix-cache-action@565684385bcd71bad329742eefe8d12f2e765b39 # v13
-        with:
-          use-gha-cache: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
-
       - name: Run Entity Reference Validation
         if: steps.changes.outputs.nix == 'true'
         run: nix build .#checks.x86_64-linux.entity-references --show-trace --max-jobs auto
@@ -124,7 +113,7 @@ jobs:
   static-tests:
     name: Static Tests
     runs-on: ubuntu-24.04
-    needs: [format, yaml-lint, markdown-lint, action-lint, enhanced-validation-ha-official, enhanced-validation-jinja2, enhanced-validation-entity-references]
+    needs: [format, yaml-lint, markdown-lint, action-lint, shellcheck, enhanced-validation-ha-official, enhanced-validation-jinja2, enhanced-validation-entity-references]
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
 
@@ -149,12 +138,6 @@ jobs:
             accept-flake-config = true
             substituters = https://cache.nixos.org https://nix-community.cachix.org
             trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=
-
-      - name: Setup Nix cache
-        if: steps.changes.outputs.nix == 'true' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
-        uses: DeterminateSystems/magic-nix-cache-action@565684385bcd71bad329742eefe8d12f2e765b39 # v13
-        with:
-          use-gha-cache: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
 
       - name: Flake Check
         if: steps.changes.outputs.nix == 'true' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
@@ -190,12 +173,6 @@ jobs:
             experimental-features = nix-command flakes
             substituters = https://cache.nixos.org https://nix-community.cachix.org
             trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=
-
-      - name: Setup Nix cache
-        if: steps.changes.outputs.nix == 'true'
-        uses: DeterminateSystems/magic-nix-cache-action@565684385bcd71bad329742eefe8d12f2e765b39 # v13
-        with:
-          use-gha-cache: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
 
       - name: Check Nix formatting
         if: steps.changes.outputs.nix == 'true'
@@ -267,10 +244,31 @@ jobs:
         if: steps.changes.outputs.workflows == 'true'
         run: actionlint
 
+  shellcheck:
+    name: ShellCheck
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
+
+      - name: Check for shell script changes
+        uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # v3
+        id: changes
+        with:
+          filters: |
+            shell:
+              - '**/*.sh'
+              - '**/*.nix'
+
+      - name: Run ShellCheck
+        if: steps.changes.outputs.shell == 'true'
+        uses: ludeeus/action-shellcheck@00cae500b08a931fb5698e11e79bfbd38e612a38 # v2.0.0
+        with:
+          severity: warning
+
   integration-tests:
     name: Integration Tests
     runs-on: ubuntu-24.04
-    needs: [static-tests]
+    needs: [format, yaml-lint, markdown-lint, action-lint, shellcheck, enhanced-validation-ha-official, enhanced-validation-jinja2, enhanced-validation-entity-references]
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
 
@@ -295,12 +293,6 @@ jobs:
             accept-flake-config = true
             substituters = https://cache.nixos.org https://nix-community.cachix.org
             trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=
-
-      - name: Setup Nix cache
-        if: steps.changes.outputs.nix == 'true' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
-        uses: DeterminateSystems/magic-nix-cache-action@565684385bcd71bad329742eefe8d12f2e765b39 # v13
-        with:
-          use-gha-cache: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
 
       - name: Enable KVM (for VM tests)
         if: steps.changes.outputs.nix == 'true' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
