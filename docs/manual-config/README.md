@@ -10,7 +10,6 @@ Home Assistant UI.
 - **[Better Thermostat](better-thermostat.md)** - Use external temperature sensors for thermostat control
 - **[Custom Conversation](custom-conversation.md)** - Fallback conversation agent (local intents → LLM)
 - **[Airly Air Quality](airly.md)** - Polish air quality sensor with PM2.5, PM10, and CAQI
-- **[GIOŚ Air Quality](gios.md)** - Polish air quality monitoring
 - **[InfluxDB](influxdb.md)** - Time-series database for metrics (365d retention)
 - **[Xiaomi Home](xiaomi-home.md)** - Xiaomi Mi devices via official OAuth (replaces `xiaomi-miio.md`)
 - **[Loki Log Aggregation](loki-logs.md)** - View HA and system logs in Grafana (365d retention)
