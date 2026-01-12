@@ -22,6 +22,7 @@ Home Assistant UI.
 - **[Wyoming Protocol](wyoming-protocol.md)** - Speech-to-text and text-to-speech services
 - **[Voice Assistant Preview Edition](voice-assistant-preview.md)** - Voice hardware setup
 - **[LG WebOS TV](lg-webos-tv.md)** - Smart TV integration
+- **[Samsung SmartThings](smartthings.md)** - SmartThings OAuth integration
 - **[MCP Server (Claude Code)](mcp-server.md)** - AI assistant API access
 - **[Todoist](todoist.md)** - Todo list integration with OAuth setup
 - **[T-Higrow ESPHome](t-higrow-esphome.md)** - LilyGO T-Higrow plant sensor setup

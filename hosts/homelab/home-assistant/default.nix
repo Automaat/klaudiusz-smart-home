@@ -252,6 +252,7 @@ in {
       "met" # Weather
       "airly" # Polish air quality (Airly)
       "radio_browser" # Internet radio
+      "cloud" # Home Assistant Cloud (simplifies OAuth for SmartThings; alternative to public HTTPS URL)
 
       # Database
       "recorder" # PostgreSQL database
@@ -280,6 +281,7 @@ in {
       "hue_ble" # Philips Hue Bluetooth (autodiscovered)
       "esphome" # ESPHome devices (Voice Preview Edition)
       "webostv" # LG WebOS TV
+      "smartthings" # Samsung SmartThings
       "wake_on_lan" # Wake on LAN for TV power-on
       "homekit_controller" # Aqara FP2 presence sensor
       "homekit" # HomeKit Bridge (expose HA entities to Apple Home)
@@ -327,6 +329,7 @@ in {
         longitude = 19.887609;
         elevation = 210;
         internal_url = "http://192.168.0.241:8123";
+        external_url = "https://ha.mskalski.dev";
       };
 
       # Enable conversation for voice commands
