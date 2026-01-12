@@ -249,7 +249,6 @@ in {
       "default_config"
       "zeroconf" # mDNS/Bonjour for device discovery (HomeKit, etc.)
       "met" # Weather
-      "gios" # Polish air quality (GIOŚ)
       "airly" # Polish air quality (Airly)
       "radio_browser" # Internet radio
 
