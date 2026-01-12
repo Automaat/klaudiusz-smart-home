@@ -217,11 +217,14 @@
   # ===========================================
   # Mini Media Player
   # ===========================================
-  miniMediaPlayerBundle = pkgs.fetchurl {
-    # renovate: datasource=github-releases depName=kalkih/mini-media-player
-    url = "https://github.com/kalkih/mini-media-player/releases/download/v1.16.10/mini-media-player-bundle.js";
-    hash = "sha256-m9OdXtiCLyGnVXm+hjb7iDJYA81Aa6WymI4LIKmfkiI=";
-  };
+  miniMediaPlayerBundle = pkgs.runCommand "mini-media-player-bundle" {} ''
+    mkdir -p $out
+    ln -s ${pkgs.fetchurl {
+      # renovate: datasource=github-releases depName=kalkih/mini-media-player
+      url = "https://github.com/kalkih/mini-media-player/releases/download/v1.16.10/mini-media-player-bundle.js";
+      hash = "sha256-m9OdXtiCLyGnVXm+hjb7iDJYA81Aa6WymI4LIKmfkiI=";
+    }} $out/mini-media-player-bundle.js
+  '';
 
   # ===========================================
   # Custom Python Packages
@@ -475,10 +478,7 @@ in {
       ln -sfn ${hassHueIconsSource}/dist /var/lib/hass/www/community/hass-hue-icons
       ln -sfn ${historyExplorerSource} /var/lib/hass/www/community/history-explorer-card
       ln -sfn ${layoutCardSource} /var/lib/hass/www/community/layout-card
-
-      # Mini Media Player (pre-built bundle)
-      mkdir -p /var/lib/hass/www/community/mini-media-player
-      ln -sfn ${miniMediaPlayerBundle} /var/lib/hass/www/community/mini-media-player/mini-media-player-bundle.js
+      ln -sfn ${miniMediaPlayerBundle} /var/lib/hass/www/community/mini-media-player
 
       # Create Adaptive Lighting symlink
       ln -sfn ${adaptiveLightingSource}/custom_components/adaptive_lighting /var/lib/hass/custom_components/adaptive_lighting
