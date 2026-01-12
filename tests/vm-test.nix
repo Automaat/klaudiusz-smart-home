@@ -95,6 +95,9 @@ pkgs.testers.nixosTest {
     # Disable avahi-alias service in VM tests (mDNS conflicts in isolated VM network)
     systemd.services.avahi-alias-homeassistant.enable = lib.mkForce false;
 
+    # Disable CrowdSec firewall bouncer in VM tests (iptables/nftables not available in VM)
+    services.crowdsec-firewall-bouncer.enable = lib.mkForce false;
+
     # Run InfluxDB init in VM tests with hardcoded credentials
     systemd.services.influxdb2-init = {
       serviceConfig = {
