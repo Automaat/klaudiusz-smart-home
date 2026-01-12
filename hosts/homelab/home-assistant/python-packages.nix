@@ -107,7 +107,7 @@
   };
 
   json-timeseries = python3Packages.buildPythonPackage rec {
-    pname = "json-timeseries";
+    pname = "json_timeseries";
     # renovate: datasource=pypi depName=json-timeseries
     version = "0.1.7";
     format = "pyproject";
