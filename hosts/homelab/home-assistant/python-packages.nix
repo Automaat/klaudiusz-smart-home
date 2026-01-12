@@ -108,6 +108,7 @@
 
   json-timeseries = python3Packages.buildPythonPackage rec {
     pname = "json-timeseries";
+    # renovate: datasource=pypi depName=json-timeseries
     version = "0.1.7";
     format = "pyproject";
 
@@ -134,6 +135,7 @@
 
   openplantbook-sdk = python3Packages.buildPythonPackage rec {
     pname = "openplantbook-sdk";
+    # renovate: datasource=pypi depName=openplantbook-sdk
     version = "0.4.7";
     format = "pyproject";
 
