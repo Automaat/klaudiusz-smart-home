@@ -10,7 +10,7 @@ Plant component.
 
 ## Prerequisites
 
-- OpenPlantbook account (free registration at https://open.plantbook.io)
+- OpenPlantbook account (free registration at <https://open.plantbook.io>)
 - OpenPlantbook integration installed declaratively (already configured in Nix)
 - Plant component installed (recommended for automatic data)
 
@@ -18,7 +18,7 @@ Plant component.
 
 ### 1. Get API Credentials
 
-1. Navigate to https://open.plantbook.io/apikey/show/
+1. Navigate to <https://open.plantbook.io/apikey/show/>
 2. Sign in or create free account
 3. Copy your **client_id** and **secret** (keep these secure)
 
@@ -77,7 +77,7 @@ Look for successful authentication and no API errors.
 **"Invalid credentials" error:**
 
 - Verify client_id and secret are correct (no extra spaces)
-- Check OpenPlantbook API status: https://open.plantbook.io
+- Check OpenPlantbook API status: <https://open.plantbook.io>
 - Regenerate API credentials if needed
 
 **Plant data not loading:**
