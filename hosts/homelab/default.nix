@@ -293,6 +293,15 @@ in {
         job_name = "influxdb";
         static_configs = [{targets = ["localhost:8086"];}];
       }
+      {
+        job_name = "cloudflared";
+        static_configs = [{targets = ["localhost:60123"];}];
+        metrics_path = "/metrics";
+      }
+      {
+        job_name = "crowdsec";
+        static_configs = [{targets = ["localhost:6060"];}];
+      }
     ];
   };
 
@@ -320,6 +329,7 @@ in {
           "fail2ban"
           "crowdsec"
           "crowdsec-firewall-bouncer"
+          "cloudflared-tunnel-${cloudflareTunnelId}"
           "wyoming-piper-default"
           "wyoming-faster-whisper-default"
           "tailscaled"

@@ -264,6 +264,27 @@
                   summary = "fail2ban service is not running";
                   description = "The fail2ban.service has been inactive for more than 10 minutes. SSH brute-force protection disabled. Check: systemctl status fail2ban";
                 }
+                {
+                  serviceName = "crowdsec";
+                  unitName = "crowdsec.service";
+                  title = "CrowdSec Service Down";
+                  summary = "CrowdSec service is not running";
+                  description = "The crowdsec.service has been inactive for more than 10 minutes. Behavioral intrusion prevention disabled. Check: systemctl status crowdsec";
+                }
+                {
+                  serviceName = "crowdsec_bouncer";
+                  unitName = "crowdsec-firewall-bouncer.service";
+                  title = "CrowdSec Firewall Bouncer Down";
+                  summary = "CrowdSec firewall bouncer is not running";
+                  description = "The crowdsec-firewall-bouncer.service has been inactive for more than 10 minutes. IP bans not enforced. Check: systemctl status crowdsec-firewall-bouncer";
+                }
+                {
+                  serviceName = "cloudflared";
+                  unitName = "cloudflared-tunnel-c0350983-f7b9-4770-ac96-34b8a5184c91.service";
+                  title = "Cloudflared Tunnel Down";
+                  summary = "Cloudflared tunnel is not running";
+                  description = "The cloudflared-tunnel service has been inactive for more than 10 minutes. External access via ha.mskalski.dev unavailable. Check: systemctl status cloudflared-tunnel-*";
+                }
               ];
             in
               map mkSystemdAlertRule services;
@@ -349,6 +370,246 @@
                 labels = {
                   severity = "critical";
                   service = "prometheus_scraping";
+                };
+                isPaused = false;
+              }
+            ];
+          }
+
+          # Security Services Monitoring
+          {
+            name = "security_services";
+            folder = "Services";
+            interval = "1m";
+            rules = [
+              {
+                uid = "cloudflared_high_error_rate";
+                title = "Cloudflared High Error Rate";
+                condition = "C";
+                data = [
+                  {
+                    refId = "A";
+                    relativeTimeRange = {
+                      from = 300;
+                      to = 0;
+                    };
+                    datasourceUid = "prometheus";
+                    model = {
+                      expr = ''rate(cloudflared_tunnel_requests_total{status=~"5.."}[5m]) / clamp_min(rate(cloudflared_tunnel_requests_total[5m]), 1) * 100'';
+                      instant = true;
+                      intervalMs = 1000;
+                      maxDataPoints = 43200;
+                      refId = "A";
+                    };
+                  }
+                  {
+                    refId = "B";
+                    relativeTimeRange = {
+                      from = 300;
+                      to = 0;
+                    };
+                    datasourceUid = "-100";
+                    model = {
+                      datasource = {
+                        type = "__expr__";
+                        uid = "-100";
+                      };
+                      expression = "A";
+                      reducer = "max";
+                      refId = "B";
+                      type = "reduce";
+                    };
+                  }
+                  {
+                    refId = "C";
+                    relativeTimeRange = {
+                      from = 300;
+                      to = 0;
+                    };
+                    datasourceUid = "-100";
+                    model = {
+                      datasource = {
+                        type = "__expr__";
+                        uid = "-100";
+                      };
+                      expression = "B";
+                      refId = "C";
+                      type = "threshold";
+                      conditions = [
+                        {
+                          evaluator = {
+                            params = [5];
+                            type = "gt";
+                          };
+                        }
+                      ];
+                    };
+                  }
+                ];
+                noDataState = "OK";
+                execErrState = "OK";
+                for = "5m";
+                annotations = {
+                  summary = "Cloudflared tunnel error rate above 5%";
+                  description = "The Cloudflared tunnel error rate has been above 5% for more than 5 minutes. Check: journalctl -u cloudflared-tunnel-* -n 50";
+                };
+                labels = {
+                  severity = "warning";
+                  service = "cloudflared";
+                };
+                isPaused = false;
+              }
+              {
+                uid = "crowdsec_high_ban_rate";
+                title = "CrowdSec High Ban Rate";
+                condition = "C";
+                data = [
+                  {
+                    refId = "A";
+                    relativeTimeRange = {
+                      from = 300;
+                      to = 0;
+                    };
+                    datasourceUid = "prometheus";
+                    model = {
+                      expr = ''rate(cs_bucket_pours_total[1m]) * 60'';
+                      instant = true;
+                      intervalMs = 1000;
+                      maxDataPoints = 43200;
+                      refId = "A";
+                    };
+                  }
+                  {
+                    refId = "B";
+                    relativeTimeRange = {
+                      from = 300;
+                      to = 0;
+                    };
+                    datasourceUid = "-100";
+                    model = {
+                      datasource = {
+                        type = "__expr__";
+                        uid = "-100";
+                      };
+                      expression = "A";
+                      reducer = "max";
+                      refId = "B";
+                      type = "reduce";
+                    };
+                  }
+                  {
+                    refId = "C";
+                    relativeTimeRange = {
+                      from = 300;
+                      to = 0;
+                    };
+                    datasourceUid = "-100";
+                    model = {
+                      datasource = {
+                        type = "__expr__";
+                        uid = "-100";
+                      };
+                      expression = "B";
+                      refId = "C";
+                      type = "threshold";
+                      conditions = [
+                        {
+                          evaluator = {
+                            params = [10];
+                            type = "gt";
+                          };
+                        }
+                      ];
+                    };
+                  }
+                ];
+                noDataState = "OK";
+                execErrState = "OK";
+                for = "5m";
+                annotations = {
+                  summary = "CrowdSec ban rate exceeds 10 per minute";
+                  description = "CrowdSec is triggering more than 10 decisions per minute for over 5 minutes. Possible attack in progress. Check: cscli decisions list";
+                };
+                labels = {
+                  severity = "warning";
+                  service = "crowdsec";
+                };
+                isPaused = false;
+              }
+              {
+                uid = "crowdsec_no_parser_activity";
+                title = "CrowdSec Not Processing Logs";
+                condition = "C";
+                data = [
+                  {
+                    refId = "A";
+                    relativeTimeRange = {
+                      from = 600;
+                      to = 0;
+                    };
+                    datasourceUid = "prometheus";
+                    model = {
+                      expr = ''rate(cs_parser_hits_total[5m])'';
+                      instant = true;
+                      intervalMs = 1000;
+                      maxDataPoints = 43200;
+                      refId = "A";
+                    };
+                  }
+                  {
+                    refId = "B";
+                    relativeTimeRange = {
+                      from = 600;
+                      to = 0;
+                    };
+                    datasourceUid = "-100";
+                    model = {
+                      datasource = {
+                        type = "__expr__";
+                        uid = "-100";
+                      };
+                      expression = "A";
+                      reducer = "max";
+                      refId = "B";
+                      type = "reduce";
+                    };
+                  }
+                  {
+                    refId = "C";
+                    relativeTimeRange = {
+                      from = 600;
+                      to = 0;
+                    };
+                    datasourceUid = "-100";
+                    model = {
+                      datasource = {
+                        type = "__expr__";
+                        uid = "-100";
+                      };
+                      expression = "B";
+                      refId = "C";
+                      type = "threshold";
+                      conditions = [
+                        {
+                          evaluator = {
+                            params = [0.01];
+                            type = "lt";
+                          };
+                        }
+                      ];
+                    };
+                  }
+                ];
+                noDataState = "Alerting";
+                execErrState = "Alerting";
+                for = "10m";
+                annotations = {
+                  summary = "CrowdSec parser activity is near zero";
+                  description = "CrowdSec has not processed any logs for more than 10 minutes. Check: systemctl status crowdsec && journalctl -u crowdsec -n 50";
+                };
+                labels = {
+                  severity = "warning";
+                  service = "crowdsec";
                 };
                 isPaused = false;
               }
