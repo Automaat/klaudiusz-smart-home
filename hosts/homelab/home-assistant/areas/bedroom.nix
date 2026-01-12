@@ -21,7 +21,7 @@
         {
           service = "climate.set_temperature";
           target.entity_id = "climate.bedroom_thermostat";
-          data.temperature = 22;
+          data.temperature = 24;
         }
       ];
     }
@@ -56,7 +56,7 @@
       condition = [
         {
           condition = "numeric_state";
-          entity_id = "climate.thermostat_bedroom";
+          entity_id = "climate.bedroom_thermostat";
           attribute = "current_temperature";
           above = 18;
         }
@@ -65,62 +65,23 @@
           conditions = [
             {
               condition = "template";
-              value_template = "{{ state_attr('sensor.airly_home_ogolny_indeks_jakosci_powietrza', 'level') == 'very_low' }}";
+              value_template = "{{ state_attr('sensor.airly_home_ogolny_indeks_jakosci_powietrza', 'level') == 'high' }}";
             }
             {
               condition = "template";
-              value_template = "{{ state_attr('sensor.airly_home_ogolny_indeks_jakosci_powietrza', 'level') == 'low' }}";
+              value_template = "{{ state_attr('sensor.airly_home_ogolny_indeks_jakosci_powietrza', 'level') == 'very_high' }}";
             }
           ];
         }
       ];
       action = [
         {
-          choose = [
-            {
-              conditions = [
-                {
-                  condition = "state";
-                  entity_id = "media_player.tv";
-                  state = "playing";
-                }
-              ];
-              sequence = [
-                {
-                  action = "media_player.media_pause";
-                  target.entity_id = "media_player.tv";
-                }
-                {
-                  delay.seconds = 1;
-                }
-                {
-                  action = "tts.speak";
-                  target.entity_id = "tts.piper";
-                  data = {
-                    media_player_entity_id = "media_player.tv";
-                    message = "Temperatura w sypialni {{ state_attr('climate.thermostat_bedroom', 'current_temperature') | round(0) }} stopni. Otwórz okno żeby wietrzyć przed snem";
-                  };
-                }
-                {
-                  delay.seconds = 1;
-                }
-                {
-                  action = "media_player.media_play";
-                  target.entity_id = "media_player.tv";
-                }
-              ];
-            }
-          ];
-          default = [
-            {
-              action = "tts.speak";
-              target.entity_id = "tts.piper";
-              data = {
-                media_player_entity_id = "media_player.tv";
-                message = "Temperatura w sypialni {{ state_attr('climate.thermostat_bedroom', 'current_temperature') | round(0) }} stopni. Otwórz okno żeby wietrzyć przed snem";
-              };
-            }
-          ];
+          action = "tts.speak";
+          target.entity_id = "tts.piper";
+          data = {
+            media_player_entity_id = "media_player.tv";
+            message = "Temperatura w sypialni {{ state_attr('climate.bedroom_thermostat', 'current_temperature') | round(0) }} stopni. Otwórz okno żeby wietrzyć przed snem";
+          };
         }
       ];
       mode = "single";
