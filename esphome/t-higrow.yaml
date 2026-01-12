@@ -23,6 +23,17 @@ packages:
     files: [LILYGO-T-Higrow-ESP32.yaml]
     refresh: 1d
 
+# Temperature sensor calibration (2026-01-12)
+# DHT11/DHT22 sensors commonly read 2-6°C too high
+# Reference: Air Purifier (22.3°C), Temp sensor (21.9°C) vs DHT (27.5°C)
+# Create copy sensor with calibration offset applied
+sensor:
+  - platform: copy
+    source_id: ${devicename}_dht_temperature
+    name: "${friendly_name} Temperature"
+    filters:
+      - offset: -5.6  # Calibrated offset
+
 # WiFi credentials managed by ESPHome secrets
 # Ensure secrets.yaml contains:
 # wifi_ssid: "your_ssid"
