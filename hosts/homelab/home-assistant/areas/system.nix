@@ -117,6 +117,24 @@ in {
       ];
     }
 
+    {
+      id = "adaptive_lighting_enable_sleep_mode_23_00";
+      alias = "Adaptive Lighting - Enable sleep mode at 23:00";
+      description = "Enable sleep mode at 23:00";
+      trigger = [
+        {
+          platform = "time";
+          at = "23:00:00";
+        }
+      ];
+      action = [
+        {
+          action = "input_boolean.turn_on";
+          target.entity_id = "input_boolean.sleep_mode";
+        }
+      ];
+    }
+
     # -----------------------------------------
     # Leaving Home
     # -----------------------------------------
