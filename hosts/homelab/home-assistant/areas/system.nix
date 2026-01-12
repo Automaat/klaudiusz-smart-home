@@ -141,22 +141,30 @@ in {
     {
       id = "leaving_home";
       alias = "System - Leaving home";
-      description = "Turn off all lights, TV, and smart plugs when leaving home. Can be triggered via location change or manual toggle.";
+      description = "Turn off all lights, TV, and smart plugs when leaving home via button or manual toggle.";
       trigger = [
-        # Location based
-        {
-          platform = "state";
-          entity_id = "person.marcin";
-          to = "not_home";
-        }
         # Manual toggle
         {
           platform = "state";
           entity_id = "input_boolean.away_mode";
           to = "on";
         }
+        # Physical button (single press)
+        {
+          platform = "event";
+          event_type = "zha_event";
+          event_data = {
+            device_ieee = "54:ef:44:10:00:ec:31:6a";
+            command = "single";
+          };
+        }
       ];
       action = [
+        # Ensure away mode is active for all triggers (button + manual)
+        {
+          action = "input_boolean.turn_on";
+          target.entity_id = "input_boolean.away_mode";
+        }
         # Turn off all lights
         {
           action = "light.turn_off";
