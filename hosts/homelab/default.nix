@@ -157,6 +157,10 @@ in {
     ];
   };
 
+  # Enable Local API server (required for agent-LAPI communication)
+  services.crowdsec.settings.general.api.server.enable = lib.mkForce true;
+  services.crowdsec.settings.lapi.credentialsFile = "/etc/crowdsec/local_api_credentials.yaml";
+
   # CrowdSec firewall bouncer (nftables/iptables integration)
   services.crowdsec-firewall-bouncer = {
     enable = true;
