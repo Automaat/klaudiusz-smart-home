@@ -91,32 +91,7 @@ except Exception as e:
 # Comin (GitOps)
 homelab.wait_for_unit("comin.service")
 
-# Cloudflared (External Tunnel)
-try:
-    # Wait for tunnel service (specific to tunnel ID)
-    homelab.wait_for_unit("cloudflared-tunnel-c0350983-f7b9-4770-ac96-34b8a5184c91.service")
-
-    # Verify service is active (will fail to connect to Cloudflare in VM, but should start)
-    homelab.succeed("systemctl is-active cloudflared-tunnel-c0350983-f7b9-4770-ac96-34b8a5184c91.service")
-
-    # Check credentials file exists and has correct permissions
-    homelab.succeed("test -f /run/secrets/cloudflared/credentials")
-    homelab.succeed("test $(stat -c '%a' /run/secrets/cloudflared/credentials) = '400'")
-
-    # Verify service loaded configuration (check logs for startup messages)
-    # Note: Service will log connection failures to Cloudflare (no network in VM)
-    # but should successfully parse config and start the process
-    homelab.succeed(
-        "journalctl -u cloudflared-tunnel-c0350983-f7b9-4770-ac96-34b8a5184c91.service | grep -E '(Starting|Started|tunnel)' > /dev/null"
-    )
-
-    print("✅ Cloudflared service started (connection to Cloudflare expected to fail in VM)")
-
-except Exception as e:
-    print(f"Cloudflared failed: {e}")
-    print(homelab.succeed("journalctl -u cloudflared-tunnel-c0350983-f7b9-4770-ac96-34b8a5184c91.service -n 100 --no-pager"))
-    print(homelab.succeed("systemctl status cloudflared-tunnel-c0350983-f7b9-4770-ac96-34b8a5184c91.service --no-pager"))
-    raise
+# Note: Cloudflared disabled in VM tests (requires real Cloudflare credentials)
 
 # =============================================
 # Service Health Checks
