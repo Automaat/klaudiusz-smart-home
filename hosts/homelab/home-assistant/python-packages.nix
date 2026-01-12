@@ -105,4 +105,60 @@
       maintainers = with maintainers; [];
     };
   };
+
+  json-timeseries = python3Packages.buildPythonPackage rec {
+    pname = "json-timeseries";
+    version = "0.1.7";
+    format = "pyproject";
+
+    src = pkgs.fetchPypi {
+      inherit pname version;
+      hash = "sha256-Eq3esU2KN0/O96sFaYucxDiA5wfCm8gxA9gEFOKbYCw=";
+    };
+
+    nativeBuildInputs = with python3Packages; [
+      poetry-core
+    ];
+
+    pythonImportsCheck = ["json_timeseries"];
+
+    doCheck = false;
+
+    meta = with lib; {
+      description = "JSON Time Series data handling library";
+      homepage = "https://github.com/slaxor505/json-timeseries-py";
+      license = licenses.mit;
+      maintainers = with maintainers; [];
+    };
+  };
+
+  openplantbook-sdk = python3Packages.buildPythonPackage rec {
+    pname = "openplantbook-sdk";
+    version = "0.4.7";
+    format = "pyproject";
+
+    src = pkgs.fetchPypi {
+      inherit pname version;
+      hash = "sha256-Pp0lfGnPfy6QZOScU39j/YACLumNJyeHKdbpdFHhdm0=";
+    };
+
+    nativeBuildInputs = with python3Packages; [
+      poetry-core
+    ];
+
+    propagatedBuildInputs = with python3Packages; [
+      aiohttp
+    ];
+
+    pythonImportsCheck = ["openplantbook_sdk"];
+
+    doCheck = false;
+
+    meta = with lib; {
+      description = "Open Plantbook SDK for Python";
+      homepage = "https://github.com/slaxor505/openplantbook-sdk-py";
+      license = licenses.mit;
+      maintainers = with maintainers; [];
+    };
+  };
 }
