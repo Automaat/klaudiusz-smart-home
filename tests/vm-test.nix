@@ -89,8 +89,18 @@ pkgs.testers.nixosTest {
     services.wyoming.faster-whisper.servers.default.enable = lib.mkForce false;
     services.wyoming.piper.servers.default.enable = lib.mkForce false;
 
-    # Disable cloudflared in VM tests (external tunnel service, not needed for core HA validation)
-    services.cloudflared.enable = lib.mkForce false;
+    # Override cloudflared credentials for VM tests (mock credentials, service won't connect but will start)
+    sops.secrets."cloudflared/credentials" = lib.mkForce {
+      mode = "0400";
+      sopsFile = lib.mkForce (pkgs.writeText "cloudflared-test-credentials" ''
+        {
+          "AccountTag": "test-account-id",
+          "TunnelSecret": "test-tunnel-secret-base64-encoded-string-here",
+          "TunnelID": "c0350983-f7b9-4770-ac96-34b8a5184c91"
+        }
+      '');
+      key = lib.mkForce "";
+    };
 
     # Disable avahi-alias service in VM tests (mDNS conflicts in isolated VM network)
     systemd.services.avahi-alias-homeassistant.enable = lib.mkForce false;
