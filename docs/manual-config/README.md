@@ -26,6 +26,7 @@ Home Assistant UI.
 - **[MCP Server (Claude Code)](mcp-server.md)** - AI assistant API access
 - **[Todoist](todoist.md)** - Todo list integration with OAuth setup
 - **[T-Higrow ESPHome](t-higrow-esphome.md)** - LilyGO T-Higrow plant sensor setup
+- **[OpenPlantbook](openplantbook.md)** - Plant species database with API credentials
 
 ## When to Add New Documentation
 

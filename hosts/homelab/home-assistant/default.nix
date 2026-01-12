@@ -345,6 +345,10 @@ in {
 
         # Xiaomi BLE integration
         xiaomi-ble # Xiaomi Bluetooth parser
+
+        # OpenPlantbook integration (custom component)
+        customPkgs.openplantbook-sdk # OpenPlantbook SDK
+        customPkgs.json-timeseries # JSON Time Series library
       ];
 
     config = {
