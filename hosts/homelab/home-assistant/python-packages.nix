@@ -134,7 +134,7 @@
   };
 
   openplantbook-sdk = python3Packages.buildPythonPackage rec {
-    pname = "openplantbook-sdk";
+    pname = "openplantbook_sdk";
     # renovate: datasource=pypi depName=openplantbook-sdk
     version = "0.4.7";
     format = "pyproject";
