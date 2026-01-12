@@ -227,6 +227,39 @@
   '';
 
   # ===========================================
+  # OpenPlantbook Integration
+  # ===========================================
+  openPlantbookSource = pkgs.fetchFromGitHub {
+    owner = "Olen";
+    repo = "home-assistant-openplantbook";
+    # renovate: datasource=github-tags depName=Olen/home-assistant-openplantbook
+    rev = "v1.3.1";
+    hash = "sha256-PSax6WFUSEouJL1jes9T+nWdVh8ix5Ue5NE8TeScNfM=";
+  };
+
+  # ===========================================
+  # Plant Component Integration
+  # ===========================================
+  plantComponentSource = pkgs.fetchFromGitHub {
+    owner = "Olen";
+    repo = "homeassistant-plant";
+    # renovate: datasource=github-tags depName=Olen/homeassistant-plant
+    rev = "v2025.8.0";
+    hash = "sha256-26hDwuy9qe5d92ZiMoMN8HqNqe+uS990lWHPM1E2XaE=";
+  };
+
+  # ===========================================
+  # Flower Card
+  # ===========================================
+  flowerCardSource = pkgs.fetchFromGitHub {
+    owner = "Olen";
+    repo = "lovelace-flower-card";
+    # renovate: datasource=github-tags depName=Olen/lovelace-flower-card
+    rev = "2025.1.0";
+    hash = "sha256-drpzAhiSCdSBaIP1zbupX4tVOa1US9AnEToajnPr5eQ=";
+  };
+
+  # ===========================================
   # Custom Python Packages
   # ===========================================
   # Function that builds custom packages with HA's Python environment
@@ -497,6 +530,15 @@ in {
 
       # Create Xiaomi Home symlink
       ln -sfn ${xiaomiHomeSource}/custom_components/xiaomi_home /var/lib/hass/custom_components/xiaomi_home
+
+      # Create OpenPlantbook integration symlink
+      ln -sfn ${openPlantbookSource}/custom_components/openplantbook /var/lib/hass/custom_components/openplantbook
+
+      # Create Plant component symlink
+      ln -sfn ${plantComponentSource}/custom_components/plant /var/lib/hass/custom_components/plant
+
+      # Create Flower Card symlink
+      ln -sfn ${flowerCardSource} /var/lib/hass/www/community/flower-card
     '';
 
     # Force derivation update when HA config changes
