@@ -1,0 +1,31 @@
+---
+# LILYGO T-Higrow Plant Sensor Configuration
+# Uses upstream config from bruvv/LILYGO-T-Higrow-Esphome
+# Calibration data collected: 2026-01-12
+# Dry (air): -3.43% → target 0%
+# Wet (water): 99.51% → target 100%
+
+substitutions:
+  devicename: "higrow_fikus"
+  friendly_name: "Fikus"
+
+  # Device-specific calibration (measured 2026-01-12)
+  # Dry (air): -3.07% → actual voltage 2.86V → target 0%
+  # Wet (water): 100.98% → actual voltage 1.38V → target 100%
+  moisture_min: "2.86"  # Dry soil voltage
+  moisture_max: "1.38"  # Wet soil voltage
+
+# Pull T-Higrow configuration from upstream
+packages:
+  higrow:
+    url: https://github.com/bruvv/LILYGO-T-Higrow-Esphome
+    ref: main
+    files: [LILYGO-T-Higrow-ESP32.yaml]
+    refresh: 1d
+
+# WiFi credentials managed by ESPHome secrets
+# Ensure secrets.yaml contains:
+# wifi_ssid: "your_ssid"
+# wifi_password: "your_password"
+# api_encryption_key: "your_key"
+# ota_password: "your_password"
