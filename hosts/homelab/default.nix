@@ -143,7 +143,6 @@ in {
   # ===========================================
   services.crowdsec = {
     enable = true;
-    settings.general.api.server.enable = lib.mkForce true;
     localConfig.acquisitions = [
       {
         source = "file";
@@ -157,6 +156,9 @@ in {
       }
     ];
   };
+
+  # Enable Local API server (required for agent-LAPI communication)
+  services.crowdsec.settings.general.api.server.enable = lib.mkForce true;
 
   # CrowdSec firewall bouncer (nftables/iptables integration)
   services.crowdsec-firewall-bouncer = {
