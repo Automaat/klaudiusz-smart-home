@@ -29,6 +29,7 @@ pkgs.testers.nixosTest {
     # Disable sops-nix for VM tests - use plaintext configs
     # Tests validate system builds & services start, not secret management
     sops.age.generateKey = lib.mkForce false;
+    sops.validateSopsFiles = lib.mkForce false;
 
     # Override Grafana to not use sops secrets
     services.grafana.settings.security = lib.mkForce {
