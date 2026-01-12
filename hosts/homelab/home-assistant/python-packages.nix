@@ -118,7 +118,8 @@
     };
 
     nativeBuildInputs = with python3Packages; [
-      poetry-core
+      setuptools
+      setuptools-scm
     ];
 
     pythonImportsCheck = ["json_timeseries"];
@@ -145,7 +146,8 @@
     };
 
     nativeBuildInputs = with python3Packages; [
-      poetry-core
+      setuptools
+      setuptools-scm
     ];
 
     propagatedBuildInputs = with python3Packages; [
