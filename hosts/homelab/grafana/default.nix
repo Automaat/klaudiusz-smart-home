@@ -395,7 +395,7 @@
                     };
                     datasourceUid = "prometheus";
                     model = {
-                      expr = ''rate(cloudflared_tunnel_requests_total{status=~"5.."}[5m]) / rate(cloudflared_tunnel_requests_total[5m]) * 100'';
+                      expr = ''rate(cloudflared_tunnel_requests_total{status=~"5.."}[5m]) / clamp_min(rate(cloudflared_tunnel_requests_total[5m]), 1) * 100'';
                       instant = true;
                       intervalMs = 1000;
                       maxDataPoints = 43200;
