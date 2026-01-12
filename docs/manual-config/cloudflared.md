@@ -1,18 +1,23 @@
 # Cloudflare Tunnel - External Home Assistant Access
 
-**Why manual?** While Cloudflare Tunnel is configured declaratively in NixOS, the initial tunnel creation and domain configuration must be done through Cloudflare Dashboard.
+**Why manual?** While Cloudflare Tunnel is configured declaratively in NixOS,
+the initial tunnel creation and domain configuration must be done through
+Cloudflare Dashboard.
 
-**When to do this:** One-time setup for secure external access to Home Assistant at ha.mskalski.dev.
+**When to do this:** One-time setup for secure external access to Home
+Assistant at ha.mskalski.dev.
 
 ## Overview
 
-Cloudflare Tunnel provides secure external access to Home Assistant without exposing ports or configuring dynamic DNS. Traffic flows:
+Cloudflare Tunnel provides secure external access to Home Assistant without
+exposing ports or configuring dynamic DNS. Traffic flows:
 
-```
+```text
 Internet → Cloudflare Edge → Cloudflared (localhost) → Home Assistant (port 8123)
 ```
 
 **Security features:**
+
 - No open ports on home router
 - TLS termination at Cloudflare Edge
 - DDoS protection
@@ -22,12 +27,14 @@ Internet → Cloudflare Edge → Cloudflared (localhost) → Home Assistant (por
 ## Architecture
 
 **Declarative configuration (already done):**
+
 - `services.cloudflared` enabled in `hosts/homelab/default.nix`
 - Tunnel ID: `c0350983-f7b9-4770-ac96-34b8a5184c91`
 - Ingress rule: `ha.mskalski.dev` → `http://localhost:8123`
 - Proxy headers: Home Assistant trusts `X-Forwarded-For` from `127.0.0.1`
 
 **Manual setup (one-time):**
+
 - Create tunnel via Cloudflare Dashboard
 - Generate tunnel credentials
 - Configure DNS CNAME record
@@ -130,6 +137,7 @@ http = {
 ```
 
 **Why required:**
+
 - Cloudflared runs locally, proxies requests to `localhost:8123`
 - Without proxy headers, HA sees all requests from `127.0.0.1`
 - Breaks: authentication rate limiting, IP-based access control, audit logs
@@ -139,12 +147,14 @@ http = {
 ### Additional Security
 
 **Recommendations:**
+
 - Enable MFA in Home Assistant (Settings → Account → Multi-factor Authentication)
 - Use strong passwords (password manager)
 - Monitor failed login attempts
 - Consider Cloudflare Access for additional authentication layer
 
 **Cloudflare Access (optional):**
+
 - Add authentication before reaching Home Assistant
 - SSO integration (Google, GitHub, etc.)
 - Geo-restrictions, device posture checks
@@ -163,6 +173,7 @@ http = {
 5. Rebuild NixOS: `sudo nixos-rebuild switch --flake /etc/nixos#homelab`
 
 **Credentials location:**
+
 - Encrypted: `secrets/secrets.yaml` (in git)
 - Decrypted: `/run/secrets/cloudflared/credentials` (on homelab, 0400 mode)
 
@@ -183,6 +194,7 @@ ssh homelab "journalctl -u cloudflared-tunnel-* -n 50"
 ```
 
 **Common issues:**
+
 - Invalid credentials → check `/run/secrets/cloudflared/credentials`
 - Network connectivity → verify internet access
 - DNS not propagated → wait 5 minutes, clear DNS cache
@@ -201,6 +213,7 @@ ssh homelab "journalctl -u cloudflared-tunnel-* -n 50"
 **Cause:** Proxy configuration not enabled
 
 **Fix:**
+
 1. Verify `use_x_forwarded_for = true` in `home-assistant/default.nix`
 2. Rebuild: `sudo nixos-rebuild switch --flake /etc/nixos#homelab`
 3. Restart HA: `sudo systemctl restart home-assistant`
