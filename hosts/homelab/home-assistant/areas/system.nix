@@ -107,6 +107,10 @@ in {
       ];
       action = [
         {
+          action = "input_boolean.turn_off";
+          target.entity_id = "input_boolean.sleep_mode";
+        }
+        {
           action = "switch.turn_off";
           target.entity_id = adaptiveLightingSleepModeSwitches;
         }
