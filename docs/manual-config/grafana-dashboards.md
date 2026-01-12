@@ -53,7 +53,7 @@ Dashboards auto-provisioned from `hosts/homelab/grafana/dashboards/`:
 - `sensor.max_home_temperature`
 - `sensor.min_home_temperature`
 - `sensor.pm25_24h_average`
-- `sensor.aleje_pm2_5` (outdoor)
+- `sensor.airly_home_pm2_5` (outdoor, Airly)
 - `sensor.zhimi_de_334622045_mb3_pm2_5_density_p_3_6` (indoor)
 
 ### Services (`services/`)

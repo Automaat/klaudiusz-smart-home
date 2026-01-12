@@ -229,7 +229,7 @@ group_by: hour
 type: custom:history-explorer-card
 cardName: PM2.5 History
 entities:
-  - entity: sensor.aleje_pm2_5
+  - entity: sensor.airly_home_pm2_5
     name: Outdoor
   - entity: sensor.zhimi_de_334622045_mb3_pm2_5_density_p_3_6
     name: Indoor
@@ -242,12 +242,12 @@ defaultTimeRange: 7d
 type: conditional
 conditions:
   - condition: numeric_state
-    entity: sensor.aleje_pm2_5
+    entity: sensor.airly_home_pm2_5
     above: 50
 card:
   type: custom:mushroom-template-card
   primary: 'Zła jakość powietrza!'
-  secondary: 'PM2.5: {{ states("sensor.aleje_pm2_5") }} µg/m³'
+  secondary: 'PM2.5: {{ states("sensor.airly_home_pm2_5") }} µg/m³'
   icon: mdi:alert
   icon_color: red
 ```
@@ -397,7 +397,7 @@ card:
 type: conditional
 conditions:
   - condition: numeric_state
-    entity: sensor.aleje_pm2_5
+    entity: sensor.airly_home_pm2_5
     above: 50
 card:
   # Air quality warning
@@ -466,8 +466,8 @@ card:
 
 ### Environmental
 
-- `sensor.aleje_pm2_5` - Outdoor PM2.5 (GIOŚ, Kraków station 400)
-- `sensor.aleje_pm2_5_index` - Air quality index
+- `sensor.airly_home_pm2_5` - Outdoor PM2.5 (Airly)
+- `sensor.airly_home_ogolny_indeks_jakosci_powietrza` - Air quality index (Airly)
 - `binary_sensor.safe_to_ventilate_living_room` - Ventilation safety indicator
 - `sensor.average_home_temperature` - Average across all rooms (template)
 - `sensor.max_home_temperature` - Highest room temperature (template)
@@ -586,8 +586,8 @@ card:
    # Debug card - always show
    type: markdown
    content: |
-     Sensor value: {{ states('sensor.aleje_pm2_5') }}
-     Condition met: {{ states('sensor.aleje_pm2_5') | float(0) > 50 }}
+     Sensor value: {{ states('sensor.airly_home_pm2_5') }}
+     Condition met: {{ states('sensor.airly_home_pm2_5') | float(0) > 50 }}
    ```
 
 ### Auto-Entities Empty
