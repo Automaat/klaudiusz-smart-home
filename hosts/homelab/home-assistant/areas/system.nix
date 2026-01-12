@@ -142,6 +142,11 @@ in {
         }
       ];
       action = [
+        # Ensure away mode is active for all triggers (button + manual)
+        {
+          action = "input_boolean.turn_on";
+          target.entity_id = "input_boolean.away_mode";
+        }
         # Turn off all lights
         {
           action = "light.turn_off";
