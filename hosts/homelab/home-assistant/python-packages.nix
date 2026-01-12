@@ -154,8 +154,9 @@
       setuptools-scm
     ];
 
-    propagatedBuildInputs = with python3Packages; [
-      aiohttp
+    propagatedBuildInputs = [
+      python3Packages.aiohttp
+      json-timeseries
     ];
 
     pythonImportsCheck = ["openplantbook_sdk"];
