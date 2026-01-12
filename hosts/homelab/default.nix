@@ -139,6 +139,39 @@ in {
   };
 
   # ===========================================
+  # CrowdSec - Behavioral Intrusion Prevention
+  # ===========================================
+  services.crowdsec = {
+    enable = true;
+    settings = {
+      api.server = {
+        listen_uri = "127.0.0.1:8080";
+      };
+    };
+    localConfig.acquisitions = [
+      {
+        source = "file";
+        filenames = ["/var/lib/hass/home-assistant.log"];
+        labels.type = "homeassistant";
+      }
+      {
+        source = "journalctl";
+        journalctl_filter = ["_SYSTEMD_UNIT=sshd.service"];
+        labels.type = "syslog";
+      }
+    ];
+  };
+
+  # CrowdSec firewall bouncer (iptables integration)
+  services.crowdsec-firewall-bouncer = {
+    enable = true;
+    settings = {
+      mode = "iptables";
+      update_frequency = "10s";
+    };
+  };
+
+  # ===========================================
   # Bluetooth
   # ===========================================
   hardware.bluetooth = {
@@ -287,6 +320,8 @@ in {
         # Services to monitor
         SERVICES=(
           "fail2ban"
+          "crowdsec"
+          "crowdsec-firewall-bouncer"
           "wyoming-piper-default"
           "wyoming-faster-whisper-default"
           "tailscaled"
@@ -454,6 +489,9 @@ in {
   # Grant promtail user read access to Home Assistant logs
   users.users.promtail.extraGroups = ["hass"];
 
+  # Grant CrowdSec read access to Home Assistant logs and systemd journal
+  users.users.crowdsec.extraGroups = ["hass" "systemd-journal"];
+
   services.promtail = {
     enable = true;
     configuration = {
@@ -529,7 +567,7 @@ in {
           pipeline_stages = [
             {
               match = {
-                selector = ''{unit=~"(home-assistant|wyoming-.*|prometheus|grafana|postgresql|influxdb2)\\.service"}'';
+                selector = ''{unit=~"(home-assistant|wyoming-.*|prometheus|grafana|postgresql|influxdb2|crowdsec.*)\\.service"}'';
                 stages = [
                   {
                     labels = {
