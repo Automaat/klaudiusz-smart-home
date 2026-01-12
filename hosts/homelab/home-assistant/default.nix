@@ -367,9 +367,9 @@ in {
       # HTTP config (for reverse proxy if needed)
       http = {
         server_port = 8123;
-        # Uncomment for reverse proxy
-        # use_x_forwarded_for = true;
-        # trusted_proxies = [ "127.0.0.1" "::1" ];
+        # Cloudflared proxy configuration
+        use_x_forwarded_for = true;
+        trusted_proxies = ["127.0.0.1" "::1"];
       };
 
       # Logger

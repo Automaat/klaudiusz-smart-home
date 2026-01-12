@@ -2,7 +2,10 @@
   config,
   lib,
   ...
-}: {
+}: let
+  # Cloudflare Tunnel ID (must match hosts/homelab/default.nix)
+  cloudflareTunnelId = "c0350983-f7b9-4770-ac96-34b8a5184c91";
+in {
   # ===========================================
   # SOPS Secrets Management
   # ===========================================
@@ -65,7 +68,7 @@
     "cloudflared/credentials" = {
       owner = "cloudflared";
       mode = "0400";
-      restartUnits = ["cloudflared-tunnel-c0350983-f7b9-4770-ac96-34b8a5184c91.service"];
+      restartUnits = ["cloudflared-tunnel-${cloudflareTunnelId}.service"];
     };
   };
 }
