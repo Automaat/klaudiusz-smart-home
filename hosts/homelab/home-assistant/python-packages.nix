@@ -122,6 +122,10 @@
       setuptools-scm
     ];
 
+    propagatedBuildInputs = with python3Packages; [
+      python-dateutil
+    ];
+
     pythonImportsCheck = ["json_timeseries"];
 
     doCheck = false;
