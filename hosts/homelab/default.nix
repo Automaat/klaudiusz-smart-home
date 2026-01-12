@@ -157,11 +157,10 @@ in {
     ];
   };
 
-  # CrowdSec firewall bouncer (iptables integration)
+  # CrowdSec firewall bouncer (nftables/iptables integration)
   services.crowdsec-firewall-bouncer = {
     enable = true;
     settings = {
-      mode = "iptables";
       update_frequency = "10s";
     };
   };
