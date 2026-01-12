@@ -27,6 +27,9 @@
     # Publish homeassistant.local mDNS alias (use -a -R to avoid reverse lookup collision)
     exec ${pkgs.avahi}/bin/avahi-publish-address -a -R homeassistant.local "$ip_addr"
   '';
+
+  # Cloudflare Tunnel ID
+  cloudflareTunnelId = "c0350983-f7b9-4770-ac96-34b8a5184c91";
 in {
   imports = [
     ./hardware-configuration.nix
@@ -178,6 +181,20 @@ in {
   services.tailscale = {
     enable = true;
     useRoutingFeatures = "server";
+  };
+
+  # ===========================================
+  # Cloudflared - External HA Access
+  # ===========================================
+  services.cloudflared = {
+    enable = true;
+    tunnels.${cloudflareTunnelId} = {
+      credentialsFile = config.sops.secrets."cloudflared/credentials".path;
+      default = "http_status:404";
+      ingress = {
+        "ha.mskalski.dev" = "http://localhost:8123";
+      };
+    };
   };
 
   # ===========================================

@@ -91,6 +91,8 @@ except Exception as e:
 # Comin (GitOps)
 homelab.wait_for_unit("comin.service")
 
+# Note: Cloudflared disabled in VM tests (requires real Cloudflare credentials)
+
 # =============================================
 # Service Health Checks
 # =============================================

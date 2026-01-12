@@ -2,7 +2,10 @@
   config,
   lib,
   ...
-}: {
+}: let
+  # Cloudflare Tunnel ID (must match hosts/homelab/default.nix)
+  cloudflareTunnelId = "c0350983-f7b9-4770-ac96-34b8a5184c91";
+in {
   # ===========================================
   # SOPS Secrets Management
   # ===========================================
@@ -59,6 +62,12 @@
       owner = "influxdb2";
       mode = "0400";
       restartUnits = ["influxdb2.service"];
+    };
+
+    # Cloudflared tunnel credentials (root-owned, service has access)
+    "cloudflared/credentials" = {
+      mode = "0400";
+      restartUnits = ["cloudflared-tunnel-${cloudflareTunnelId}.service"];
     };
   };
 }

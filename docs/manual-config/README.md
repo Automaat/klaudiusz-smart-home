@@ -7,6 +7,7 @@ Home Assistant UI.
 ## Integrations
 
 - **[Zigbee Home Automation (ZHA)](zha.md)** - Zigbee device pairing and setup
+- **[Cloudflare Tunnel](cloudflared.md)** - Secure external access via ha.mskalski.dev
 - **[Better Thermostat](better-thermostat.md)** - Use external temperature sensors for thermostat control
 - **[Custom Conversation](custom-conversation.md)** - Fallback conversation agent (local intents → LLM)
 - **[Airly Air Quality](airly.md)** - Polish air quality sensor with PM2.5, PM10, and CAQI
