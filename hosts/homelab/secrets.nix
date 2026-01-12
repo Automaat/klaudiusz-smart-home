@@ -64,9 +64,8 @@ in {
       restartUnits = ["influxdb2.service"];
     };
 
-    # Cloudflared tunnel credentials
+    # Cloudflared tunnel credentials (root-owned, service has access)
     "cloudflared/credentials" = {
-      owner = "cloudflared";
       mode = "0400";
       restartUnits = ["cloudflared-tunnel-${cloudflareTunnelId}.service"];
     };
