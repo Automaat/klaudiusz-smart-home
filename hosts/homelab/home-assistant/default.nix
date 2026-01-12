@@ -328,6 +328,7 @@ in {
         longitude = 19.887609;
         elevation = 210;
         internal_url = "http://192.168.0.241:8123";
+        external_url = "https://ha.mskalski.dev";
       };
 
       # Enable conversation for voice commands
