@@ -145,7 +145,13 @@ in {
     enable = true;
     settings = {
       # Enable Local API server (required for agent-LAPI communication)
-      general.api.server.enable = true;
+      general = {
+        api = {
+          server = {
+            enable = true;
+          };
+        };
+      };
     };
     localConfig.acquisitions = [
       {
