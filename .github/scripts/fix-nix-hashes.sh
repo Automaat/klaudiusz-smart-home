@@ -29,31 +29,52 @@ find . -path './.git' -prune -o -name "*.nix" -type f -exec grep -Il "fetchFromG
             # We have a complete block, process it
             if [ -n "$owner" ] && [ -n "$repo" ] && [ -n "$rev" ] && [ -n "$current_hash" ]; then
                 echo "  Checking $owner/$repo@$rev"
+                echo "    Current hash: $current_hash"
 
-                # Prefetch the correct hash for this rev
-                correct_hash=$(nix-shell -p nix-prefetch-github --run "nix-prefetch-github '$owner' '$repo' --rev '$rev' 2>/dev/null" | grep '"hash"' | sed 's/.*"hash": "\(.*\)".*/\1/' || echo "")
+                # Prefetch the correct hash for this rev using nix-prefetch-url
+                # This is more reliable than nix-prefetch-github
+                tarball_url="https://github.com/$owner/$repo/archive/$rev.tar.gz"
+                echo "    Fetching: $tarball_url"
 
-                # Validate the format of the prefetched hash before using it
-                if [[ -n "$correct_hash" && ! "$correct_hash" =~ ^sha256-[A-Za-z0-9+/=]+$ ]]; then
-                    echo "  WARNING: Invalid hash format returned: $correct_hash"
+                # Get hash in base32 format, then convert to SRI
+                if base32_hash=$(nix-prefetch-url --unpack "$tarball_url" 2>&1 | tail -1); then
+                    echo "    Base32 hash: $base32_hash"
+
+                    # Convert to SRI format
+                    if correct_hash=$(nix hash convert --hash-algo sha256 --to sri "$base32_hash" 2>&1); then
+                        echo "    Correct hash: $correct_hash"
+
+                        # Validate the format
+                        if [[ ! "$correct_hash" =~ ^sha256-[A-Za-z0-9+/=]+$ ]]; then
+                            echo "  ⚠️  WARNING: Invalid hash format: $correct_hash"
+                            correct_hash=""
+                        fi
+                    else
+                        echo "  ⚠️  WARNING: Failed to convert hash to SRI format: $correct_hash"
+                        correct_hash=""
+                    fi
+                else
+                    echo "  ⚠️  WARNING: Failed to prefetch: $base32_hash"
                     correct_hash=""
                 fi
 
                 if [ -z "$correct_hash" ]; then
-                    echo "  WARNING: Could not prefetch hash for $owner/$repo@$rev"
+                    echo "  ⚠️  Could not prefetch hash for $owner/$repo@$rev"
                 elif [ "$current_hash" != "$correct_hash" ]; then
-                    echo "  Hash mismatch:"
+                    echo "  ❌ Hash mismatch detected!"
                     echo "    Current:  $current_hash"
                     echo "    Correct:  $correct_hash"
 
                     # Replace the hash in the file
                     if sed -i.bak "s|hash[[:space:]]*=[[:space:]]*\"$current_hash\"|hash = \"$correct_hash\"|g" "$file"; then
                         rm -f "$file.bak"
-                        echo "  ✓ Updated hash in $file"
+                        echo "  ✅ Updated hash in $file"
                         echo "$file" >> "$tmpfile"
+                    else
+                        echo "  ⚠️  Failed to update hash in $file"
                     fi
                 else
-                    echo "  ✓ Hash is correct"
+                    echo "  ✅ Hash is correct"
                 fi
 
                 # Reset for next block
