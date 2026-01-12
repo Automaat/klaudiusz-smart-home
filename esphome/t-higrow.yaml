@@ -1,0 +1,193 @@
+---
+# LILYGO T-Higrow Plant Sensor Configuration
+# Calibration data collected: 2026-01-12
+# Dry (air): -3.43% → target 0%
+# Wet (water): 99.51% → target 100%
+
+substitutions:
+  devicename: "lilygohigrowplantsensor-b38a0c"
+  friendly_name: "Fikus"
+  device_description: "T-Higrow plant sensor"
+  project_version: "1.0"
+  update_interval: "30min"  # Adjust for battery life vs update frequency
+  loglevel: "INFO"
+
+  # Calibration values (voltage readings)
+  # TODO: Fine-tune these based on raw ADC readings
+  moisture_min: "2.82"  # Dry soil voltage
+  moisture_max: "1.39"  # Wet soil voltage
+  conductivity_min: "0.075"
+  conductivity_max: "0.25"
+
+esphome:
+  name: "${devicename}"
+  friendly_name: "${friendly_name}"
+  comment: "${device_description}"
+  project:
+    name: "esphome.t-higrow"
+    version: "${project_version}"
+  on_boot:
+    priority: 240
+    then:
+      - wait_until:
+          condition:
+            wifi.connected:
+          timeout: 10s
+  on_shutdown:
+    then:
+      - switch.turn_off: spower
+
+esp32:
+  board: lolin_d32
+  framework:
+    type: esp-idf
+
+# Enable WiFi with fallback AP
+wifi:
+  # WiFi credentials managed by ESPHome secrets
+  ap:
+    ssid: "${devicename}"
+    password: "plantlife"
+
+captive_portal:
+
+logger:
+  level: "${loglevel}"
+
+api:
+  encryption:
+    key: !secret api_encryption_key
+
+ota:
+  - platform: esphome
+    password: !secret ota_password
+
+# Sync time from Home Assistant
+time:
+  - platform: homeassistant
+    id: homeassistant_time
+
+# Restart button
+button:
+  - platform: restart
+    name: "Restart - ${friendly_name}"
+
+# I2C bus for sensors
+i2c:
+  sda: GPIO25
+  scl: GPIO26
+  scan: true
+  id: bus_a
+
+# Power control switch for sensors
+switch:
+  - platform: gpio
+    name: "${friendly_name} Sensor Power"
+    pin: GPIO4
+    id: spower
+    restore_mode: ALWAYS_ON
+    internal: true
+    setup_priority: 1000
+
+  # Water pump control
+  - platform: gpio
+    name: "Water Pump"
+    pin: GPIO23
+    id: water_pump
+    icon: "mdi:water-pump"
+
+sensor:
+  # WiFi signal strength
+  - platform: wifi_signal
+    name: "${friendly_name} WiFi Signal"
+    update_interval: ${update_interval}
+
+  # DHT11 Temperature & Humidity
+  - platform: dht
+    pin: GPIO16
+    model: DHT11
+    temperature:
+      name: "${friendly_name} DHT Temperature"
+      filters:
+        - offset: 0.0  # Adjust if needed
+    humidity:
+      name: "${friendly_name} DHT Humidity"
+      filters:
+        - offset: 0.0  # Adjust if needed
+    update_interval: ${update_interval}
+
+  # BH1750 Light sensor
+  - platform: bh1750
+    name: "${friendly_name} BH1750 Illuminance"
+    address: 0x23
+    update_interval: ${update_interval}
+
+  # Soil moisture sensor (ADC)
+  - platform: adc
+    pin: GPIO32
+    name: "${friendly_name} Soil Moisture"
+    attenuation: 11db
+    unit_of_measurement: "%"
+    icon: "mdi:watering-can"
+    accuracy_decimals: 1
+    update_interval: ${update_interval}
+    filters:
+      - calibrate_linear:
+          # Map voltage readings to 0-100%
+          # Default values from reference config
+          # Fine-tune after observing raw readings in dry/wet soil
+          - ${moisture_min} -> 0.0
+          - ${moisture_max} -> 100.0
+      - lambda: |-
+          if (x < 0) return 0;
+          if (x > 100) return 100;
+          return x;
+
+  # Soil conductivity/fertility sensor (ADC)
+  - platform: adc
+    pin: GPIO34
+    name: "${friendly_name} Soil Conductivity"
+    attenuation: 11db
+    unit_of_measurement: "μS/cm"
+    icon: "mdi:flower"
+    accuracy_decimals: 0
+    update_interval: ${update_interval}
+    filters:
+      - calibrate_linear:
+          - ${conductivity_min} -> 0.0
+          - ${conductivity_max} -> 100.0
+      - lambda: |-
+          if (x < 0) return 0;
+          if (x > 2000) return 2000;
+          return x;
+
+  # Battery voltage (optional, if using battery)
+  - platform: adc
+    pin: GPIO33
+    name: "${friendly_name} Battery Voltage"
+    attenuation: 11db
+    filters:
+      - multiply: 2.0  # Voltage divider
+    unit_of_measurement: "V"
+    device_class: voltage
+    update_interval: ${update_interval}
+
+# Text sensors for device info
+text_sensor:
+  - platform: wifi_info
+    ip_address:
+      name: "${friendly_name} IP Address"
+    ssid:
+      name: "${friendly_name} SSID"
+    mac_address:
+      name: "${friendly_name} MAC Address"
+
+  - platform: version
+    name: "${friendly_name} ESPHome Version"
+
+# Optional: Deep sleep for battery operation
+# Uncomment to enable deep sleep (significantly extends battery life)
+# deep_sleep:
+#   id: deep_sleep_control
+#   run_duration: 30s  # Stay awake for sensor readings
+#   sleep_duration: 30min  # Sleep between readings
