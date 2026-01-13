@@ -126,8 +126,8 @@
           # Ventilation considered safe when outdoor PM2.5 < 15 µg/m³
           # (good/upper-moderate boundary per WHO guidelines)
           # Based solely on Airly outdoor sensor for simplicity
+          # No device_class to avoid confusing "Safe"/"Clear" labels in history
           state = "{{ states('sensor.airly_home_pm2_5') | float(999) < 15 }}";
-          device_class = "safety";
         }
         {
           name = "Antibacterial Filter Run Due";
