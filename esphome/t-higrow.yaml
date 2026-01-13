@@ -23,6 +23,13 @@ packages:
     files: [LILYGO-T-Higrow-ESP32.yaml]
     refresh: 1d
 
+# Disable Bluetooth proxy - causes crashes/disconnections (2026-01-13)
+# Issue: Device crashes every ~10-15min with bluetooth_proxy enabled
+# Not needed for plant sensor functionality (WiFi-only)
+# Refs: https://github.com/esphome/esphome/issues/12185
+bluetooth_proxy:
+  active: false
+
 # WiFi credentials managed by ESPHome secrets
 # Ensure secrets.yaml contains:
 # wifi_ssid: "your_ssid"
