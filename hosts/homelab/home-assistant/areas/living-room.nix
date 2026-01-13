@@ -77,13 +77,13 @@ in {
     # Air Purifier
     # -----------------------------------------
     {
-      id = "air_purifier_outdoor_mode_switch";
-      alias = "Air Purifier - Outdoor mode switching";
-      description = "Adjust purifier mode based on outdoor PM2.5 levels";
+      id = "air_purifier_indoor_mode_switch";
+      alias = "Air Purifier - Indoor mode switching";
+      description = "Adjust purifier mode based on indoor PM2.5 levels";
       trigger = [
         {
           platform = "state";
-          entity_id = "sensor.airly_home_pm2_5";
+          entity_id = "sensor.zhimi_de_334622045_mb3_pm2_5_density_p_3_6";
         }
       ];
       condition = [
@@ -100,8 +100,8 @@ in {
               conditions = [
                 {
                   condition = "numeric_state";
-                  entity_id = "sensor.airly_home_pm2_5";
-                  above = 75;
+                  entity_id = "sensor.zhimi_de_334622045_mb3_pm2_5_density_p_3_6";
+                  above = 50;
                 }
               ];
               sequence = [
@@ -121,9 +121,9 @@ in {
               conditions = [
                 {
                   condition = "numeric_state";
-                  entity_id = "sensor.airly_home_pm2_5";
-                  above = 50;
-                  below = 76;
+                  entity_id = "sensor.zhimi_de_334622045_mb3_pm2_5_density_p_3_6";
+                  above = 25;
+                  below = 51;
                 }
               ];
               sequence = [
@@ -143,8 +143,8 @@ in {
               conditions = [
                 {
                   condition = "numeric_state";
-                  entity_id = "sensor.airly_home_pm2_5";
-                  below = 15;
+                  entity_id = "sensor.zhimi_de_334622045_mb3_pm2_5_density_p_3_6";
+                  below = 10;
                 }
               ];
               sequence = [
@@ -246,7 +246,7 @@ in {
     {
       id = "air_purifier_sleep_mode";
       alias = "Air Purifier - Adaptive sleep mode";
-      description = "Manual 66% if outdoor PM2.5 >75, else Night mode during sleep hours";
+      description = "Manual 66% if indoor PM2.5 >50, else Night mode during sleep hours";
       trigger = [
         {
           platform = "time";
@@ -254,7 +254,7 @@ in {
         }
         {
           platform = "state";
-          entity_id = "sensor.airly_home_pm2_5";
+          entity_id = "sensor.zhimi_de_334622045_mb3_pm2_5_density_p_3_6";
         }
       ];
       condition = [
@@ -271,8 +271,8 @@ in {
               conditions = [
                 {
                   condition = "numeric_state";
-                  entity_id = "sensor.airly_home_pm2_5";
-                  above = 75;
+                  entity_id = "sensor.zhimi_de_334622045_mb3_pm2_5_density_p_3_6";
+                  above = 50;
                 }
               ];
               sequence = [
@@ -338,7 +338,7 @@ in {
     {
       id = "air_purifier_away_mode";
       alias = "Air Purifier - Away mode optimization";
-      description = "Adjust operation based on outdoor AQ during away mode";
+      description = "Adjust operation based on indoor AQ during away mode";
       trigger = [
         {
           platform = "state";
@@ -353,8 +353,8 @@ in {
               conditions = [
                 {
                   condition = "numeric_state";
-                  entity_id = "sensor.airly_home_pm2_5";
-                  below = 25;
+                  entity_id = "sensor.zhimi_de_334622045_mb3_pm2_5_density_p_3_6";
+                  below = 15;
                 }
               ];
               sequence = [
@@ -368,8 +368,8 @@ in {
               conditions = [
                 {
                   condition = "numeric_state";
-                  entity_id = "sensor.airly_home_pm2_5";
-                  above = 50;
+                  entity_id = "sensor.zhimi_de_334622045_mb3_pm2_5_density_p_3_6";
+                  above = 35;
                 }
               ];
               sequence = [
