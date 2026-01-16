@@ -600,12 +600,12 @@
                     };
                   }
                 ];
-                noDataState = "Alerting";
-                execErrState = "Alerting";
-                for = "10m";
+                noDataState = "OK";
+                execErrState = "OK";
+                for = "1h";
                 annotations = {
                   summary = "CrowdSec parser activity is near zero";
-                  description = "CrowdSec has not processed any logs for more than 10 minutes. Check: systemctl status crowdsec && journalctl -u crowdsec -n 50";
+                  description = "CrowdSec has not processed any logs for more than 1 hour. Check: systemctl status crowdsec && journalctl -u crowdsec -n 50";
                 };
                 labels = {
                   severity = "warning";
