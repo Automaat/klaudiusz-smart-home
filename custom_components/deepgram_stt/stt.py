@@ -47,54 +47,18 @@ async def async_setup_entry(
     async_add_entities([DeepgramSTTEntity(config_entry)])
 
 
-async def async_setup_platform(
-    hass: HomeAssistant,
-    config: dict[str, Any],
-    async_add_entities: AddEntitiesCallback,
-    discovery_info: dict[str, Any] | None = None,
-) -> None:
-    """Set up Deepgram STT platform from YAML configuration."""
-    if not discovery_info:
-        _LOGGER.error("Deepgram STT requires discovery_info with API key")
-        return
-
-    api_key = discovery_info.get(CONF_API_KEY)
-    if not api_key:
-        _LOGGER.error("Deepgram API key not provided in discovery_info")
-        return
-
-    entity_config = {
-        CONF_API_KEY: api_key,
-        CONF_MODEL: discovery_info.get(CONF_MODEL, DEFAULT_MODEL),
-        CONF_LANGUAGE: discovery_info.get(CONF_LANGUAGE, DEFAULT_LANGUAGE),
-    }
-    async_add_entities([DeepgramSTTEntity(config=entity_config)])
-
-
 class DeepgramSTTEntity(SpeechToTextEntity):
     """Deepgram Speech-to-Text entity."""
 
-    def __init__(
-        self,
-        config_entry: ConfigEntry | None = None,
-        config: dict[str, Any] | None = None,
-    ) -> None:
+    def __init__(self, config_entry: ConfigEntry) -> None:
         """Initialize Deepgram STT."""
         self._attr_name = "Deepgram STT"
         self._attr_unique_id = "deepgram_stt"
-
-        if config_entry:
-            self._api_key = config_entry.data.get(CONF_API_KEY)
-            self._model = config_entry.data.get(CONF_MODEL, DEFAULT_MODEL)
-            self._language = config_entry.data.get(CONF_LANGUAGE, DEFAULT_LANGUAGE)
-        elif config:
-            self._api_key = config.get(CONF_API_KEY)
-            self._model = config.get(CONF_MODEL, DEFAULT_MODEL)
-            self._language = config.get(CONF_LANGUAGE, DEFAULT_LANGUAGE)
-        else:
-            self._api_key = None
-            self._model = DEFAULT_MODEL
-            self._language = DEFAULT_LANGUAGE
+        self._api_key = config_entry.data.get(CONF_API_KEY)
+        self._model = config_entry.data.get(CONF_MODEL, DEFAULT_MODEL)
+        self._language = config_entry.data.get(CONF_LANGUAGE, DEFAULT_LANGUAGE)
+        self.config_entry = config_entry
+        self._attr_device_info = None  # No physical device for cloud API
 
     @property
     def supported_languages(self) -> list[str]:

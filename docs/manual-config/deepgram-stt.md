@@ -1,91 +1,100 @@
-# Deepgram STT Integration
+# Deepgram Speech-to-Text Manual Configuration
 
-**Why manual?** Modern HA STT integrations only support UI configuration. YAML `stt` platform config deprecated.
+## Overview
 
-**Purpose:** Cloud-based speech recognition. Alternative to local Whisper for faster Polish transcription.
+Deepgram STT integration provides cloud-based speech-to-text using the Deepgram API.
 
-## Prerequisites
+## Auto-Configuration (Default)
 
-- Deepgram API key in `secrets/secrets.yaml` as `deepgram_api_key`
-- Custom component deployed to `/var/lib/hass/custom_components/deepgram_stt/`
-- Home Assistant restarted after deployment
+**The integration auto-configures on first startup** - no manual setup needed.
 
-## Setup Steps
+The integration automatically creates a config entry using the API key from `/run/secrets/deepgram-api-key` (sops-encrypted).
 
-**Configure in Voice Assistant pipeline:**
+**Verify auto-configuration:**
 
-1. Go to **Settings** → **Voice assistants**
-2. Create or edit a pipeline
-3. In **Speech-to-text** dropdown, select **Deepgram STT**
-4. Save pipeline
+1. Navigate to **Settings** > **Devices & Services**
+2. Look for **Deepgram Speech-to-Text** integration
+3. Should show as "Configured"
 
-**Settings (hardcoded in custom component):**
+## Manual Configuration (If Needed)
 
-- Model: `nova-3` (best Polish accuracy)
-- Language: `pl`
-- API key: auto-loaded from secrets
+If auto-configuration fails or you want to reconfigure:
 
-## Verify
+### Prerequisites
 
-**Test voice command:**
+- Deepgram API key from <https://console.deepgram.com/>
+- In NixOS setup: API key stored in sops secrets
 
-1. Use Voice Assistant with Deepgram STT pipeline
-2. Check logs for transcription results
-3. Should see faster response than Whisper (~100-200ms)
+### Setup Steps
+
+1. **Remove existing integration (if any):**
+   - Go to **Settings** > **Devices & Services**
+   - Find **Deepgram Speech-to-Text**
+   - Click three dots > **Delete**
+
+2. **Add integration:**
+   - Click **Add Integration**
+   - Search for "Deepgram Speech-to-Text"
+   - Click on it
+
+3. **Configure:**
+   - **API Key**: Enter your Deepgram API key
+     - For NixOS setup: `cat /run/secrets/deepgram-api-key` on homelab
+   - **Model** (optional): Default is `nova-3`
+   - **Language** (optional): Default is `pl` (Polish)
+
+4. **Verify:**
+   - Integration should appear in Devices & Services
+   - Entity `stt.deepgram_stt` should be available
+
+## Using in Voice Assistant
+
+1. **Navigate to Settings** > **Voice assistants**
+2. **Select your assistant** (e.g., "Home Assistant")
+3. **Speech-to-text**: Select **Deepgram STT**
+4. **Save**
 
 ## Troubleshooting
 
-**Integration not found:**
+### Integration doesn't appear in UI
+
+Check logs for auto-configuration:
 
 ```bash
-# Verify custom component exists
-ssh homelab "ls -la /var/lib/hass/custom_components/deepgram_stt/"
+ssh homelab "journalctl -u home-assistant | grep -i deepgram"
 ```
 
-Expected: `__init__.py`, `manifest.json`, `stt.py`, `const.py`
+Look for:
 
-**Integration fails to load:**
+- "Auto-configuring Deepgram STT from sops secret" (success)
+- "Could not auto-configure from sops secret" (failure)
+
+### API key errors
+
+Verify sops secret is readable:
 
 ```bash
-# Check Home Assistant logs for errors
-ssh homelab "journalctl -u home-assistant -f | grep deepgram"
+ssh homelab "cat /run/secrets/deepgram-api-key"
 ```
 
-Look for import errors or API key issues.
+Should output valid Deepgram API key (starts with project-specific prefix).
 
-**API key not found:**
+### Integration loads but STT doesn't work
 
-```bash
-# Verify secret exists
-ssh homelab "sudo cat /var/lib/hass/secrets.yaml | grep deepgram_api_key"
-```
+1. Check entity state in **Developer Tools** > **States**
+2. Search for `stt.deepgram_stt`
+3. Verify "supported_languages" includes `pl`
 
-Should show: `deepgram_api_key: dg_xxxxx`
+## Technical Details
 
-**Service not starting:**
-
-```bash
-ssh homelab "sudo systemctl restart home-assistant"
-```
-
-## Performance Notes
-
-- Cloud-based: requires internet, ~100-200ms latency
-- Faster than local Whisper on Celeron N5095
-- Nova-3 model: best Polish accuracy as of 2026
-- Streaming WebSocket for real-time transcription
-- Fallback: use Whisper for offline operation
-
-## Notes
-
-- Custom component source: `custom_components/deepgram_stt/`
-- Deployed via symlink in HA pre-start script
-- API key encrypted via sops-nix
-- No config flow UI (prototype implementation)
-- Integration persists across HA restarts
+- **Integration Type**: Config Flow (UI-based)
+- **Platform**: STT (Speech-to-Text)
+- **API**: Deepgram Live Transcription WebSocket API
+- **Supported Languages**: pl, en, de, es, fr, it, nl, pt
+- **Audio Format**: WAV, PCM, 16-bit, 16kHz, mono
 
 ## Related Documentation
 
-- [Deepgram Nova-3 Docs](https://developers.deepgram.com/docs/nova-3)
+- [Deepgram API Docs](https://developers.deepgram.com/)
 - [HA STT Integration](https://www.home-assistant.io/integrations/stt/)
-- [Custom Components Guide](https://developers.home-assistant.io/docs/creating_component_index/)
+- [HA Voice Assistants](https://www.home-assistant.io/voice_control/)
