@@ -24,6 +24,7 @@ recognition. Alternative to local Whisper for faster Polish transcription.
 6. Click **SUBMIT**
 
 **Note:** The integration uses hardcoded settings:
+
 - Model: `nova-3` (best Polish accuracy)
 - Language: `pl`
 - API key: loaded from secrets via HA
