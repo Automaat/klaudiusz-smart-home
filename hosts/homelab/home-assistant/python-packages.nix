@@ -189,9 +189,14 @@
     ];
 
     propagatedBuildInputs = with python3Packages; [
+      aiofiles
+      aiohttp
+      aenum
+      dataclasses-json
+      deprecation
       httpx
-      websockets
       typing-extensions
+      websockets
     ];
 
     pythonImportsCheck = ["deepgram"];
