@@ -20,6 +20,7 @@ Home Assistant UI.
 - **[Dashboard Configuration](dashboards.md)** - Home Assistant GUI dashboard setup guide
 - **[System Monitor](system-monitor.md)** - System resource monitoring
 - **[Wyoming Protocol](wyoming-protocol.md)** - Speech-to-text and text-to-speech services
+- **[Deepgram STT](deepgram-stt.md)** - Cloud-based speech-to-text with Nova-3 model
 - **[Voice Assistant Preview Edition](voice-assistant-preview.md)** - Voice hardware setup
 - **[LG WebOS TV](lg-webos-tv.md)** - Smart TV integration
 - **[Samsung SmartThings](smartthings.md)** - SmartThings OAuth integration
