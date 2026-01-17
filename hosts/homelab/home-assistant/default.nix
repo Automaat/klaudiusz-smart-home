@@ -381,7 +381,7 @@ in {
       # Enable conversation for voice commands
       conversation = {};
 
-      # Speech-to-Text: configured via UI (custom components not supported in YAML)
+      # Speech-to-Text: STT providers configured via UI (no YAML support in modern HA)
 
       # Frontend with themes
       frontend = {

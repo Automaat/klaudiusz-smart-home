@@ -1,50 +1,37 @@
 # Deepgram STT Integration
 
-**Why manual?** STT integration no longer supports YAML configuration. Custom STT
-components must be configured through the UI.
+**Why manual?** Modern HA STT integrations only support UI configuration. YAML `stt` platform config deprecated.
 
-**When to do this:** After initial installation, when setting up cloud-based speech
-recognition. Alternative to local Whisper for faster Polish transcription.
+**Purpose:** Cloud-based speech recognition. Alternative to local Whisper for faster Polish transcription.
 
 ## Prerequisites
 
-- Deepgram API key stored in `secrets/secrets.yaml` as `deepgram_api_key`
+- Deepgram API key in `secrets/secrets.yaml` as `deepgram_api_key`
 - Custom component deployed to `/var/lib/hass/custom_components/deepgram_stt/`
 - Home Assistant restarted after deployment
 
 ## Setup Steps
 
-**1. Add Deepgram STT Integration:**
-
-1. Open Home Assistant UI
-2. Navigate to **Settings** → **Devices & Services**
-3. Click **+ ADD INTEGRATION** (bottom-right)
-4. Search for and select **Deepgram STT**
-5. Integration should auto-configure (no config flow UI)
-6. Click **SUBMIT**
-
-**Note:** The integration uses hardcoded settings:
-
-- Model: `nova-3` (best Polish accuracy)
-- Language: `pl`
-- API key: loaded from secrets via HA
-
-## Verify Integration
-
-**Check integration added:**
-
-1. Go to **Settings** → **Devices & Services**
-2. Find **Deepgram STT** card
-3. Status should show connected
-
-**Test in Voice Assistant settings:**
+**Configure in Voice Assistant pipeline:**
 
 1. Go to **Settings** → **Voice assistants**
 2. Create or edit a pipeline
-3. Verify **Speech-to-text** dropdown includes: `Deepgram STT`
-4. Select Deepgram STT as STT engine
+3. In **Speech-to-text** dropdown, select **Deepgram STT**
+4. Save pipeline
 
-**If not available**: Integration not loaded - check custom component and restart HA.
+**Settings (hardcoded in custom component):**
+
+- Model: `nova-3` (best Polish accuracy)
+- Language: `pl`
+- API key: auto-loaded from secrets
+
+## Verify
+
+**Test voice command:**
+
+1. Use Voice Assistant with Deepgram STT pipeline
+2. Check logs for transcription results
+3. Should see faster response than Whisper (~100-200ms)
 
 ## Troubleshooting
 
