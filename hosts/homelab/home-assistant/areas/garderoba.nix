@@ -38,9 +38,6 @@
           platform = "state";
           entity_id = "binary_sensor.motion_sensor";
           to = "off";
-          for = {
-            seconds = 30;
-          };
         }
       ];
       action = [
