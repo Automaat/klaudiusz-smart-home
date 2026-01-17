@@ -53,8 +53,8 @@
     owner = "jmcollin78";
     repo = "versatile_thermostat";
     # renovate: datasource=github-tags depName=jmcollin78/versatile_thermostat
-    rev = "8.5.1";
-    hash = "sha256-zSpeiSK8FyXlM1U8jjSVl1nLQX/IplvKHfS6XZUNxo4=";
+    rev = "8.6.0";
+    hash = "sha256-rzNznV2YfBUxgYdc+qZeDIBVeMfwPwvDyYVON980SCg=";
   };
 
   # ===========================================
