@@ -1,0 +1,13 @@
+{
+  "domain": "deepgram_stt",
+  "name": "Deepgram Speech-to-Text",
+  "codeowners": [],
+  "documentation": "https://github.com/mskalski/klaudiusz-smart-home",
+  "iot_class": "cloud_polling",
+  "requirements": [
+    "deepgram-sdk==4.1.0",
+    "websockets==14.2"
+  ],
+  "version": "0.1.0",
+  "stt": ["deepgram"]
+}

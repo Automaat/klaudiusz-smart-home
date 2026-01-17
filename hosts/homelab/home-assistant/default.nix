@@ -260,6 +260,11 @@
   };
 
   # ===========================================
+  # Deepgram STT (Custom Component)
+  # ===========================================
+  deepgramSTTSource = ../../../custom_components/deepgram_stt;
+
+  # ===========================================
   # Custom Python Packages
   # ===========================================
   # Function that builds custom packages with HA's Python environment
@@ -295,6 +300,7 @@ in {
       "conversation"
       "intent_script"
       "wyoming"
+      "stt" # Speech-to-Text platform
 
       # Monitoring
       "prometheus" # Metrics export for Grafana
@@ -349,6 +355,9 @@ in {
         # OpenPlantbook integration (custom component)
         customPkgs.openplantbook-sdk # OpenPlantbook SDK
         customPkgs.json-timeseries # JSON Time Series library
+
+        # Deepgram STT integration (custom component)
+        customPkgs.deepgram-sdk # Deepgram SDK
       ];
 
     config = {
@@ -371,6 +380,15 @@ in {
 
       # Enable conversation for voice commands
       conversation = {};
+
+      # Speech-to-Text
+      stt = [
+        {
+          platform = "deepgram_stt";
+          model = "nova-3";
+          language = "pl";
+        }
+      ];
 
       # Frontend with themes
       frontend = {
@@ -493,6 +511,7 @@ in {
       cat > /var/lib/hass/secrets.yaml <<EOF
       telegram_bot_token: "123456789:ABCdefGHIjklMNOpqrsTUVwxyz-DUMMY"
       telegram_chat_id: "123456789"
+      deepgram_api_key: "$(cat ${config.sops.secrets.deepgram-api-key.path})"
       influxdb_token: "$(cat ${config.sops.secrets.influxdb-admin-token.path})"
       EOF
 
@@ -537,6 +556,9 @@ in {
 
       # Create OpenPlantbook integration symlink
       ln -sfn ${openPlantbookSource}/custom_components/openplantbook /var/lib/hass/custom_components/openplantbook
+
+      # Create Deepgram STT symlink
+      ln -sfn ${deepgramSTTSource} /var/lib/hass/custom_components/deepgram_stt
 
       # Create Plant component symlink
       ln -sfn ${plantComponentSource}/custom_components/plant /var/lib/hass/custom_components/plant
