@@ -381,9 +381,6 @@ in {
       # Enable conversation for voice commands
       conversation = {};
 
-      # Speech-to-Text: Deepgram STT (activates custom component)
-      deepgram_stt = {};
-
       # Frontend with themes
       frontend = {
         themes = "!include_dir_merge_named themes/";
@@ -505,7 +502,6 @@ in {
       cat > /var/lib/hass/secrets.yaml <<EOF
       telegram_bot_token: "123456789:ABCdefGHIjklMNOpqrsTUVwxyz-DUMMY"
       telegram_chat_id: "123456789"
-      deepgram_api_key: "$(cat ${config.sops.secrets.deepgram-api-key.path})"
       influxdb_token: "$(cat ${config.sops.secrets.influxdb-admin-token.path})"
       EOF
 

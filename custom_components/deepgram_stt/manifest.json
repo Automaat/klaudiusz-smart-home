@@ -2,11 +2,12 @@
   "domain": "deepgram_stt",
   "name": "Deepgram Speech-to-Text",
   "codeowners": [],
+  "config_flow": true,
   "documentation": "https://github.com/mskalski/klaudiusz-smart-home",
   "iot_class": "cloud_push",
   "requirements": [
     "deepgram-sdk==4.1.0"
   ],
-  "version": "0.1.0",
+  "version": "0.2.0",
   "stt": ["deepgram_stt"]
 }
