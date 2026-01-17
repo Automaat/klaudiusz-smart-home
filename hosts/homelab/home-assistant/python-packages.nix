@@ -179,7 +179,7 @@
 
     src = pkgs.fetchPypi {
       inherit pname version;
-      hash = lib.fakeHash;
+      hash = "sha256-6dc669052e37fb8187cb179ff31e333916b5870b4935abd4ad2146ab907a5313";
     };
 
     nativeBuildInputs = with python3Packages; [
