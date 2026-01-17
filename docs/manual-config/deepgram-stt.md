@@ -11,6 +11,7 @@ Deepgram STT integration provides cloud-based speech-to-text using the Deepgram 
 The integration automatically creates a config entry using the API key from `/run/secrets/deepgram-api-key` (sops-encrypted).
 
 **Verify auto-configuration:**
+
 1. Navigate to **Settings** > **Devices & Services**
 2. Look for **Deepgram Speech-to-Text** integration
 3. Should show as "Configured"
@@ -21,7 +22,7 @@ If auto-configuration fails or you want to reconfigure:
 
 ### Prerequisites
 
-- Deepgram API key from https://console.deepgram.com/
+- Deepgram API key from <https://console.deepgram.com/>
 - In NixOS setup: API key stored in sops secrets
 
 ### Setup Steps
@@ -58,17 +59,20 @@ If auto-configuration fails or you want to reconfigure:
 ### Integration doesn't appear in UI
 
 Check logs for auto-configuration:
+
 ```bash
 ssh homelab "journalctl -u home-assistant | grep -i deepgram"
 ```
 
 Look for:
+
 - "Auto-configuring Deepgram STT from sops secret" (success)
 - "Could not auto-configure from sops secret" (failure)
 
 ### API key errors
 
 Verify sops secret is readable:
+
 ```bash
 ssh homelab "cat /run/secrets/deepgram-api-key"
 ```
