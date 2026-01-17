@@ -49,6 +49,13 @@ in {
       restartUnits = ["home-assistant.service"];
     };
 
+    # Deepgram API key (Speech-to-Text)
+    "deepgram-api-key" = {
+      owner = "hass";
+      mode = "0400";
+      restartUnits = ["home-assistant.service"];
+    };
+
     # InfluxDB admin token (API authentication)
     # Group: influxdb-readers (hass + grafana)
     "influxdb-admin-token" = {

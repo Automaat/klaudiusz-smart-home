@@ -170,4 +170,44 @@
       maintainers = with maintainers; [];
     };
   };
+
+  deepgram-sdk = python3Packages.buildPythonPackage rec {
+    pname = "deepgram-sdk";
+    # renovate: datasource=pypi depName=deepgram-sdk
+    version = "4.1.0";
+    format = "pyproject";
+
+    src = pkgs.fetchPypi {
+      pname = "deepgram_sdk";
+      inherit version;
+      hash = "sha256-bcZpBS43+4GHyxef8x4zORa1hwtJNavUrSFGq5B6UxM=";
+    };
+
+    nativeBuildInputs = with python3Packages; [
+      setuptools
+      wheel
+    ];
+
+    propagatedBuildInputs = with python3Packages; [
+      aiofiles
+      aiohttp
+      aenum
+      dataclasses-json
+      deprecation
+      httpx
+      typing-extensions
+      websockets
+    ];
+
+    pythonImportsCheck = ["deepgram"];
+
+    doCheck = false;
+
+    meta = with lib; {
+      description = "Deepgram Python SDK";
+      homepage = "https://github.com/deepgram/deepgram-python-sdk";
+      license = licenses.mit;
+      maintainers = with maintainers; [];
+    };
+  };
 }
