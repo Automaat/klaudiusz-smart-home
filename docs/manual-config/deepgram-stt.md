@@ -1,50 +1,37 @@
 # Deepgram STT Integration
 
-**Why manual?** STT integration no longer supports YAML configuration. Custom STT
-components must be configured through the UI.
+**Configuration:** Fully declarative via NixOS (no manual setup required).
 
-**When to do this:** After initial installation, when setting up cloud-based speech
-recognition. Alternative to local Whisper for faster Polish transcription.
+**Purpose:** Cloud-based speech recognition. Alternative to local Whisper for faster Polish transcription.
 
-## Prerequisites
+## Configuration
 
-- Deepgram API key stored in `secrets/secrets.yaml` as `deepgram_api_key`
-- Custom component deployed to `/var/lib/hass/custom_components/deepgram_stt/`
-- Home Assistant restarted after deployment
+Configured in `hosts/homelab/home-assistant/default.nix`:
 
-## Setup Steps
+```nix
+stt = [
+  {
+    platform = "deepgram_stt";
+  }
+];
+```
 
-**1. Add Deepgram STT Integration:**
+**Settings:**
 
-1. Open Home Assistant UI
-2. Navigate to **Settings** → **Devices & Services**
-3. Click **+ ADD INTEGRATION** (bottom-right)
-4. Search for and select **Deepgram STT**
-5. Integration should auto-configure (no config flow UI)
-6. Click **SUBMIT**
-
-**Note:** The integration uses hardcoded settings:
-
-- Model: `nova-3` (best Polish accuracy)
-- Language: `pl`
-- API key: loaded from secrets via HA
+- Model: `nova-3` (best Polish accuracy, hardcoded in custom component)
+- Language: `pl` (hardcoded)
+- API key: loaded from `secrets/secrets.yaml` via `deepgram_api_key`
 
 ## Verify Integration
 
-**Check integration added:**
-
-1. Go to **Settings** → **Devices & Services**
-2. Find **Deepgram STT** card
-3. Status should show connected
-
-**Test in Voice Assistant settings:**
+**After NixOS rebuild, check STT available in Voice Assistant:**
 
 1. Go to **Settings** → **Voice assistants**
 2. Create or edit a pipeline
 3. Verify **Speech-to-text** dropdown includes: `Deepgram STT`
 4. Select Deepgram STT as STT engine
 
-**If not available**: Integration not loaded - check custom component and restart HA.
+**If not available**: Check logs for errors (see Troubleshooting).
 
 ## Troubleshooting
 
