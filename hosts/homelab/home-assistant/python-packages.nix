@@ -184,7 +184,8 @@
     };
 
     nativeBuildInputs = with python3Packages; [
-      poetry-core
+      setuptools
+      wheel
     ];
 
     propagatedBuildInputs = with python3Packages; [
