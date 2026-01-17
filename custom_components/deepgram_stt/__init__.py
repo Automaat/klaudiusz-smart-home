@@ -29,6 +29,10 @@ async def async_setup(hass: HomeAssistant, config: dict) -> bool:
                 api_key = await hass.async_add_executor_job(sops_secret_path.read_text)
                 api_key = api_key.strip()
 
+                if not api_key:
+                    _LOGGER.warning("Deepgram API key is empty")
+                    return True
+
                 _LOGGER.info("Auto-configuring Deepgram STT from sops secret")
                 hass.async_create_task(
                     hass.config_entries.flow.async_init(
@@ -41,7 +45,7 @@ async def async_setup(hass: HomeAssistant, config: dict) -> bool:
                         },
                     )
                 )
-            except (FileNotFoundError, PermissionError) as e:
+            except (PermissionError, OSError) as e:
                 _LOGGER.warning("Could not auto-configure from sops secret: %s", e)
 
     return True

@@ -57,6 +57,8 @@ class DeepgramSTTEntity(SpeechToTextEntity):
         self._api_key = config_entry.data.get(CONF_API_KEY)
         self._model = config_entry.data.get(CONF_MODEL, DEFAULT_MODEL)
         self._language = config_entry.data.get(CONF_LANGUAGE, DEFAULT_LANGUAGE)
+        self.config_entry = config_entry
+        self._attr_device_info = None  # No physical device for cloud API
 
     @property
     def supported_languages(self) -> list[str]:

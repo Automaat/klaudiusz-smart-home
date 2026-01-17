@@ -39,7 +39,7 @@ If auto-configuration fails or you want to reconfigure:
 3. **Configure:**
    - **API Key**: Enter your Deepgram API key
      - For NixOS setup: `cat /run/secrets/deepgram-api-key` on homelab
-   - **Model** (optional): Default is `nova-2-general`
+   - **Model** (optional): Default is `nova-3`
    - **Language** (optional): Default is `pl` (Polish)
 
 4. **Verify:**

@@ -30,7 +30,8 @@ async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str,
     Data has the keys from STEP_USER_DATA_SCHEMA with values provided by the user.
     """
     # Basic validation - ensure API key is not empty
-    if not data[CONF_API_KEY] or len(data[CONF_API_KEY].strip()) < 10:
+    data[CONF_API_KEY] = data[CONF_API_KEY].strip()
+    if not data[CONF_API_KEY] or len(data[CONF_API_KEY]) < 10:
         raise InvalidAPIKey
 
     # Return info to be stored in config entry
