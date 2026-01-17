@@ -14,6 +14,7 @@
   livingRoomAutomations = import ./areas/living-room.nix {inherit config pkgs lib;};
   hallwayAutomations = import ./areas/hallway.nix {inherit config pkgs lib;};
   officeAutomations = import ./areas/office.nix {inherit config pkgs lib;};
+  garderobaAutomations = import ./areas/garderoba.nix {inherit config pkgs lib;};
   analyticsAutomations = import ./areas/analytics.nix {inherit config pkgs lib;};
 
   # ===========================================
@@ -35,6 +36,7 @@ in {
       ++ livingRoomAutomations.automation
       ++ hallwayAutomations.automation
       ++ officeAutomations.automation
+      ++ garderobaAutomations.automation
       ++ analyticsAutomations.automation;
 
     # ===========================================
