@@ -39,7 +39,7 @@
           entity_id = "binary_sensor.motion_sensor";
           to = "off";
           for = {
-            minutes = 2;
+            seconds = 30;
           };
         }
       ];
