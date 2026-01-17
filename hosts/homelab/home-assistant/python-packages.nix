@@ -178,7 +178,8 @@
     format = "pyproject";
 
     src = pkgs.fetchPypi {
-      inherit pname version;
+      pname = "deepgram_sdk";
+      inherit version;
       hash = "sha256-bcZpBS43+4GHyxef8x4zORa1hwtJNavUrSFGq5B6UxM=";
     };
 
