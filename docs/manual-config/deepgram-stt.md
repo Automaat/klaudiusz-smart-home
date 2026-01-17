@@ -1,37 +1,37 @@
 # Deepgram STT Integration
 
-**Configuration:** Fully declarative via NixOS (no manual setup required).
+**Why manual?** Modern HA STT integrations only support UI configuration. YAML `stt` platform config deprecated.
 
 **Purpose:** Cloud-based speech recognition. Alternative to local Whisper for faster Polish transcription.
 
-## Configuration
+## Prerequisites
 
-Configured in `hosts/homelab/home-assistant/default.nix`:
+- Deepgram API key in `secrets/secrets.yaml` as `deepgram_api_key`
+- Custom component deployed to `/var/lib/hass/custom_components/deepgram_stt/`
+- Home Assistant restarted after deployment
 
-```nix
-stt = [
-  {
-    platform = "deepgram_stt";
-  }
-];
-```
+## Setup Steps
 
-**Settings:**
-
-- Model: `nova-3` (best Polish accuracy, hardcoded in custom component)
-- Language: `pl` (hardcoded)
-- API key: loaded from `secrets/secrets.yaml` via `deepgram_api_key`
-
-## Verify Integration
-
-**After NixOS rebuild, check STT available in Voice Assistant:**
+**Configure in Voice Assistant pipeline:**
 
 1. Go to **Settings** → **Voice assistants**
 2. Create or edit a pipeline
-3. Verify **Speech-to-text** dropdown includes: `Deepgram STT`
-4. Select Deepgram STT as STT engine
+3. In **Speech-to-text** dropdown, select **Deepgram STT**
+4. Save pipeline
 
-**If not available**: Check logs for errors (see Troubleshooting).
+**Settings (hardcoded in custom component):**
+
+- Model: `nova-3` (best Polish accuracy)
+- Language: `pl`
+- API key: auto-loaded from secrets
+
+## Verify
+
+**Test voice command:**
+
+1. Use Voice Assistant with Deepgram STT pipeline
+2. Check logs for transcription results
+3. Should see faster response than Whisper (~100-200ms)
 
 ## Troubleshooting
 

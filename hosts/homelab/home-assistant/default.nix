@@ -381,12 +381,7 @@ in {
       # Enable conversation for voice commands
       conversation = {};
 
-      # Speech-to-Text
-      stt = [
-        {
-          platform = "deepgram_stt";
-        }
-      ];
+      # Speech-to-Text: STT providers configured via UI (no YAML support in modern HA)
 
       # Frontend with themes
       frontend = {
