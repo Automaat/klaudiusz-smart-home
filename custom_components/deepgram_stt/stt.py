@@ -54,30 +54,19 @@ async def async_setup_platform(
     discovery_info: dict[str, Any] | None = None,
 ) -> None:
     """Set up Deepgram STT platform from YAML configuration."""
-    import os
-    from pathlib import Path
+    if not discovery_info:
+        _LOGGER.error("Deepgram STT requires discovery_info with API key")
+        return
 
-    # Read API key from secrets.yaml
-    secrets_path = Path(hass.config.config_dir) / "secrets.yaml"
-    api_key = None
-
-    try:
-        if secrets_path.exists():
-            import yaml
-            with open(secrets_path) as f:
-                secrets = yaml.safe_load(f)
-                api_key = secrets.get("deepgram_api_key")
-    except Exception as e:
-        _LOGGER.error(f"Failed to read secrets.yaml: {e}")
-
+    api_key = discovery_info.get(CONF_API_KEY)
     if not api_key:
-        _LOGGER.error("Deepgram API key not found in secrets.yaml")
+        _LOGGER.error("Deepgram API key not provided in discovery_info")
         return
 
     entity_config = {
         CONF_API_KEY: api_key,
-        CONF_MODEL: config.get(CONF_MODEL, DEFAULT_MODEL),
-        CONF_LANGUAGE: config.get(CONF_LANGUAGE, DEFAULT_LANGUAGE),
+        CONF_MODEL: discovery_info.get(CONF_MODEL, DEFAULT_MODEL),
+        CONF_LANGUAGE: discovery_info.get(CONF_LANGUAGE, DEFAULT_LANGUAGE),
     }
     async_add_entities([DeepgramSTTEntity(config=entity_config)])
 
