@@ -5,6 +5,7 @@
 Dual-repository Restic backup (local + Backblaze B2) for disaster recovery from complete hardware failure.
 
 **Specs:**
+
 - **Backup size:** ~200-400GB (all critical data + time-series)
 - **Frequency:** Daily at 2 AM
 - **Retention:** 7 daily, 4 weekly, 6 monthly
@@ -28,7 +29,8 @@ Dual-repository Restic backup (local + Backblaze B2) for disaster recovery from 
 ### Data Backup Scope
 
 **Critical directories (~200-400GB):**
-```
+
+```text
 /var/lib/hass              # HA config, automations, zigbee.db
 /var/lib/postgresql        # Recorder DB (via pg_dump)
 /var/lib/influxdb2         # Metrics (365d)
@@ -44,7 +46,7 @@ Dual-repository Restic backup (local + Backblaze B2) for disaster recovery from 
 
 ### Backup Flow
 
-```
+```text
 2:00 AM: Local backup
   ↓ Pre-backup: pg_dump → /tmp/postgres-backup.sql
   ↓ Restic backup to /backup/homelab-restic
@@ -62,6 +64,7 @@ Dual-repository Restic backup (local + Backblaze B2) for disaster recovery from 
 ## Cost Analysis
 
 **Backblaze B2 (200GB scenario):**
+
 - Storage: 190GB × $0.006/GB = **$1.14/month**
 - API calls (daily backups): **$0.65/month**
 - Egress (DR restore): **$0** (first 600GB/month free)
@@ -73,7 +76,7 @@ Dual-repository Restic backup (local + Backblaze B2) for disaster recovery from 
 
 **One-time steps:**
 
-1. Create account: https://www.backblaze.com/sign-up/cloud-storage
+1. Create account: <https://www.backblaze.com/sign-up/cloud-storage>
 2. Create bucket:
    - Name: `homelab-backup`
    - Lifecycle: Private
@@ -83,6 +86,7 @@ Dual-repository Restic backup (local + Backblaze B2) for disaster recovery from 
    - Access: Read/Write to `homelab-backup` only
    - **Save Key ID and Key** (shown once!)
 4. Test connectivity manually:
+
    ```bash
    export B2_ACCOUNT_ID=...
    export B2_ACCOUNT_KEY=...
@@ -93,12 +97,14 @@ Dual-repository Restic backup (local + Backblaze B2) for disaster recovery from 
 ### 2. Secrets Configuration
 
 **Generate passwords:**
+
 ```bash
 openssl rand -base64 32  # Local repo password
 openssl rand -base64 32  # B2 repo password
 ```
 
 **Add to secrets:**
+
 ```bash
 mise run decrypt-secrets
 # Edit secrets/secrets.decrypted.yaml - add:
@@ -111,6 +117,7 @@ mise run encrypt-secrets
 ```
 
 **Update hosts/homelab/secrets.nix:**
+
 ```nix
 sops.secrets = {
   # ... existing secrets ...
@@ -140,6 +147,7 @@ sops.secrets = {
 **Create hosts/homelab/backups.nix:**
 
 Key components:
+
 - `services.restic.backups.homelab-local` - Local repository config
 - `services.restic.backups.homelab-b2` - B2 repository config
 - PostgreSQL pg_dump in `backupPrepareCommand`
@@ -148,12 +156,14 @@ Key components:
 - Notification service: `notify-backup-failure@.service` (follows pattern at default.nix:713-734)
 
 **Patterns to follow:**
+
 - Timer config: default.nix:360-367
 - LoadCredential: default.nix:394-397
 - Oneshot service: default.nix:383-428
 - Prometheus textfile export: default.nix:317-358
 
 **Metrics exported:**
+
 ```prometheus
 restic_backup_success{repository="local|b2"} 1
 restic_backup_size_bytes{repository="local|b2"} 234567890
@@ -161,6 +171,7 @@ restic_backup_last_run_timestamp{repository="local|b2"} 1737000000
 ```
 
 **Import in hosts/homelab/default.nix:**
+
 ```nix
 imports = [
   # ... existing ...
@@ -209,6 +220,7 @@ Follow `mkSystemdAlertRule` pattern (default.nix:114-121):
 **Create hosts/homelab/grafana/dashboards/services/backup.json:**
 
 Panels:
+
 - Backup status (gauge: green/red)
 - Repository size (time series)
 - Time since last backup (single stat)
@@ -219,6 +231,7 @@ Panels:
 **Create docs/manual-config/backups.md:**
 
 Sections:
+
 - Full system restore from B2 (hardware failure)
 - Partial restore (single service)
 - Database point-in-time recovery
@@ -226,6 +239,7 @@ Sections:
 - Age key backup locations (CRITICAL)
 
 **Age key backup (4× redundant):**
+
 1. USB flash drive (encrypted)
 2. Password manager (Bitwarden: "Homelab Age Encryption Key")
 3. Printed paper backup (QR code)
@@ -323,7 +337,7 @@ rm -rf /tmp/restore-test
 ## Risk Mitigation
 
 | Risk | Impact | Mitigation |
-|------|--------|------------|
+| ---- | ------ | ---------- |
 | Age key loss | CRITICAL | 4× redundant backups (USB, password manager, paper, cloud) |
 | Both repos corrupt | HIGH | Weekly integrity checks, separate passwords |
 | B2 account lockout | MEDIUM | Local repo provides recovery |
@@ -357,21 +371,26 @@ rm -rf /tmp/restore-test
    - Update README.md
    - Backup age key to 4 locations
 
-**Total effort: 9-11 hours**
+### Total Effort
+
+9-11 hours
 
 ## Alternative Approaches Considered
 
 **Restic vs Borg:**
+
 - Restic: Native B2 support, better deduplication, simpler restore
 - Borg: Faster for local-only, more mature
 - **Decision:** Restic for cloud-native + NixOS integration
 
 **Dual vs Single Repo:**
+
 - Dual: Fast local restore, network resilience
 - Single B2: Simpler, lower cost
 - **Decision:** Dual for faster RTO (cost difference negligible)
 
 **pg_dump vs Filesystem Backup:**
+
 - pg_dump: Clean state, point-in-time consistency, easier restore
 - Filesystem: Simpler
 - **Decision:** pg_dump for reliability
@@ -381,6 +400,7 @@ rm -rf /tmp/restore-test
 None - all requirements clarified via user questions.
 
 **Confirmed:**
+
 - ✅ DR scenario: Complete hardware failure
 - ✅ Budget: $5-10/month (actual: $2-4/month)
 - ✅ Frequency: Daily at 2 AM
@@ -391,6 +411,7 @@ None - all requirements clarified via user questions.
 ## Cost Optimization
 
 Current cost ($2-4/month) already optimal. Further optimization not worth complexity:
+
 - Reduce frequency: Save $0.30/month, lose up to 7d metrics
 - Pre-compress: Save $0.10-0.20/month, slower restore
 - Lifecycle policies: Save $0.05/month (already recommended)
