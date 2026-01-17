@@ -3,11 +3,15 @@
 DOMAIN = "deepgram_stt"
 
 # API Configuration
-API_URL = "wss://api.deepgram.com/v1/listen"
 DEFAULT_MODEL = "nova-3"
 DEFAULT_LANGUAGE = "pl"
 DEFAULT_ENCODING = "linear16"
 DEFAULT_SAMPLE_RATE = 16000
+
+# Streaming Configuration
+AUDIO_CHUNK_SIZE = 8192
+STREAM_DELAY = 0.01
+TRANSCRIPT_TIMEOUT = 5
 
 # Config Keys
 CONF_API_KEY = "api_key"

@@ -23,12 +23,16 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import (
+    AUDIO_CHUNK_SIZE,
     CONF_API_KEY,
     CONF_LANGUAGE,
     CONF_MODEL,
+    DEFAULT_ENCODING,
     DEFAULT_LANGUAGE,
     DEFAULT_MODEL,
-    DOMAIN,
+    DEFAULT_SAMPLE_RATE,
+    STREAM_DELAY,
+    TRANSCRIPT_TIMEOUT,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -55,17 +59,22 @@ async def async_setup_platform(
         _LOGGER.error("Deepgram API key not found in secrets.yaml")
         return
 
-    entity = DeepgramSTTEntity(None)
-    entity._api_key = api_key
-    entity._model = config.get(CONF_MODEL, DEFAULT_MODEL)
-    entity._language = config.get(CONF_LANGUAGE, DEFAULT_LANGUAGE)
-    async_add_entities([entity])
+    entity_config = {
+        CONF_API_KEY: api_key,
+        CONF_MODEL: config.get(CONF_MODEL, DEFAULT_MODEL),
+        CONF_LANGUAGE: config.get(CONF_LANGUAGE, DEFAULT_LANGUAGE),
+    }
+    async_add_entities([DeepgramSTTEntity(config=entity_config)])
 
 
 class DeepgramSTTEntity(SpeechToTextEntity):
     """Deepgram Speech-to-Text entity."""
 
-    def __init__(self, config_entry: ConfigEntry | None) -> None:
+    def __init__(
+        self,
+        config_entry: ConfigEntry | None = None,
+        config: dict[str, Any] | None = None,
+    ) -> None:
         """Initialize Deepgram STT."""
         self._attr_name = "Deepgram STT"
         self._attr_unique_id = "deepgram_stt"
@@ -74,6 +83,10 @@ class DeepgramSTTEntity(SpeechToTextEntity):
             self._api_key = config_entry.data.get(CONF_API_KEY)
             self._model = config_entry.data.get(CONF_MODEL, DEFAULT_MODEL)
             self._language = config_entry.data.get(CONF_LANGUAGE, DEFAULT_LANGUAGE)
+        elif config:
+            self._api_key = config.get(CONF_API_KEY)
+            self._model = config.get(CONF_MODEL, DEFAULT_MODEL)
+            self._language = config.get(CONF_LANGUAGE, DEFAULT_LANGUAGE)
         else:
             self._api_key = None
             self._model = DEFAULT_MODEL
@@ -130,25 +143,32 @@ class DeepgramSTTEntity(SpeechToTextEntity):
             final_transcript = ""
             is_final = False
             error_occurred = False
+            state_lock = asyncio.Lock()
 
             # Event handlers
-            async def on_message(self, result, **kwargs):
+            async def on_message(result, **kwargs):
                 nonlocal transcript_parts, final_transcript, is_final
+
+                if not result.channel.alternatives:
+                    return
+
                 sentence = result.channel.alternatives[0].transcript
 
                 if len(sentence) > 0:
-                    if result.is_final:
-                        final_transcript = sentence
-                        is_final = True
-                        _LOGGER.debug("Final transcript: %s", sentence)
-                    else:
-                        transcript_parts.append(sentence)
-                        _LOGGER.debug("Interim transcript: %s", sentence)
+                    async with state_lock:
+                        if result.is_final:
+                            final_transcript = sentence
+                            is_final = True
+                            _LOGGER.debug("Final transcript: %s", sentence)
+                        else:
+                            transcript_parts.append(sentence)
+                            _LOGGER.debug("Interim transcript: %s", sentence)
 
-            async def on_error(self, error, **kwargs):
+            async def on_error(error, **kwargs):
                 nonlocal error_occurred
-                _LOGGER.error("Deepgram error: %s", error)
-                error_occurred = True
+                async with state_lock:
+                    _LOGGER.error("Deepgram error: %s", error)
+                    error_occurred = True
 
             # Register event handlers
             dg_connection.on(LiveTranscriptionEvents.Transcript, on_message)
@@ -158,8 +178,8 @@ class DeepgramSTTEntity(SpeechToTextEntity):
             options = LiveOptions(
                 model=self._model,
                 language=self._language,
-                encoding="linear16",
-                sample_rate=16000,
+                encoding=DEFAULT_ENCODING,
+                sample_rate=DEFAULT_SAMPLE_RATE,
                 channels=1,
                 interim_results=True,
             )
@@ -172,24 +192,25 @@ class DeepgramSTTEntity(SpeechToTextEntity):
             _LOGGER.debug("Deepgram connection started")
 
             # Stream audio data
-            chunk_size = 8192
             try:
                 while True:
-                    chunk = await stream.read(chunk_size)
+                    chunk = await stream.read(AUDIO_CHUNK_SIZE)
                     if not chunk:
                         break
 
                     dg_connection.send(chunk)
-                    await asyncio.sleep(0.01)  # Small delay to prevent overwhelming
+                    await asyncio.sleep(STREAM_DELAY)
 
                 # Signal end of audio
                 await dg_connection.finish()
 
                 # Wait for final transcript (with timeout)
-                timeout = 5
                 start_time = asyncio.get_event_loop().time()
-                while not is_final and not error_occurred:
-                    if asyncio.get_event_loop().time() - start_time > timeout:
+                while True:
+                    async with state_lock:
+                        if is_final or error_occurred:
+                            break
+                    if asyncio.get_event_loop().time() - start_time > TRANSCRIPT_TIMEOUT:
                         _LOGGER.warning("Timeout waiting for final transcript")
                         break
                     await asyncio.sleep(0.1)
@@ -197,12 +218,15 @@ class DeepgramSTTEntity(SpeechToTextEntity):
             except Exception as e:
                 _LOGGER.error("Error streaming audio: %s", e)
                 return SpeechResult("", SpeechResultState.ERROR)
+            finally:
+                await dg_connection.finish()
 
             # Return result
-            if error_occurred:
-                return SpeechResult("", SpeechResultState.ERROR)
+            async with state_lock:
+                if error_occurred:
+                    return SpeechResult("", SpeechResultState.ERROR)
 
-            result_text = final_transcript if final_transcript else " ".join(transcript_parts)
+                result_text = final_transcript if final_transcript else " ".join(transcript_parts)
 
             if not result_text:
                 _LOGGER.warning("No transcript received")
