@@ -381,7 +381,8 @@ in {
       # Enable conversation for voice commands
       conversation = {};
 
-      # Speech-to-Text: STT providers configured via UI (no YAML support in modern HA)
+      # Speech-to-Text: Deepgram STT (activates custom component)
+      deepgram_stt = {};
 
       # Frontend with themes
       frontend = {

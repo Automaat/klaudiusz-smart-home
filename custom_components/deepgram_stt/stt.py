@@ -54,7 +54,22 @@ async def async_setup_platform(
     discovery_info: dict[str, Any] | None = None,
 ) -> None:
     """Set up Deepgram STT platform from YAML configuration."""
-    api_key = hass.data["secrets"].get("deepgram_api_key")
+    import os
+    from pathlib import Path
+
+    # Read API key from secrets.yaml
+    secrets_path = Path(hass.config.config_dir) / "secrets.yaml"
+    api_key = None
+
+    try:
+        if secrets_path.exists():
+            import yaml
+            with open(secrets_path) as f:
+                secrets = yaml.safe_load(f)
+                api_key = secrets.get("deepgram_api_key")
+    except Exception as e:
+        _LOGGER.error(f"Failed to read secrets.yaml: {e}")
+
     if not api_key:
         _LOGGER.error("Deepgram API key not found in secrets.yaml")
         return
