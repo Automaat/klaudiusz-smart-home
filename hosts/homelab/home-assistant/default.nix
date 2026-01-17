@@ -385,8 +385,6 @@ in {
       stt = [
         {
           platform = "deepgram_stt";
-          model = "nova-3";
-          language = "pl";
         }
       ];
 
