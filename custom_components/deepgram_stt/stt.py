@@ -7,7 +7,7 @@ import logging
 
 from deepgram import AsyncDeepgramClient
 from deepgram.core.events import EventType
-from deepgram.core.types.sockets import ListenV1MediaMessage
+from deepgram.extensions.types.sockets import ListenV1MediaMessage
 from homeassistant.components.stt import (
     AudioBitRates,
     AudioChannels,
