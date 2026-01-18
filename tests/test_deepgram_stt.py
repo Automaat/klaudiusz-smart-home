@@ -21,7 +21,7 @@ from homeassistant.const import CONF_API_KEY
 from homeassistant.core import HomeAssistant
 
 from custom_components.deepgram_stt import async_setup_entry as async_setup_platform_entry
-from custom_components.deepgram_stt.config_flow import DeepgramSTTConfigFlow
+from custom_components.deepgram_stt.config_flow import ConfigFlow
 from custom_components.deepgram_stt.const import (
     CONF_LANGUAGE,
     CONF_MODEL,
@@ -285,7 +285,7 @@ class TestDeepgramSTTConfigFlow:
     @pytest.mark.asyncio
     async def test_config_flow_user_step(self, mock_hass):
         """Test manual user configuration flow."""
-        flow = DeepgramSTTConfigFlow()
+        flow = ConfigFlow()
         flow.hass = mock_hass
 
         # Show form
@@ -307,7 +307,7 @@ class TestDeepgramSTTConfigFlow:
     @pytest.mark.asyncio
     async def test_config_flow_invalid_api_key(self, mock_hass):
         """Test config flow rejects invalid API key."""
-        flow = DeepgramSTTConfigFlow()
+        flow = ConfigFlow()
         flow.hass = mock_hass
 
         # Submit form with short API key
@@ -319,7 +319,7 @@ class TestDeepgramSTTConfigFlow:
     @pytest.mark.asyncio
     async def test_config_flow_import_step(self, mock_hass):
         """Test import configuration flow from sops secret."""
-        flow = DeepgramSTTConfigFlow()
+        flow = ConfigFlow()
         flow.hass = mock_hass
 
         with patch.object(flow, "async_set_unique_id"):
