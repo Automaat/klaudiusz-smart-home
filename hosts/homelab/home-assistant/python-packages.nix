@@ -184,8 +184,7 @@
     };
 
     nativeBuildInputs = with python3Packages; [
-      setuptools
-      wheel
+      poetry-core
     ];
 
     propagatedBuildInputs = with python3Packages; [
@@ -195,6 +194,8 @@
       dataclasses-json
       deprecation
       httpx
+      pydantic
+      pydantic-core
       typing-extensions
       websockets
     ];
