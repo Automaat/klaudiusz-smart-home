@@ -120,7 +120,7 @@ mock_connection.on = MagicMock(side_effect=capture_handler)
 Tests run automatically in GitHub Actions on PR creation.
 
 - **Static checks**: Nix config validation, YAML syntax
-- **Unit tests**: pytest suite (requires implementation)
+- **Unit tests**: pytest suite
 - **Integration tests**: VM-based tests with full HA stack
 - **Gate**: `production` branch only updates when all tests pass
 

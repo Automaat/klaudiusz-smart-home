@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import asyncio
 import logging
-from typing import Any
 
 from deepgram import DeepgramClient, DeepgramClientOptions, LiveOptions, LiveTranscriptionEvents
 from homeassistant.components.stt import (
@@ -132,7 +131,7 @@ class DeepgramSTTEntity(SpeechToTextEntity):
                             transcript_parts.append(sentence)
                             _LOGGER.debug("Interim transcript: %s", sentence)
 
-            def on_error(self, error, **kwargs):
+            def on_error(connection, error, **kwargs):
                 nonlocal error_occurred
                 _LOGGER.error("Deepgram error: %s", error)
                 error_occurred = True

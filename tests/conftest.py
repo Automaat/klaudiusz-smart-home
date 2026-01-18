@@ -14,8 +14,6 @@ sys.path.insert(0, str(custom_components_path.parent))
 @pytest.fixture(autouse=True)
 def reset_imports():
     """Reset imports between tests to avoid state leakage."""
-    import importlib
-
     yield
 
     # Clean up custom_components imports

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import asyncio
 from pathlib import Path
-from unittest.mock import AsyncMock, MagicMock, Mock, patch
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 from homeassistant.components.stt import (
@@ -16,7 +16,6 @@ from homeassistant.components.stt import (
     SpeechMetadata,
     SpeechResultState,
 )
-from homeassistant.config_entries import ConfigEntryState
 from homeassistant.const import CONF_API_KEY
 from homeassistant.core import HomeAssistant
 
@@ -27,7 +26,6 @@ from custom_components.deepgram_stt.const import (
     CONF_MODEL,
     DEFAULT_LANGUAGE,
     DEFAULT_MODEL,
-    DOMAIN,
 )
 from custom_components.deepgram_stt.stt import DeepgramSTTEntity
 
@@ -368,9 +366,13 @@ class TestDeepgramSTTEventHandlers:
         mock_connection.finish = AsyncMock()
 
         registered_handlers = {}
+        handlers_ready = asyncio.Event()
 
         def capture_handler(event, handler):
             registered_handlers[event] = handler
+            # Signal when both handlers are registered
+            if len(registered_handlers) == 2:
+                handlers_ready.set()
 
         mock_connection.on = MagicMock(side_effect=capture_handler)
 
@@ -393,7 +395,8 @@ class TestDeepgramSTTEventHandlers:
                 entity.async_process_audio_stream(mock_metadata, mock_stream)
             )
 
-            await asyncio.sleep(0.1)
+            # Wait for handlers to be registered
+            await asyncio.wait_for(handlers_ready.wait(), timeout=1.0)
 
             # Trigger on_error handler
             if "Error" in registered_handlers:
