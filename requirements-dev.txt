@@ -9,7 +9,7 @@ pytest-cov>=4.1.0
 homeassistant>=2025.1.0
 
 # Deepgram SDK (for integration testing)
-deepgram-sdk==4.8.1
+deepgram-sdk==5.3.1
 
 # Code quality
 ruff>=0.1.0

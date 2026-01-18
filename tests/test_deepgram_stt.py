@@ -162,18 +162,20 @@ class TestDeepgramSTTAudioProcessing:
         """Test audio processing handles connection failure."""
         entity = DeepgramSTTEntity(mock_config_entry)
 
-        mock_connection = MagicMock()
-        mock_connection.start = MagicMock(return_value=False)  # Connection fails
+        # Mock connection that raises exception on enter
+        mock_connection = AsyncMock()
+        mock_connection.__aenter__.side_effect = Exception("Connection failed")
+
+        mock_v1 = MagicMock()
+        mock_v1.connect = MagicMock(return_value=mock_connection)
 
         mock_listen = MagicMock()
-        mock_listen.websocket.v = MagicMock(return_value=mock_connection)
+        mock_listen.v1 = mock_v1
 
-        mock_client = MagicMock()
+        mock_client = AsyncMock()
         mock_client.listen = mock_listen
 
-        with patch("custom_components.deepgram_stt.stt.DeepgramClient", return_value=mock_client), \
-             patch("custom_components.deepgram_stt.stt.DeepgramClientOptions"), \
-             patch("custom_components.deepgram_stt.stt.LiveOptions"):
+        with patch("custom_components.deepgram_stt.stt.AsyncDeepgramClient", return_value=mock_client):
             result = await entity.async_process_audio_stream(mock_metadata, mock_stream)
 
             assert result.text == ""
@@ -187,7 +189,7 @@ class TestDeepgramSTTAudioProcessing:
         entity = DeepgramSTTEntity(mock_config_entry)
 
         with patch(
-            "custom_components.deepgram_stt.stt.DeepgramClient",
+            "custom_components.deepgram_stt.stt.AsyncDeepgramClient",
             side_effect=Exception("SDK error"),
         ):
             result = await entity.async_process_audio_stream(mock_metadata, mock_stream)
@@ -202,22 +204,23 @@ class TestDeepgramSTTAudioProcessing:
         """Test audio processing handles empty transcript."""
         entity = DeepgramSTTEntity(mock_config_entry)
 
-        mock_connection = MagicMock()
-        mock_connection.start = MagicMock(return_value=True)
+        # Mock connection with async context manager
+        mock_connection = AsyncMock()
         mock_connection.send = MagicMock()
-        mock_connection.finish = AsyncMock()
         mock_connection.on = MagicMock()
+        mock_connection.__aenter__ = AsyncMock(return_value=mock_connection)
+        mock_connection.__aexit__ = AsyncMock(return_value=None)
+
+        mock_v1 = MagicMock()
+        mock_v1.connect = MagicMock(return_value=mock_connection)
 
         mock_listen = MagicMock()
-        mock_listen.websocket.v = MagicMock(return_value=mock_connection)
+        mock_listen.v1 = mock_v1
 
-        mock_client = MagicMock()
+        mock_client = AsyncMock()
         mock_client.listen = mock_listen
 
-        with patch("custom_components.deepgram_stt.stt.DeepgramClient", return_value=mock_client), \
-             patch("custom_components.deepgram_stt.stt.DeepgramClientOptions"), \
-             patch("custom_components.deepgram_stt.stt.LiveOptions"), \
-             patch("custom_components.deepgram_stt.stt.LiveTranscriptionEvents"):
+        with patch("custom_components.deepgram_stt.stt.AsyncDeepgramClient", return_value=mock_client):
             result = await entity.async_process_audio_stream(mock_metadata, mock_stream)
 
             assert result.text == ""
@@ -360,10 +363,11 @@ class TestDeepgramSTTEventHandlers:
                 yield b""
         mock_stream = empty_stream()
 
-        mock_connection = MagicMock()
-        mock_connection.start = MagicMock(return_value=True)
+        # Mock connection with async context manager
+        mock_connection = AsyncMock()
         mock_connection.send = MagicMock()
-        mock_connection.finish = AsyncMock()
+        mock_connection.__aenter__ = AsyncMock(return_value=mock_connection)
+        mock_connection.__aexit__ = AsyncMock(return_value=None)
 
         registered_handlers = {}
 
@@ -372,20 +376,21 @@ class TestDeepgramSTTEventHandlers:
 
         mock_connection.on = MagicMock(side_effect=capture_handler)
 
-        mock_listen = MagicMock()
-        mock_listen.websocket.v = MagicMock(return_value=mock_connection)
+        mock_v1 = MagicMock()
+        mock_v1.connect = MagicMock(return_value=mock_connection)
 
-        mock_client = MagicMock()
+        mock_listen = MagicMock()
+        mock_listen.v1 = mock_v1
+
+        mock_client = AsyncMock()
         mock_client.listen = mock_listen
 
-        with patch("custom_components.deepgram_stt.stt.DeepgramClient", return_value=mock_client), \
-             patch("custom_components.deepgram_stt.stt.DeepgramClientOptions"), \
-             patch("custom_components.deepgram_stt.stt.LiveOptions"), \
-             patch("custom_components.deepgram_stt.stt.LiveTranscriptionEvents") as mock_events:
+        with patch("custom_components.deepgram_stt.stt.AsyncDeepgramClient", return_value=mock_client), \
+             patch("custom_components.deepgram_stt.stt.EventType") as mock_event_type:
 
             # Set up event types
-            mock_events.Transcript = "Transcript"
-            mock_events.Error = "Error"
+            mock_event_type.MESSAGE = "MESSAGE"
+            mock_event_type.ERROR = "ERROR"
 
             task = asyncio.create_task(
                 entity.async_process_audio_stream(mock_metadata, mock_stream)
@@ -396,9 +401,9 @@ class TestDeepgramSTTEventHandlers:
             await asyncio.sleep(0.2)
 
             # Trigger on_error handler
-            if "Error" in registered_handlers:
-                # Call with connection, error, **kwargs (correct signature)
-                registered_handlers["Error"](mock_connection, "Test error")
+            if "ERROR" in registered_handlers:
+                # Call with error (v5 signature)
+                await registered_handlers["ERROR"]("Test error")
 
             result = await task
 

@@ -5,7 +5,8 @@ from __future__ import annotations
 import asyncio
 import logging
 
-from deepgram import DeepgramClient, DeepgramClientOptions, LiveOptions, LiveTranscriptionEvents
+from deepgram import AsyncDeepgramClient
+from deepgram.core.events import EventType
 from homeassistant.components.stt import (
     AudioBitRates,
     AudioChannels,
@@ -98,11 +99,7 @@ class DeepgramSTTEntity(SpeechToTextEntity):
 
         try:
             # Configure Deepgram client
-            config = DeepgramClientOptions(
-                api_key=self._api_key,
-            )
-            client = DeepgramClient(self._api_key, config)
-            dg_connection = client.listen.websocket.v("1")
+            client = AsyncDeepgramClient(api_key=self._api_key)
 
             # Storage for transcript
             transcript_parts = []
@@ -112,17 +109,17 @@ class DeepgramSTTEntity(SpeechToTextEntity):
             state_lock = asyncio.Lock()
 
             # Event handlers
-            async def on_message(result, **kwargs):
+            async def on_message(message, **kwargs):
                 nonlocal transcript_parts, final_transcript, is_final
 
-                if not result.channel.alternatives:
+                if not hasattr(message, "channel") or not message.channel.alternatives:
                     return
 
-                sentence = result.channel.alternatives[0].transcript
+                sentence = message.channel.alternatives[0].transcript
 
                 if len(sentence) > 0:
                     async with state_lock:
-                        if result.is_final:
+                        if message.is_final:
                             final_transcript = sentence
                             is_final = True
                             _LOGGER.debug("Final transcript: %s", sentence)
@@ -130,59 +127,48 @@ class DeepgramSTTEntity(SpeechToTextEntity):
                             transcript_parts.append(sentence)
                             _LOGGER.debug("Interim transcript: %s", sentence)
 
-            def on_error(connection, error, **kwargs):
+            async def on_error(error, **kwargs):
                 nonlocal error_occurred
                 _LOGGER.error("Deepgram error: %s", error)
                 error_occurred = True
 
-            # Register event handlers
-            dg_connection.on(LiveTranscriptionEvents.Transcript, on_message)
-            dg_connection.on(LiveTranscriptionEvents.Error, on_error)
-
-            # Configure transcription options
-            options = LiveOptions(
+            # Connect to Deepgram with async context manager
+            async with client.listen.v1.connect(
                 model=self._model,
                 language=self._language,
                 encoding=DEFAULT_ENCODING,
                 sample_rate=DEFAULT_SAMPLE_RATE,
                 channels=1,
                 interim_results=True,
-            )
+            ) as dg_connection:
+                # Register event handlers
+                dg_connection.on(EventType.MESSAGE, on_message)
+                dg_connection.on(EventType.ERROR, on_error)
 
-            # Start connection
-            if not dg_connection.start(options):
-                _LOGGER.error("Failed to start Deepgram connection")
-                return SpeechResult("", SpeechResultState.ERROR)
+                _LOGGER.debug("Deepgram connection started")
 
-            _LOGGER.debug("Deepgram connection started")
+                # Stream audio data
+                try:
+                    async for chunk in stream:
+                        await dg_connection.send(chunk)
+                        await asyncio.sleep(STREAM_DELAY)
 
-            # Stream audio data
-            try:
-                async for chunk in stream:
-                    dg_connection.send(chunk)
-                    await asyncio.sleep(STREAM_DELAY)
-
-                # Signal end of audio
-                await dg_connection.finish()
-
-                # Wait for final transcript (with timeout)
-                start_time = asyncio.get_event_loop().time()
-                while True:
-                    async with state_lock:
-                        if is_final or error_occurred:
+                    # Wait for final transcript (with timeout)
+                    start_time = asyncio.get_event_loop().time()
+                    while True:
+                        async with state_lock:
+                            if is_final or error_occurred:
+                                break
+                        if asyncio.get_event_loop().time() - start_time > TRANSCRIPT_TIMEOUT:
+                            _LOGGER.warning("Timeout waiting for final transcript")
                             break
-                    if asyncio.get_event_loop().time() - start_time > TRANSCRIPT_TIMEOUT:
-                        _LOGGER.warning("Timeout waiting for final transcript")
-                        break
-                    await asyncio.sleep(0.1)
+                        await asyncio.sleep(0.1)
 
-            except Exception as e:
-                _LOGGER.error("Error streaming audio: %s", e)
-                return SpeechResult("", SpeechResultState.ERROR)
-            finally:
-                await dg_connection.finish()
+                except Exception as e:
+                    _LOGGER.error("Error streaming audio: %s", e)
+                    return SpeechResult("", SpeechResultState.ERROR)
 
-            # Return result
+            # Return result (connection auto-closed by context manager)
             async with state_lock:
                 if error_occurred:
                     return SpeechResult("", SpeechResultState.ERROR)
