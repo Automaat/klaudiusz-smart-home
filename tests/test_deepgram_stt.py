@@ -172,7 +172,6 @@ class TestDeepgramSTTAudioProcessing:
         mock_client.listen = mock_listen
 
         with patch("custom_components.deepgram_stt.stt.DeepgramClient", return_value=mock_client), \
-             patch("custom_components.deepgram_stt.stt.DeepgramClientOptions"), \
              patch("custom_components.deepgram_stt.stt.LiveOptions"):
             result = await entity.async_process_audio_stream(mock_metadata, mock_stream)
 
@@ -215,7 +214,6 @@ class TestDeepgramSTTAudioProcessing:
         mock_client.listen = mock_listen
 
         with patch("custom_components.deepgram_stt.stt.DeepgramClient", return_value=mock_client), \
-             patch("custom_components.deepgram_stt.stt.DeepgramClientOptions"), \
              patch("custom_components.deepgram_stt.stt.LiveOptions"), \
              patch("custom_components.deepgram_stt.stt.LiveTranscriptionEvents"):
             result = await entity.async_process_audio_stream(mock_metadata, mock_stream)
@@ -379,7 +377,6 @@ class TestDeepgramSTTEventHandlers:
         mock_client.listen = mock_listen
 
         with patch("custom_components.deepgram_stt.stt.DeepgramClient", return_value=mock_client), \
-             patch("custom_components.deepgram_stt.stt.DeepgramClientOptions"), \
              patch("custom_components.deepgram_stt.stt.LiveOptions"), \
              patch("custom_components.deepgram_stt.stt.LiveTranscriptionEvents") as mock_events:
 

@@ -5,7 +5,7 @@ from __future__ import annotations
 import asyncio
 import logging
 
-from deepgram import DeepgramClient, DeepgramClientOptions, LiveOptions, LiveTranscriptionEvents
+from deepgram import DeepgramClient, LiveOptions, LiveTranscriptionEvents
 from homeassistant.components.stt import (
     AudioBitRates,
     AudioChannels,
@@ -98,10 +98,7 @@ class DeepgramSTTEntity(SpeechToTextEntity):
 
         try:
             # Configure Deepgram client
-            config = DeepgramClientOptions(
-                api_key=self._api_key,
-            )
-            client = DeepgramClient(self._api_key, config)
+            client = DeepgramClient(api_key=self._api_key)
             dg_connection = client.listen.websocket.v("1")
 
             # Storage for transcript
