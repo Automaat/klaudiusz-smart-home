@@ -92,18 +92,21 @@ class TestMyComponent:
 ### Key Testing Patterns
 
 **Mock Deepgram SDK:**
+
 ```python
 with patch("custom_components.deepgram_stt.stt.DeepgramClient", return_value=mock_client):
     result = await entity.process_audio()
 ```
 
 **Mock Home Assistant:**
+
 ```python
 mock_hass = MagicMock(spec=HomeAssistant)
 mock_hass.async_add_executor_job = AsyncMock()
 ```
 
 **Test async event handlers:**
+
 ```python
 registered_handlers = {}
 def capture_handler(event, handler):
@@ -124,6 +127,7 @@ Tests run automatically in GitHub Actions on PR creation.
 ## Troubleshooting
 
 **Import errors:**
+
 ```bash
 # Ensure custom_components in path
 export PYTHONPATH="${PYTHONPATH}:${PWD}"
@@ -131,12 +135,14 @@ pytest
 ```
 
 **Async test failures:**
+
 ```bash
 # Check pytest-asyncio installed
 pip install pytest-asyncio>=0.23.0
 ```
 
 **Deepgram SDK not found:**
+
 ```bash
 # Install from requirements
 pip install -r requirements-dev.txt
