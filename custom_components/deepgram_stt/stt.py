@@ -22,7 +22,6 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import (
-    AUDIO_CHUNK_SIZE,
     CONF_API_KEY,
     CONF_LANGUAGE,
     CONF_MODEL,
@@ -159,11 +158,7 @@ class DeepgramSTTEntity(SpeechToTextEntity):
 
             # Stream audio data
             try:
-                while True:
-                    chunk = await stream.read(AUDIO_CHUNK_SIZE)
-                    if not chunk:
-                        break
-
+                async for chunk in stream:
                     dg_connection.send(chunk)
                     await asyncio.sleep(STREAM_DELAY)
 
