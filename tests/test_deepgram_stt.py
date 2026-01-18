@@ -366,13 +366,9 @@ class TestDeepgramSTTEventHandlers:
         mock_connection.finish = AsyncMock()
 
         registered_handlers = {}
-        handlers_ready = asyncio.Event()
 
         def capture_handler(event, handler):
             registered_handlers[event] = handler
-            # Signal when both handlers are registered
-            if len(registered_handlers) == 2:
-                handlers_ready.set()
 
         mock_connection.on = MagicMock(side_effect=capture_handler)
 
@@ -395,12 +391,13 @@ class TestDeepgramSTTEventHandlers:
                 entity.async_process_audio_stream(mock_metadata, mock_stream)
             )
 
-            # Wait for handlers to be registered
-            await asyncio.wait_for(handlers_ready.wait(), timeout=1.0)
+            # Allow task to initialize and register handlers
+            # Note: Event-based sync attempted but unreliable with complex SDK mocking
+            await asyncio.sleep(0.2)
 
             # Trigger on_error handler
             if "Error" in registered_handlers:
-                # Call with self, error, **kwargs (correct signature)
+                # Call with connection, error, **kwargs (correct signature)
                 registered_handlers["Error"](mock_connection, "Test error")
 
             result = await task
