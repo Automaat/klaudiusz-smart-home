@@ -174,13 +174,13 @@
   deepgram-sdk = python3Packages.buildPythonPackage rec {
     pname = "deepgram-sdk";
     # renovate: datasource=pypi depName=deepgram-sdk
-    version = "4.1.0";
+    version = "5.3.1";
     format = "pyproject";
 
     src = pkgs.fetchPypi {
       pname = "deepgram_sdk";
       inherit version;
-      hash = "sha256-bcZpBS43+4GHyxef8x4zORa1hwtJNavUrSFGq5B6UxM=";
+      hash = "sha256-bgZqe3r4RCyOaED6NfsOL+fd+IWg8AESfY7tolK6txY=";
     };
 
     nativeBuildInputs = with python3Packages; [
