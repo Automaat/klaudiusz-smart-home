@@ -355,8 +355,9 @@ class TestDeepgramSTTEventHandlers:
         )
 
         async def empty_stream():
-            return
-            yield  # Make it a generator (unreachable)
+            # Async generator that yields nothing
+            if False:
+                yield b""
         mock_stream = empty_stream()
 
         mock_connection = MagicMock()
