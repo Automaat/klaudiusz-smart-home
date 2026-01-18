@@ -121,14 +121,11 @@ class TestDeepgramSTTAudioProcessing:
 
     @pytest.fixture
     def mock_stream(self):
-        """Mock audio stream."""
-        stream = AsyncMock(spec=asyncio.StreamReader)
-        stream.read = AsyncMock(side_effect=[
-            b"audio_chunk_1",
-            b"audio_chunk_2",
-            b"",  # EOF
-        ])
-        return stream
+        """Mock audio stream as async generator."""
+        async def stream_generator():
+            yield b"audio_chunk_1"
+            yield b"audio_chunk_2"
+        return stream_generator()
 
     @pytest.fixture
     def mock_metadata(self):
@@ -357,8 +354,10 @@ class TestDeepgramSTTEventHandlers:
             channel=AudioChannels.CHANNEL_MONO,
         )
 
-        mock_stream = AsyncMock(spec=asyncio.StreamReader)
-        mock_stream.read = AsyncMock(return_value=b"")
+        async def empty_stream():
+            return
+            yield  # Make it a generator (unreachable)
+        mock_stream = empty_stream()
 
         mock_connection = MagicMock()
         mock_connection.start = MagicMock(return_value=True)
