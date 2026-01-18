@@ -132,11 +132,10 @@ class DeepgramSTTEntity(SpeechToTextEntity):
                             transcript_parts.append(sentence)
                             _LOGGER.debug("Interim transcript: %s", sentence)
 
-            async def on_error(error, **kwargs):
+            def on_error(self, error, **kwargs):
                 nonlocal error_occurred
-                async with state_lock:
-                    _LOGGER.error("Deepgram error: %s", error)
-                    error_occurred = True
+                _LOGGER.error("Deepgram error: %s", error)
+                error_occurred = True
 
             # Register event handlers
             dg_connection.on(LiveTranscriptionEvents.Transcript, on_message)
@@ -153,7 +152,7 @@ class DeepgramSTTEntity(SpeechToTextEntity):
             )
 
             # Start connection
-            if not await dg_connection.start(options):
+            if not dg_connection.start(options):
                 _LOGGER.error("Failed to start Deepgram connection")
                 return SpeechResult("", SpeechResultState.ERROR)
 
