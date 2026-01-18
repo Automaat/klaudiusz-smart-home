@@ -135,10 +135,8 @@ class DeepgramSTTEntity(SpeechToTextEntity):
             # Connect to Deepgram with async context manager
             async with client.listen.v2.connect(
                 model=self._model,
-                language=self._language,
                 encoding=DEFAULT_ENCODING,
                 sample_rate=DEFAULT_SAMPLE_RATE,
-                channels=1,
                 interim_results=True,
             ) as dg_connection:
                 # Register event handlers
