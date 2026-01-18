@@ -180,7 +180,7 @@
     src = pkgs.fetchPypi {
       pname = "deepgram_sdk";
       inherit version;
-      hash = "sha256-bgZqe3r4RCyOaED6NfsOL+fd+IWg8AESfY7tolK6txY=";
+      hash = "sha256-hzNnh8MHLTJKD6QSNkZorexzF1qfbw/dT5GYP3NMKEI=";
     };
 
     nativeBuildInputs = with python3Packages; [
