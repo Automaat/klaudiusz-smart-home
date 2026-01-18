@@ -133,11 +133,10 @@ class DeepgramSTTEntity(SpeechToTextEntity):
                 error_occurred = True
 
             # Connect to Deepgram with async context manager
-            # v2 API: Nova-3 multilingual mode supports Polish (31 languages)
-            # Use language=multi for automatic language detection including Polish
+            # v2 API: Nova-3 supports language parameter directly
             async with client.listen.v2.connect(
                 model=self._model,
-                language="multi",
+                language=self._language,
                 encoding=DEFAULT_ENCODING,
                 sample_rate=DEFAULT_SAMPLE_RATE,
                 interim_results=True,
