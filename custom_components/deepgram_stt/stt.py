@@ -7,7 +7,6 @@ import logging
 
 from deepgram import AsyncDeepgramClient
 from deepgram.core.events import EventType
-from deepgram.core.types.sockets import ListenV1MediaMessage
 from homeassistant.components.stt import (
     AudioBitRates,
     AudioChannels,
@@ -152,7 +151,7 @@ class DeepgramSTTEntity(SpeechToTextEntity):
                 # Stream audio data
                 try:
                     async for chunk in stream:
-                        dg_connection.send_media(ListenV1MediaMessage(chunk))
+                        await dg_connection.send(chunk)
                         await asyncio.sleep(STREAM_DELAY)
 
                     # Wait for final transcript (with timeout)
