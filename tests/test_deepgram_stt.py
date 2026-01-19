@@ -533,10 +533,11 @@ class TestDeepgramSDKCompatibility:
 
         with patch("custom_components.deepgram_stt.stt.AsyncDeepgramClient", return_value=mock_client):
             # Should succeed because we use send_media, not send
-            result = await entity.async_process_audio_stream(mock_metadata, mock_stream)
+            await entity.async_process_audio_stream(mock_metadata, mock_stream)
 
             # Connection should NOT have send attribute
-            assert not hasattr(mock_connection, 'send')
+            assert not hasattr(mock_connection, 'send'), "Connection should not have send method (v4 API)"
+            assert mock_connection.send_media.called, "send_media should be called"
 
     def test_sdk_v5_imports_available(self):
         """Test that required SDK v5 imports are available."""
@@ -570,3 +571,26 @@ class TestDeepgramSDKCompatibility:
         # Verify ListenV1MediaMessage is constructible
         test_message = ListenV1MediaMessage(b"test")
         assert test_message is not None
+
+    @pytest.mark.asyncio
+    async def test_real_sdk_connection_has_send_media_interface(self):
+        """Verify real SDK connection object has send_media method."""
+        from deepgram import AsyncDeepgramClient
+        from unittest.mock import MagicMock, AsyncMock
+
+        client = AsyncDeepgramClient(api_key="test_key")
+
+        # Mock connect() to avoid network call, but verify interface
+        mock_connection = AsyncMock()
+        mock_connection.__aenter__ = AsyncMock(return_value=mock_connection)
+        mock_connection.__aexit__ = AsyncMock(return_value=None)
+
+        original_connect = client.listen.v1.connect
+        client.listen.v1.connect = MagicMock(return_value=mock_connection)
+
+        # Call connect to get connection object
+        connection = client.listen.v1.connect(model="nova-2", language="pl")
+
+        # Verify connection has send_media method
+        async with connection as conn:
+            assert hasattr(conn, 'send_media'), "Connection missing send_media method (SDK v5 API)"
