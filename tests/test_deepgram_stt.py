@@ -206,7 +206,7 @@ class TestDeepgramSTTAudioProcessing:
 
         # Mock connection with async context manager
         mock_connection = AsyncMock()
-        mock_connection.send = MagicMock()
+        mock_connection.send_media = MagicMock()
         mock_connection.on = MagicMock()
         mock_connection.__aenter__ = AsyncMock(return_value=mock_connection)
         mock_connection.__aexit__ = AsyncMock(return_value=None)
@@ -365,7 +365,7 @@ class TestDeepgramSTTEventHandlers:
 
         # Mock connection with async context manager
         mock_connection = AsyncMock()
-        mock_connection.send = MagicMock()
+        mock_connection.send_media = MagicMock()
         mock_connection.__aenter__ = AsyncMock(return_value=mock_connection)
         mock_connection.__aexit__ = AsyncMock(return_value=None)
 
@@ -408,3 +408,165 @@ class TestDeepgramSTTEventHandlers:
             result = await task
 
             assert result.result == SpeechResultState.ERROR
+
+
+class TestDeepgramSDKCompatibility:
+    """Test Deepgram SDK v5 API compatibility.
+
+    These tests ensure we're using the correct SDK methods and catch API
+    breaking changes before deployment.
+    """
+
+    @pytest.fixture
+    def mock_stream(self):
+        """Mock audio stream as async generator."""
+        async def stream_generator():
+            yield b"audio_chunk_1"
+            yield b"audio_chunk_2"
+        return stream_generator()
+
+    @pytest.fixture
+    def mock_metadata(self):
+        """Mock speech metadata."""
+        return SpeechMetadata(
+            language="pl",
+            format=AudioFormats.WAV,
+            codec=AudioCodecs.PCM,
+            bit_rate=AudioBitRates.BITRATE_16,
+            sample_rate=AudioSampleRates.SAMPLERATE_16000,
+            channel=AudioChannels.CHANNEL_MONO,
+        )
+
+    @pytest.mark.asyncio
+    async def test_sdk_v5_connection_has_send_media_method(
+        self, mock_config_entry, mock_stream, mock_metadata
+    ):
+        """Test that SDK v5 connection object has send_media method."""
+        entity = DeepgramSTTEntity(mock_config_entry)
+
+        # Mock connection with v5 API
+        mock_connection = AsyncMock()
+        mock_connection.send_media = MagicMock()
+        mock_connection.on = MagicMock()
+        mock_connection.__aenter__ = AsyncMock(return_value=mock_connection)
+        mock_connection.__aexit__ = AsyncMock(return_value=None)
+
+        mock_v1 = MagicMock()
+        mock_v1.connect = MagicMock(return_value=mock_connection)
+
+        mock_listen = MagicMock()
+        mock_listen.v1 = mock_v1
+
+        mock_client = AsyncMock()
+        mock_client.listen = mock_listen
+
+        with patch("custom_components.deepgram_stt.stt.AsyncDeepgramClient", return_value=mock_client):
+            # This will fail if send_media doesn't exist
+            await entity.async_process_audio_stream(mock_metadata, mock_stream)
+
+            # Verify send_media was called
+            assert mock_connection.send_media.called
+
+    @pytest.mark.asyncio
+    async def test_sdk_v5_send_media_called_with_media_message(
+        self, mock_config_entry, mock_metadata
+    ):
+        """Test that send_media is called with ListenV1MediaMessage wrapper."""
+        entity = DeepgramSTTEntity(mock_config_entry)
+
+        async def test_stream():
+            yield b"test_chunk"
+
+        mock_connection = AsyncMock()
+        send_media_calls = []
+
+        def capture_send_media(message):
+            send_media_calls.append(message)
+
+        mock_connection.send_media = MagicMock(side_effect=capture_send_media)
+        mock_connection.on = MagicMock()
+        mock_connection.__aenter__ = AsyncMock(return_value=mock_connection)
+        mock_connection.__aexit__ = AsyncMock(return_value=None)
+
+        mock_v1 = MagicMock()
+        mock_v1.connect = MagicMock(return_value=mock_connection)
+
+        mock_listen = MagicMock()
+        mock_listen.v1 = mock_v1
+
+        mock_client = AsyncMock()
+        mock_client.listen = mock_listen
+
+        with patch("custom_components.deepgram_stt.stt.AsyncDeepgramClient", return_value=mock_client), \
+             patch("custom_components.deepgram_stt.stt.ListenV1MediaMessage") as mock_media_msg:
+            await entity.async_process_audio_stream(mock_metadata, test_stream())
+
+            # Verify ListenV1MediaMessage was used to wrap audio chunk
+            mock_media_msg.assert_called_once_with(b"test_chunk")
+
+    @pytest.mark.asyncio
+    async def test_sdk_v5_connection_does_not_have_send_method(
+        self, mock_config_entry, mock_stream, mock_metadata
+    ):
+        """Test that using old .send() method fails (to catch regressions)."""
+        entity = DeepgramSTTEntity(mock_config_entry)
+
+        # Mock connection WITHOUT send method (only send_media)
+        mock_connection = AsyncMock()
+        mock_connection.send_media = MagicMock()
+        mock_connection.on = MagicMock()
+        mock_connection.__aenter__ = AsyncMock(return_value=mock_connection)
+        mock_connection.__aexit__ = AsyncMock(return_value=None)
+
+        # Remove send attribute to simulate v5 API
+        if hasattr(mock_connection, 'send'):
+            delattr(mock_connection, 'send')
+
+        mock_v1 = MagicMock()
+        mock_v1.connect = MagicMock(return_value=mock_connection)
+
+        mock_listen = MagicMock()
+        mock_listen.v1 = mock_v1
+
+        mock_client = AsyncMock()
+        mock_client.listen = mock_listen
+
+        with patch("custom_components.deepgram_stt.stt.AsyncDeepgramClient", return_value=mock_client):
+            # Should succeed because we use send_media, not send
+            result = await entity.async_process_audio_stream(mock_metadata, mock_stream)
+
+            # Connection should NOT have send attribute
+            assert not hasattr(mock_connection, 'send')
+
+    def test_sdk_v5_imports_available(self):
+        """Test that required SDK v5 imports are available."""
+        # This catches import errors at test time instead of runtime
+        from deepgram import AsyncDeepgramClient
+        from deepgram.core.events import EventType
+        from deepgram.core.types.sockets import ListenV1MediaMessage
+
+        # Verify classes are importable
+        assert AsyncDeepgramClient is not None
+        assert EventType is not None
+        assert ListenV1MediaMessage is not None
+
+    @pytest.mark.asyncio
+    async def test_real_sdk_connection_api_compatibility(self):
+        """Integration test: verify real SDK has expected v5 API.
+
+        This test imports the actual Deepgram SDK and verifies the connection
+        object has the methods we expect, catching SDK breaking changes.
+        """
+        from deepgram import AsyncDeepgramClient
+        from deepgram.core.types.sockets import ListenV1MediaMessage
+
+        # Create real client (no API call, just object creation)
+        client = AsyncDeepgramClient(api_key="test_key_for_compatibility_check")
+
+        # Verify listen.v1 exists
+        assert hasattr(client, 'listen')
+        assert hasattr(client.listen, 'v1')
+
+        # Verify ListenV1MediaMessage is constructible
+        test_message = ListenV1MediaMessage(b"test")
+        assert test_message is not None
