@@ -433,6 +433,7 @@ in {
           "homeassistant.components.assist_pipeline" = "debug";
           "homeassistant.components.wyoming" = "debug";
           "homeassistant.components.conversation" = "debug";
+          "custom_components.deepgram_stt" = "debug";
         };
       };
 

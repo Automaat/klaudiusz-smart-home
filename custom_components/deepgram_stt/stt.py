@@ -112,7 +112,14 @@ class DeepgramSTTEntity(SpeechToTextEntity):
             async def on_message(message, **kwargs):
                 nonlocal transcript_parts, final_transcript, is_final
 
-                if not hasattr(message, "channel") or not message.channel.alternatives:
+                _LOGGER.debug("Received message from Deepgram: type=%s", type(message).__name__)
+
+                if not hasattr(message, "channel"):
+                    _LOGGER.warning("Message missing 'channel' attribute: %s", dir(message))
+                    return
+
+                if not message.channel.alternatives:
+                    _LOGGER.warning("Message channel has no alternatives")
                     return
 
                 sentence = message.channel.alternatives[0].transcript
@@ -126,6 +133,8 @@ class DeepgramSTTEntity(SpeechToTextEntity):
                         else:
                             transcript_parts.append(sentence)
                             _LOGGER.debug("Interim transcript: %s", sentence)
+                else:
+                    _LOGGER.debug("Received empty transcript (silence detection)")
 
             async def on_error(error, **kwargs):
                 nonlocal error_occurred
@@ -150,9 +159,16 @@ class DeepgramSTTEntity(SpeechToTextEntity):
 
                 # Stream audio data
                 try:
+                    chunk_count = 0
+                    total_bytes = 0
                     async for chunk in stream:
+                        chunk_size = len(chunk)
+                        total_bytes += chunk_size
+                        chunk_count += 1
                         await dg_connection.send_media(chunk)
                         await asyncio.sleep(STREAM_DELAY)
+
+                    _LOGGER.debug("Audio streaming complete: %d chunks, %d bytes total", chunk_count, total_bytes)
 
                     # Wait for final transcript (with timeout)
                     start_time = asyncio.get_event_loop().time()
