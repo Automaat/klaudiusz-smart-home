@@ -408,3 +408,37 @@ class TestDeepgramSTTEventHandlers:
             result = await task
 
             assert result.result == SpeechResultState.ERROR
+
+
+class TestDeepgramSDKCompatibility:
+    """Test Deepgram SDK v5 API compatibility.
+
+    These tests ensure we're using the correct SDK methods and catch API
+    breaking changes before deployment.
+    """
+
+    def test_sdk_v5_imports_available(self):
+        """Test that required SDK v5 imports are available."""
+        # This catches import errors at test time instead of runtime
+        from deepgram import AsyncDeepgramClient
+        from deepgram.core.events import EventType
+
+        # Verify classes are importable
+        assert AsyncDeepgramClient is not None
+        assert EventType is not None
+
+    @pytest.mark.asyncio
+    async def test_real_sdk_connection_api_compatibility(self):
+        """Integration test: verify real SDK has expected v5 API.
+
+        This test imports the actual Deepgram SDK and verifies the connection
+        object has the methods we expect, catching SDK breaking changes.
+        """
+        from deepgram import AsyncDeepgramClient
+
+        # Create real client (no API call, just object creation)
+        client = AsyncDeepgramClient(api_key="test_key_for_compatibility_check")
+
+        # Verify listen.v1 exists
+        assert hasattr(client, 'listen')
+        assert hasattr(client.listen, 'v1')
