@@ -208,6 +208,7 @@ class TestDeepgramSTTAudioProcessing:
         mock_connection = AsyncMock()
         mock_connection.send_media = AsyncMock()
         mock_connection.send_close_stream = AsyncMock()
+        mock_connection.start_listening = AsyncMock()
         mock_connection.on = MagicMock()
         mock_connection.__aenter__ = AsyncMock(return_value=mock_connection)
         mock_connection.__aexit__ = AsyncMock(return_value=None)
@@ -368,6 +369,7 @@ class TestDeepgramSTTEventHandlers:
         mock_connection = AsyncMock()
         mock_connection.send_media = AsyncMock()
         mock_connection.send_close_stream = AsyncMock()
+        mock_connection.start_listening = AsyncMock()
         mock_connection.__aenter__ = AsyncMock(return_value=mock_connection)
         mock_connection.__aexit__ = AsyncMock(return_value=None)
 
