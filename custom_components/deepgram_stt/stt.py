@@ -156,7 +156,9 @@ class DeepgramSTTEntity(SpeechToTextEntity):
                 dg_connection.on(EventType.MESSAGE, on_message)
                 dg_connection.on(EventType.ERROR, on_error)
 
-                _LOGGER.debug("Deepgram connection started")
+                # Start listening for messages in background
+                listen_task = asyncio.create_task(dg_connection.start_listening())
+                _LOGGER.debug("Deepgram connection started, listening task created")
 
                 # Stream audio data
                 try:
@@ -189,6 +191,14 @@ class DeepgramSTTEntity(SpeechToTextEntity):
                 except Exception as e:
                     _LOGGER.error("Error streaming audio: %s", e)
                     return SpeechResult("", SpeechResultState.ERROR)
+                finally:
+                    # Cancel listening task if still running
+                    if not listen_task.done():
+                        listen_task.cancel()
+                        try:
+                            await listen_task
+                        except asyncio.CancelledError:
+                            pass
 
             # Return result (connection auto-closed by context manager)
             async with state_lock:
