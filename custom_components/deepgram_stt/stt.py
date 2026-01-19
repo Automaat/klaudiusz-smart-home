@@ -151,7 +151,7 @@ class DeepgramSTTEntity(SpeechToTextEntity):
                 # Stream audio data
                 try:
                     async for chunk in stream:
-                        await dg_connection.send(chunk)
+                        await dg_connection.send_media(chunk)
                         await asyncio.sleep(STREAM_DELAY)
 
                     # Wait for final transcript (with timeout)

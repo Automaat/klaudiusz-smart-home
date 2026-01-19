@@ -206,7 +206,7 @@ class TestDeepgramSTTAudioProcessing:
 
         # Mock connection with async context manager
         mock_connection = AsyncMock()
-        mock_connection.send = MagicMock()
+        mock_connection.send_media = AsyncMock()
         mock_connection.on = MagicMock()
         mock_connection.__aenter__ = AsyncMock(return_value=mock_connection)
         mock_connection.__aexit__ = AsyncMock(return_value=None)
@@ -365,7 +365,7 @@ class TestDeepgramSTTEventHandlers:
 
         # Mock connection with async context manager
         mock_connection = AsyncMock()
-        mock_connection.send = MagicMock()
+        mock_connection.send_media = AsyncMock()
         mock_connection.__aenter__ = AsyncMock(return_value=mock_connection)
         mock_connection.__aexit__ = AsyncMock(return_value=None)
 
