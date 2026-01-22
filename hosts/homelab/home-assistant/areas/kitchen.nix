@@ -14,7 +14,7 @@
       trigger = [
         {
           platform = "state";
-          entity_id = "binary_sensor.presence_kitchen";
+          entity_id = "binary_sensor.presence_sensor_fp2_b63f_presence_sensor_2";
           to = "on";
         }
       ];
@@ -52,7 +52,7 @@
       trigger = [
         {
           platform = "state";
-          entity_id = "binary_sensor.presence_kitchen";
+          entity_id = "binary_sensor.presence_sensor_fp2_b63f_presence_sensor_2";
           to = "off";
         }
       ];
