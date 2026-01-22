@@ -8,7 +8,7 @@
   # Hallway
   # ===========================================
   automation = [
-    # Presence Sensor 1 → h-4, h-5
+    # Presence Sensor 1 → h-3, h-4, h-5
     {
       id = "hallway_presence_1_lights_on";
       alias = "Hallway - Turn on lights zone 1 on presence";
@@ -42,6 +42,7 @@
           data = {
             entity_id = "switch.adaptive_lighting_hallway_lights";
             lights = [
+              "light.hue_essential_spot_4_2" # h-3
               "light.hue_essential_spot_1_2" # h-4
               "light.hue_essential_spot_2_2" # h-5
             ];
@@ -66,6 +67,7 @@
         {
           service = "light.turn_off";
           target.entity_id = [
+            "light.hue_essential_spot_4_2" # h-3
             "light.hue_essential_spot_1_2" # h-4
             "light.hue_essential_spot_2_2" # h-5
           ];
@@ -73,7 +75,7 @@
       ];
     }
 
-    # Presence Sensor 2 → h-1, h-2, h-3
+    # Presence Sensor 2 → h-1, h-2
     {
       id = "hallway_presence_2_lights_on";
       alias = "Hallway - Turn on lights zone 2 on presence";
@@ -109,7 +111,6 @@
             lights = [
               "light.hue_essential_spot_3_2" # h-1
               "light.hue_essential_spot_5" # h-2
-              "light.hue_essential_spot_4_2" # h-3
             ];
             turn_on_lights = true;
           };
@@ -134,7 +135,6 @@
           target.entity_id = [
             "light.hue_essential_spot_3_2" # h-1
             "light.hue_essential_spot_5" # h-2
-            "light.hue_essential_spot_4_2" # h-3
           ];
         }
       ];
