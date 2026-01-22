@@ -65,7 +65,10 @@ in {
     hostName = "homelab";
     # Fallback DNS servers (used when Tailscale DNS fails)
     nameservers = ["1.1.1.1" "8.8.8.8"];
-    networkmanager.enable = true;
+    networkmanager = {
+      enable = true;
+      dns = "none"; # Let NixOS manage DNS, not NetworkManager
+    };
     firewall = {
       enable = true;
       allowedTCPPorts = [
