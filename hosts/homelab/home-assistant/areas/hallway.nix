@@ -8,14 +8,14 @@
   # Hallway
   # ===========================================
   automation = [
-    # Presence Sensor 1 → h-3, h-4, h-5
+    # Presence Sensor 3 → h-3, h-4, h-5
     {
-      id = "hallway_presence_1_lights_on";
-      alias = "Hallway - Turn on lights zone 1 on presence";
+      id = "hallway_presence_3_lights_on";
+      alias = "Hallway - Turn on lights zone 1 (sensor 3) on presence";
       trigger = [
         {
           platform = "state";
-          entity_id = "binary_sensor.presence_sensor_fp2_fac2_presence_sensor_1";
+          entity_id = "binary_sensor.presence_sensor_fp2_fac2_presence_sensor_3";
           to = "on";
         }
       ];
@@ -53,12 +53,12 @@
     }
 
     {
-      id = "hallway_presence_1_lights_off";
-      alias = "Hallway - Turn off lights zone 1 on clear";
+      id = "hallway_presence_3_lights_off";
+      alias = "Hallway - Turn off lights zone 1 (sensor 3) on clear";
       trigger = [
         {
           platform = "state";
-          entity_id = "binary_sensor.presence_sensor_fp2_fac2_presence_sensor_1";
+          entity_id = "binary_sensor.presence_sensor_fp2_fac2_presence_sensor_3";
           to = "off";
           for = "00:00:05";
         }
