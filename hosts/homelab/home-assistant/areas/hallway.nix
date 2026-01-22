@@ -59,7 +59,7 @@
           platform = "state";
           entity_id = "binary_sensor.presence_sensor_fp2_fac2_presence_sensor_1";
           to = "off";
-          for = "00:00:30";
+          for = "00:00:10";
         }
       ];
       action = [
@@ -125,7 +125,7 @@
           platform = "state";
           entity_id = "binary_sensor.presence_sensor_fp2_fac2_presence_sensor_2";
           to = "off";
-          for = "00:00:30";
+          for = "00:00:10";
         }
       ];
       action = [
