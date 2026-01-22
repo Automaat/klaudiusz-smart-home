@@ -8,7 +8,7 @@
   # Hallway
   # ===========================================
   automation = [
-    # Presence Sensor 1 → h-3, h-4, h-5
+    # Presence Sensor 1 → h-4, h-5
     {
       id = "hallway_presence_1_lights_on";
       alias = "Hallway - Turn on lights zone 1 on presence";
@@ -21,6 +21,16 @@
       ];
       condition = [
         {
+          condition = "state";
+          entity_id = "input_boolean.sleep_mode";
+          state = "off";
+        }
+        {
+          condition = "state";
+          entity_id = "input_boolean.away_mode";
+          state = "off";
+        }
+        {
           condition = "numeric_state";
           entity_id = "sensor.presence_sensor_fp2_fac2_light_sensor_light_level";
           below = 30;
@@ -32,7 +42,6 @@
           data = {
             entity_id = "switch.adaptive_lighting_hallway_lights";
             lights = [
-              "light.hue_essential_spot_4_2" # h-3
               "light.hue_essential_spot_1_2" # h-4
               "light.hue_essential_spot_2_2" # h-5
             ];
@@ -50,27 +59,16 @@
           platform = "state";
           entity_id = "binary_sensor.presence_sensor_fp2_fac2_presence_sensor_1";
           to = "off";
-          for = "00:00:05";
+          for = "00:00:30";
         }
       ];
       action = [
-        # Turn off zone 1 exclusive lights
         {
           service = "light.turn_off";
           target.entity_id = [
             "light.hue_essential_spot_1_2" # h-4
             "light.hue_essential_spot_2_2" # h-5
           ];
-        }
-        # Turn off shared light only if zone 2 is also clear
-        {
-          condition = "state";
-          entity_id = "binary_sensor.presence_sensor_fp2_fac2_presence_sensor_2";
-          state = "off";
-        }
-        {
-          service = "light.turn_off";
-          target.entity_id = "light.hue_essential_spot_4_2"; # h-3
         }
       ];
     }
@@ -84,6 +82,23 @@
           platform = "state";
           entity_id = "binary_sensor.presence_sensor_fp2_fac2_presence_sensor_2";
           to = "on";
+        }
+      ];
+      condition = [
+        {
+          condition = "state";
+          entity_id = "input_boolean.sleep_mode";
+          state = "off";
+        }
+        {
+          condition = "state";
+          entity_id = "input_boolean.away_mode";
+          state = "off";
+        }
+        {
+          condition = "numeric_state";
+          entity_id = "sensor.presence_sensor_fp2_fac2_light_sensor_light_level";
+          below = 30;
         }
       ];
       action = [
@@ -110,27 +125,17 @@
           platform = "state";
           entity_id = "binary_sensor.presence_sensor_fp2_fac2_presence_sensor_2";
           to = "off";
-          for = "00:00:05";
+          for = "00:00:30";
         }
       ];
       action = [
-        # Turn off zone 2 exclusive lights
         {
           service = "light.turn_off";
           target.entity_id = [
             "light.hue_essential_spot_3_2" # h-1
             "light.hue_essential_spot_5" # h-2
+            "light.hue_essential_spot_4_2" # h-3
           ];
-        }
-        # Turn off shared light only if zone 1 is also clear
-        {
-          condition = "state";
-          entity_id = "binary_sensor.presence_sensor_fp2_fac2_presence_sensor_1";
-          state = "off";
-        }
-        {
-          service = "light.turn_off";
-          target.entity_id = "light.hue_essential_spot_4_2"; # h-3
         }
       ];
     }
