@@ -22,11 +22,6 @@
       condition = [
         {
           condition = "state";
-          entity_id = "input_boolean.sleep_mode";
-          state = "off";
-        }
-        {
-          condition = "state";
           entity_id = "input_boolean.away_mode";
           state = "off";
         }
@@ -87,11 +82,6 @@
         }
       ];
       condition = [
-        {
-          condition = "state";
-          entity_id = "input_boolean.sleep_mode";
-          state = "off";
-        }
         {
           condition = "state";
           entity_id = "input_boolean.away_mode";
