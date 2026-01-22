@@ -11,6 +11,7 @@
     away_mode = {
       name = "Tryb poza domem";
       icon = "mdi:home-export-outline";
+      initial = false;
     };
     guest_mode = {
       name = "Tryb gościa";
