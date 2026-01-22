@@ -63,6 +63,8 @@ in {
   # ===========================================
   networking = {
     hostName = "homelab";
+    # Fallback DNS servers (used when Tailscale DNS fails)
+    nameservers = ["1.1.1.1" "8.8.8.8"];
     networkmanager.enable = true;
     firewall = {
       enable = true;
