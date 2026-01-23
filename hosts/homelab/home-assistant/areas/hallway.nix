@@ -25,11 +25,6 @@
           entity_id = "input_boolean.away_mode";
           state = "off";
         }
-        {
-          condition = "numeric_state";
-          entity_id = "sensor.presence_sensor_fp2_fac2_light_sensor_light_level";
-          below = 30;
-        }
       ];
       action = [
         {
@@ -86,11 +81,6 @@
           condition = "state";
           entity_id = "input_boolean.away_mode";
           state = "off";
-        }
-        {
-          condition = "numeric_state";
-          entity_id = "sensor.presence_sensor_fp2_fac2_light_sensor_light_level";
-          below = 30;
         }
       ];
       action = [
