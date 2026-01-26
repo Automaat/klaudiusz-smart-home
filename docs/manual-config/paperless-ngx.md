@@ -35,7 +35,7 @@ ssh -L 28981:localhost:28981 homelab
 ### 2. Complete Setup Wizard
 
 1. Navigate to `http://homelab:28981`
-2. Create admin account (username pre-configured via NixOS)
+2. Create admin account (auto-created by NixOS: username `admin`, password from secrets)
 3. Set UI preferences, language (Polish/English)
 4. Configure OCR settings (defaults: pol+eng)
 
@@ -45,7 +45,7 @@ ssh -L 28981:localhost:28981 homelab
 
 1. Install from App Store / Play Store
 2. Server: `http://homelab:28981`
-3. Username: `admin`
+3. Username: `admin` (NixOS module default)
 4. Password: (from sops secrets)
 5. Test upload
 
