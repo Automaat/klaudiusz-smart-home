@@ -28,6 +28,7 @@ Home Assistant UI.
 - **[Todoist](todoist.md)** - Todo list integration with OAuth setup
 - **[T-Higrow ESPHome](t-higrow-esphome.md)** - LilyGO T-Higrow plant sensor setup
 - **[OpenPlantbook](openplantbook.md)** - Plant species database with API credentials
+- **[Paperless-ngx](paperless-ngx.md)** - Document management initial setup
 
 ## When to Add New Documentation
 

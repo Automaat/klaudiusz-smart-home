@@ -76,5 +76,19 @@ in {
       mode = "0400";
       restartUnits = ["cloudflared-tunnel-${cloudflareTunnelId}.service"];
     };
+
+    # Paperless-ngx admin password
+    "paperless/admin-password" = {
+      owner = "paperless";
+      mode = "0400";
+      restartUnits = ["paperless-web.service"];
+    };
+
+    # Paperless-ngx secret key (Django)
+    "paperless/secret-key" = {
+      owner = "paperless";
+      mode = "0400";
+      restartUnits = ["paperless-web.service"];
+    };
   };
 }

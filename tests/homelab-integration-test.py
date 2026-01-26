@@ -88,6 +88,24 @@ except Exception as e:
     print(homelab.succeed("systemctl status grafana.service --no-pager"))
     raise
 
+# Paperless-ngx
+try:
+    homelab.wait_for_unit("paperless-scheduler.service")
+    homelab.wait_for_unit("paperless-consumer.service")
+    homelab.wait_for_unit("paperless-web.service")
+    homelab.wait_for_open_port(28981)
+
+    # Check web UI responds
+    homelab.succeed("curl -f http://localhost:28981/")
+
+    print("✅ Paperless-ngx services healthy")
+
+except Exception as e:
+    print(f"❌ Paperless-ngx failed: {e}")
+    print(homelab.succeed("journalctl -u paperless-web.service -n 50 --no-pager"))
+    print(homelab.succeed("systemctl status paperless-web.service --no-pager"))
+    raise
+
 # Comin (GitOps)
 homelab.wait_for_unit("comin.service")
 
