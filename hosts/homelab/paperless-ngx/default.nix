@@ -21,7 +21,7 @@
     settings = {
       PAPERLESS_SECRET_KEY_FILE = config.sops.secrets."paperless/secret-key".path;
       PAPERLESS_OCR_LANGUAGE = "pol+eng";
-      PAPERLESS_OCR_MODE = "skip_archive_file";
+      PAPERLESS_OCR_SKIP_ARCHIVE_FILE = "with_text";
       PAPERLESS_TIME_ZONE = "Europe/Warsaw";
       PAPERLESS_ENABLE_HTTP_REMOTE_USER = false;
       PAPERLESS_URL = "http://homelab:28981";
