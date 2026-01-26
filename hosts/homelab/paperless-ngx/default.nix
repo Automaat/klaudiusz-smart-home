@@ -1,9 +1,13 @@
-{ config, pkgs, lib, ... }:
 {
+  config,
+  pkgs,
+  lib,
+  ...
+}: {
   # === Paperless-ngx Document Management ===
   services.paperless = {
     enable = true;
-    address = "0.0.0.0";  # Tailscale access
+    address = "0.0.0.0"; # Tailscale access
     port = 28981;
 
     # Storage
@@ -26,11 +30,13 @@
 
   # === PostgreSQL Database ===
   services.postgresql = {
-    ensureDatabases = [ "paperless" ];
-    ensureUsers = [{
-      name = "paperless";
-      ensureDBOwnership = true;
-    }];
+    ensureDatabases = ["paperless"];
+    ensureUsers = [
+      {
+        name = "paperless";
+        ensureDBOwnership = true;
+      }
+    ];
   };
 
   # === Systemd Hardening + Failure Notifications ===
