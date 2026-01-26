@@ -37,37 +37,37 @@ pkgs.testers.nixosTest {
     };
     services.grafana.provision.datasources = lib.mkForce {
       settings.datasources = [
-      {
-        name = "Prometheus";
-        type = "prometheus";
-        url = "http://localhost:9090";
-        isDefault = true;
-        uid = "prometheus";
-      }
-      {
-        name = "InfluxDB";
-        type = "influxdb";
-        url = "http://localhost:8086";
-        isDefault = false;
-        uid = "influxdb";
-        jsonData = {
-          version = "Flux";
-          organization = "homeassistant";
-          defaultBucket = "home-assistant";
-        };
-        secureJsonData = {
-          token = "test-token";
-        };
-      }
-      {
-        name = "Loki";
-        type = "loki";
-        url = "http://localhost:3100";
-        uid = "loki";
-        jsonData = {
-          maxLines = 1000;
-        };
-      }
+        {
+          name = "Prometheus";
+          type = "prometheus";
+          url = "http://localhost:9090";
+          isDefault = true;
+          uid = "prometheus";
+        }
+        {
+          name = "InfluxDB";
+          type = "influxdb";
+          url = "http://localhost:8086";
+          isDefault = false;
+          uid = "influxdb";
+          jsonData = {
+            version = "Flux";
+            organization = "homeassistant";
+            defaultBucket = "home-assistant";
+          };
+          secureJsonData = {
+            token = "test-token";
+          };
+        }
+        {
+          name = "Loki";
+          type = "loki";
+          url = "http://localhost:3100";
+          uid = "loki";
+          jsonData = {
+            maxLines = 1000;
+          };
+        }
       ];
     };
 
