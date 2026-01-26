@@ -35,7 +35,8 @@ pkgs.testers.nixosTest {
       admin_user = "admin";
       admin_password = "test-password";
     };
-    services.grafana.provision.datasources.settings.datasources = lib.mkForce [
+    services.grafana.provision.datasources = lib.mkForce {
+      settings.datasources = [
       {
         name = "Prometheus";
         type = "prometheus";
@@ -67,7 +68,8 @@ pkgs.testers.nixosTest {
           maxLines = 1000;
         };
       }
-    ];
+      ];
+    };
 
     # Override PostgreSQL settings for VM test (limited memory)
     services.postgresql.settings = lib.mkForce {
