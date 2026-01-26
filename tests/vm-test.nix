@@ -98,6 +98,12 @@ pkgs.testers.nixosTest {
     # Disable CrowdSec firewall bouncer in VM tests (iptables/nftables not available in VM)
     services.crowdsec-firewall-bouncer.enable = lib.mkForce false;
 
+    # Override Paperless-ngx to use test credentials (no sops paths)
+    services.paperless = {
+      passwordFile = lib.mkForce (builtins.toFile "paperless-password" "test-password");
+      settings.PAPERLESS_SECRET_KEY_FILE = lib.mkForce (builtins.toFile "paperless-secret" "test-secret-key-do-not-use-in-production");
+    };
+
     # Run InfluxDB init in VM tests with hardcoded credentials
     systemd.services.influxdb2-init = {
       serviceConfig = {
