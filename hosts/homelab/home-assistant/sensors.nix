@@ -9,6 +9,37 @@
   # ===========================================
   template = [
     # -----------------------------------------
+    # Debugging
+    # -----------------------------------------
+    {
+      sensor = [
+        {
+          name = "Hallway Zone 2 Debug State";
+          unique_id = "hallway_zone_2_debug_state";
+          state = ''
+            {% set p = states('binary_sensor.presence_sensor_fp2_fac2_presence_sensor_2') %}
+            {% set l1 = states('light.hue_essential_spot_3_2') %}
+            {% set l2 = states('light.hue_essential_spot_5') %}
+            {% set sleep = states('input_boolean.sleep_mode') %}
+            {% set al = states('switch.adaptive_lighting_hallway_lights') %}
+            {% set al_sleep = states('switch.adaptive_lighting_sleep_mode_hallway_lights') %}
+            {{ p }}/{{ l1 }}/{{ l2 }}/sl:{{ sleep }}/al:{{ al }}/als:{{ al_sleep }}
+          '';
+          attributes = {
+            presence = "{{ states('binary_sensor.presence_sensor_fp2_fac2_presence_sensor_2') }}";
+            light_h1 = "{{ states('light.hue_essential_spot_3_2') }}";
+            light_h2 = "{{ states('light.hue_essential_spot_5') }}";
+            brightness_h1 = "{{ state_attr('light.hue_essential_spot_3_2', 'brightness') }}";
+            brightness_h2 = "{{ state_attr('light.hue_essential_spot_5', 'brightness') }}";
+            sleep_mode = "{{ states('input_boolean.sleep_mode') }}";
+            adaptive_lighting = "{{ states('switch.adaptive_lighting_hallway_lights') }}";
+            adaptive_lighting_sleep = "{{ states('switch.adaptive_lighting_sleep_mode_hallway_lights') }}";
+          };
+        }
+      ];
+    }
+
+    # -----------------------------------------
     # Temperature Monitoring
     # -----------------------------------------
     {
