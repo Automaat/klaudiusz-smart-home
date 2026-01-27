@@ -35,6 +35,7 @@ in {
     ./hardware-configuration.nix
     ./home-assistant
     ./grafana
+    ./paperless-ngx
     ./secrets.nix
     ./users.nix
   ];
@@ -75,6 +76,7 @@ in {
         22 # SSH
         3000 # Grafana
         8123 # Home Assistant
+        28981 # Paperless-ngx (Tailscale access)
       ];
       allowedUDPPorts = [
         config.services.tailscale.port # Tailscale
@@ -338,6 +340,9 @@ in {
           "wyoming-piper-default"
           "wyoming-faster-whisper-default"
           "tailscaled"
+          "paperless-scheduler"
+          "paperless-consumer"
+          "paperless-web"
         )
 
         # Write metrics to temp file
@@ -503,7 +508,12 @@ in {
   users.users.promtail.extraGroups = ["hass"];
 
   # Grant CrowdSec read access to Home Assistant logs and systemd journal
-  users.users.crowdsec.extraGroups = ["hass" "systemd-journal"];
+  users.groups.crowdsec = {};
+  users.users.crowdsec = {
+    isSystemUser = true;
+    group = "crowdsec";
+    extraGroups = ["hass" "systemd-journal"];
+  };
 
   services.promtail = {
     enable = true;

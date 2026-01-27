@@ -285,6 +285,30 @@
                   summary = "Cloudflared tunnel is not running";
                   description = "The cloudflared-tunnel service has been inactive for more than 10 minutes. External access via ha.mskalski.dev unavailable. Check: systemctl status cloudflared-tunnel-*";
                 }
+                {
+                  serviceName = "paperless_scheduler";
+                  unitName = "paperless-scheduler.service";
+                  title = "Paperless Scheduler Down";
+                  summary = "Paperless task scheduler not running";
+                  description = "paperless-scheduler.service inactive >10min. Document processing stalled. Check: systemctl status paperless-scheduler";
+                  severity = "warning";
+                }
+                {
+                  serviceName = "paperless_consumer";
+                  unitName = "paperless-consumer.service";
+                  title = "Paperless Consumer Down";
+                  summary = "Paperless document consumer not running";
+                  description = "paperless-consumer.service inactive >10min. New documents not processed. Check: systemctl status paperless-consumer";
+                  severity = "warning";
+                }
+                {
+                  serviceName = "paperless_web";
+                  unitName = "paperless-web.service";
+                  title = "Paperless Web UI Down";
+                  summary = "Paperless web interface not running";
+                  description = "paperless-web.service inactive >10min. Web UI unavailable. Check: systemctl status paperless-web";
+                  severity = "warning";
+                }
               ];
             in
               map mkSystemdAlertRule services;

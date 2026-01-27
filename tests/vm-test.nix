@@ -20,6 +20,10 @@ pkgs.testers.nixosTest {
       ../hosts/homelab
     ];
 
+    # VM resource limits (paperless-ngx stack requires more memory)
+    virtualisation.memorySize = 4096; # 4GB - needed for HA + PostgreSQL + Paperless + monitoring
+    virtualisation.cores = 4; # Parallel processing for faster tests
+
     # Override nixpkgs settings to use the test's pkgs instance
     # The test framework provides its own nixpkgs, so we force-override
     # both pkgs and config to avoid conflicts
@@ -35,51 +39,53 @@ pkgs.testers.nixosTest {
       admin_user = "admin";
       admin_password = "test-password";
     };
-    services.grafana.provision.datasources.settings.datasources = lib.mkForce [
-      {
-        name = "Prometheus";
-        type = "prometheus";
-        url = "http://localhost:9090";
-        isDefault = true;
-        uid = "prometheus";
-      }
-      {
-        name = "InfluxDB";
-        type = "influxdb";
-        url = "http://localhost:8086";
-        isDefault = false;
-        uid = "influxdb";
-        jsonData = {
-          version = "Flux";
-          organization = "homeassistant";
-          defaultBucket = "home-assistant";
-        };
-        secureJsonData = {
-          token = "test-token";
-        };
-      }
-      {
-        name = "Loki";
-        type = "loki";
-        url = "http://localhost:3100";
-        uid = "loki";
-        jsonData = {
-          maxLines = 1000;
-        };
-      }
-    ];
+    services.grafana.provision.datasources = lib.mkForce {
+      settings.datasources = [
+        {
+          name = "Prometheus";
+          type = "prometheus";
+          url = "http://localhost:9090";
+          isDefault = true;
+          uid = "prometheus";
+        }
+        {
+          name = "InfluxDB";
+          type = "influxdb";
+          url = "http://localhost:8086";
+          isDefault = false;
+          uid = "influxdb";
+          jsonData = {
+            version = "Flux";
+            organization = "homeassistant";
+            defaultBucket = "home-assistant";
+          };
+          secureJsonData = {
+            token = "test-token";
+          };
+        }
+        {
+          name = "Loki";
+          type = "loki";
+          url = "http://localhost:3100";
+          uid = "loki";
+          jsonData = {
+            maxLines = 1000;
+          };
+        }
+      ];
+    };
 
     # Override PostgreSQL settings for VM test (limited memory)
     services.postgresql.settings = lib.mkForce {
-      shared_buffers = "128MB";
-      effective_cache_size = "256MB";
-      maintenance_work_mem = "64MB";
+      shared_buffers = "256MB"; # Increased for paperless migrations
+      effective_cache_size = "512MB"; # Increased for paperless migrations
+      maintenance_work_mem = "128MB"; # Increased for paperless migrations
       checkpoint_completion_target = 0.9;
-      wal_buffers = "4MB";
+      wal_buffers = "8MB"; # Increased for paperless migrations
       default_statistics_target = 100;
       random_page_cost = 1.1;
       effective_io_concurrency = 200;
-      work_mem = "4MB";
+      work_mem = "8MB"; # Increased for paperless migrations
       min_wal_size = "80MB";
       max_wal_size = "1GB";
       jit = "off"; # Disable JIT in VMs to reduce resource usage
@@ -95,8 +101,15 @@ pkgs.testers.nixosTest {
     # Disable avahi-alias service in VM tests (mDNS conflicts in isolated VM network)
     systemd.services.avahi-alias-homeassistant.enable = lib.mkForce false;
 
-    # Disable CrowdSec firewall bouncer in VM tests (iptables/nftables not available in VM)
+    # Disable CrowdSec in VM tests (no network, failed DNS lookups cause repeated restarts)
+    services.crowdsec.enable = lib.mkForce false;
     services.crowdsec-firewall-bouncer.enable = lib.mkForce false;
+
+    # Override Paperless-ngx to use test credentials (no sops paths)
+    services.paperless = {
+      passwordFile = lib.mkForce (builtins.toFile "paperless-password" "test-password");
+      settings.PAPERLESS_SECRET_KEY_FILE = lib.mkForce (builtins.toFile "paperless-secret" "test-secret-key-do-not-use-in-production");
+    };
 
     # Run InfluxDB init in VM tests with hardcoded credentials
     systemd.services.influxdb2-init = {
