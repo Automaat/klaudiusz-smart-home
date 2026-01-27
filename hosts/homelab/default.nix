@@ -508,7 +508,12 @@ in {
   users.users.promtail.extraGroups = ["hass"];
 
   # Grant CrowdSec read access to Home Assistant logs and systemd journal
-  users.users.crowdsec.extraGroups = ["hass" "systemd-journal"];
+  users.groups.crowdsec = {};
+  users.users.crowdsec = {
+    isSystemUser = true;
+    group = "crowdsec";
+    extraGroups = ["hass" "systemd-journal"];
+  };
 
   services.promtail = {
     enable = true;
