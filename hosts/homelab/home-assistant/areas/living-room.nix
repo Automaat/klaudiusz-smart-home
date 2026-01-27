@@ -64,11 +64,8 @@ in {
       ];
       action = [
         {
-          action = "wake_on_lan.send_magic_packet";
-          data = {
-            mac = "20:28:bc:69:b9:84";
-            broadcast_address = "192.168.0.255";
-          };
+          action = "button.press";
+          target.entity_id = "button.wake_on_lan_20_28_bc_69_b9_84";
         }
       ];
     }
