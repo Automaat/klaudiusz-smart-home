@@ -20,6 +20,10 @@ pkgs.testers.nixosTest {
       ../hosts/homelab
     ];
 
+    # VM resource limits (paperless-ngx stack requires more memory)
+    virtualisation.memorySize = 4096; # 4GB - needed for HA + PostgreSQL + Paperless + monitoring
+    virtualisation.cores = 4; # Parallel processing for faster tests
+
     # Override nixpkgs settings to use the test's pkgs instance
     # The test framework provides its own nixpkgs, so we force-override
     # both pkgs and config to avoid conflicts
