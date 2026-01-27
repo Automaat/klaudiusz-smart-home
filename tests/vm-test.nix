@@ -73,15 +73,15 @@ pkgs.testers.nixosTest {
 
     # Override PostgreSQL settings for VM test (limited memory)
     services.postgresql.settings = lib.mkForce {
-      shared_buffers = "128MB";
-      effective_cache_size = "256MB";
-      maintenance_work_mem = "64MB";
+      shared_buffers = "256MB"; # Increased for paperless migrations
+      effective_cache_size = "512MB"; # Increased for paperless migrations
+      maintenance_work_mem = "128MB"; # Increased for paperless migrations
       checkpoint_completion_target = 0.9;
-      wal_buffers = "4MB";
+      wal_buffers = "8MB"; # Increased for paperless migrations
       default_statistics_target = 100;
       random_page_cost = 1.1;
       effective_io_concurrency = 200;
-      work_mem = "4MB";
+      work_mem = "8MB"; # Increased for paperless migrations
       min_wal_size = "80MB";
       max_wal_size = "1GB";
       jit = "off"; # Disable JIT in VMs to reduce resource usage

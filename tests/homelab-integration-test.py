@@ -93,7 +93,13 @@ try:
     homelab.wait_for_unit("paperless-scheduler.service")
     homelab.wait_for_unit("paperless-consumer.service")
     homelab.wait_for_unit("paperless-web.service")
+
+    print("Paperless services started, checking port 28981...")
+    print(homelab.succeed("ss -tlnp | grep 28981 || echo 'Port 28981 not open yet'"))
+
+    # Wait for port with extended timeout (migrations can be slow)
     homelab.wait_for_open_port(28981)
+    print("Port 28981 is open, checking HTTP endpoint...")
 
     # Check web UI responds
     homelab.succeed("curl -f http://localhost:28981/")
@@ -102,8 +108,16 @@ try:
 
 except Exception as e:
     print(f"❌ Paperless-ngx failed: {e}")
-    print(homelab.succeed("journalctl -u paperless-web.service -n 50 --no-pager"))
+    print("\n=== Paperless Web Service Status ===")
     print(homelab.succeed("systemctl status paperless-web.service --no-pager"))
+    print("\n=== Paperless Web Service Logs (last 100 lines) ===")
+    print(homelab.succeed("journalctl -u paperless-web.service -n 100 --no-pager"))
+    print("\n=== Port Status ===")
+    print(homelab.succeed("ss -tlnp | grep 28981 || echo 'Port 28981 not open'"))
+    print("\n=== PostgreSQL Status ===")
+    print(homelab.succeed("systemctl status postgresql.service --no-pager"))
+    print("\n=== Paperless Database Connection Test ===")
+    print(homelab.succeed("sudo -u paperless psql -d paperless -c 'SELECT 1' || echo 'Database connection failed'"))
     raise
 
 # Comin (GitOps)

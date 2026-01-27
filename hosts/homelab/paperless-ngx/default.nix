@@ -68,6 +68,7 @@
     serviceConfig = {
       Restart = "on-failure";
       RestartSec = "10s";
+      TimeoutStartSec = "300s"; # Allow 5min for migrations
     };
     unitConfig = {
       StartLimitBurst = 5;
