@@ -101,7 +101,8 @@ pkgs.testers.nixosTest {
     # Disable avahi-alias service in VM tests (mDNS conflicts in isolated VM network)
     systemd.services.avahi-alias-homeassistant.enable = lib.mkForce false;
 
-    # Disable CrowdSec firewall bouncer in VM tests (iptables/nftables not available in VM)
+    # Disable CrowdSec in VM tests (no network, failed DNS lookups cause repeated restarts)
+    services.crowdsec.enable = lib.mkForce false;
     services.crowdsec-firewall-bouncer.enable = lib.mkForce false;
 
     # Override Paperless-ngx to use test credentials (no sops paths)
