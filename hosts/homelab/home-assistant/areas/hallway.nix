@@ -45,6 +45,7 @@
     {
       id = "hallway_presence_3_lights_off";
       alias = "Hallway - Turn off lights zone 1 (sensor 3) on clear";
+      mode = "restart";
       trigger = [
         {
           platform = "state";
@@ -61,6 +62,9 @@
             "light.hue_essential_spot_1_2" # h-4
             "light.hue_essential_spot_2_2" # h-5
           ];
+          data = {
+            transition = 1;
+          };
         }
       ];
     }
@@ -101,6 +105,7 @@
     {
       id = "hallway_presence_2_lights_off";
       alias = "Hallway - Turn off lights zone 2 on clear";
+      mode = "restart";
       trigger = [
         {
           platform = "state";
@@ -116,6 +121,9 @@
             "light.hue_essential_spot_3_2" # h-1
             "light.hue_essential_spot_5" # h-2
           ];
+          data = {
+            transition = 1;
+          };
         }
       ];
     }

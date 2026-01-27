@@ -59,6 +59,49 @@ in {
     # Adaptive Lighting
     # -----------------------------------------
     {
+      id = "sleep_mode_force_hallway_lights_off";
+      alias = "System - Force hallway lights off at sleep mode";
+      description = "Ensure hallway lights turn off when sleep mode activates, unless presence detected";
+      trigger = [
+        {
+          platform = "state";
+          entity_id = "input_boolean.sleep_mode";
+          to = "on";
+        }
+      ];
+      condition = [
+        {
+          condition = "state";
+          entity_id = "binary_sensor.presence_sensor_fp2_fac2_presence_sensor_2";
+          state = "off";
+          for = "00:00:10";
+        }
+        {
+          condition = "state";
+          entity_id = "binary_sensor.presence_sensor_fp2_fac2_presence_sensor_3";
+          state = "off";
+          for = "00:00:10";
+        }
+      ];
+      action = [
+        {
+          service = "light.turn_off";
+          target.entity_id = [
+            "light.hue_essential_spot_3_2" # h-1
+            "light.hue_essential_spot_5" # h-2
+            "light.hue_essential_spot_4_2" # h-3
+            "light.hue_essential_spot_1_2" # h-4
+            "light.hue_essential_spot_2_2" # h-5
+          ];
+          data = {
+            transition = 2;
+          };
+        }
+      ];
+      mode = "single";
+    }
+
+    {
       id = "adaptive_lighting_enable_sleep_mode";
       alias = "Adaptive Lighting - Enable sleep mode on sleep";
       description = "Enable sleep mode on all adaptive lighting switches when sleep mode is activated";
@@ -67,6 +110,7 @@ in {
           platform = "state";
           entity_id = "input_boolean.sleep_mode";
           to = "on";
+          for = "00:01:00";
         }
       ];
       action = [
@@ -133,6 +177,57 @@ in {
           target.entity_id = "input_boolean.sleep_mode";
         }
       ];
+    }
+
+    # -----------------------------------------
+    # Stuck Light Detection
+    # -----------------------------------------
+    {
+      id = "hallway_lights_stuck_alert";
+      alias = "Alert - Hallway lights stuck on during sleep";
+      description = "Notify when hallway lights stay on >5min during sleep mode without presence";
+      trigger = [
+        {
+          platform = "state";
+          entity_id = [
+            "light.hue_essential_spot_3_2"
+            "light.hue_essential_spot_5"
+          ];
+          to = "on";
+          for = "00:05:00";
+        }
+      ];
+      condition = [
+        {
+          condition = "state";
+          entity_id = "input_boolean.sleep_mode";
+          state = "on";
+        }
+        {
+          condition = "state";
+          entity_id = "binary_sensor.presence_sensor_fp2_fac2_presence_sensor_2";
+          state = "off";
+          for = "00:01:00";
+        }
+      ];
+      action = [
+        {
+          service = "persistent_notification.create";
+          data = {
+            title = "Hallway Lights Stuck";
+            message = "Zone 2 lights on >5min during sleep without presence. Check automation logs.";
+            notification_id = "hallway_lights_stuck";
+          };
+        }
+        {
+          service = "light.turn_off";
+          target.entity_id = [
+            "light.hue_essential_spot_3_2"
+            "light.hue_essential_spot_5"
+          ];
+        }
+      ];
+      mode = "single";
     }
 
     # -----------------------------------------
