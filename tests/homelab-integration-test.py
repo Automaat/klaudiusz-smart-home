@@ -168,6 +168,7 @@ expected_errors = [
     "Command failed (with return code 2): jq",  # comin store.json doesn't exist in test
     "Theme Catppuccin Latte not found",  # Theme not installed in test environment
     "invalid_entity_id",  # Test environment doesn't have all entities
+    "Error doing job: Task exception was never retrieved",  # Caused by invalid_entity_id in test
     "InfluxDB bucket is not accessible",  # InfluxDB token not configured in test
     "Error requesting homeassistant_alerts data",  # No internet in test VM
 ]
