@@ -3,7 +3,24 @@
   pkgs,
   lib,
   ...
-}: {
+}: let
+  tvAmbientConditions = [
+    {
+      condition = "state";
+      entity_id = "media_player.tv";
+      state = "playing";
+    }
+    {
+      condition = "sun";
+      after = "sunset";
+    }
+    {
+      condition = "state";
+      entity_id = "input_boolean.sleep_mode";
+      state = "off";
+    }
+  ];
+in {
   # ===========================================
   # Hallway
   # ===========================================
@@ -28,16 +45,40 @@
       ];
       action = [
         {
-          service = "adaptive_lighting.apply";
-          data = {
-            entity_id = "switch.adaptive_lighting_hallway_lights";
-            lights = [
-              "light.hue_essential_spot_4_2" # h-3
-              "light.hue_essential_spot_1_2" # h-4
-              "light.hue_essential_spot_2_2" # h-5
-            ];
-            turn_on_lights = true;
-          };
+          choose = [
+            {
+              conditions = tvAmbientConditions;
+              sequence = [
+                {
+                  service = "adaptive_lighting.apply";
+                  data = {
+                    entity_id = "switch.adaptive_lighting_hallway_lights";
+                    lights = [
+                      "light.hue_essential_spot_4_2" # h-3
+                      "light.hue_essential_spot_1_2" # h-4
+                      "light.hue_essential_spot_2_2" # h-5
+                    ];
+                    brightness_pct = 40;
+                    turn_on_lights = true;
+                  };
+                }
+              ];
+            }
+          ];
+          default = [
+            {
+              service = "adaptive_lighting.apply";
+              data = {
+                entity_id = "switch.adaptive_lighting_hallway_lights";
+                lights = [
+                  "light.hue_essential_spot_4_2" # h-3
+                  "light.hue_essential_spot_1_2" # h-4
+                  "light.hue_essential_spot_2_2" # h-5
+                ];
+                turn_on_lights = true;
+              };
+            }
+          ];
         }
       ];
     }
