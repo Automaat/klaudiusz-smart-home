@@ -3,7 +3,24 @@
   pkgs,
   lib,
   ...
-}: {
+}: let
+  tvAmbientConditions = [
+    {
+      condition = "state";
+      entity_id = "media_player.tv";
+      state = "playing";
+    }
+    {
+      condition = "sun";
+      after = "sunset";
+    }
+    {
+      condition = "state";
+      entity_id = "input_boolean.sleep_mode";
+      state = "off";
+    }
+  ];
+in {
   # ===========================================
   # Hallway
   # ===========================================
@@ -30,22 +47,7 @@
         {
           choose = [
             {
-              conditions = [
-                {
-                  condition = "state";
-                  entity_id = "media_player.tv";
-                  state = "playing";
-                }
-                {
-                  condition = "sun";
-                  after = "sunset";
-                }
-                {
-                  condition = "state";
-                  entity_id = "input_boolean.sleep_mode";
-                  state = "off";
-                }
-              ];
+              conditions = tvAmbientConditions;
               sequence = [
                 {
                   service = "adaptive_lighting.apply";
