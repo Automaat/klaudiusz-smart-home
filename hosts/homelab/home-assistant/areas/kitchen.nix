@@ -3,24 +3,7 @@
   pkgs,
   lib,
   ...
-}: let
-  tvAmbientConditions = [
-    {
-      condition = "state";
-      entity_id = "media_player.tv";
-      state = "playing";
-    }
-    {
-      condition = "sun";
-      after = "sunset";
-    }
-    {
-      condition = "state";
-      entity_id = "input_boolean.sleep_mode";
-      state = "off";
-    }
-  ];
-in {
+}: {
   # ===========================================
   # Kitchen
   # ===========================================
@@ -53,32 +36,12 @@ in {
       ];
       action = [
         {
-          choose = [
-            {
-              conditions = tvAmbientConditions;
-              sequence = [
-                {
-                  service = "adaptive_lighting.apply";
-                  data = {
-                    entity_id = "switch.adaptive_lighting_kitchen_lights";
-                    lights = ["light.kitchen"];
-                    brightness_pct = 40;
-                    turn_on_lights = true;
-                  };
-                }
-              ];
-            }
-          ];
-          default = [
-            {
-              service = "adaptive_lighting.apply";
-              data = {
-                entity_id = "switch.adaptive_lighting_kitchen_lights";
-                lights = ["light.kitchen"];
-                turn_on_lights = true;
-              };
-            }
-          ];
+          service = "adaptive_lighting.apply";
+          data = {
+            entity_id = "switch.adaptive_lighting_kitchen_lights";
+            lights = ["light.kitchen"];
+            turn_on_lights = true;
+          };
         }
       ];
     }
