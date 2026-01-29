@@ -21,6 +21,7 @@
           webhook_id = "zoom_meeting_7cca0951_0a49_4bdc_a8d3_cc46ea7d8980";
           allowed_methods = ["POST"];
           local_only = true;
+          "for" = "00:00:05"; # Debounce: ignore state changes < 5 seconds apart
         }
       ];
       action = [
