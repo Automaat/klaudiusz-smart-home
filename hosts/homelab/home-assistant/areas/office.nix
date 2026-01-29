@@ -15,16 +15,19 @@
       id = "zoom_meeting_smart_plug";
       alias = "Office - Zoom meeting smart plug control";
       description = "Turn on/off office smart plug based on Zoom meeting state via webhook";
+      mode = "restart"; # Debounce: restart automation if webhook fires during delay
       trigger = [
         {
           platform = "webhook";
           webhook_id = "zoom_meeting_7cca0951_0a49_4bdc_a8d3_cc46ea7d8980";
           allowed_methods = ["POST"];
           local_only = true;
-          "for" = "00:00:05"; # Debounce: ignore state changes < 5 seconds apart
         }
       ];
       action = [
+        {
+          delay = "00:00:05"; # Wait 5s - cancelled if new webhook arrives
+        }
         {
           choose = [
             # Meeting started → turn on
