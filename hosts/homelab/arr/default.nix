@@ -63,11 +63,13 @@
           exit 0
         fi
 
+        # Transmission listens on wg-br bridge (not localhost) inside VPN namespace
         GATEWAY="10.2.0.1"
+        TRANSMISSION_RPC="192.168.15.1:9091"
 
         # Get Transmission's current listening port (or use default)
         CURRENT_PORT=$(${pkgs.iproute2}/bin/ip netns exec wg \
-          ${pkgs.transmission_4}/bin/transmission-remote localhost:9091 \
+          ${pkgs.transmission_4}/bin/transmission-remote "$TRANSMISSION_RPC" \
           --session-info 2>/dev/null | \
           ${pkgs.ripgrep}/bin/rg 'Listening port: (\d+)' -r '$1' || echo "51413")
 
@@ -106,7 +108,7 @@
         if [ "$MAPPED_PORT" != "$PREV_PORT" ]; then
           echo "Port changed ($PREV_PORT -> $MAPPED_PORT), updating Transmission..."
           ${pkgs.iproute2}/bin/ip netns exec wg \
-            ${pkgs.transmission_4}/bin/transmission-remote localhost:9091 \
+            ${pkgs.transmission_4}/bin/transmission-remote "$TRANSMISSION_RPC" \
             --port "$MAPPED_PORT" || echo "WARNING: Failed to update Transmission port"
           echo "$MAPPED_PORT" > "$PREV_PORT_FILE"
         else
