@@ -1,4 +1,4 @@
-"""Quirk for LUMI lumi.motion.agl8."""
+"""Quirk for LUMI lumi.sensor_occupy.agl8."""
 
 from typing import Any, Final
 

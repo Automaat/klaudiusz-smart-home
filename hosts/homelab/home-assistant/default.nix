@@ -254,6 +254,11 @@
   deepgramSTTSource = ../../../custom_components/deepgram_stt;
 
   # ===========================================
+  # Custom ZHA Quirks
+  # ===========================================
+  customZHAQuirksSource = ./custom_zha_quirks;
+
+  # ===========================================
   # Custom Python Packages
   # ===========================================
   # Function that builds custom packages with HA's Python environment
@@ -546,7 +551,7 @@ in {
       ln -sfn ${flowerCardSource} /var/lib/hass/www/community/flower-card
 
       # Create custom ZHA quirks symlink (Aqara FP300 support)
-      ln -sfn ${./custom_zha_quirks} /var/lib/hass/custom_zha_quirks
+      ln -sfn ${customZHAQuirksSource} /var/lib/hass/custom_zha_quirks
     '';
 
     # Force derivation update when HA config changes
