@@ -76,5 +76,13 @@ in {
       mode = "0400";
       restartUnits = ["cloudflared-tunnel-${cloudflareTunnelId}.service"];
     };
+
+    # ProtonVPN WireGuard config
+    "protonvpn-wg-conf" = {
+      format = "binary";
+      sopsFile = ../../secrets/protonvpn-wg.conf;
+      mode = "0400";
+      restartUnits = ["transmission-port-forwarding.service"];
+    };
   };
 }

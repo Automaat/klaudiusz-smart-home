@@ -47,6 +47,9 @@ in {
   nixpkgs.config.allowUnfree = true;
   nix.settings.experimental-features = ["nix-command" "flakes"];
 
+  # Enable WireGuard kernel module
+  networking.wireguard.enable = true;
+
   # ===========================================
   # Boot (adjust for your hardware)
   # ===========================================
@@ -66,6 +69,8 @@ in {
     hostName = "homelab";
     # Fallback DNS servers (used when Tailscale DNS fails)
     nameservers = ["1.1.1.1" "8.8.8.8"];
+    # Disable IPv6 (required for ProtonVPN NAT-PMP)
+    enableIPv6 = false;
     networkmanager = {
       enable = true;
       dns = "none"; # Let NixOS manage DNS, not NetworkManager
