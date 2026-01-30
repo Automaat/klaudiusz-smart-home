@@ -58,7 +58,7 @@
         set -euo pipefail
 
         # Check if wg namespace exists (exit successfully if not ready yet, timer will retry)
-        if ! ${pkgs.iproute2}/bin/ip netns list | ${pkgs.gnugrep}/bin/grep -q '^wg$'; then
+        if ! ${pkgs.iproute2}/bin/ip netns list | ${pkgs.gnugrep}/bin/grep -q '^wg\b'; then
           echo "VPN namespace 'wg' not ready yet, skipping (timer will retry)"
           exit 0
         fi
