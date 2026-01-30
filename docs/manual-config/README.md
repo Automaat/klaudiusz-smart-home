@@ -1,11 +1,12 @@
 # Manual Configuration Steps
 
 This directory contains instructions for configuration that cannot be done
-declaratively through NixOS and must be performed manually through the
-Home Assistant UI.
+declaratively through NixOS and must be performed manually through web UIs
+(Home Assistant or service-specific interfaces).
 
 ## Integrations
 
+- **[Nixarr Media Server](nixarr.md)** - Jellyfin, Sonarr, Radarr, Prowlarr, Bazarr, Transmission setup
 - **[Zigbee Home Automation (ZHA)](zha.md)** - Zigbee device pairing and setup
 - **[Cloudflare Tunnel](cloudflared.md)** - Secure external access via ha.mskalski.dev
 - **[Better Thermostat](better-thermostat.md)** - Use external temperature sensors for thermostat control

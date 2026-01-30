@@ -35,6 +35,7 @@ in {
     ./hardware-configuration.nix
     ./home-assistant
     ./grafana
+    ./arr
     ./secrets.nix
     ./users.nix
   ];
@@ -75,6 +76,13 @@ in {
         22 # SSH
         3000 # Grafana
         8123 # Home Assistant
+        8096 # Jellyfin
+        8989 # Sonarr
+        7878 # Radarr
+        9696 # Prowlarr
+        6767 # Bazarr
+        9091 # Transmission
+        5055 # Jellyseerr
       ];
       allowedUDPPorts = [
         config.services.tailscale.port # Tailscale
@@ -97,7 +105,7 @@ in {
   # ===========================================
   users.users.admin = {
     isNormalUser = true;
-    extraGroups = ["wheel" "networkmanager" "dialout"]; # dialout for Zigbee USB
+    extraGroups = ["wheel" "networkmanager" "dialout" "media"]; # dialout for Zigbee USB, media for Nixarr
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMnlSO5YSaF10lrs9q4Z6QJ2LZp4oDHgZ5xR9VaaR+cX skalskimarcin33@gmail.com"
     ];
