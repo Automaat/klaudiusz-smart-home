@@ -2,7 +2,8 @@
 
 ## Overview
 
-Aqara FP300 multi-sensor with mmWave presence detection, PIR motion, temperature, humidity, and illuminance sensors. Supports Zigbee (via ZHA custom quirk) and Matter/Thread.
+Aqara FP300 multi-sensor with mmWave presence detection, PIR motion, temperature, humidity, and illuminance
+sensors. Supports Zigbee (via ZHA custom quirk) and Matter/Thread.
 
 ## Why Manual Configuration
 
@@ -44,6 +45,7 @@ Aqara FP300 multi-sensor with mmWave presence detection, PIR motion, temperature
 5. Follow on-screen prompts to complete pairing
 
 **Expected entities:**
+
 - Binary sensor: Presence (main occupancy)
 - Binary sensor: PIR detection (diagnostic, initially disabled)
 - Sensor: Target distance (diagnostic)
@@ -59,6 +61,7 @@ Aqara FP300 multi-sensor with mmWave presence detection, PIR motion, temperature
 **Check entities count:** 30+ entities expected (vs ~5 without quirk)
 
 **If entities missing:**
+
 1. Remove device from ZHA: **Settings → Devices & Services → ZHA → {Device} → Delete**
 2. Factory reset FP300 (hold button 10+ seconds until LED flashes)
 3. Re-pair device (repeat Step 2)
@@ -90,6 +93,7 @@ FP300 detects presence in 6 configurable 1-meter segments (0-6m total):
 ### Absence Delay
 
 Time (seconds) after motion stops before marking absent:
+
 - Min: 10s, Max: 300s, Step: 5s
 - Higher values reduce state flicker
 - Lower values improve responsiveness
@@ -107,6 +111,7 @@ Time (seconds) after motion stops before marking absent:
 **Current version:** v5841 (Zigbee, Jan 2026)
 
 **Update method:**
+
 1. Open Aqara app
 2. Select device
 3. Check for firmware updates
