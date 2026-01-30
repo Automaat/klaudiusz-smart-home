@@ -222,7 +222,7 @@
     owner = "Olen";
     repo = "home-assistant-openplantbook";
     # renovate: datasource=github-tags depName=Olen/home-assistant-openplantbook
-    rev = "v1.3.1";
+    rev = "v1.3.2";
     hash = "sha256-PSax6WFUSEouJL1jes9T+nWdVh8ix5Ue5NE8TeScNfM=";
   };
 
