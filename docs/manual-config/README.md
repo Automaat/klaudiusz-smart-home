@@ -6,6 +6,7 @@ Home Assistant UI.
 
 ## Integrations
 
+- **[Nixarr Media Server](nixarr.md)** - Jellyfin, Sonarr, Radarr, Prowlarr, Bazarr, Transmission setup
 - **[Zigbee Home Automation (ZHA)](zha.md)** - Zigbee device pairing and setup
 - **[Cloudflare Tunnel](cloudflared.md)** - Secure external access via ha.mskalski.dev
 - **[Better Thermostat](better-thermostat.md)** - Use external temperature sensors for thermostat control
