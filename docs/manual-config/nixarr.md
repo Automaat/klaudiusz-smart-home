@@ -20,9 +20,9 @@ done through each service's web UI.
 
 **Storage:**
 
-- `/media/downloads/` - Transmission downloads
-- `/media/tv/` - Sonarr library
-- `/media/movies/` - Radarr library
+- `/media/torrents/` - Transmission downloads (categorized by service)
+- `/media/library/shows/` - Sonarr library (TV shows)
+- `/media/library/movies/` - Radarr library (Movies)
 - `/data/.state/nixarr/` - Service configs/databases
 
 **Critical:** All on same filesystem (`/dev/sda2`) for hardlinks - prevents
@@ -56,12 +56,12 @@ file duplication when importing downloads.
    - Click **Add Media Library**
    - **Content type:** Shows
    - **Display name:** TV Shows
-   - **Folders:** Click **+** → Enter `/media/tv` → **OK**
+   - **Folders:** Click **+** → Enter `/media/library/shows` → **OK**
    - **Save**
    - Click **Add Media Library** again
    - **Content type:** Movies
    - **Display name:** Movies
-   - **Folders:** Click **+** → Enter `/media/movies` → **OK**
+   - **Folders:** Click **+** → Enter `/media/library/movies` → **OK**
    - **Save**
    - **Next**
 5. **Preferred Metadata Language:** English (or Polish)
@@ -74,7 +74,7 @@ file duplication when importing downloads.
 
 1. Navigate to **Dashboard** → **Libraries**
 2. Verify `TV Shows` and `Movies` libraries visible
-3. Check paths: `/media/tv` and `/media/movies`
+3. Check paths: `/media/library/shows` and `/media/library/movies`
 
 ## 2. Prowlarr Setup
 
@@ -150,7 +150,7 @@ file duplication when importing downloads.
 1. Open Transmission web UI (enter credentials if prompted)
 2. Click **Settings** gear icon (top-right)
 3. Navigate to **Torrents** tab
-4. Verify **Download to:** `/media/downloads`
+4. Verify **Download to:** `/media/torrents` (categorized by service via Sonarr/Radarr)
 5. **Seeding:**
    - Stop seeding at ratio: `2.0` (adjust as desired)
    - Or stop seeding after: `7 days`
@@ -171,7 +171,7 @@ file duplication when importing downloads.
 
 1. Navigate to **Settings** → **Media Management**
 2. Under **Root Folders**, click **Add Root Folder** (+)
-3. Enter `/media/tv`
+3. Enter `/media/library/shows`
 4. **OK**
 
 ### Add Download Client
@@ -207,7 +207,7 @@ file duplication when importing downloads.
 
 **Access:** <http://homelab:7878> or <http://192.168.0.241:7878>
 
-**NOTE:** Radarr setup identical to Sonarr, just use `/media/movies` as root folder.
+**NOTE:** Radarr setup identical to Sonarr, just use `/media/library/movies` as root folder.
 
 ### Initial Configuration
 
@@ -220,7 +220,7 @@ file duplication when importing downloads.
 
 1. Navigate to **Settings** → **Media Management**
 2. Under **Root Folders**, click **Add Root Folder** (+)
-3. Enter `/media/movies`
+3. Enter `/media/library/movies`
 4. **OK**
 
 ### Add Download Client
@@ -320,7 +320,7 @@ file duplication when importing downloads.
 4. **Test** → Should show quality profiles and root folders
 5. Select:
    - **Quality Profile:** (choose default or preferred)
-   - **Root Folder:** `/media/tv`
+   - **Root Folder:** `/media/library/shows`
    - **Language Profile:** (optional)
 6. **Save Changes**
 
@@ -337,7 +337,7 @@ file duplication when importing downloads.
    - **API Key:** (copy from Radarr)
    - **URL Base:** (leave blank)
 4. **Test** → **Save Changes**
-5. Select quality profile and root folder `/media/movies`
+5. Select quality profile and root folder `/media/library/movies`
 
 ### Configure Permissions
 
@@ -379,7 +379,11 @@ curl -I http://homelab:5055  # Jellyseerr
 ```bash
 # Check directories created
 ssh homelab "ls -la /media"
-# Should show: downloads/, tv/, movies/
+# Should show: library/, torrents/
+
+# Check library subdirectories
+ssh homelab "ls -la /media/library"
+# Should show: shows/, movies/, music/, books/, audiobooks/
 
 # Check state directories
 ssh homelab "ls -la /data/.state/nixarr"
@@ -410,10 +414,10 @@ ssh homelab "df -h | grep sda2"
 
    ```bash
    # Find downloaded file
-   ssh homelab "find /media/downloads -name '*.mkv' -type f -exec stat {} \;"
+   ssh homelab "find /media/torrents -name '*.mkv' -type f -exec stat {} \;"
 
    # Find imported file
-   ssh homelab "find /media/tv -name '*.mkv' -type f -exec stat {} \;"
+   ssh homelab "find /media/library/shows -name '*.mkv' -type f -exec stat {} \;"
 
    # Same inode number = hardlink working (no duplication)
    ```
@@ -462,12 +466,13 @@ ssh homelab "sudo systemctl restart <service>"
 
 ```bash
 # Verify same filesystem
-ssh homelab "df /media/downloads /media/tv /media/movies"
+ssh homelab "df /media/torrents /media/library/shows /media/library/movies"
 # All should show same device (e.g., /dev/sda2)
 
 # Check permissions
 ssh homelab "ls -la /media"
-ssh homelab "ls -la /media/downloads"
+ssh homelab "ls -la /media/library"
+ssh homelab "ls -la /media/torrents"
 ```
 
 ### Jellyfin Not Showing Content
@@ -484,7 +489,7 @@ ssh homelab "ls -la /media/downloads"
 ```bash
 # 1. Stop services (automatic when disabling module)
 # 2. Remove data
-ssh homelab "sudo rm -rf /data/.state/nixarr /media"
+ssh homelab "sudo rm -rf /data/.state/nixarr /media/library /media/torrents"
 
 # 3. Remove module from git
 # - Delete hosts/homelab/arr/
