@@ -15,6 +15,12 @@ creation_rules:
           - *homelab
           - *local
           - *test
+  - path_regex: secrets/protonvpn-wg\.conf$
+    key_groups:
+      - age:
+          - *homelab
+          - *local
+          - *test
   - path_regex: tests/[^/]+\.yaml$
     key_groups:
       - age:

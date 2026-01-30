@@ -537,7 +537,7 @@ WireGuard connection. Sonarr/Radarr/Prowlarr remain on LAN to avoid rate limitin
 **2. Encrypt with SOPS:**
 
 ```bash
-cd /Users/marcin.skalski@konghq.com/sideprojects/klaudiusz-smart-home
+cd /path/to/your/klaudiusz-smart-home
 
 # Copy downloaded config
 cp ~/Downloads/protonvpn.conf secrets/protonvpn-wg.conf.plain
@@ -627,7 +627,7 @@ ssh homelab "cat /run/transmission-natpmp-port"
 
 ```bash
 # Extract gateway from config
-grep -oP 'Endpoint = \K[^:]+' secrets/protonvpn-wg.conf.plain
+sed -n 's/^Endpoint = \([^:]*\):.*/\1/p' secrets/protonvpn-wg.conf.plain
 ```
 
 Standard ProtonVPN gateway: `10.2.0.1` (most servers). If different, update systemd service.

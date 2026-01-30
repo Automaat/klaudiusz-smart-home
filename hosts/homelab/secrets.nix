@@ -82,7 +82,11 @@ in {
       format = "binary";
       sopsFile = ../../secrets/protonvpn-wg.conf;
       mode = "0400";
-      restartUnits = ["transmission-port-forwarding.service"];
+      restartUnits = [
+        "wg-quick-wg0.service"
+        "transmission.service"
+        "transmission-port-forwarding.service"
+      ];
     };
   };
 }
