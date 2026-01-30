@@ -57,6 +57,12 @@
       ExecStart = pkgs.writeShellScript "transmission-natpmp" ''
         set -euo pipefail
 
+        # Check if wg namespace exists (exit successfully if not ready yet, timer will retry)
+        if ! ${pkgs.iproute2}/bin/ip netns list | ${pkgs.gnugrep}/bin/grep -q '^wg$'; then
+          echo "VPN namespace 'wg' not ready yet, skipping (timer will retry)"
+          exit 0
+        fi
+
         GATEWAY="10.2.0.1"
 
         # Get Transmission's current listening port (or use default)
