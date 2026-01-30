@@ -62,6 +62,11 @@
           entity_id = "input_boolean.away_mode";
           state = "off";
         }
+        {
+          condition = "state";
+          entity_id = "binary_sensor.presence_sensor_presence";
+          state = "on";
+        }
       ];
       action = [
         {

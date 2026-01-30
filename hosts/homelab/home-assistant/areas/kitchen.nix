@@ -20,6 +20,11 @@
       ];
       condition = [
         {
+          condition = "state";
+          entity_id = "binary_sensor.presence_sensor_fp2_b63f_presence_sensor_2";
+          state = "on";
+        }
+        {
           condition = "or";
           conditions = [
             {

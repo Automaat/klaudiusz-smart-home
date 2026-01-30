@@ -18,6 +18,13 @@
           to = "on";
         }
       ];
+      condition = [
+        {
+          condition = "state";
+          entity_id = "binary_sensor.motion_sensor";
+          state = "on";
+        }
+      ];
       action = [
         {
           service = "adaptive_lighting.apply";
