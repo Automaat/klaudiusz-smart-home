@@ -245,7 +245,7 @@
     repo = "lovelace-flower-card";
     # renovate: datasource=github-tags depName=Olen/lovelace-flower-card
     rev = "v2026.1.1";
-    hash = "sha256-drpzAhiSCdSBaIP1zbupX4tVOa1US9AnEToajnPr5eQ=";
+    hash = "sha256-X3bdYkdm72ptix69gTmJ3TS4cwAU6HTEUM+m5OmHN/c=";
   };
 
   # ===========================================
