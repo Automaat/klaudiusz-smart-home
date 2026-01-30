@@ -30,8 +30,93 @@
     # Request management
     jellyseerr.enable = true;
 
-    # VPN (disabled for testing)
-    # vpn.enable = false;  # Enable later for privacy
+    # VPN configuration (transmission only)
+    vpn = {
+      enable = true;
+      wgConf = config.sops.secrets."protonvpn-wg-conf".path;
+    };
+
+    # Route transmission through VPN namespace
+    transmission.vpn = {
+      enable = true;
+    };
+  };
+
+  # ===========================================
+  # ProtonVPN NAT-PMP Port Forwarding
+  # ===========================================
+
+  environment.systemPackages = [pkgs.libnatpmp];
+
+  systemd.services."transmission-port-forwarding" = {
+    description = "ProtonVPN NAT-PMP port forwarding for Transmission";
+    after = ["network-online.target" "transmission.service"];
+    wants = ["network-online.target"];
+    serviceConfig = {
+      Type = "oneshot";
+      JoinsNamespaceOf = "transmission.service";
+      ExecStart = pkgs.writeShellScript "transmission-natpmp" ''
+        set -euo pipefail
+
+        GATEWAY="10.2.0.1"
+
+        # Get Transmission's current listening port (or use default)
+        CURRENT_PORT=$(${pkgs.transmission_4}/bin/transmission-remote localhost:9091 \
+          --session-info 2>/dev/null | \
+          ${pkgs.ripgrep}/bin/rg 'Listening port: (\d+)' -r '$1' || echo "51413")
+
+        echo "Current Transmission port: $CURRENT_PORT"
+        echo "Requesting NAT-PMP TCP port mapping..."
+
+        # Request mapping for current port (private=public ideally)
+        NATPMP_OUTPUT=$(${pkgs.libnatpmp}/bin/natpmpc -a "$CURRENT_PORT" 0 tcp 60 -g "$GATEWAY" 2>&1) || {
+          echo "ERROR: natpmpc failed: $NATPMP_OUTPUT" >&2
+          exit 1
+        }
+
+        MAPPED_PORT=$(echo "$NATPMP_OUTPUT" | ${pkgs.ripgrep}/bin/rg -o 'Mapped public port (\d+)' -r '$1')
+
+        if [ -z "$MAPPED_PORT" ]; then
+          echo "ERROR: Failed to extract mapped port" >&2
+          exit 1
+        fi
+
+        echo "Mapped public port: $MAPPED_PORT"
+
+        # Request UDP mapping for same port (BitTorrent uses TCP + UDP)
+        echo "Requesting NAT-PMP UDP port mapping..."
+        ${pkgs.libnatpmp}/bin/natpmpc -a "$CURRENT_PORT" 0 udp 60 -g "$GATEWAY" 2>&1 || {
+          echo "WARNING: UDP mapping failed (DHT/uTP may not work)" >&2
+        }
+
+        # Store port for next run comparison
+        RUNTIME_DIR="''${RUNTIME_DIRECTORY:-/run/transmission-natpmp}"
+        PREV_PORT_FILE="$RUNTIME_DIR/port"
+        PREV_PORT=""
+        [ -f "$PREV_PORT_FILE" ] && PREV_PORT=$(cat "$PREV_PORT_FILE")
+
+        if [ "$MAPPED_PORT" != "$PREV_PORT" ]; then
+          echo "Port changed ($PREV_PORT -> $MAPPED_PORT), updating Transmission..."
+          ${pkgs.transmission_4}/bin/transmission-remote localhost:9091 \
+            --port "$MAPPED_PORT" || echo "WARNING: Failed to update Transmission port"
+          echo "$MAPPED_PORT" > "$PREV_PORT_FILE"
+        else
+          echo "Port unchanged ($MAPPED_PORT), skipping Transmission update"
+        fi
+      '';
+      RuntimeDirectory = "transmission-natpmp";
+      RuntimeDirectoryMode = "0755";
+    };
+  };
+
+  systemd.timers."transmission-port-forwarding" = {
+    description = "Timer for ProtonVPN NAT-PMP port renewal";
+    wantedBy = ["timers.target"];
+    timerConfig = {
+      OnBootSec = "45s";
+      OnUnitActiveSec = "45s";
+      Unit = "transmission-port-forwarding.service";
+    };
   };
 
   # ===========================================

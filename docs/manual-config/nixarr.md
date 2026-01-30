@@ -514,10 +514,185 @@ sudo nixos-rebuild switch --flake /etc/nixos#homelab
 - [Jellyseerr Documentation](https://docs.jellyseerr.dev/)
 - [Transmission Manual](https://transmissionbt.com/)
 
+## ProtonVPN Integration
+
+**Architecture:** Transmission runs in isolated network namespace with ProtonVPN
+WireGuard connection. Sonarr/Radarr/Prowlarr remain on LAN to avoid rate limiting.
+
+**Features:**
+
+- Automatic NAT-PMP port forwarding (renewed every 45s)
+- Only Transmission uses VPN (via VPN-Confinement module)
+- Dynamic port mapping to Transmission on renewal
+
+### Manual Setup (One-Time)
+
+**1. Download WireGuard Config:**
+
+1. Login to [account.protonvpn.com](https://account.protonvpn.com) → Downloads → WireGuard configuration
+2. Select **P2P-optimized server** (e.g., NL-FREE#123)
+3. **Enable NAT-PMP checkbox** (critical for port forwarding)
+4. Download config, rename to `protonvpn.conf` (max 15 chars for systemd)
+
+**2. Encrypt with SOPS:**
+
+```bash
+cd /path/to/your/klaudiusz-smart-home
+
+# Copy downloaded config
+cp ~/Downloads/protonvpn.conf secrets/protonvpn-wg.conf.plain
+
+# Encrypt with sops
+sops -e secrets/protonvpn-wg.conf.plain > secrets/protonvpn-wg.conf
+
+# Securely delete plaintext
+shred -u secrets/protonvpn-wg.conf.plain
+
+# Add to git
+git add secrets/protonvpn-wg.conf
+```
+
+**3. Deploy:**
+
+```bash
+# Commit and push
+git commit -s -S -m "feat(nixarr): add ProtonVPN WireGuard config"
+git push
+
+# Wait for Comin to pull changes, or manually trigger:
+ssh homelab "sudo systemctl restart comin"
+```
+
+### Verification
+
+**Check VPN Connection:**
+
+```bash
+# Check VPN interface in namespace
+ssh homelab "sudo ip netns exec transmission-ns ip addr show wg0"
+
+# Verify VPN IP (should differ from host)
+ssh homelab "sudo ip netns exec transmission-ns curl -4 ifconfig.me"  # VPN IP
+ssh homelab "curl -4 ifconfig.me"  # Host IP (should differ)
+```
+
+**Check Port Forwarding:**
+
+```bash
+# Service status
+ssh homelab "systemctl status transmission-port-forwarding.service"
+
+# Recent logs
+ssh homelab "journalctl -u transmission-port-forwarding.service -n 50"
+
+# View mapped port
+ssh homelab "cat /run/transmission-natpmp-port"
+```
+
+**Test Port Forwarding (Functional):**
+
+1. Add legal torrent (e.g., Ubuntu ISO) via Transmission web UI
+2. Monitor for incoming connections in Transmission
+3. Incoming connections indicate port forwarding working
+
+**Verify Arr Services NOT Using VPN:**
+
+```bash
+# Prowlarr should use home IP (not VPN)
+# Test indexer searches - should not be rate limited
+```
+
+### Transmission Authentication
+
+**CRITICAL:** VPN namespace changes network exposure. Enable authentication:
+
+1. Edit Transmission settings (if not already enabled)
+2. Configure username/password
+3. Update Sonarr/Radarr download client credentials
+
+### Server Rotation
+
+**When to rotate:** Server maintenance, poor performance, IP flagged
+
+**Steps:**
+
+1. Download new WireGuard config from ProtonVPN (different server)
+2. Encrypt and replace `secrets/protonvpn-wg.conf`
+3. **Update gateway IP** if different:
+   - Check `Endpoint` line in downloaded config
+   - Update `GATEWAY` variable in `hosts/homelab/arr/default.nix` (line ~59)
+4. Commit, push, deploy
+
+**Gateway IP check:**
+
+```bash
+# Extract gateway from config
+sed -n 's/^Endpoint = \([^:]*\):.*/\1/p' secrets/protonvpn-wg.conf.plain
+```
+
+Standard ProtonVPN gateway: `10.2.0.1` (most servers). If different, update systemd service.
+
+### Troubleshooting
+
+**VPN not connecting:**
+
+```bash
+# Check WireGuard interface
+ssh homelab "sudo ip netns exec transmission-ns wg show"
+
+# Check systemd service
+ssh homelab "systemctl status wg-quick-wg0"
+
+# Verify config decrypted
+ssh homelab "sudo ls -la /run/secrets/protonvpn-wg-conf"
+```
+
+**Port forwarding failing:**
+
+```bash
+# Check NAT-PMP service logs
+ssh homelab "journalctl -u transmission-port-forwarding.service -n 100"
+
+# Common errors:
+# - "natpmpc failed" → VPN not connected or NAT-PMP not enabled
+# - "Failed to extract mapped port" → Gateway IP wrong or ProtonVPN config invalid
+```
+
+**Transmission not updating port:**
+
+```bash
+# Check Transmission RPC accessible
+ssh homelab "transmission-remote localhost:9091 --session-info"
+
+# Manually set port to test
+ssh homelab "transmission-remote localhost:9091 --port 12345"
+```
+
+**IPv6 Issues:**
+
+IPv6 disabled system-wide (required for ProtonVPN NAT-PMP). If issues:
+
+```bash
+# Check IPv6 disabled
+ssh homelab "cat /proc/sys/net/ipv6/conf/all/disable_ipv6"
+# Should output: 1
+```
+
+**Tailscale connectivity after IPv6 disable:** Test Tailscale peer connections:
+
+```bash
+tailscale ping homelab
+```
+
+If issues, check Tailscale logs:
+
+```bash
+ssh homelab "journalctl -u tailscaled -n 50"
+```
+
 ## Security Notes
 
-- **VPN:** Currently disabled. Enable the VPN option under the top-level `nixarr`
-  configuration for privacy when downloading from public trackers.
-- **Authentication:** Set passwords on all web UIs (especially if exposed beyond LAN).
+- **VPN:** Enabled via ProtonVPN WireGuard. Only Transmission uses VPN.
+- **Authentication:** Set passwords on all web UIs (especially Transmission, now VPN-exposed).
 - **Firewall:** Ports only accessible from LAN + Tailscale (not internet-exposed).
 - **Legal Content:** Only use for legal content (public domain, personal media, authorized downloads).
