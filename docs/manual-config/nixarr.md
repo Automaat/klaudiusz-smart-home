@@ -125,9 +125,28 @@ file duplication when importing downloads.
 
 **Access:** <http://homelab:9091> or <http://192.168.0.241:9091>
 
-### Verify Configuration
+### Secure Access
+
+**CRITICAL:** Port 9091 is open on firewall. Enable authentication to prevent unauthorized access.
 
 1. Open Transmission web UI
+2. Click **Settings** gear icon (top-right)
+3. Navigate to **Remote** / **Privacy** tab
+4. **Enable authentication:**
+   - Check **Use authentication**
+   - Username: (choose strong username)
+   - Password: (choose strong password, save to password manager)
+5. **Apply** → **Close**
+6. **Verify:** Reload page, should prompt for credentials
+
+**Alternative (Advanced):** Restrict via firewall:
+- Remove port 9091 from `networking.firewall.allowedTCPPorts`
+- Access via SSH tunnel: `ssh -L 9091:localhost:9091 homelab`
+- Or configure reverse proxy with authentication
+
+### Verify Download Configuration
+
+1. Open Transmission web UI (enter credentials if prompted)
 2. Click **Settings** gear icon (top-right)
 3. Navigate to **Torrents** tab
 4. Verify **Download to:** `/media/downloads`
@@ -135,8 +154,6 @@ file duplication when importing downloads.
    - Stop seeding at ratio: `2.0` (adjust as desired)
    - Or stop seeding after: `7 days`
 6. **Apply** → **Close**
-
-**NOTE:** Nixarr pre-configures most settings. No authentication setup needed.
 
 ## 4. Sonarr Setup
 
@@ -493,7 +510,7 @@ sudo nixos-rebuild switch --flake /etc/nixos#homelab
 
 ## Security Notes
 
-- **VPN:** Currently disabled. Enable `services.nixarr.vpn` for privacy when downloading from public trackers.
+- **VPN:** Currently disabled. Enable the VPN option under the top-level `nixarr` configuration for privacy when downloading from public trackers.
 - **Authentication:** Set passwords on all web UIs (especially if exposed beyond LAN).
 - **Firewall:** Ports only accessible from LAN + Tailscale (not internet-exposed).
 - **Legal Content:** Only use for legal content (public domain, personal media, authorized downloads).

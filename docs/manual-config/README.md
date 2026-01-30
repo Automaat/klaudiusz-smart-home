@@ -1,8 +1,8 @@
 # Manual Configuration Steps
 
 This directory contains instructions for configuration that cannot be done
-declaratively through NixOS and must be performed manually through the
-Home Assistant UI.
+declaratively through NixOS and must be performed manually through web UIs
+(Home Assistant or service-specific interfaces).
 
 ## Integrations
 
