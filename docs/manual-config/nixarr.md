@@ -1,12 +1,15 @@
 # Nixarr Media Server Stack
 
-**Why manual?** While Nixarr services are enabled declaratively, initial configuration (API keys, indexers, connections between services) must be done through each service's web UI.
+**Why manual?** While Nixarr services are enabled declaratively, initial
+configuration (API keys, indexers, connections between services) must be
+done through each service's web UI.
 
 **When to do this:** After first deployment when all services are running.
 
 ## Architecture Overview
 
 **Services:**
+
 - **Jellyfin** (8096): Media streaming server
 - **Sonarr** (8989): TV show management
 - **Radarr** (7878): Movie management
@@ -16,12 +19,14 @@
 - **Jellyseerr** (5055): Request interface for users
 
 **Storage:**
+
 - `/media/downloads/` - Transmission downloads
 - `/media/tv/` - Sonarr library
 - `/media/movies/` - Radarr library
 - `/data/.state/nixarr/` - Service configs/databases
 
-**Critical:** All on same filesystem (`/dev/sda2`) for hardlinks - prevents file duplication when importing downloads.
+**Critical:** All on same filesystem (`/dev/sda2`) for hardlinks - prevents
+file duplication when importing downloads.
 
 ## Initial Setup Order
 
@@ -37,7 +42,7 @@
 
 ## 1. Jellyfin Setup
 
-**Access:** http://homelab:8096 or http://192.168.0.241:8096
+**Access:** <http://homelab:8096> or <http://192.168.0.241:8096>
 
 ### Initial Wizard
 
@@ -73,7 +78,7 @@
 
 ## 2. Prowlarr Setup
 
-**Access:** http://homelab:9696 or http://192.168.0.241:9696
+**Access:** <http://homelab:9696> or <http://192.168.0.241:9696>
 
 ### Initial Configuration
 
@@ -118,7 +123,7 @@
 
 ## 3. Transmission Setup
 
-**Access:** http://homelab:9091 or http://192.168.0.241:9091
+**Access:** <http://homelab:9091> or <http://192.168.0.241:9091>
 
 ### Verify Configuration
 
@@ -135,7 +140,7 @@
 
 ## 4. Sonarr Setup
 
-**Access:** http://homelab:8989 or http://192.168.0.241:8989
+**Access:** <http://homelab:8989> or <http://192.168.0.241:8989>
 
 ### Initial Configuration
 
@@ -182,7 +187,7 @@
 
 ## 5. Radarr Setup
 
-**Access:** http://homelab:7878 or http://192.168.0.241:7878
+**Access:** <http://homelab:7878> or <http://192.168.0.241:7878>
 
 **NOTE:** Radarr setup identical to Sonarr, just use `/media/movies` as root folder.
 
@@ -219,7 +224,7 @@
 
 ## 6. Bazarr Setup
 
-**Access:** http://homelab:6767 or http://192.168.0.241:6767
+**Access:** <http://homelab:6767> or <http://192.168.0.241:6767>
 
 ### Initial Configuration
 
@@ -269,7 +274,7 @@
 
 ## 7. Jellyseerr Setup
 
-**Access:** http://homelab:5055 or http://192.168.0.241:5055
+**Access:** <http://homelab:5055> or <http://192.168.0.241:5055>
 
 ### Initial Wizard
 
@@ -384,6 +389,7 @@ ssh homelab "df -h | grep sda2"
    - Verify episode appears in **Series** list
 
 4. **Check Hardlinks:**
+
    ```bash
    # Find downloaded file
    ssh homelab "find /media/downloads -name '*.mkv' -type f -exec stat {} \;"
