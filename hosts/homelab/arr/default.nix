@@ -67,7 +67,7 @@
 
         # Get Transmission's current listening port (or use default)
         CURRENT_PORT=$(${pkgs.iproute2}/bin/ip netns exec wg \
-          ${pkgs.transmission_4}/bin/transmission-remote localhost:9091 \
+          ${pkgs.transmission_4}/bin/transmission-remote 192.168.15.1:9091 \
           --session-info 2>/dev/null | \
           ${pkgs.ripgrep}/bin/rg 'Listening port: (\d+)' -r '$1' || echo "51413")
 
@@ -106,7 +106,7 @@
         if [ "$MAPPED_PORT" != "$PREV_PORT" ]; then
           echo "Port changed ($PREV_PORT -> $MAPPED_PORT), updating Transmission..."
           ${pkgs.iproute2}/bin/ip netns exec wg \
-            ${pkgs.transmission_4}/bin/transmission-remote localhost:9091 \
+            ${pkgs.transmission_4}/bin/transmission-remote 192.168.15.1:9091 \
             --port "$MAPPED_PORT" || echo "WARNING: Failed to update Transmission port"
           echo "$MAPPED_PORT" > "$PREV_PORT_FILE"
         else
