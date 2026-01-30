@@ -8,6 +8,7 @@ declaratively through NixOS and must be performed manually through web UIs
 
 - **[Nixarr Media Server](nixarr.md)** - Jellyfin, Sonarr, Radarr, Prowlarr, Bazarr, Transmission setup
 - **[Zigbee Home Automation (ZHA)](zha.md)** - Zigbee device pairing and setup
+- **[Aqara FP300 Presence Sensor](aqara-fp300.md)** - mmWave presence sensor with ZHA custom quirk
 - **[Cloudflare Tunnel](cloudflared.md)** - Secure external access via ha.mskalski.dev
 - **[Better Thermostat](better-thermostat.md)** - Use external temperature sensors for thermostat control
 - **[Custom Conversation](custom-conversation.md)** - Fallback conversation agent (local intents → LLM)

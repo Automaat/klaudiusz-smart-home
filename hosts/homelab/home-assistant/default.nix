@@ -429,6 +429,8 @@ in {
       # ZHA (Zigbee Home Automation)
       zha = {
         database_path = "/var/lib/hass/zigbee.db";
+        custom_quirks_path = "/var/lib/hass/custom_zha_quirks";
+        enable_quirks = true;
       };
 
       # InfluxDB integration for Grafana dashboards
@@ -542,6 +544,9 @@ in {
 
       # Create Flower Card symlink
       ln -sfn ${flowerCardSource} /var/lib/hass/www/community/flower-card
+
+      # Create custom ZHA quirks symlink (Aqara FP300 support)
+      ln -sfn ${./custom_zha_quirks} /var/lib/hass/custom_zha_quirks
     '';
 
     # Force derivation update when HA config changes
