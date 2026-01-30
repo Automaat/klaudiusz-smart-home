@@ -90,7 +90,7 @@
       action = [
         {
           service = "light.turn_off";
-          target.entity_id = ["light.bathroom"];
+          target.entity_id = "light.bathroom";
           data = {
             transition = 1;
           };
