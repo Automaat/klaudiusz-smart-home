@@ -89,7 +89,7 @@
       };
 
       vmTest = import ./tests/vm-test.nix {
-        inherit pkgs self comin sops-nix;
+        inherit pkgs self comin sops-nix nixarr;
       };
     in {
       # Configuration validation tests

@@ -3,6 +3,7 @@
   self,
   comin,
   sops-nix,
+  nixarr,
   ...
 }:
 pkgs.testers.nixosTest {
@@ -17,6 +18,7 @@ pkgs.testers.nixosTest {
     imports = [
       comin.nixosModules.comin
       sops-nix.nixosModules.sops
+      nixarr.nixosModules.default
       ../hosts/homelab
     ];
 
@@ -97,6 +99,9 @@ pkgs.testers.nixosTest {
 
     # Disable CrowdSec firewall bouncer in VM tests (iptables/nftables not available in VM)
     services.crowdsec-firewall-bouncer.enable = lib.mkForce false;
+
+    # Disable Nixarr services in VM tests (not essential, reduces resource usage)
+    nixarr.enable = lib.mkForce false;
 
     # Run InfluxDB init in VM tests with hardcoded credentials
     systemd.services.influxdb2-init = {
