@@ -11,6 +11,7 @@
     {
       id = "kitchen_presence_lights_on";
       alias = "Kitchen - Turn on lights on presence";
+      mode = "restart";
       trigger = [
         {
           platform = "state";
@@ -18,35 +19,46 @@
           to = "on";
         }
       ];
-      condition = [
-        {
-          condition = "state";
-          entity_id = "binary_sensor.presence_sensor_fp2_b63f_presence_sensor_2";
-          state = "on";
-        }
-        {
-          condition = "or";
-          conditions = [
-            {
-              condition = "sun";
-              after = "sunset";
-            }
-            {
-              condition = "numeric_state";
-              entity_id = "sensor.kitchen_light_power";
-              below = 20;
-            }
-          ];
-        }
-      ];
       action = [
         {
-          service = "adaptive_lighting.apply";
-          data = {
-            entity_id = "switch.adaptive_lighting_kitchen_lights";
-            lights = ["light.kitchen"];
-            turn_on_lights = true;
-          };
+          delay = "00:00:02";
+        }
+        {
+          choose = [
+            {
+              conditions = [
+                {
+                  condition = "state";
+                  entity_id = "binary_sensor.presence_sensor_fp2_b63f_presence_sensor_2";
+                  state = "on";
+                }
+                {
+                  condition = "or";
+                  conditions = [
+                    {
+                      condition = "sun";
+                      after = "sunset";
+                    }
+                    {
+                      condition = "numeric_state";
+                      entity_id = "sensor.kitchen_light_power";
+                      below = 20;
+                    }
+                  ];
+                }
+              ];
+              sequence = [
+                {
+                  service = "adaptive_lighting.apply";
+                  data = {
+                    entity_id = "switch.adaptive_lighting_kitchen_lights";
+                    lights = ["light.kitchen"];
+                    turn_on_lights = true;
+                  };
+                }
+              ];
+            }
+          ];
         }
       ];
     }

@@ -49,6 +49,7 @@
     {
       id = "bathroom_presence_lights_on";
       alias = "Bathroom - Turn on lights on presence";
+      mode = "restart";
       trigger = [
         {
           platform = "state";
@@ -62,20 +63,33 @@
           entity_id = "input_boolean.away_mode";
           state = "off";
         }
-        {
-          condition = "state";
-          entity_id = "binary_sensor.presence_sensor_presence";
-          state = "on";
-        }
       ];
       action = [
         {
-          service = "adaptive_lighting.apply";
-          data = {
-            entity_id = "switch.adaptive_lighting_bathroom_lights";
-            lights = ["light.bathroom"];
-            turn_on_lights = true;
-          };
+          delay = "00:00:02";
+        }
+        {
+          choose = [
+            {
+              conditions = [
+                {
+                  condition = "state";
+                  entity_id = "binary_sensor.presence_sensor_presence";
+                  state = "on";
+                }
+              ];
+              sequence = [
+                {
+                  service = "adaptive_lighting.apply";
+                  data = {
+                    entity_id = "switch.adaptive_lighting_bathroom_lights";
+                    lights = ["light.bathroom"];
+                    turn_on_lights = true;
+                  };
+                }
+              ];
+            }
+          ];
         }
       ];
     }
