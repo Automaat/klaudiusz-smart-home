@@ -254,6 +254,11 @@
   deepgramSTTSource = ../../../custom_components/deepgram_stt;
 
   # ===========================================
+  # Custom ZHA Quirks
+  # ===========================================
+  customZHAQuirksSource = ./custom_zha_quirks;
+
+  # ===========================================
   # Custom Python Packages
   # ===========================================
   # Function that builds custom packages with HA's Python environment
@@ -429,6 +434,8 @@ in {
       # ZHA (Zigbee Home Automation)
       zha = {
         database_path = "/var/lib/hass/zigbee.db";
+        custom_quirks_path = "/var/lib/hass/custom_zha_quirks";
+        enable_quirks = true;
       };
 
       # InfluxDB integration for Grafana dashboards
@@ -542,6 +549,9 @@ in {
 
       # Create Flower Card symlink
       ln -sfn ${flowerCardSource} /var/lib/hass/www/community/flower-card
+
+      # Create custom ZHA quirks symlink (Aqara FP300 support)
+      ln -sfn ${customZHAQuirksSource} /var/lib/hass/custom_zha_quirks
     '';
 
     # Force derivation update when HA config changes
