@@ -11,6 +11,7 @@
     {
       id = "garderoba_motion_lights_on";
       alias = "Garderoba - Turn on lights on motion";
+      mode = "restart";
       trigger = [
         {
           platform = "state";
@@ -20,12 +21,30 @@
       ];
       action = [
         {
-          service = "adaptive_lighting.apply";
-          data = {
-            entity_id = "switch.adaptive_lighting_garderoba_lights";
-            lights = ["light.garderoba"];
-            turn_on_lights = true;
-          };
+          delay = "00:00:02";
+        }
+        {
+          choose = [
+            {
+              conditions = [
+                {
+                  condition = "state";
+                  entity_id = "binary_sensor.motion_sensor";
+                  state = "on";
+                }
+              ];
+              sequence = [
+                {
+                  service = "adaptive_lighting.apply";
+                  data = {
+                    entity_id = "switch.adaptive_lighting_garderoba_lights";
+                    lights = ["light.garderoba"];
+                    turn_on_lights = true;
+                  };
+                }
+              ];
+            }
+          ];
         }
       ];
     }

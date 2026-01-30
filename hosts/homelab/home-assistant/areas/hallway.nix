@@ -12,6 +12,7 @@
     {
       id = "hallway_presence_3_lights_on";
       alias = "Hallway - Turn on lights zone 1 (sensor 3) on presence";
+      mode = "restart";
       trigger = [
         {
           platform = "state";
@@ -28,16 +29,34 @@
       ];
       action = [
         {
-          service = "adaptive_lighting.apply";
-          data = {
-            entity_id = "switch.adaptive_lighting_hallway_lights";
-            lights = [
-              "light.hue_essential_spot_4_2" # h-3
-              "light.hue_essential_spot_1_2" # h-4
-              "light.hue_essential_spot_2_2" # h-5
-            ];
-            turn_on_lights = true;
-          };
+          delay = "00:00:02";
+        }
+        {
+          choose = [
+            {
+              conditions = [
+                {
+                  condition = "state";
+                  entity_id = "binary_sensor.presence_sensor_fp2_fac2_presence_sensor_3";
+                  state = "on";
+                }
+              ];
+              sequence = [
+                {
+                  service = "adaptive_lighting.apply";
+                  data = {
+                    entity_id = "switch.adaptive_lighting_hallway_lights";
+                    lights = [
+                      "light.hue_essential_spot_4_2" # h-3
+                      "light.hue_essential_spot_1_2" # h-4
+                      "light.hue_essential_spot_2_2" # h-5
+                    ];
+                    turn_on_lights = true;
+                  };
+                }
+              ];
+            }
+          ];
         }
       ];
     }
@@ -73,6 +92,7 @@
     {
       id = "hallway_presence_2_lights_on";
       alias = "Hallway - Turn on lights zone 2 on presence";
+      mode = "restart";
       trigger = [
         {
           platform = "state";
@@ -89,15 +109,33 @@
       ];
       action = [
         {
-          service = "adaptive_lighting.apply";
-          data = {
-            entity_id = "switch.adaptive_lighting_hallway_lights";
-            lights = [
-              "light.hue_essential_spot_3_2" # h-1
-              "light.hue_essential_spot_5" # h-2
-            ];
-            turn_on_lights = true;
-          };
+          delay = "00:00:02";
+        }
+        {
+          choose = [
+            {
+              conditions = [
+                {
+                  condition = "state";
+                  entity_id = "binary_sensor.presence_sensor_fp2_fac2_presence_sensor_2";
+                  state = "on";
+                }
+              ];
+              sequence = [
+                {
+                  service = "adaptive_lighting.apply";
+                  data = {
+                    entity_id = "switch.adaptive_lighting_hallway_lights";
+                    lights = [
+                      "light.hue_essential_spot_3_2" # h-1
+                      "light.hue_essential_spot_5" # h-2
+                    ];
+                    turn_on_lights = true;
+                  };
+                }
+              ];
+            }
+          ];
         }
       ];
     }
