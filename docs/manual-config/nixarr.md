@@ -516,9 +516,11 @@ sudo nixos-rebuild switch --flake /etc/nixos#homelab
 
 ## ProtonVPN Integration
 
-**Architecture:** Transmission runs in isolated network namespace with ProtonVPN WireGuard connection. Sonarr/Radarr/Prowlarr remain on LAN to avoid rate limiting.
+**Architecture:** Transmission runs in isolated network namespace with ProtonVPN
+WireGuard connection. Sonarr/Radarr/Prowlarr remain on LAN to avoid rate limiting.
 
 **Features:**
+
 - Automatic NAT-PMP port forwarding (renewed every 45s)
 - Only Transmission uses VPN (via VPN-Confinement module)
 - Dynamic port mapping to Transmission on renewal
