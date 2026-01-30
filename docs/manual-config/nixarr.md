@@ -140,6 +140,7 @@ file duplication when importing downloads.
 6. **Verify:** Reload page, should prompt for credentials
 
 **Alternative (Advanced):** Restrict via firewall:
+
 - Remove port 9091 from `networking.firewall.allowedTCPPorts`
 - Access via SSH tunnel: `ssh -L 9091:localhost:9091 homelab`
 - Or configure reverse proxy with authentication
@@ -510,7 +511,8 @@ sudo nixos-rebuild switch --flake /etc/nixos#homelab
 
 ## Security Notes
 
-- **VPN:** Currently disabled. Enable the VPN option under the top-level `nixarr` configuration for privacy when downloading from public trackers.
+- **VPN:** Currently disabled. Enable the VPN option under the top-level `nixarr`
+  configuration for privacy when downloading from public trackers.
 - **Authentication:** Set passwords on all web UIs (especially if exposed beyond LAN).
 - **Firewall:** Ports only accessible from LAN + Tailscale (not internet-exposed).
 - **Legal Content:** Only use for legal content (public domain, personal media, authorized downloads).
