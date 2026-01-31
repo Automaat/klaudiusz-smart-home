@@ -29,11 +29,8 @@
       enable = true;
       vpn.enable = true;
       extraSettings = {
-        # Fix 421 Misdirected Request - allow homelab hostname and LAN IP
-        rpc-host-whitelist = "homelab,192.168.0.241";
-        rpc-host-whitelist-enabled = true;
-
-        # Disable IP whitelist - authentication handles access control
+        # Disable whitelists - authentication handles access control
+        rpc-host-whitelist-enabled = false;
         rpc-whitelist-enabled = false;
 
         # Authentication - CRITICAL: port 9091 is firewall-exposed
