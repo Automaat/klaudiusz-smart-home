@@ -198,7 +198,7 @@
         rm -f "$ENV_FILE"
       fi
     '';
-    serviceConfig.EnvironmentFile = "/run/flood-transmission.env";
+    serviceConfig.EnvironmentFile = "-/run/flood-transmission.env";
     environment = {
       # Transmission RPC in VPN namespace
       TRANSMISSION_URL = "http://192.168.15.1:9091/transmission/rpc";
