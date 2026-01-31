@@ -296,7 +296,7 @@ in {
             action = "claude_brain.ask";
             data.query = "{{ query }}";
           }
-          { delay.seconds = 3; }
+          {delay.seconds = 3;}
         ];
         speech.text = "{{ states('input_text.claude_response') }}";
       };
@@ -311,7 +311,7 @@ in {
           {
             action = "claude_brain.confirm";
           }
-          { delay.seconds = 2; }
+          {delay.seconds = 2;}
         ];
         speech.text = "{{ states('input_text.claude_response') }}";
       };
@@ -326,7 +326,7 @@ in {
           {
             action = "claude_brain.cancel";
           }
-          { delay.seconds = 1; }
+          {delay.seconds = 1;}
         ];
         speech.text = "{{ states('input_text.claude_response') }}";
       };

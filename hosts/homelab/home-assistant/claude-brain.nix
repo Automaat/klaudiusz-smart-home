@@ -1,8 +1,9 @@
-{ config, lib, ... }:
-
 {
+  config,
+  lib,
+  ...
+}: {
   services.home-assistant.config = {
-
     # ===========================================
     # Input Helpers - Claude State Management
     # ===========================================

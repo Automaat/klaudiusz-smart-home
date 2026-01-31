@@ -2,14 +2,17 @@
 
 ## Overview
 
-Run Claude Code as headless HTTP server on Mac, integrated with HA as AI brain. HA becomes interface for voice I/O, Claude handles reasoning, device control, personal assistant tasks.
+Run Claude Code as headless HTTP server on Mac, integrated with HA as AI brain.
+HA becomes interface for voice I/O, Claude handles reasoning, device control, personal assistant tasks.
 
 **Architecture:**
-```
+
+```text
 Voice → Whisper STT → HA Conversation → HTTP → Claude Code MCP Server (Mac) → Response → Piper TTS
 ```
 
 **Key decisions:**
+
 - HTTP wrapper (not stdio) for HA rest_command integration
 - Mac launchd service (always-on, auto-restart)
 - Session-based conversations using `--session-id` (5 min timeout)
@@ -20,6 +23,7 @@ Voice → Whisper STT → HA Conversation → HTTP → Claude Code MCP Server (M
 ## Critical Files
 
 **New project (Mac):**
+
 1. `~/sideprojects/claude-ha-brain/` - Go HTTP server wrapping Claude Code CLI
 2. `~/Library/LaunchAgents/com.mskalski.claude-ha-brain.plist` - launchd auto-start service
 
@@ -61,178 +65,178 @@ touch main.go
 package main
 
 import (
-	"bytes"
-	"context"
-	"encoding/json"
-	"fmt"
-	"log"
-	"net/http"
-	"os/exec"
-	"regexp"
-	"strings"
-	"sync"
-	"time"
+    "bytes"
+    "context"
+    "encoding/json"
+    "fmt"
+    "log"
+    "net/http"
+    "os/exec"
+    "regexp"
+    "strings"
+    "sync"
+    "time"
 
-	"github.com/google/uuid"
+    "github.com/google/uuid"
 )
 
 const (
-	ClaudePath     = "/Users/marcin.skalski@konghq.com/.local/bin/claude"
-	WorkingDir     = "/Users/marcin.skalski@konghq.com/sideprojects/klaudiusz-smart-home"
-	SessionTimeout = 5 * time.Minute
-	Port           = "8742"
+    ClaudePath     = "/Users/marcin.skalski@konghq.com/.local/bin/claude"
+    WorkingDir     = "/Users/marcin.skalski@konghq.com/sideprojects/klaudiusz-smart-home"
+    SessionTimeout = 5 * time.Minute
+    Port           = "8742"
 )
 
 type PendingAction struct {
-	ID          string   `json:"id"`
-	Description string   `json:"description"`
-	Commands    []string `json:"commands"`
+    ID          string   `json:"id"`
+    Description string   `json:"description"`
+    Commands    []string `json:"commands"`
 }
 
 type Session struct {
-	ID            string
-	LastActivity  time.Time
-	PendingAction *PendingAction
+    ID            string
+    LastActivity  time.Time
+    PendingAction *PendingAction
 }
 
 type Server struct {
-	sessions sync.Map
-	mu       sync.RWMutex
+    sessions sync.Map
+    mu       sync.RWMutex
 }
 
 func NewServer() *Server {
-	s := &Server{}
-	go s.cleanupSessions()
-	return s
+    s := &Server{}
+    go s.cleanupSessions()
+    return s
 }
 
 func (s *Server) cleanupSessions() {
-	ticker := time.NewTicker(time.Minute)
-	defer ticker.Stop()
+    ticker := time.NewTicker(time.Minute)
+    defer ticker.Stop()
 
-	for range ticker.C {
-		now := time.Now()
-		s.sessions.Range(func(key, value interface{}) bool {
-			session := value.(*Session)
-			if now.Sub(session.LastActivity) > SessionTimeout {
-				log.Printf("Session %s expired", session.ID)
-				s.sessions.Delete(key)
-			}
-			return true
-		})
-	}
+    for range ticker.C {
+        now := time.Now()
+        s.sessions.Range(func(key, value interface{}) bool {
+            session := value.(*Session)
+            if now.Sub(session.LastActivity) > SessionTimeout {
+                log.Printf("Session %s expired", session.ID)
+                s.sessions.Delete(key)
+            }
+            return true
+        })
+    }
 }
 
 func (s *Server) getOrCreateSession(sessionID string) *Session {
-	if sessionID == "" {
-		sessionID = uuid.New().String()
-	}
+    if sessionID == "" {
+        sessionID = uuid.New().String()
+    }
 
-	val, _ := s.sessions.LoadOrStore(sessionID, &Session{
-		ID:           sessionID,
-		LastActivity: time.Now(),
-	})
+    val, _ := s.sessions.LoadOrStore(sessionID, &Session{
+        ID:           sessionID,
+        LastActivity: time.Now(),
+    })
 
-	session := val.(*Session)
-	session.LastActivity = time.Now()
-	return session
+    session := val.(*Session)
+    session.LastActivity = time.Now()
+    return session
 }
 
 func executeClaude(ctx context.Context, prompt string, sessionID string) (string, error) {
-	args := []string{
-		"-p", // Non-interactive headless mode
-		"--working-directory", WorkingDir,
-	}
+    args := []string{
+        "-p", // Non-interactive headless mode
+        "--working-directory", WorkingDir,
+    }
 
-	if sessionID != "" {
-		args = append(args, "--session-id", sessionID)
-	}
+    if sessionID != "" {
+        args = append(args, "--session-id", sessionID)
+    }
 
-	args = append(args, prompt)
+    args = append(args, prompt)
 
-	cmd := exec.CommandContext(ctx, ClaudePath, args...)
-	var stdout, stderr bytes.Buffer
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
+    cmd := exec.CommandContext(ctx, ClaudePath, args...)
+    var stdout, stderr bytes.Buffer
+    cmd.Stdout = &stdout
+    cmd.Stderr = &stderr
 
-	if err := cmd.Run(); err != nil {
-		return "", fmt.Errorf("claude failed: %v, stderr: %s", err, stderr.String())
-	}
+    if err := cmd.Run(); err != nil {
+        return "", fmt.Errorf("claude failed: %v, stderr: %s", err, stderr.String())
+    }
 
-	return strings.TrimSpace(stdout.String()), nil
+    return strings.TrimSpace(stdout.String()), nil
 }
 
 var dangerousPatterns = []*regexp.Regexp{
-	regexp.MustCompile(`(?i)wyłącz wszystk`),
-	regexp.MustCompile(`(?i)turn off all`),
-	regexp.MustCompile(`(?i)zamknij dom`),
-	regexp.MustCompile(`(?i)ustaw temperatur[ęe] (na|do) (1[0-5]|[0-9])`),
+    regexp.MustCompile(`(?i)wyłącz wszystk`),
+    regexp.MustCompile(`(?i)turn off all`),
+    regexp.MustCompile(`(?i)zamknij dom`),
+    regexp.MustCompile(`(?i)ustaw temperatur[ęe] (na|do) (1[0-5]|[0-9])`),
 }
 
 func isDangerousAction(text string) bool {
-	for _, pattern := range dangerousPatterns {
-		if pattern.MatchString(text) {
-			return true
-		}
-	}
-	return false
+    for _, pattern := range dangerousPatterns {
+        if pattern.MatchString(text) {
+            return true
+        }
+    }
+    return false
 }
 
 func (s *Server) handleAsk(w http.ResponseWriter, r *http.Request) {
-	var req struct {
-		Query         string `json:"query"`
-		SessionID     string `json:"session_id"`
-		ConfirmAction bool   `json:"confirm_action"`
-	}
+    var req struct {
+        Query         string `json:"query"`
+        SessionID     string `json:"session_id"`
+        ConfirmAction bool   `json:"confirm_action"`
+    }
 
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "Invalid JSON", http.StatusBadRequest)
-		return
-	}
+    if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+        http.Error(w, "Invalid JSON", http.StatusBadRequest)
+        return
+    }
 
-	if req.Query == "" {
-		http.Error(w, "Missing query", http.StatusBadRequest)
-		return
-	}
+    if req.Query == "" {
+        http.Error(w, "Missing query", http.StatusBadRequest)
+        return
+    }
 
-	session := s.getOrCreateSession(req.SessionID)
+    session := s.getOrCreateSession(req.SessionID)
 
-	// Handle action confirmation
-	if req.ConfirmAction && session.PendingAction != nil {
-		action := session.PendingAction
-		session.PendingAction = nil
+    // Handle action confirmation
+    if req.ConfirmAction && session.PendingAction != nil {
+        action := session.PendingAction
+        session.PendingAction = nil
 
-		executePrompt := fmt.Sprintf(`
+        executePrompt := fmt.Sprintf(`
 WYKONAJ: %s
 
 Użyj narzędzi ha-mcp aby wykonać powyższe komendy.
 Odpowiedz krótko "Wykonano" gdy zakończysz.
 `, strings.Join(action.Commands, ", "))
 
-		ctx, cancel := context.WithTimeout(r.Context(), 30*time.Second)
-		defer cancel()
+        ctx, cancel := context.WithTimeout(r.Context(), 30*time.Second)
+        defer cancel()
 
-		response, err := executeClaude(ctx, executePrompt, session.ID)
-		if err != nil {
-			log.Printf("Claude execution error: %v", err)
-			json.NewEncoder(w).Encode(map[string]interface{}{
-				"text":  "Przepraszam, nie mogę wykonać akcji.",
-				"error": err.Error(),
-			})
-			return
-		}
+        response, err := executeClaude(ctx, executePrompt, session.ID)
+        if err != nil {
+            log.Printf("Claude execution error: %v", err)
+            json.NewEncoder(w).Encode(map[string]interface{}{
+                "text":  "Przepraszam, nie mogę wykonać akcji.",
+                "error": err.Error(),
+            })
+            return
+        }
 
-		json.NewEncoder(w).Encode(map[string]interface{}{
-			"text":           response,
-			"language":       "pl",
-			"session_id":     session.ID,
-			"action_executed": true,
-		})
-		return
-	}
+        json.NewEncoder(w).Encode(map[string]interface{}{
+            "text":           response,
+            "language":       "pl",
+            "session_id":     session.ID,
+            "action_executed": true,
+        })
+        return
+    }
 
-	// Build system prompt
-	systemPrompt := fmt.Sprintf(`
+    // Build system prompt
+    systemPrompt := fmt.Sprintf(`
 JĘZYK: Odpowiadaj TYLKO po polsku.
 FORMAT: Zwięzłe odpowiedzi dla głosowego wyjścia (max 2-3 zdania).
 KONTEKST: Jesteś polskim asystentem domowym Klaudiusz.
@@ -252,126 +256,126 @@ Pytanie użytkownika: %s
 Odpowiedź (po polsku, zwięźle):
 `, req.Query)
 
-	ctx, cancel := context.WithTimeout(r.Context(), 30*time.Second)
-	defer cancel()
+    ctx, cancel := context.WithTimeout(r.Context(), 30*time.Second)
+    defer cancel()
 
-	response, err := executeClaude(ctx, systemPrompt, session.ID)
-	if err != nil {
-		log.Printf("Claude execution error: %v", err)
-		json.NewEncoder(w).Encode(map[string]interface{}{
-			"text":  "Przepraszam, nie mogę teraz odpowiedzieć.",
-			"error": err.Error(),
-		})
-		return
-	}
+    response, err := executeClaude(ctx, systemPrompt, session.ID)
+    if err != nil {
+        log.Printf("Claude execution error: %v", err)
+        json.NewEncoder(w).Encode(map[string]interface{}{
+            "text":  "Przepraszam, nie mogę teraz odpowiedzieć.",
+            "error": err.Error(),
+        })
+        return
+    }
 
-	// Check if permission required
-	if strings.Contains(response, "PERMISSION_REQUIRED:") {
-		re := regexp.MustCompile(`PERMISSION_REQUIRED: (.+?) \| COMMANDS: (.+)`)
-		matches := re.FindStringSubmatch(response)
-		if len(matches) == 3 {
-			description := strings.TrimSpace(matches[1])
-			commandsStr := matches[2]
-			commands := strings.Split(commandsStr, ",")
-			for i := range commands {
-				commands[i] = strings.TrimSpace(commands[i])
-			}
+    // Check if permission required
+    if strings.Contains(response, "PERMISSION_REQUIRED:") {
+        re := regexp.MustCompile(`PERMISSION_REQUIRED: (.+?) \| COMMANDS: (.+)`)
+        matches := re.FindStringSubmatch(response)
+        if len(matches) == 3 {
+            description := strings.TrimSpace(matches[1])
+            commandsStr := matches[2]
+            commands := strings.Split(commandsStr, ",")
+            for i := range commands {
+                commands[i] = strings.TrimSpace(commands[i])
+            }
 
-			actionID := uuid.New().String()
-			session.PendingAction = &PendingAction{
-				ID:          actionID,
-				Description: description,
-				Commands:    commands,
-			}
+            actionID := uuid.New().String()
+            session.PendingAction = &PendingAction{
+                ID:          actionID,
+                Description: description,
+                Commands:    commands,
+            }
 
-			json.NewEncoder(w).Encode(map[string]interface{}{
-				"text":               fmt.Sprintf("%s. Powiedz 'Tak' aby potwierdzić lub 'Nie' aby anulować.", description),
-				"language":           "pl",
-				"session_id":         session.ID,
-				"requires_permission": true,
-				"action_id":          actionID,
-				"action_description": description,
-			})
-			return
-		}
-	}
+            json.NewEncoder(w).Encode(map[string]interface{}{
+                "text":               fmt.Sprintf("%s. Powiedz 'Tak' aby potwierdzić lub 'Nie' aby anulować.", description),
+                "language":           "pl",
+                "session_id":         session.ID,
+                "requires_permission": true,
+                "action_id":          actionID,
+                "action_description": description,
+            })
+            return
+        }
+    }
 
-	// Check if dangerous but Claude didn't flag
-	if isDangerousAction(req.Query) && !strings.Contains(response, "PERMISSION_REQUIRED:") {
-		log.Printf("WARNING: Query flagged as dangerous: %s", req.Query)
-	}
+    // Check if dangerous but Claude didn't flag
+    if isDangerousAction(req.Query) && !strings.Contains(response, "PERMISSION_REQUIRED:") {
+        log.Printf("WARNING: Query flagged as dangerous: %s", req.Query)
+    }
 
-	json.NewEncoder(w).Encode(map[string]interface{}{
-		"text":       response,
-		"language":   "pl",
-		"session_id": session.ID,
-		"timestamp":  time.Now().Format(time.RFC3339),
-	})
+    json.NewEncoder(w).Encode(map[string]interface{}{
+        "text":       response,
+        "language":   "pl",
+        "session_id": session.ID,
+        "timestamp":  time.Now().Format(time.RFC3339),
+    })
 }
 
 func (s *Server) handleCancel(w http.ResponseWriter, r *http.Request) {
-	var req struct {
-		SessionID string `json:"session_id"`
-	}
+    var req struct {
+        SessionID string `json:"session_id"`
+    }
 
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "Invalid JSON", http.StatusBadRequest)
-		return
-	}
+    if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+        http.Error(w, "Invalid JSON", http.StatusBadRequest)
+        return
+    }
 
-	val, ok := s.sessions.Load(req.SessionID)
-	if !ok {
-		json.NewEncoder(w).Encode(map[string]interface{}{
-			"text":      "Nie ma oczekującej akcji.",
-			"cancelled": false,
-		})
-		return
-	}
+    val, ok := s.sessions.Load(req.SessionID)
+    if !ok {
+        json.NewEncoder(w).Encode(map[string]interface{}{
+            "text":      "Nie ma oczekującej akcji.",
+            "cancelled": false,
+        })
+        return
+    }
 
-	session := val.(*Session)
-	if session.PendingAction != nil {
-		session.PendingAction = nil
-		json.NewEncoder(w).Encode(map[string]interface{}{
-			"text":      "Anulowano akcję.",
-			"cancelled": true,
-		})
-	} else {
-		json.NewEncoder(w).Encode(map[string]interface{}{
-			"text":      "Nie ma oczekującej akcji.",
-			"cancelled": false,
-		})
-	}
+    session := val.(*Session)
+    if session.PendingAction != nil {
+        session.PendingAction = nil
+        json.NewEncoder(w).Encode(map[string]interface{}{
+            "text":      "Anulowano akcję.",
+            "cancelled": true,
+        })
+    } else {
+        json.NewEncoder(w).Encode(map[string]interface{}{
+            "text":      "Nie ma oczekującej akcji.",
+            "cancelled": false,
+        })
+    }
 }
 
 func (s *Server) handleHealth(w http.ResponseWriter, r *http.Request) {
-	activeSessions := 0
-	s.sessions.Range(func(key, value interface{}) bool {
-		activeSessions++
-		return true
-	})
+    activeSessions := 0
+    s.sessions.Range(func(key, value interface{}) bool {
+        activeSessions++
+        return true
+    })
 
-	json.NewEncoder(w).Encode(map[string]interface{}{
-		"status":          "ok",
-		"claude_path":     ClaudePath,
-		"active_sessions": activeSessions,
-	})
+    json.NewEncoder(w).Encode(map[string]interface{}{
+        "status":          "ok",
+        "claude_path":     ClaudePath,
+        "active_sessions": activeSessions,
+    })
 }
 
 func main() {
-	server := NewServer()
+    server := NewServer()
 
-	http.HandleFunc("/ask", server.handleAsk)
-	http.HandleFunc("/cancel", server.handleCancel)
-	http.HandleFunc("/health", server.handleHealth)
+    http.HandleFunc("/ask", server.handleAsk)
+    http.HandleFunc("/cancel", server.handleCancel)
+    http.HandleFunc("/health", server.handleHealth)
 
-	log.Printf("Claude HA Brain server starting on port %s", Port)
-	log.Printf("Claude CLI: %s", ClaudePath)
-	log.Printf("Working directory: %s", WorkingDir)
-	log.Printf("Session timeout: %.0f minutes", SessionTimeout.Minutes())
+    log.Printf("Claude HA Brain server starting on port %s", Port)
+    log.Printf("Claude CLI: %s", ClaudePath)
+    log.Printf("Working directory: %s", WorkingDir)
+    log.Printf("Session timeout: %.0f minutes", SessionTimeout.Minutes())
 
-	if err := http.ListenAndServe(":"+Port, nil); err != nil {
-		log.Fatalf("Server failed: %v", err)
-	}
+    if err := http.ListenAndServe(":"+Port, nil); err != nil {
+        log.Fatalf("Server failed: %v", err)
+    }
 }
 ```
 
