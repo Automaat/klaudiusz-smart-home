@@ -33,6 +33,9 @@
         rpc-host-whitelist = "homelab,192.168.0.241";
         rpc-host-whitelist-enabled = true;
 
+        # Disable IP whitelist - authentication handles access control
+        rpc-whitelist-enabled = false;
+
         # Authentication - CRITICAL: port 9091 is firewall-exposed
         rpc-authentication-required = true;
         rpc-username = "admin";
