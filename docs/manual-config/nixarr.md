@@ -16,6 +16,7 @@ done through each service's web UI.
 - **Prowlarr** (9696): Indexer manager (central point for all arr apps)
 - **Bazarr** (6767): Subtitle management
 - **Transmission** (9091): Download client
+- **Flood** (3001): Modern web UI for Transmission
 - **Jellyseerr** (5055): Request interface for users
 
 **Storage:**
@@ -34,11 +35,12 @@ file duplication when importing downloads.
 
 1. Jellyfin → Create admin account, add libraries
 2. Prowlarr → Add indexers
-3. Transmission → Note download directory
-4. Sonarr → Connect to Prowlarr + Transmission
-5. Radarr → Connect to Prowlarr + Transmission
-6. Bazarr → Connect to Sonarr + Radarr
-7. Jellyseerr → Connect to Jellyfin + Sonarr + Radarr
+3. Transmission → Verify authentication, note download directory
+4. Flood (optional) → Create account, verify Transmission connection
+5. Sonarr → Connect to Prowlarr + Transmission
+6. Radarr → Connect to Prowlarr + Transmission
+7. Bazarr → Connect to Sonarr + Radarr
+8. Jellyseerr → Connect to Jellyfin + Sonarr + Radarr
 
 ## 1. Jellyfin Setup
 
@@ -192,6 +194,93 @@ transmission.extraSettings = {
 
 **Note:** Transmission daemon has no web UI settings editor. All configuration via Nix or manual
 `settings.json` editing (requires service stop).
+
+### Flood Web UI (Alternative Interface)
+
+**Access:** <http://homelab:3001> or <http://192.168.0.241:3001>
+
+**Why Flood?** Transmission 4.x removed the built-in web UI. Flood provides a modern, feature-rich
+alternative with better UX.
+
+**Configuration:** Transmission connection pre-configured via NixOS (environment variables).
+Manual setup required for user account only.
+
+#### Initial Setup
+
+1. Open Flood web UI in browser
+2. **Create Account** (first-time only):
+   - **Username:** Choose username (e.g., `admin`)
+   - **Password:** Choose strong password (Flood account, separate from Transmission)
+   - Click **Create Account**
+3. **Client Connection** (auto-configured):
+   - Flood automatically connects to Transmission via pre-configured environment variables
+   - If prompted, verify settings:
+     - **Client:** Transmission
+     - **Host:** `192.168.15.1` (VPN namespace)
+     - **Port:** `9091`
+     - **Username:** `admin` (from sops secret)
+     - **Password:** (auto-injected from sops secret)
+   - Click **Connect**
+4. **Verify Connection:**
+   - Dashboard should load showing Transmission stats
+   - Add test torrent to confirm functionality
+
+#### Features
+
+- **Modern UI:** Drag-and-drop torrent files, real-time stats
+- **Multi-view:** List, grid, and detailed views
+- **Filtering:** By status, tracker, label
+- **RSS Feeds:** Subscribe to torrent RSS feeds
+- **Mobile-friendly:** Responsive design
+
+#### Troubleshooting
+
+**Flood won't start:**
+
+```bash
+# Check service status
+ssh homelab "systemctl status flood.service"
+
+# Check logs
+ssh homelab "journalctl -u flood.service -n 50"
+
+# Common issue: Permission denied on sops secret
+# Verify preStart runs as root (+ prefix)
+```
+
+**Cannot connect to Transmission:**
+
+1. Verify Transmission running: `systemctl status transmission`
+2. Check Transmission authentication working (curl test above)
+3. Review Flood environment variables:
+
+   ```bash
+   ssh homelab "systemctl show flood.service -p Environment"
+   # Should show TRANSMISSION_URL and TRANSMISSION_USER
+   ```
+
+4. Check password injected:
+
+   ```bash
+   ssh homelab "cat /run/flood-transmission.env"
+   # Should show TRANSMISSION_PASS=<password>
+   ```
+
+**Account locked out:**
+
+Flood stores user data in `/var/lib/flood`. To reset:
+
+```bash
+# Remove Flood state (WARNING: deletes all Flood settings)
+ssh homelab "sudo systemctl stop flood && sudo rm -rf /var/lib/flood && sudo systemctl start flood"
+```
+
+#### Security Notes
+
+- **Port 3001** must be added to firewall (already configured)
+- **Flood authentication** independent from Transmission (separate user/pass)
+- **Recommendation:** Use same strong password as Transmission for consistency
+- **Access control:** Consider restricting to LAN/Tailscale only
 
 ## 4. Sonarr Setup
 
@@ -408,6 +497,7 @@ curl -I http://homelab:7878  # Radarr
 curl -I http://homelab:9696  # Prowlarr
 curl -I http://homelab:6767  # Bazarr
 curl -I http://homelab:9091  # Transmission
+curl -I http://homelab:3001  # Flood
 curl -I http://homelab:5055  # Jellyseerr
 ```
 
