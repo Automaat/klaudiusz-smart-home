@@ -116,7 +116,8 @@ find . -path './.git' -prune -o -name "*.nix" -type f -exec grep -Il "fetchFromG
             # Use perl for safer in-place editing with proper escaping
             # Only replace the first occurrence to avoid affecting other dependencies
             # ||= sets $done to true when substitution succeeds, preventing further matches
-            if perl -i.bak -pe "BEGIN{\$done=0} \$done ||= s/\Qhash = \"$old_hash\"\E/hash = \"$new_hash\"/" "$file"; then
+            # Use | as delimiter to avoid conflicts with / in base64 hashes
+            if perl -i.bak -pe "BEGIN{\$done=0} \$done ||= s|\Qhash = \"$old_hash\"\E|hash = \"$new_hash\"|" "$file"; then
                 rm -f "$file.bak"
                 echo "  ✅ Updated hash in $file"
                 echo "$file" >> "$tmpfile"
@@ -239,7 +240,8 @@ find . -path './.git' -prune -o -name "*.nix" -type f -exec grep -Il "fetchurl" 
             # Use perl for safer in-place editing with proper escaping
             # Only replace the first occurrence to avoid affecting other dependencies
             # ||= sets $done to true when substitution succeeds, preventing further matches
-            if perl -i.bak -pe "BEGIN{\$done=0} \$done ||= s/\Qhash = \"$old_hash\"\E/hash = \"$new_hash\"/" "$file"; then
+            # Use | as delimiter to avoid conflicts with / in base64 hashes
+            if perl -i.bak -pe "BEGIN{\$done=0} \$done ||= s|\Qhash = \"$old_hash\"\E|hash = \"$new_hash\"|" "$file"; then
                 rm -f "$file.bak"
                 echo "  ✅ Updated hash in $file"
                 echo "$file" >> "$tmpfile"
