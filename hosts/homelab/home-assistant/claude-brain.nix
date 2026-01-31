@@ -43,7 +43,7 @@
         sensor = {
           name = "Claude Server Status";
           unique_id = "claude_server_status";
-          command = "curl -sf --max-time 3 http://192.168.0.34:8742/health 2>/dev/null | jq -r '.status // \"offline\"' || echo 'offline'";
+          command = "curl -sf --max-time 3 http://100.82.161.69:8742/health 2>/dev/null | jq -r '.status // \"offline\"' || echo 'offline'";
           scan_interval = 60;
         };
       }
@@ -98,7 +98,7 @@
             action = "persistent_notification.create";
             data = {
               title = "Claude Server Offline";
-              message = "Claude HA Brain server at 192.168.0.34:8742 is unreachable. Check Mac server.";
+              message = "Claude HA Brain server at 100.82.161.69:8742 (Tailscale) is unreachable. Check Mac server.";
             };
           }
         ];
