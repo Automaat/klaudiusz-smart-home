@@ -221,7 +221,7 @@ transmission.extraSettings = {
    - **Port:** `9091`
    - **URL Base:** (leave blank)
    - **Username:** `admin` (from Transmission auth config)
-   - **Password:** (password from Transmission extraSettings)
+   - **Password:** (from sops secrets: transmission-rpc-password)
    - **Category:** `sonarr` (optional, for organization)
 4. **Test** → **Save**
 

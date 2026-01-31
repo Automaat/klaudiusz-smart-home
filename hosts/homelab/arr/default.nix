@@ -150,15 +150,18 @@
       PASSWORD_FILE="${config.sops.secrets."transmission-rpc-password".path}"
 
       if [ -f "$PASSWORD_FILE" ]; then
-        PASSWORD=$(cat "$PASSWORD_FILE")
-
         # Update settings.json using jq (transmission will hash it on next start)
-        ${pkgs.jq}/bin/jq --arg pass "$PASSWORD" \
-          '.["rpc-password"] = $pass' \
-          "$SETTINGS_FILE" > "$SETTINGS_FILE.tmp" && \
+        # Use --rawfile to avoid exposing password in process args
+        if ${pkgs.jq}/bin/jq --rawfile pass "$PASSWORD_FILE" \
+          '.["rpc-password"] = ($pass | rtrimstr("\n"))' \
+          "$SETTINGS_FILE" > "$SETTINGS_FILE.tmp"; then
           mv "$SETTINGS_FILE.tmp" "$SETTINGS_FILE"
-
-        echo "RPC password injected from sops secret"
+          echo "RPC password injected from sops secret"
+        else
+          rm -f "$SETTINGS_FILE.tmp"
+          echo "ERROR: Failed to inject RPC password (jq failure)"
+          exit 1
+        fi
       else
         echo "WARNING: RPC password secret not found at $PASSWORD_FILE"
       fi
