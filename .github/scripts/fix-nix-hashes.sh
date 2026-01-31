@@ -90,6 +90,22 @@ find . -path './.git' -prune -o -name "*.nix" -type f -exec grep -Il "fetchFromG
     # Apply all hash replacements after reading the file
     if [ ${#old_hashes[@]} -gt 0 ]; then
         echo "  Applying ${#old_hashes[@]} hash update(s) to $file..."
+
+        # Detect hash collisions (same old_hash appearing multiple times)
+        declare -A seen_hashes
+        for i in "${!old_hashes[@]}"; do
+            old_hash="${old_hashes[$i]}"
+            if [ -n "${seen_hashes[$old_hash]:-}" ]; then
+                echo "  ⚠️  WARNING: Hash collision detected!"
+                echo "    Multiple entries need update from: $old_hash"
+                echo "    Context 1: ${seen_hashes[$old_hash]}"
+                echo "    Context 2: ${contexts[$i]}"
+                echo "    Manual intervention required - skipping automated replacement"
+                exit 1
+            fi
+            seen_hashes[$old_hash]="${contexts[$i]}"
+        done
+
         for i in "${!old_hashes[@]}"; do
             old_hash="${old_hashes[$i]}"
             new_hash="${new_hashes[$i]}"
@@ -197,6 +213,22 @@ find . -path './.git' -prune -o -name "*.nix" -type f -exec grep -Il "fetchurl" 
     # Apply all hash replacements after reading the file
     if [ ${#old_hashes[@]} -gt 0 ]; then
         echo "  Applying ${#old_hashes[@]} hash update(s) to $file..."
+
+        # Detect hash collisions (same old_hash appearing multiple times)
+        declare -A seen_hashes
+        for i in "${!old_hashes[@]}"; do
+            old_hash="${old_hashes[$i]}"
+            if [ -n "${seen_hashes[$old_hash]:-}" ]; then
+                echo "  ⚠️  WARNING: Hash collision detected!"
+                echo "    Multiple entries need update from: $old_hash"
+                echo "    Context 1: ${seen_hashes[$old_hash]}"
+                echo "    Context 2: ${contexts[$i]}"
+                echo "    Manual intervention required - skipping automated replacement"
+                exit 1
+            fi
+            seen_hashes[$old_hash]="${contexts[$i]}"
+        done
+
         for i in "${!old_hashes[@]}"; do
             old_hash="${old_hashes[$i]}"
             new_hash="${new_hashes[$i]}"
