@@ -95,7 +95,7 @@ find . -path './.git' -prune -o -name "*.nix" -type f -exec grep -Il "fetchFromG
         declare -A seen_hashes
         for i in "${!old_hashes[@]}"; do
             old_hash="${old_hashes[$i]}"
-            if [ -n "${seen_hashes[$old_hash]}" ]; then
+            if [ -n "${seen_hashes[$old_hash]:-}" ]; then
                 echo "  ⚠️  WARNING: Hash collision detected!"
                 echo "    Multiple entries need update from: $old_hash"
                 echo "    Context 1: ${seen_hashes[$old_hash]}"
@@ -218,7 +218,7 @@ find . -path './.git' -prune -o -name "*.nix" -type f -exec grep -Il "fetchurl" 
         declare -A seen_hashes
         for i in "${!old_hashes[@]}"; do
             old_hash="${old_hashes[$i]}"
-            if [ -n "${seen_hashes[$old_hash]}" ]; then
+            if [ -n "${seen_hashes[$old_hash]:-}" ]; then
                 echo "  ⚠️  WARNING: Hash collision detected!"
                 echo "    Multiple entries need update from: $old_hash"
                 echo "    Context 1: ${seen_hashes[$old_hash]}"
