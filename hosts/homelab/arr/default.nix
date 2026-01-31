@@ -182,23 +182,28 @@
 
   systemd.services.flood = {
     after = ["transmission.service"];
-    preStart = lib.mkBefore ''
-      # Inject RPC password from sops secret into env file
-      # Flood runs as DynamicUser and cannot read transmission-owned secret
-      PASSWORD_FILE="${config.sops.secrets."transmission-rpc-password".path}"
-      ENV_FILE="/run/flood-transmission.env"
+    serviceConfig = {
+      EnvironmentFile = "-/run/flood-transmission.env";
+      # Run preStart as root (prefix with +) to read sops secret
+      ExecStartPre = let
+        preStartScript = pkgs.writeShellScript "flood-pre-start" ''
+          # Inject RPC password from sops secret into env file
+          # Flood runs as DynamicUser and cannot read transmission-owned secret
+          PASSWORD_FILE="${config.sops.secrets."transmission-rpc-password".path}"
+          ENV_FILE="/run/flood-transmission.env"
 
-      if [ -f "$PASSWORD_FILE" ]; then
-        PASSWORD="$(${pkgs.coreutils}/bin/tr -d '\n' < "$PASSWORD_FILE")"
-        umask 0077
-        echo "TRANSMISSION_PASS=$PASSWORD" > "$ENV_FILE"
-        echo "Flood: RPC password injected from sops secret"
-      else
-        echo "WARNING: Transmission RPC password secret not found"
-        rm -f "$ENV_FILE"
-      fi
-    '';
-    serviceConfig.EnvironmentFile = "-/run/flood-transmission.env";
+          if [ -f "$PASSWORD_FILE" ]; then
+            PASSWORD="$(${pkgs.coreutils}/bin/tr -d '\n' < "$PASSWORD_FILE")"
+            umask 0077
+            echo "TRANSMISSION_PASS=$PASSWORD" > "$ENV_FILE"
+            echo "Flood: RPC password injected from sops secret"
+          else
+            echo "WARNING: Transmission RPC password secret not found"
+            rm -f "$ENV_FILE"
+          fi
+        '';
+      in "+${preStartScript}";
+    };
     environment = {
       # Transmission RPC in VPN namespace
       TRANSMISSION_URL = "http://192.168.15.1:9091/transmission/rpc";
