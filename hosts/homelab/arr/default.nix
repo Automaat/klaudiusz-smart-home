@@ -146,7 +146,7 @@
   systemd.services.transmission = {
     preStart = lib.mkAfter ''
       # Inject RPC password from sops secret into settings.json
-      SETTINGS_FILE="${config.nixarr.stateDir}/transmission/settings.json"
+      SETTINGS_FILE="${config.nixarr.stateDir}/transmission/.config/transmission-daemon/settings.json"
       PASSWORD_FILE="${config.sops.secrets."transmission-rpc-password".path}"
 
       if [ -f "$PASSWORD_FILE" ]; then
