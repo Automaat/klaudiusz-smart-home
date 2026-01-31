@@ -13,6 +13,11 @@ echo "Checking for fetchFromGitHub with outdated hashes..."
 find . -path './.git' -prune -o -name "*.nix" -type f -exec grep -Il "fetchFromGitHub" {} + | while IFS= read -r file; do
     echo "Processing $file..."
 
+    # Arrays to collect hash replacements (to avoid modifying file while reading it)
+    declare -a old_hashes=()
+    declare -a new_hashes=()
+    declare -a contexts=()  # Store owner/repo for more specific replacement
+
     # Read file content and extract fetchFromGitHub blocks
     owner="" repo="" rev="" current_hash=""
 
@@ -69,14 +74,10 @@ find . -path './.git' -prune -o -name "*.nix" -type f -exec grep -Il "fetchFromG
                     echo "    Current:  $current_hash"
                     echo "    Correct:  $correct_hash"
 
-                    # Replace the hash in the file
-                    if sed -i.bak "s|hash[[:space:]]*=[[:space:]]*\"$current_hash\"|hash = \"$correct_hash\"|g" "$file"; then
-                        rm -f "$file.bak"
-                        echo "  ✅ Updated hash in $file"
-                        echo "$file" >> "$tmpfile"
-                    else
-                        echo "  ⚠️  Failed to update hash in $file"
-                    fi
+                    # Store the replacement to apply later
+                    old_hashes+=("$current_hash")
+                    new_hashes+=("$correct_hash")
+                    contexts+=("$owner/$repo")
                 else
                     echo "  ✅ Hash is correct"
                 fi
@@ -85,6 +86,28 @@ find . -path './.git' -prune -o -name "*.nix" -type f -exec grep -Il "fetchFromG
                 owner="" repo="" rev="" current_hash=""
             fi
     done < "$file"
+
+    # Apply all hash replacements after reading the file
+    if [ ${#old_hashes[@]} -gt 0 ]; then
+        echo "  Applying ${#old_hashes[@]} hash update(s) to $file..."
+        for i in "${!old_hashes[@]}"; do
+            old_hash="${old_hashes[$i]}"
+            new_hash="${new_hashes[$i]}"
+            context="${contexts[$i]}"
+
+            echo "    Updating $context: $old_hash → $new_hash"
+
+            # Use perl for safer in-place editing with proper escaping
+            # Only replace the first occurrence to avoid affecting other dependencies
+            if perl -i.bak -pe "BEGIN{\$done=0} s/\Qhash = \"$old_hash\"\E/hash = \"$new_hash\"/ if ! \$done; \$done = 1 if /\Qhash = \"$old_hash\"\E/" "$file"; then
+                rm -f "$file.bak"
+                echo "  ✅ Updated hash in $file"
+                echo "$file" >> "$tmpfile"
+            else
+                echo "  ⚠️  Failed to update hash in $file"
+            fi
+        done
+    fi
 done
 
 echo ""
@@ -93,6 +116,11 @@ echo "Checking for fetchurl with outdated hashes..."
 # Find all .nix files with fetchurl, ignoring binaries and .git directory
 find . -path './.git' -prune -o -name "*.nix" -type f -exec grep -Il "fetchurl" {} + | while IFS= read -r file; do
     echo "Processing $file..."
+
+    # Arrays to collect hash replacements (to avoid modifying file while reading it)
+    declare -a old_hashes=()
+    declare -a new_hashes=()
+    declare -a contexts=()  # Store URL for context
 
     # Read file content and extract fetchurl blocks
     current_url="" current_hash=""
@@ -150,14 +178,12 @@ find . -path './.git' -prune -o -name "*.nix" -type f -exec grep -Il "fetchurl" 
                     echo "    Current:  $current_hash"
                     echo "    Correct:  $correct_hash"
 
-                    # Replace the hash in the file
-                    if sed -i.bak "s|hash[[:space:]]*=[[:space:]]*\"$current_hash\"|hash = \"$correct_hash\"|g" "$file"; then
-                        rm -f "$file.bak"
-                        echo "  ✅ Updated hash in $file"
-                        echo "$file" >> "$tmpfile"
-                    else
-                        echo "  ⚠️  Failed to update hash in $file"
-                    fi
+                    # Store the replacement to apply later
+                    old_hashes+=("$current_hash")
+                    new_hashes+=("$correct_hash")
+                    # Extract filename from URL for context
+                    url_filename=$(basename "$current_url")
+                    contexts+=("$url_filename")
                 else
                     echo "  ✅ Hash is correct"
                 fi
@@ -166,6 +192,28 @@ find . -path './.git' -prune -o -name "*.nix" -type f -exec grep -Il "fetchurl" 
                 current_url="" current_hash=""
             fi
     done < "$file"
+
+    # Apply all hash replacements after reading the file
+    if [ ${#old_hashes[@]} -gt 0 ]; then
+        echo "  Applying ${#old_hashes[@]} hash update(s) to $file..."
+        for i in "${!old_hashes[@]}"; do
+            old_hash="${old_hashes[$i]}"
+            new_hash="${new_hashes[$i]}"
+            context="${contexts[$i]}"
+
+            echo "    Updating $context: $old_hash → $new_hash"
+
+            # Use perl for safer in-place editing with proper escaping
+            # Only replace the first occurrence to avoid affecting other dependencies
+            if perl -i.bak -pe "BEGIN{\$done=0} s/\Qhash = \"$old_hash\"\E/hash = \"$new_hash\"/ if ! \$done; \$done = 1 if /\Qhash = \"$old_hash\"\E/" "$file"; then
+                rm -f "$file.bak"
+                echo "  ✅ Updated hash in $file"
+                echo "$file" >> "$tmpfile"
+            else
+                echo "  ⚠️  Failed to update hash in $file"
+            fi
+        done
+    fi
 done
 
 changed_files=$(sort -u "$tmpfile" | wc -l | tr -d ' ')
