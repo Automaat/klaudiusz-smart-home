@@ -105,7 +105,22 @@ find . -path './.git' -prune -o -name "*.nix" -type f -exec grep -Il "fetchFromG
             # Use perl with slurp mode (-0777) to match owner + repo + hash together
             # This handles hash collisions by using full context for unique matching
             # Pattern: owner = "X"; ... repo = "Y"; ... hash = "old"; → replace hash with new
-            if perl -i.bak -0777 -pe "s|(owner\\s*=\\s*\"\\Q$owner_name\\E\"[^}]*repo\\s*=\\s*\"\\Q$repo_name\\E\"[^}]*hash\\s*=\\s*\")\\Q$old_hash\\E(\")|\$1$new_hash\$2|s" "$file"; then
+            # Security: Pass untrusted data via env vars, prevent injection by avoiding shell interpolation
+            if OWNER="$owner_name" REPO="$repo_name" OLD_HASH="$old_hash" NEW_HASH="$new_hash" \
+                perl -i.bak -0777 -pe '
+                    BEGIN {
+                        use strict;
+                        use warnings;
+                        # Quotemeta to safely escape special regex chars
+                        our $owner_escaped = quotemeta($ENV{OWNER});
+                        our $repo_escaped = quotemeta($ENV{REPO});
+                        our $old_hash_escaped = quotemeta($ENV{OLD_HASH});
+                        our $new_hash = $ENV{NEW_HASH};
+                    }
+                    # Use non-capturing substitution to avoid Perl interpolation issues
+                    my $pattern = qr/(owner\s*=\s*"$owner_escaped"[^}]*repo\s*=\s*"$repo_escaped"[^}]*hash\s*=\s*")$old_hash_escaped(")/s;
+                    s/$pattern/$1$new_hash$2/;
+                ' "$file"; then
                 rm -f "$file.bak"
                 echo "  ✅ Updated hash in $file"
                 echo "$file" >> "$tmpfile"
@@ -213,7 +228,21 @@ find . -path './.git' -prune -o -name "*.nix" -type f -exec grep -Il "fetchurl" 
             # Use perl with slurp mode (-0777) to match URL + hash together
             # This handles hash collisions by using URL context for unique matching
             # Pattern: url = "...filename"; ... hash = "old"; → replace hash with new
-            if perl -i.bak -0777 -pe "s|(url\\s*=\\s*\"[^\"]*\\Q$context\\E\"[^}]*hash\\s*=\\s*\")\\Q$old_hash\\E(\")|\$1$new_hash\$2|s" "$file"; then
+            # Security: Pass untrusted data via env vars, prevent injection by avoiding shell interpolation
+            if CONTEXT="$context" OLD_HASH="$old_hash" NEW_HASH="$new_hash" \
+                perl -i.bak -0777 -pe '
+                    BEGIN {
+                        use strict;
+                        use warnings;
+                        # Quotemeta to safely escape special regex chars
+                        our $ctx_escaped = quotemeta($ENV{CONTEXT});
+                        our $old_hash_escaped = quotemeta($ENV{OLD_HASH});
+                        our $new_hash = $ENV{NEW_HASH};
+                    }
+                    # Use non-capturing substitution to avoid Perl interpolation issues
+                    my $pattern = qr/(url\s*=\s*"[^"]*$ctx_escaped"[^}]*hash\s*=\s*")$old_hash_escaped(")/s;
+                    s/$pattern/$1$new_hash$2/;
+                ' "$file"; then
                 rm -f "$file.bak"
                 echo "  ✅ Updated hash in $file"
                 echo "$file" >> "$tmpfile"
