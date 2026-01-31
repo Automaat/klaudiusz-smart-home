@@ -239,3 +239,26 @@ intents:
   #         - "tryb kino"
   #         - "film"
   #         - "oglądamy film"
+
+  # =========================================
+  # Claude AI Brain
+  # =========================================
+  AskClaude:
+    data:
+      - sentences:
+          - "{query}"
+
+  ConfirmClaude:
+    data:
+      - sentences:
+          - "tak"
+          - "potwierdź"
+          - "zgoda"
+          - "ok"
+
+  CancelClaude:
+    data:
+      - sentences:
+          - "nie"
+          - "anuluj"
+          - "stop"

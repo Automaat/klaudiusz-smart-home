@@ -269,6 +269,7 @@ in {
     ./automations.nix
     ./monitoring.nix
     ./kettle.nix
+    ./claude-brain.nix
   ];
 
   # ===========================================
@@ -552,6 +553,9 @@ in {
 
       # Create custom ZHA quirks symlink (Aqara FP300 support)
       ln -sfn ${customZHAQuirksSource} /var/lib/hass/custom_zha_quirks
+
+      # Create Claude Brain component symlink
+      ln -sfn ${./custom_components/claude_brain} /var/lib/hass/custom_components/claude_brain
     '';
 
     # Force derivation update when HA config changes

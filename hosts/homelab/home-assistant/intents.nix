@@ -286,6 +286,50 @@ in {
       #   speech.text = "Włączam tryb filmowy";
       #   action = [];
       # };
+
+      # -----------------------------------------
+      # Claude AI Brain
+      # -----------------------------------------
+      AskClaude = {
+        action = [
+          {
+            action = "claude_brain.ask";
+            data.query = "{{ query }}";
+          }
+          { delay.seconds = 3; }
+        ];
+        speech.text = "{{ states('input_text.claude_response') }}";
+      };
+
+      ConfirmClaude = {
+        action = [
+          {
+            condition = "state";
+            entity_id = "input_boolean.claude_awaiting_confirmation";
+            state = "on";
+          }
+          {
+            action = "claude_brain.confirm";
+          }
+          { delay.seconds = 2; }
+        ];
+        speech.text = "{{ states('input_text.claude_response') }}";
+      };
+
+      CancelClaude = {
+        action = [
+          {
+            condition = "state";
+            entity_id = "input_boolean.claude_awaiting_confirmation";
+            state = "on";
+          }
+          {
+            action = "claude_brain.cancel";
+          }
+          { delay.seconds = 1; }
+        ];
+        speech.text = "{{ states('input_text.claude_response') }}";
+      };
     };
 
     # ===========================================
