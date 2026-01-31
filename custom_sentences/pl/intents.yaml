@@ -22,6 +22,10 @@ lists:
   item:
     wildcard: true
 
+  # Claude Brain query wildcard
+  query:
+    wildcard: true
+
   # Common area names for better slot matching
   area_names:
     values:
