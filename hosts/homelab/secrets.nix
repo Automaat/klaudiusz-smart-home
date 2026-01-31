@@ -88,5 +88,12 @@ in {
         "transmission-port-forwarding.service"
       ];
     };
+
+    # Transmission RPC password
+    "transmission-rpc-password" = {
+      owner = "transmission";
+      mode = "0400";
+      restartUnits = ["transmission.service"];
+    };
   };
 }

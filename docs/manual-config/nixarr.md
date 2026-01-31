@@ -129,15 +129,39 @@ file duplication when importing downloads.
 
 **CRITICAL:** Port 9091 is open on firewall. Enable authentication to prevent unauthorized access.
 
-1. Open Transmission web UI
-2. Click **Settings** gear icon (top-right)
-3. Navigate to **Remote** / **Privacy** tab
-4. **Enable authentication:**
-   - Check **Use authentication**
-   - Username: (choose strong username)
-   - Password: (choose strong password, save to password manager)
-5. **Apply** → **Close**
-6. **Verify:** Reload page, should prompt for credentials
+**Authentication is configured declaratively via NixOS** (not web UI - daemon has no settings button):
+
+**Password is stored in sops-encrypted secrets:**
+
+1. Decrypt secrets: `mise run decrypt-secrets`
+2. Edit `secrets/secrets.decrypted.yaml`, add/update:
+   ```yaml
+   transmission-rpc-password: your-strong-password
+   ```
+3. Encrypt: `mise run encrypt-secrets`
+4. Commit encrypted `secrets/secrets.yaml`
+
+**Configuration** (already set in `hosts/homelab/arr/default.nix`):
+
+```nix
+transmission.extraSettings = {
+  rpc-authentication-required = true;
+  rpc-username = "admin";
+  # Password injected via systemd preStart from sops secret
+};
+```
+
+**Verification:**
+
+```bash
+# Rebuild
+sudo nixos-rebuild switch --flake /etc/nixos#homelab
+
+# Test authentication required
+curl -I http://homelab:9091  # Should return 401 Unauthorized
+```
+
+**Password handling:** Password stored encrypted in sops, injected into settings.json on service start, then auto-hashed to SHA1 by Transmission.
 
 **Alternative (Advanced):** Restrict via firewall:
 
@@ -147,14 +171,23 @@ file duplication when importing downloads.
 
 ### Verify Download Configuration
 
+Download settings are managed declaratively by nixarr. Verify via web UI:
+
 1. Open Transmission web UI (enter credentials if prompted)
-2. Click **Settings** gear icon (top-right)
-3. Navigate to **Torrents** tab
-4. Verify **Download to:** `/media/torrents` (categorized by service via Sonarr/Radarr)
-5. **Seeding:**
-   - Stop seeding at ratio: `2.0` (adjust as desired)
-   - Or stop seeding after: `7 days`
-6. **Apply** → **Close**
+2. Check download directory: `/media/torrents`
+3. Check seeding limits (optional, configure via extraSettings if needed):
+
+```nix
+transmission.extraSettings = {
+  # ... existing settings ...
+  ratio-limit-enabled = true;
+  ratio-limit = 2.0;
+  idle-seeding-limit-enabled = true;
+  idle-seeding-limit = 10080;  # 7 days in minutes
+};
+```
+
+**Note:** Transmission daemon has no web UI settings editor. All configuration via Nix or manual `settings.json` editing (requires service stop).
 
 ## 4. Sonarr Setup
 
@@ -183,8 +216,8 @@ file duplication when importing downloads.
    - **Host:** `localhost`
    - **Port:** `9091`
    - **URL Base:** (leave blank)
-   - **Username:** (leave blank - no auth)
-   - **Password:** (leave blank)
+   - **Username:** `admin` (from Transmission auth config)
+   - **Password:** (password from Transmission extraSettings)
    - **Category:** `sonarr` (optional, for organization)
 4. **Test** → **Save**
 
