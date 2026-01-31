@@ -19,15 +19,19 @@ find . -path './.git' -prune -o -name "*.nix" -type f -exec grep -Il "fetchFromG
     while IFS= read -r line; do
         if [[ $line =~ owner[[:space:]]*=[[:space:]]*\"([^\"]+)\" ]]; then
             owner="${BASH_REMATCH[1]}"
-        elif [[ $line =~ repo[[:space:]]*=[[:space:]]*\"([^\"]+)\" ]]; then
+        fi
+        if [[ $line =~ repo[[:space:]]*=[[:space:]]*\"([^\"]+)\" ]]; then
             repo="${BASH_REMATCH[1]}"
-        elif [[ $line =~ rev[[:space:]]*=[[:space:]]*\"([^\"]+)\" ]]; then
+        fi
+        if [[ $line =~ rev[[:space:]]*=[[:space:]]*\"([^\"]+)\" ]]; then
             rev="${BASH_REMATCH[1]}"
-        elif [[ $line =~ hash[[:space:]]*=[[:space:]]*\"(sha256-[A-Za-z0-9+/=]+)\" ]]; then
+        fi
+        if [[ $line =~ hash[[:space:]]*=[[:space:]]*\"(sha256-[A-Za-z0-9+/=]+)\" ]]; then
             current_hash="${BASH_REMATCH[1]}"
+        fi
 
-            # We have a complete block, process it
-            if [ -n "$owner" ] && [ -n "$repo" ] && [ -n "$rev" ] && [ -n "$current_hash" ]; then
+        # Check if we have a complete block, process it
+        if [ -n "$owner" ] && [ -n "$repo" ] && [ -n "$rev" ] && [ -n "$current_hash" ]; then
                 echo "  Checking $owner/$repo@$rev"
                 echo "    Current hash: $current_hash"
 
@@ -80,7 +84,6 @@ find . -path './.git' -prune -o -name "*.nix" -type f -exec grep -Il "fetchFromG
                 # Reset for next block
                 owner="" repo="" rev="" current_hash=""
             fi
-        fi
     done < "$file"
 done
 
@@ -98,12 +101,14 @@ find . -path './.git' -prune -o -name "*.nix" -type f -exec grep -Il "fetchurl" 
         # Match URL patterns
         if [[ $line =~ url[[:space:]]*=[[:space:]]*\"([^\"]+)\" ]]; then
             current_url="${BASH_REMATCH[1]}"
+        fi
         # Match hash patterns
-        elif [[ $line =~ hash[[:space:]]*=[[:space:]]*\"(sha256-[A-Za-z0-9+/=]+)\" ]]; then
+        if [[ $line =~ hash[[:space:]]*=[[:space:]]*\"(sha256-[A-Za-z0-9+/=]+)\" ]]; then
             current_hash="${BASH_REMATCH[1]}"
+        fi
 
-            # We have a complete block, process it
-            if [ -n "$current_url" ] && [ -n "$current_hash" ]; then
+        # Check if we have a complete block, process it
+        if [ -n "$current_url" ] && [ -n "$current_hash" ]; then
                 echo "  Checking URL: $current_url"
                 echo "    Current hash: $current_hash"
 
@@ -160,7 +165,6 @@ find . -path './.git' -prune -o -name "*.nix" -type f -exec grep -Il "fetchurl" 
                 # Reset for next block
                 current_url="" current_hash=""
             fi
-        fi
     done < "$file"
 done
 
