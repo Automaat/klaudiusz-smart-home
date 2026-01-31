@@ -183,31 +183,25 @@
   systemd.services.flood = {
     after = ["transmission.service"];
     serviceConfig = {
-      EnvironmentFile = "-/run/flood-transmission.env";
-      # Run preStart as root (prefix with +) to read sops secret
-      ExecStartPre = let
-        preStartScript = pkgs.writeShellScript "flood-pre-start" ''
-          # Inject RPC password from sops secret into env file
-          # Flood runs as DynamicUser and cannot read transmission-owned secret
-          PASSWORD_FILE="${config.sops.secrets."transmission-rpc-password".path}"
-          ENV_FILE="/run/flood-transmission.env"
+      # Use systemd LoadCredential for secure password injection
+      LoadCredential = "transmission-pass:${config.sops.secrets."transmission-rpc-password".path}";
+      # Wrapper script to inject credential into environment before starting Flood
+      ExecStart = lib.mkForce (pkgs.writeShellScript "flood-start" ''
+        # Read password from systemd credential and export as env var
+        export TRANSMISSION_PASS="$(${pkgs.coreutils}/bin/tr -d '\n' < "$CREDENTIALS_DIRECTORY/transmission-pass")"
 
-          if [ -f "$PASSWORD_FILE" ]; then
-            PASSWORD="$(${pkgs.coreutils}/bin/tr -d '\n' < "$PASSWORD_FILE")"
-            umask 0077
-            echo "TRANSMISSION_PASS=$PASSWORD" > "$ENV_FILE"
-            echo "Flood: RPC password injected from sops secret"
-          else
-            echo "WARNING: Transmission RPC password secret not found"
-            rm -f "$ENV_FILE"
-          fi
-        '';
-      in "+${preStartScript}";
+        # Start Flood with all environment variables available
+        exec ${pkgs.flood}/bin/flood \
+          --host ${config.services.flood.host} \
+          --port ${toString config.services.flood.port} \
+          --rundir=/var/lib/flood
+      '');
     };
     environment = {
       # Transmission RPC in VPN namespace
       TRANSMISSION_URL = "http://192.168.15.1:9091/transmission/rpc";
       TRANSMISSION_USER = "admin";
+      # TRANSMISSION_PASS injected by wrapper script from LoadCredential
     };
   };
 
