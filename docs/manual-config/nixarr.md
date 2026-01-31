@@ -135,9 +135,11 @@ file duplication when importing downloads.
 
 1. Decrypt secrets: `mise run decrypt-secrets`
 2. Edit `secrets/secrets.decrypted.yaml`, add/update:
+
    ```yaml
    transmission-rpc-password: your-strong-password
    ```
+
 3. Encrypt: `mise run encrypt-secrets`
 4. Commit encrypted `secrets/secrets.yaml`
 
@@ -161,7 +163,8 @@ sudo nixos-rebuild switch --flake /etc/nixos#homelab
 curl -I http://homelab:9091  # Should return 401 Unauthorized
 ```
 
-**Password handling:** Password stored encrypted in sops, injected into settings.json on service start, then auto-hashed to SHA1 by Transmission.
+**Password handling:** Password stored encrypted in sops, injected into settings.json on service start,
+then auto-hashed to SHA1 by Transmission.
 
 **Alternative (Advanced):** Restrict via firewall:
 
@@ -187,7 +190,8 @@ transmission.extraSettings = {
 };
 ```
 
-**Note:** Transmission daemon has no web UI settings editor. All configuration via Nix or manual `settings.json` editing (requires service stop).
+**Note:** Transmission daemon has no web UI settings editor. All configuration via Nix or manual
+`settings.json` editing (requires service stop).
 
 ## 4. Sonarr Setup
 
