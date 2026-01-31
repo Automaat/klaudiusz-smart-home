@@ -169,6 +169,44 @@
   };
 
   # ===========================================
+  # Flood Web UI for Transmission
+  # ===========================================
+  # Transmission 4.x doesn't include built-in web UI
+  # Use Flood as modern alternative
+
+  services.flood = {
+    enable = true;
+    host = "0.0.0.0";
+    port = 3001;
+  };
+
+  systemd.services.flood = {
+    after = ["transmission.service"];
+    preStart = lib.mkBefore ''
+      # Inject RPC password from sops secret into env file
+      # Flood runs as DynamicUser and cannot read transmission-owned secret
+      PASSWORD_FILE="${config.sops.secrets."transmission-rpc-password".path}"
+      ENV_FILE="/run/flood-transmission.env"
+
+      if [ -f "$PASSWORD_FILE" ]; then
+        PASSWORD="$(${pkgs.coreutils}/bin/tr -d '\n' < "$PASSWORD_FILE")"
+        umask 0077
+        echo "TRANSMISSION_PASS=$PASSWORD" > "$ENV_FILE"
+        echo "Flood: RPC password injected from sops secret"
+      else
+        echo "WARNING: Transmission RPC password secret not found"
+        rm -f "$ENV_FILE"
+      fi
+    '';
+    serviceConfig.EnvironmentFile = "/run/flood-transmission.env";
+    environment = {
+      # Transmission RPC in VPN namespace
+      TRANSMISSION_URL = "http://192.168.15.1:9091/transmission/rpc";
+      TRANSMISSION_USER = "admin";
+    };
+  };
+
+  # ===========================================
   # Networking - Firewall Ports
   # ===========================================
   # NOTE: These are added to main default.nix firewall config
@@ -180,7 +218,8 @@
   #   7878  # Radarr
   #   9696  # Prowlarr
   #   6767  # Bazarr
-  #   9091  # Transmission
+  #   9091  # Transmission RPC
+  #   3001  # Flood web UI
   #   5055  # Jellyseerr
   # ];
 }

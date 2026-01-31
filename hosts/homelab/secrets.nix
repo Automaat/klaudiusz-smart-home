@@ -93,7 +93,7 @@ in {
     "transmission-rpc-password" = {
       owner = "transmission";
       mode = "0400";
-      restartUnits = ["transmission.service"];
+      restartUnits = ["transmission.service" "flood.service"];
     };
   };
 }
