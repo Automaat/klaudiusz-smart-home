@@ -1,0 +1,19 @@
+ask:
+  name: Ask Claude
+  description: Send query to Claude brain server
+  fields:
+    query:
+      name: Query
+      description: Question or command for Claude
+      required: true
+      example: "Jaka jest temperatura w salonie?"
+      selector:
+        text:
+
+confirm:
+  name: Confirm Action
+  description: Confirm pending dangerous action
+
+cancel:
+  name: Cancel Action
+  description: Cancel pending dangerous action

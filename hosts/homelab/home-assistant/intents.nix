@@ -286,6 +286,98 @@ in {
       #   speech.text = "Włączam tryb filmowy";
       #   action = [];
       # };
+
+      # -----------------------------------------
+      # Claude AI Brain
+      # -----------------------------------------
+      AskClaude = {
+        action = [
+          {
+            action = "claude_brain.ask";
+            data.query = "{{ query }}";
+          }
+          {
+            wait_template = "{{ states('input_text.claude_response') != '' }}";
+            timeout = "00:00:10";
+            continue_on_timeout = true;
+          }
+        ];
+        speech.text = "{{ states('input_text.claude_response') }}";
+      };
+
+      ConfirmClaude = {
+        action = [
+          {
+            choose = [
+              {
+                conditions = [
+                  {
+                    condition = "state";
+                    entity_id = "input_boolean.claude_awaiting_confirmation";
+                    state = "on";
+                  }
+                ];
+                sequence = [
+                  {
+                    action = "claude_brain.confirm";
+                  }
+                  {
+                    wait_template = "{{ is_state('input_boolean.claude_awaiting_confirmation', 'off') }}";
+                    timeout = "00:00:10";
+                    continue_on_timeout = true;
+                  }
+                ];
+              }
+            ];
+            default = [
+              {
+                service = "tts.speak";
+                data.message = "Nie ma żadnej akcji do potwierdzenia";
+                target.entity_id = "tts.piper";
+              }
+              {stop = "";}
+            ];
+          }
+        ];
+        speech.text = "{{ states('input_text.claude_response') }}";
+      };
+
+      CancelClaude = {
+        action = [
+          {
+            choose = [
+              {
+                conditions = [
+                  {
+                    condition = "state";
+                    entity_id = "input_boolean.claude_awaiting_confirmation";
+                    state = "on";
+                  }
+                ];
+                sequence = [
+                  {
+                    action = "claude_brain.cancel";
+                  }
+                  {
+                    wait_template = "{{ is_state('input_boolean.claude_awaiting_confirmation', 'off') }}";
+                    timeout = "00:00:10";
+                    continue_on_timeout = true;
+                  }
+                ];
+              }
+            ];
+            default = [
+              {
+                service = "tts.speak";
+                data.message = "Nie mam nic do anulowania";
+                target.entity_id = "tts.piper";
+              }
+              {stop = "";}
+            ];
+          }
+        ];
+        speech.text = "{{ states('input_text.claude_response') }}";
+      };
     };
 
     # ===========================================

@@ -1,0 +1,10 @@
+{
+  "domain": "claude_brain",
+  "name": "Claude Brain",
+  "codeowners": [],
+  "documentation": "https://github.com/skalskip/klaudiusz-smart-home",
+  "integration_type": "service",
+  "iot_class": "local_push",
+  "requirements": [],
+  "version": "1.0.0"
+}
