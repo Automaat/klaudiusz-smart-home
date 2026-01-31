@@ -15,12 +15,12 @@
       };
       claude_response = {
         name = "Claude Last Response";
-        max = 500;
+        max = 255;
         initial = "";
       };
       claude_pending_action = {
         name = "Claude Pending Action Description";
-        max = 500;
+        max = 255;
         initial = "";
       };
     };
