@@ -32,6 +32,11 @@
         # Fix 421 Misdirected Request - allow homelab hostname and LAN IP
         rpc-host-whitelist = "homelab,192.168.0.241";
         rpc-host-whitelist-enabled = true;
+
+        # Authentication - CRITICAL: port 9091 is firewall-exposed
+        rpc-authentication-required = true;
+        rpc-username = "admin";
+        # Password injected via preStart from sops secret
       };
     };
 
@@ -131,6 +136,36 @@
       OnUnitActiveSec = "45s";
       Unit = "transmission-port-forwarding.service";
     };
+  };
+
+  # ===========================================
+  # Transmission RPC Password Injection
+  # ===========================================
+  # Override transmission service to inject password from sops before start
+
+  systemd.services.transmission = {
+    preStart = lib.mkAfter ''
+      # Inject RPC password from sops secret into settings.json
+      SETTINGS_FILE="${config.nixarr.stateDir}/transmission/settings.json"
+      PASSWORD_FILE="${config.sops.secrets."transmission-rpc-password".path}"
+
+      if [ -f "$PASSWORD_FILE" ]; then
+        # Update settings.json using jq (transmission will hash it on next start)
+        # Use --rawfile to avoid exposing password in process args
+        if ${pkgs.jq}/bin/jq --rawfile pass "$PASSWORD_FILE" \
+          '.["rpc-password"] = ($pass | rtrimstr("\n"))' \
+          "$SETTINGS_FILE" > "$SETTINGS_FILE.tmp"; then
+          mv "$SETTINGS_FILE.tmp" "$SETTINGS_FILE"
+          echo "RPC password injected from sops secret"
+        else
+          rm -f "$SETTINGS_FILE.tmp"
+          echo "ERROR: Failed to inject RPC password (jq failure)"
+          exit 1
+        fi
+      else
+        echo "WARNING: RPC password secret not found at $PASSWORD_FILE"
+      fi
+    '';
   };
 
   # ===========================================
