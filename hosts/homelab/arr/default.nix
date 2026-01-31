@@ -198,8 +198,8 @@
       '');
     };
     environment = {
-      # Transmission RPC in VPN namespace
-      TRANSMISSION_URL = "http://192.168.15.1:9091/transmission/rpc";
+      # Transmission RPC via nginx proxy
+      TRANSMISSION_URL = "http://localhost:9091/transmission/rpc";
       TRANSMISSION_USER = "admin";
       # TRANSMISSION_PASS injected by wrapper script from LoadCredential
     };
