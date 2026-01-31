@@ -103,6 +103,9 @@ pkgs.testers.nixosTest {
     # Disable Nixarr services in VM tests (not essential, reduces resource usage)
     nixarr.enable = lib.mkForce false;
 
+    # Override transmission-rpc-password secret (transmission user doesn't exist when nixarr disabled)
+    sops.secrets."transmission-rpc-password".owner = lib.mkForce null;
+
     # Run InfluxDB init in VM tests with hardcoded credentials
     systemd.services.influxdb2-init = {
       serviceConfig = {
