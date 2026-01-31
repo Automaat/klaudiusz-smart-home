@@ -1,6 +1,7 @@
 [tools]
 actionlint = "1.7.10"
 shellcheck = "0.11.0"
+shellspec = "latest"
 sops = "3.11.0"
 uv = "0.9.28"
 
@@ -27,3 +28,7 @@ run = "sops -d secrets/secrets.yaml > secrets/secrets.decrypted.yaml && chmod 60
 [tasks.encrypt-secrets]
 description = "Encrypt temp file back to secrets/secrets.yaml"
 run = "if [ -f secrets/secrets.decrypted.yaml ]; then cp secrets/secrets.decrypted.yaml secrets/secrets.yaml && sops -e -i secrets/secrets.yaml && shred -u secrets/secrets.decrypted.yaml && echo 'Encrypted to secrets/secrets.yaml'; else echo 'No decrypted secrets file found at secrets/secrets.decrypted.yaml' >&2; exit 1; fi"
+
+[tasks.test-scripts]
+description = "Run shellspec tests for shell scripts"
+run = "shellspec"
