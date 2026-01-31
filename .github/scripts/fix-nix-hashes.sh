@@ -212,9 +212,6 @@ find . -path './.git' -prune -o -name "*.nix" -type f -exec grep -Il "fetchurl" 
 
             # Use perl with slurp mode (-0777) to match URL + hash together
             # This handles hash collisions by using URL context for unique matching
-            # Extract filename from context for matching
-            url_pattern=$(echo "$context" | sed 's/[.]/\\./g')
-
             # Pattern: url = "...filename"; ... hash = "old"; → replace hash with new
             if perl -i.bak -0777 -pe "s|(url\\s*=\\s*\"[^\"]*\\Q$context\\E\"[^}]*hash\\s*=\\s*\")\\Q$old_hash\\E(\")|\$1$new_hash\$2|s" "$file"; then
                 rm -f "$file.bak"
