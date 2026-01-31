@@ -91,21 +91,6 @@ find . -path './.git' -prune -o -name "*.nix" -type f -exec grep -Il "fetchFromG
     if [ ${#old_hashes[@]} -gt 0 ]; then
         echo "  Applying ${#old_hashes[@]} hash update(s) to $file..."
 
-        # Detect hash collisions (same old_hash appearing multiple times)
-        declare -A seen_hashes
-        for i in "${!old_hashes[@]}"; do
-            old_hash="${old_hashes[$i]}"
-            if [ -n "${seen_hashes[$old_hash]:-}" ]; then
-                echo "  ⚠️  WARNING: Hash collision detected!"
-                echo "    Multiple entries need update from: $old_hash"
-                echo "    Context 1: ${seen_hashes[$old_hash]}"
-                echo "    Context 2: ${contexts[$i]}"
-                echo "    Manual intervention required - skipping automated replacement"
-                exit 1
-            fi
-            seen_hashes[$old_hash]="${contexts[$i]}"
-        done
-
         for i in "${!old_hashes[@]}"; do
             old_hash="${old_hashes[$i]}"
             new_hash="${new_hashes[$i]}"
@@ -113,10 +98,14 @@ find . -path './.git' -prune -o -name "*.nix" -type f -exec grep -Il "fetchFromG
 
             echo "    Updating $context: $old_hash → $new_hash"
 
-            # Use perl for safer in-place editing with proper escaping
-            # Only replace the first occurrence to avoid affecting other dependencies
-            # ||= sets $done to true when substitution succeeds, preventing further matches
-            if perl -i.bak -pe "BEGIN{\$done=0} \$done ||= s/\Qhash = \"$old_hash\"\E/hash = \"$new_hash\"/" "$file"; then
+            # Extract owner and repo from context (format: "owner/repo")
+            owner_name="${context%/*}"
+            repo_name="${context#*/}"
+
+            # Use perl with slurp mode (-0777) to match owner + repo + hash together
+            # This handles hash collisions by using full context for unique matching
+            # Pattern: owner = "X"; ... repo = "Y"; ... hash = "old"; → replace hash with new
+            if perl -i.bak -0777 -pe "s|(owner\\s*=\\s*\"\\Q$owner_name\\E\"[^}]*repo\\s*=\\s*\"\\Q$repo_name\\E\"[^}]*hash\\s*=\\s*\")\\Q$old_hash\\E(\")|\$1$new_hash\$2|s" "$file"; then
                 rm -f "$file.bak"
                 echo "  ✅ Updated hash in $file"
                 echo "$file" >> "$tmpfile"
@@ -214,21 +203,6 @@ find . -path './.git' -prune -o -name "*.nix" -type f -exec grep -Il "fetchurl" 
     if [ ${#old_hashes[@]} -gt 0 ]; then
         echo "  Applying ${#old_hashes[@]} hash update(s) to $file..."
 
-        # Detect hash collisions (same old_hash appearing multiple times)
-        declare -A seen_hashes
-        for i in "${!old_hashes[@]}"; do
-            old_hash="${old_hashes[$i]}"
-            if [ -n "${seen_hashes[$old_hash]:-}" ]; then
-                echo "  ⚠️  WARNING: Hash collision detected!"
-                echo "    Multiple entries need update from: $old_hash"
-                echo "    Context 1: ${seen_hashes[$old_hash]}"
-                echo "    Context 2: ${contexts[$i]}"
-                echo "    Manual intervention required - skipping automated replacement"
-                exit 1
-            fi
-            seen_hashes[$old_hash]="${contexts[$i]}"
-        done
-
         for i in "${!old_hashes[@]}"; do
             old_hash="${old_hashes[$i]}"
             new_hash="${new_hashes[$i]}"
@@ -236,10 +210,13 @@ find . -path './.git' -prune -o -name "*.nix" -type f -exec grep -Il "fetchurl" 
 
             echo "    Updating $context: $old_hash → $new_hash"
 
-            # Use perl for safer in-place editing with proper escaping
-            # Only replace the first occurrence to avoid affecting other dependencies
-            # ||= sets $done to true when substitution succeeds, preventing further matches
-            if perl -i.bak -pe "BEGIN{\$done=0} \$done ||= s/\Qhash = \"$old_hash\"\E/hash = \"$new_hash\"/" "$file"; then
+            # Use perl with slurp mode (-0777) to match URL + hash together
+            # This handles hash collisions by using URL context for unique matching
+            # Extract filename from context for matching
+            url_pattern=$(echo "$context" | sed 's/[.]/\\./g')
+
+            # Pattern: url = "...filename"; ... hash = "old"; → replace hash with new
+            if perl -i.bak -0777 -pe "s|(url\\s*=\\s*\"[^\"]*\\Q$context\\E\"[^}]*hash\\s*=\\s*\")\\Q$old_hash\\E(\")|\$1$new_hash\$2|s" "$file"; then
                 rm -f "$file.bak"
                 echo "  ✅ Updated hash in $file"
                 echo "$file" >> "$tmpfile"
