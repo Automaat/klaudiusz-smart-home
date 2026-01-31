@@ -34,8 +34,24 @@ async def async_setup(hass: HomeAssistant, config: dict) -> bool:
 
     async def async_ask_claude(call: ServiceCall) -> None:
         """Ask Claude a question."""
-        query = call.data["query"]
-        session_id = hass.states.get(INPUT_TEXT_SESSION).state
+        query = str(call.data.get("query", "")).strip()
+
+        # Validate query
+        if not query:
+            _LOGGER.warning("Empty query for Claude Brain 'ask'")
+            await hass.services.async_call(
+                "input_text", "set_value",
+                {"entity_id": INPUT_TEXT_RESPONSE, "value": "Przepraszam, nie zrozumiałem pytania"},
+                blocking=True,
+            )
+            return
+
+        if len(query) > 500:
+            _LOGGER.warning("Truncating query (len=%d)", len(query))
+            query = query[:500]
+
+        session_state = hass.states.get(INPUT_TEXT_SESSION)
+        session_id = session_state.state if session_state else ""
 
         session = async_get_clientsession(hass)
 
@@ -45,6 +61,15 @@ async def async_setup(hass: HomeAssistant, config: dict) -> bool:
                     f"{SERVER_URL}/ask",
                     json={"query": query, "session_id": session_id},
                 ) as resp:
+                    if resp.status != 200:
+                        _LOGGER.error("Claude server returned status %d: %s", resp.status, await resp.text())
+                        await hass.services.async_call(
+                            "input_text", "set_value",
+                            {"entity_id": INPUT_TEXT_RESPONSE, "value": "Przepraszam, wystąpił błąd serwera"},
+                            blocking=True,
+                        )
+                        return
+
                     data = await resp.json()
 
                     # Update HA state
@@ -88,7 +113,8 @@ async def async_setup(hass: HomeAssistant, config: dict) -> bool:
 
     async def async_confirm_claude(call: ServiceCall) -> None:
         """Confirm pending action."""
-        session_id = hass.states.get(INPUT_TEXT_SESSION).state
+        session_state = hass.states.get(INPUT_TEXT_SESSION)
+        session_id = session_state.state if session_state else ""
         session = async_get_clientsession(hass)
 
         try:
@@ -97,6 +123,15 @@ async def async_setup(hass: HomeAssistant, config: dict) -> bool:
                     f"{SERVER_URL}/ask",
                     json={"query": "wykonaj", "session_id": session_id, "confirm_action": True},
                 ) as resp:
+                    if resp.status != 200:
+                        _LOGGER.error("Claude server returned status %d: %s", resp.status, await resp.text())
+                        await hass.services.async_call(
+                            "input_text", "set_value",
+                            {"entity_id": INPUT_TEXT_RESPONSE, "value": "Przepraszam, wystąpił błąd serwera"},
+                            blocking=True,
+                        )
+                        return
+
                     data = await resp.json()
                     await hass.services.async_call(
                         "input_text", "set_value",
@@ -105,6 +140,11 @@ async def async_setup(hass: HomeAssistant, config: dict) -> bool:
                     )
         except Exception as err:
             _LOGGER.error("Error confirming action: %s", err)
+            await hass.services.async_call(
+                "input_text", "set_value",
+                {"entity_id": INPUT_TEXT_RESPONSE, "value": "Przepraszam, nie mogę potwierdzić akcji"},
+                blocking=True,
+            )
         finally:
             # Clear confirmation state
             await hass.services.async_call(
@@ -120,7 +160,8 @@ async def async_setup(hass: HomeAssistant, config: dict) -> bool:
 
     async def async_cancel_claude(call: ServiceCall) -> None:
         """Cancel pending action."""
-        session_id = hass.states.get(INPUT_TEXT_SESSION).state
+        session_state = hass.states.get(INPUT_TEXT_SESSION)
+        session_id = session_state.state if session_state else ""
         session = async_get_clientsession(hass)
 
         try:
@@ -129,6 +170,15 @@ async def async_setup(hass: HomeAssistant, config: dict) -> bool:
                     f"{SERVER_URL}/cancel",
                     json={"session_id": session_id},
                 ) as resp:
+                    if resp.status != 200:
+                        _LOGGER.error("Claude server returned status %d: %s", resp.status, await resp.text())
+                        await hass.services.async_call(
+                            "input_text", "set_value",
+                            {"entity_id": INPUT_TEXT_RESPONSE, "value": "Przepraszam, wystąpił błąd serwera"},
+                            blocking=True,
+                        )
+                        return
+
                     data = await resp.json()
                     await hass.services.async_call(
                         "input_text", "set_value",
@@ -137,6 +187,11 @@ async def async_setup(hass: HomeAssistant, config: dict) -> bool:
                     )
         except Exception as err:
             _LOGGER.error("Error canceling action: %s", err)
+            await hass.services.async_call(
+                "input_text", "set_value",
+                {"entity_id": INPUT_TEXT_RESPONSE, "value": "Przepraszam, nie udało się anulować akcji"},
+                blocking=True,
+            )
         finally:
             # Clear confirmation state
             await hass.services.async_call(

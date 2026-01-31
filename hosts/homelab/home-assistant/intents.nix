@@ -296,7 +296,11 @@ in {
             action = "claude_brain.ask";
             data.query = "{{ query }}";
           }
-          {delay.seconds = 3;}
+          {
+            wait_template = "{{ states('input_text.claude_response') != '' }}";
+            timeout = "00:00:10";
+            continue_on_timeout = true;
+          }
         ];
         speech.text = "{{ states('input_text.claude_response') }}";
       };
@@ -304,14 +308,36 @@ in {
       ConfirmClaude = {
         action = [
           {
-            condition = "state";
-            entity_id = "input_boolean.claude_awaiting_confirmation";
-            state = "on";
+            choose = [
+              {
+                conditions = [
+                  {
+                    condition = "state";
+                    entity_id = "input_boolean.claude_awaiting_confirmation";
+                    state = "on";
+                  }
+                ];
+                sequence = [
+                  {
+                    action = "claude_brain.confirm";
+                  }
+                  {
+                    wait_template = "{{ is_state('input_boolean.claude_awaiting_confirmation', 'off') }}";
+                    timeout = "00:00:10";
+                    continue_on_timeout = true;
+                  }
+                ];
+              }
+            ];
+            default = [
+              {
+                service = "tts.speak";
+                data.message = "Nie ma żadnej akcji do potwierdzenia";
+                target.entity_id = "tts.piper";
+              }
+              {stop = "";}
+            ];
           }
-          {
-            action = "claude_brain.confirm";
-          }
-          {delay.seconds = 2;}
         ];
         speech.text = "{{ states('input_text.claude_response') }}";
       };
@@ -319,14 +345,36 @@ in {
       CancelClaude = {
         action = [
           {
-            condition = "state";
-            entity_id = "input_boolean.claude_awaiting_confirmation";
-            state = "on";
+            choose = [
+              {
+                conditions = [
+                  {
+                    condition = "state";
+                    entity_id = "input_boolean.claude_awaiting_confirmation";
+                    state = "on";
+                  }
+                ];
+                sequence = [
+                  {
+                    action = "claude_brain.cancel";
+                  }
+                  {
+                    wait_template = "{{ is_state('input_boolean.claude_awaiting_confirmation', 'off') }}";
+                    timeout = "00:00:10";
+                    continue_on_timeout = true;
+                  }
+                ];
+              }
+            ];
+            default = [
+              {
+                service = "tts.speak";
+                data.message = "Nie mam nic do anulowania";
+                target.entity_id = "tts.piper";
+              }
+              {stop = "";}
+            ];
           }
-          {
-            action = "claude_brain.cancel";
-          }
-          {delay.seconds = 1;}
         ];
         speech.text = "{{ states('input_text.claude_response') }}";
       };

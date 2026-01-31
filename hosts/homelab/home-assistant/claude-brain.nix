@@ -43,7 +43,7 @@
         sensor = {
           name = "Claude Server Status";
           unique_id = "claude_server_status";
-          command = "timeout 5 curl -s --max-time 3 http://192.168.0.34:8742/health | jq -r '.status // \"offline\"'";
+          command = "curl -sf --max-time 3 http://192.168.0.34:8742/health 2>/dev/null | jq -r '.status // \"offline\"' || echo 'offline'";
           scan_interval = 60;
         };
       }
