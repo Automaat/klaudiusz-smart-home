@@ -61,7 +61,7 @@
             state = ''
               {% if is_state('input_boolean.claude_awaiting_confirmation', 'on') %}
                 awaiting_confirmation
-              {% elif states('input_text.claude_session') != '''' %}
+              {% elif states('input_text.claude_session') | length > 0 %}
                 active_session
               {% else %}
                 idle
