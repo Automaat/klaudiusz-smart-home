@@ -25,7 +25,15 @@
     bazarr.enable = true;
 
     # Download client
-    transmission.enable = true;
+    transmission = {
+      enable = true;
+      vpn.enable = true;
+      extraSettings = {
+        # Fix 421 Misdirected Request - allow homelab hostname and LAN IP
+        rpc-host-whitelist = "homelab,192.168.0.241";
+        rpc-host-whitelist-enabled = true;
+      };
+    };
 
     # Request management
     jellyseerr.enable = true;
@@ -34,11 +42,6 @@
     vpn = {
       enable = true;
       wgConf = config.sops.secrets."protonvpn-wg-conf".path;
-    };
-
-    # Route transmission through VPN namespace
-    transmission.vpn = {
-      enable = true;
     };
   };
 
