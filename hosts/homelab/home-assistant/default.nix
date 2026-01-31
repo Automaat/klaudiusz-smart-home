@@ -65,7 +65,7 @@
     ln -s ${pkgs.fetchurl {
       # renovate: datasource=github-releases depName=piitaya/lovelace-mushroom
       url = "https://github.com/piitaya/lovelace-mushroom/releases/download/v5.0.10/mushroom.js";
-      hash = "sha256-3R99PKHr264VQR+Wb8hiZXYL4wIxzaANuIZ/SO0T4+Q=";
+      hash = "sha256-RYCS5ne5Vr3Y2VyPeP3Y10fwSBAWDOS/gVSrm8qSLHk=";
     }} $out/mushroom.js
   '';
 
@@ -211,7 +211,7 @@
     ln -s ${pkgs.fetchurl {
       # renovate: datasource=github-releases depName=kalkih/mini-media-player
       url = "https://github.com/kalkih/mini-media-player/releases/download/v1.16.10/mini-media-player-bundle.js";
-      hash = "sha256-5AhVnn7umpJ7r68e7FCkaT6E9pG4bNOg1O32PWS5WrI=";
+      hash = "sha256-m9OdXtiCLyGnVXm+hjb7iDJYA81Aa6WymI4LIKmfkiI=";
     }} $out/mini-media-player-bundle.js
   '';
 
