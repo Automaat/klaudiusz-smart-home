@@ -60,7 +60,7 @@
             state = ''
               {% if is_state('input_boolean.claude_awaiting_confirmation', 'on') %}
                 awaiting_confirmation
-              {% elif states('input_text.claude_session') != '' %}
+              {% elif states('input_text.claude_session') != '''' %}
                 active_session
               {% else %}
                 idle
