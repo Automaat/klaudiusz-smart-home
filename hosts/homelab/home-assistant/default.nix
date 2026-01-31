@@ -21,7 +21,7 @@
     repo = "home-assistant";
     # renovate: datasource=github-tags depName=catppuccin/home-assistant
     rev = "v2.1.2";
-    hash = "sha256-4knJI+3Bo+uRL+NAVt5JrI3PcsZjANozyXvRRR5aNjM=";
+    hash = "sha256-iMomioxH7Iydy+bzJDbZxt6BX31UkCvqhXrxYFQV8Gw=";
   };
 
   # ===========================================
@@ -32,7 +32,7 @@
     repo = "lovelace-ios-themes";
     # renovate: datasource=github-tags depName=basnijholt/lovelace-ios-themes
     rev = "v3.0.1";
-    hash = "sha256-b3AX714qJwJoju9USH2JjUeKp7izgk0p7wqJqvS7J7U=";
+    hash = "sha256-iMomioxH7Iydy+bzJDbZxt6BX31UkCvqhXrxYFQV8Gw=";
   };
 
   # ===========================================
@@ -43,7 +43,7 @@
     repo = "better_thermostat";
     # renovate: datasource=github-tags depName=KartoffelToby/better_thermostat
     rev = "1.7.0";
-    hash = "sha256-rE14iKAXo3hecK3bQ9MLcOtnZviwjOpYKGlIc4+uCfw=";
+    hash = "sha256-iMomioxH7Iydy+bzJDbZxt6BX31UkCvqhXrxYFQV8Gw=";
   };
 
   # ===========================================
@@ -54,7 +54,7 @@
     repo = "Bubble-Card";
     # renovate: datasource=github-tags depName=Clooos/Bubble-Card
     rev = "v3.1.0-rc.2";
-    hash = "sha256-WGe8XAJFYrFxp4KkXefK5ImAnRtgKH9ZhbEC74QRPVY=";
+    hash = "sha256-iMomioxH7Iydy+bzJDbZxt6BX31UkCvqhXrxYFQV8Gw=";
   };
 
   # ===========================================
@@ -65,7 +65,7 @@
     ln -s ${pkgs.fetchurl {
       # renovate: datasource=github-releases depName=piitaya/lovelace-mushroom
       url = "https://github.com/piitaya/lovelace-mushroom/releases/download/v5.0.9/mushroom.js";
-      hash = "sha256-3R99PKHr264VQR+Wb8hiZXYL4wIxzaANuIZ/SO0T4+Q=";
+      hash = "sha256-XW6cavygHoAUZT+la7XWqpJI2DLDT7lEp/LDYym8ItE=";
     }} $out/mushroom.js
   '';
 
@@ -77,7 +77,7 @@
     ln -s ${pkgs.fetchurl {
       # renovate: datasource=github-releases depName=kalkih/mini-graph-card
       url = "https://github.com/kalkih/mini-graph-card/releases/download/v0.13.0/mini-graph-card-bundle.js";
-      hash = "sha256-TYuYbzzWk8D3dx0vVXQAi8OcRey0UK7AZ5BhUL4t+r0=";
+      hash = "sha256-XW6cavygHoAUZT+la7XWqpJI2DLDT7lEp/LDYym8ItE=";
     }} $out/mini-graph-card-bundle.js
   '';
 
@@ -89,7 +89,7 @@
     ln -s ${pkgs.fetchurl {
       # renovate: datasource=github-releases depName=custom-cards/button-card
       url = "https://github.com/custom-cards/button-card/releases/download/v7.0.1/button-card.js";
-      hash = "sha256-XW6cavygHoAUZT+la7XWqpJI2DLDT7lEp/LDYym8ItE=";
+      hash = "sha256-m9OdXtiCLyGnVXm+hjb7iDJYA81Aa6WymI4LIKmfkiI=";
     }} $out/button-card.js
   '';
 
@@ -101,7 +101,7 @@
     repo = "lovelace-card-mod";
     # renovate: datasource=github-tags depName=thomasloven/lovelace-card-mod
     rev = "v4.1.0";
-    hash = "sha256-w2ky3jSHRbIaTzl0b0aJq4pzuCNUV8GqYsI2U/eoGfs=";
+    hash = "sha256-m9OdXtiCLyGnVXm+hjb7iDJYA81Aa6WymI4LIKmfkiI=";
   };
 
   # ===========================================
@@ -112,7 +112,7 @@
     repo = "lovelace-auto-entities";
     # renovate: datasource=github-tags depName=thomasloven/lovelace-auto-entities
     rev = "v1.16.1";
-    hash = "sha256-yMqf4LA/fBTIrrYwacUTb2fL758ZB1k471vdsHAiOj8=";
+    hash = "sha256-m9OdXtiCLyGnVXm+hjb7iDJYA81Aa6WymI4LIKmfkiI=";
   };
 
   # ===========================================
@@ -123,7 +123,7 @@
     repo = "hass-hue-icons";
     # renovate: datasource=github-tags depName=arallsopp/hass-hue-icons
     rev = "v1.2.53";
-    hash = "sha256-7ZkaZd4XkGbzb0MA4V/qXJDvSXDq2EsogtsvgJGxNCU=";
+    hash = "sha256-m9OdXtiCLyGnVXm+hjb7iDJYA81Aa6WymI4LIKmfkiI=";
   };
 
   # ===========================================
@@ -134,7 +134,7 @@
     repo = "adaptive-lighting";
     # renovate: datasource=github-tags depName=basnijholt/adaptive-lighting
     rev = "v1.30.1";
-    hash = "sha256-pmI0jZxIjSiA9P5+0hRCujHE53WprvkAo6jp/IOpJ88=";
+    hash = "sha256-m9OdXtiCLyGnVXm+hjb7iDJYA81Aa6WymI4LIKmfkiI=";
   };
 
   # ===========================================
@@ -145,7 +145,7 @@
     repo = "thewatchman";
     # renovate: datasource=github-tags depName=dummylabs/thewatchman
     rev = "v0.8.1";
-    hash = "sha256-2C94T33axLTJvZ5VYAtXoB4PEAhhVXlEDG3z/cc5UfI=";
+    hash = "sha256-m9OdXtiCLyGnVXm+hjb7iDJYA81Aa6WymI4LIKmfkiI=";
   };
 
   # ===========================================
@@ -156,7 +156,7 @@
     repo = "homeassistant-powercalc";
     # renovate: datasource=github-tags depName=bramstroker/homeassistant-powercalc
     rev = "v1.20.3";
-    hash = "sha256-z66VHJ/ZzQKvx4l00XGKvTBt9o4T+hv64oCGZNDRUng=";
+    hash = "sha256-m9OdXtiCLyGnVXm+hjb7iDJYA81Aa6WymI4LIKmfkiI=";
   };
 
   # ===========================================
@@ -167,7 +167,7 @@
     repo = "custom-conversation";
     # renovate: datasource=github-tags depName=michelle-avery/custom-conversation
     rev = "1.4.0";
-    hash = "sha256-y1vOb/hTMMd1iiYazkiKCUT1pBghvtMMwrcrKgs9U1w=";
+    hash = "sha256-m9OdXtiCLyGnVXm+hjb7iDJYA81Aa6WymI4LIKmfkiI=";
   };
 
   # ===========================================
@@ -178,7 +178,7 @@
     repo = "ha_xiaomi_home";
     # renovate: datasource=github-tags depName=XiaoMi/ha_xiaomi_home
     rev = "v0.4.6";
-    hash = "sha256-YvQ9Fzk+WAIqtYyv6j2terPfR3bLer6GgcK1GBdpctg=";
+    hash = "sha256-m9OdXtiCLyGnVXm+hjb7iDJYA81Aa6WymI4LIKmfkiI=";
   };
 
   # ===========================================
@@ -189,7 +189,7 @@
     repo = "history-explorer-card";
     # renovate: datasource=github-tags depName=alexarch21/history-explorer-card
     rev = "v1.0.51";
-    hash = "sha256-/bPFW6/vqL1aK30WOQxxRV3fuIk7FYnZA+l4ihHpToM=";
+    hash = "sha256-m9OdXtiCLyGnVXm+hjb7iDJYA81Aa6WymI4LIKmfkiI=";
   };
 
   # ===========================================
@@ -200,7 +200,7 @@
     repo = "lovelace-layout-card";
     # renovate: datasource=github-tags depName=thomasloven/lovelace-layout-card
     rev = "v2.4.7";
-    hash = "sha256-xni9cTgv5rdpr+Oo4Zh/d/2ERMiqDiTFGAiXEnigqjc=";
+    hash = "sha256-m9OdXtiCLyGnVXm+hjb7iDJYA81Aa6WymI4LIKmfkiI=";
   };
 
   # ===========================================
@@ -211,7 +211,7 @@
     ln -s ${pkgs.fetchurl {
       # renovate: datasource=github-releases depName=kalkih/mini-media-player
       url = "https://github.com/kalkih/mini-media-player/releases/download/v1.16.10/mini-media-player-bundle.js";
-      hash = "sha256-m9OdXtiCLyGnVXm+hjb7iDJYA81Aa6WymI4LIKmfkiI=";
+      hash = "sha256-X3bdYkdm72ptix69gTmJ3TS4cwAU6HTEUM+m5OmHN/c=";
     }} $out/mini-media-player-bundle.js
   '';
 
@@ -223,7 +223,7 @@
     repo = "home-assistant-openplantbook";
     # renovate: datasource=github-tags depName=Olen/home-assistant-openplantbook
     rev = "v1.3.2";
-    hash = "sha256-5AhVnn7umpJ7r68e7FCkaT6E9pG4bNOg1O32PWS5WrI=";
+    hash = "sha256-X3bdYkdm72ptix69gTmJ3TS4cwAU6HTEUM+m5OmHN/c=";
   };
 
   # ===========================================
@@ -234,7 +234,7 @@
     repo = "homeassistant-plant";
     # renovate: datasource=github-tags depName=Olen/homeassistant-plant
     rev = "v2026.1.1";
-    hash = "sha256-a3fcl4xhH4itVBmwCTIde/+8m/Q8eS8jSxeaEcDhHwQ=";
+    hash = "sha256-X3bdYkdm72ptix69gTmJ3TS4cwAU6HTEUM+m5OmHN/c=";
   };
 
   # ===========================================
