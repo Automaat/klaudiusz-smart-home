@@ -75,6 +75,18 @@
       ];
       action = [
         {
+          service = "adaptive_lighting.set_manual_control";
+          data = {
+            entity_id = "switch.adaptive_lighting_hallway_lights";
+            lights = [
+              "light.hue_essential_spot_4_2" # h-3
+              "light.hue_essential_spot_1_2" # h-4
+              "light.hue_essential_spot_2_2" # h-5
+            ];
+            manual_control = true;
+          };
+        }
+        {
           service = "light.turn_off";
           target.entity_id = [
             "light.hue_essential_spot_4_2" # h-3
@@ -153,6 +165,17 @@
         }
       ];
       action = [
+        {
+          service = "adaptive_lighting.set_manual_control";
+          data = {
+            entity_id = "switch.adaptive_lighting_hallway_lights";
+            lights = [
+              "light.hue_essential_spot_3_2" # h-1
+              "light.hue_essential_spot_5" # h-2
+            ];
+            manual_control = true;
+          };
+        }
         {
           service = "light.turn_off";
           target.entity_id = [
