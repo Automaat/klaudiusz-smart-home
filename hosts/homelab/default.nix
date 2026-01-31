@@ -80,13 +80,14 @@ in {
       allowedTCPPorts = [
         22 # SSH
         3000 # Grafana
+        3001 # Flood (Transmission web UI)
         8123 # Home Assistant
         8096 # Jellyfin
         8989 # Sonarr
         7878 # Radarr
         9696 # Prowlarr
         6767 # Bazarr
-        9091 # Transmission
+        9091 # Transmission RPC
         5055 # Jellyseerr
       ];
       allowedUDPPorts = [

@@ -169,6 +169,28 @@
   };
 
   # ===========================================
+  # Flood Web UI for Transmission
+  # ===========================================
+  # Transmission 4.x doesn't include built-in web UI
+  # Use Flood as modern alternative
+
+  services.flood = {
+    enable = true;
+    host = "0.0.0.0";
+    port = 3001;
+  };
+
+  systemd.services.flood = {
+    after = ["transmission.service"];
+    environment = {
+      # Transmission RPC in VPN namespace
+      TRANSMISSION_URL = "http://192.168.15.1:9091/transmission/rpc";
+      TRANSMISSION_USER = "admin";
+      TRANSMISSION_PASS = config.sops.secrets."transmission-rpc-password".path;
+    };
+  };
+
+  # ===========================================
   # Networking - Firewall Ports
   # ===========================================
   # NOTE: These are added to main default.nix firewall config
@@ -180,7 +202,8 @@
   #   7878  # Radarr
   #   9696  # Prowlarr
   #   6767  # Bazarr
-  #   9091  # Transmission
+  #   9091  # Transmission (Flood web UI)
+  #   3001  # Flood
   #   5055  # Jellyseerr
   # ];
 }
