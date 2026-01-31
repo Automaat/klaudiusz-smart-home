@@ -199,9 +199,11 @@ transmission.extraSettings = {
 
 **Access:** <http://homelab:3001> or <http://192.168.0.241:3001>
 
-**Why Flood?** Transmission 4.x removed the built-in web UI. Flood provides a modern, feature-rich alternative with better UX.
+**Why Flood?** Transmission 4.x removed the built-in web UI. Flood provides a modern, feature-rich
+alternative with better UX.
 
-**Configuration:** Transmission connection pre-configured via NixOS (environment variables). Manual setup required for user account only.
+**Configuration:** Transmission connection pre-configured via NixOS (environment variables).
+Manual setup required for user account only.
 
 #### Initial Setup
 
@@ -252,17 +254,17 @@ ssh homelab "journalctl -u flood.service -n 50"
 2. Check Transmission authentication working (curl test above)
 3. Review Flood environment variables:
 
-```bash
-ssh homelab "systemctl show flood.service -p Environment"
-# Should show TRANSMISSION_URL and TRANSMISSION_USER
-```
+   ```bash
+   ssh homelab "systemctl show flood.service -p Environment"
+   # Should show TRANSMISSION_URL and TRANSMISSION_USER
+   ```
 
 4. Check password injected:
 
-```bash
-ssh homelab "cat /run/flood-transmission.env"
-# Should show TRANSMISSION_PASS=<password>
-```
+   ```bash
+   ssh homelab "cat /run/flood-transmission.env"
+   # Should show TRANSMISSION_PASS=<password>
+   ```
 
 **Account locked out:**
 
