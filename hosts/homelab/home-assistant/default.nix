@@ -64,7 +64,7 @@
     mkdir -p $out
     ln -s ${pkgs.fetchurl {
       # renovate: datasource=github-releases depName=piitaya/lovelace-mushroom
-      url = "https://github.com/piitaya/lovelace-mushroom/releases/download/v5.0.9/mushroom.js";
+      url = "https://github.com/piitaya/lovelace-mushroom/releases/download/v5.0.10/mushroom.js";
       hash = "sha256-3R99PKHr264VQR+Wb8hiZXYL4wIxzaANuIZ/SO0T4+Q=";
     }} $out/mushroom.js
   '';
