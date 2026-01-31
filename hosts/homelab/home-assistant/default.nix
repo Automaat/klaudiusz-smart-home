@@ -89,7 +89,7 @@
     ln -s ${pkgs.fetchurl {
       # renovate: datasource=github-releases depName=custom-cards/button-card
       url = "https://github.com/custom-cards/button-card/releases/download/v7.0.1/button-card.js";
-      hash = "sha256-XW6cavygHoAUZT+la7XWqpJI2DLDT7lEp/LDYym8ItE=";
+      hash = "sha256-WtNUO7PIRqplGG/WQV1TJM+ta+4i1rNpfeFL9Q7uSdM=";
     }} $out/button-card.js
   '';
 
@@ -156,7 +156,7 @@
     repo = "homeassistant-powercalc";
     # renovate: datasource=github-tags depName=bramstroker/homeassistant-powercalc
     rev = "v1.20.4";
-    hash = "sha256-z66VHJ/ZzQKvx4l00XGKvTBt9o4T+hv64oCGZNDRUng=";
+    hash = "sha256-xni9cTgv5rdpr+Oo4Zh/d/2ERMiqDiTFGAiXEnigqjc=";
   };
 
   # ===========================================
@@ -211,7 +211,7 @@
     ln -s ${pkgs.fetchurl {
       # renovate: datasource=github-releases depName=kalkih/mini-media-player
       url = "https://github.com/kalkih/mini-media-player/releases/download/v1.16.10/mini-media-player-bundle.js";
-      hash = "sha256-m9OdXtiCLyGnVXm+hjb7iDJYA81Aa6WymI4LIKmfkiI=";
+      hash = "sha256-X3bdYkdm72ptix69gTmJ3TS4cwAU6HTEUM+m5OmHN/c=";
     }} $out/mini-media-player-bundle.js
   '';
 
