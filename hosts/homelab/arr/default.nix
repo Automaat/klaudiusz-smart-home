@@ -182,11 +182,27 @@
 
   systemd.services.flood = {
     after = ["transmission.service"];
+    preStart = lib.mkBefore ''
+      # Inject RPC password from sops secret into env file
+      # Flood runs as DynamicUser and cannot read transmission-owned secret
+      PASSWORD_FILE="${config.sops.secrets."transmission-rpc-password".path}"
+      ENV_FILE="/run/flood-transmission.env"
+
+      if [ -f "$PASSWORD_FILE" ]; then
+        PASSWORD="$(${pkgs.coreutils}/bin/tr -d '\n' < "$PASSWORD_FILE")"
+        umask 0077
+        echo "TRANSMISSION_PASS=$PASSWORD" > "$ENV_FILE"
+        echo "Flood: RPC password injected from sops secret"
+      else
+        echo "WARNING: Transmission RPC password secret not found"
+        rm -f "$ENV_FILE"
+      fi
+    '';
+    serviceConfig.EnvironmentFile = "/run/flood-transmission.env";
     environment = {
       # Transmission RPC in VPN namespace
       TRANSMISSION_URL = "http://192.168.15.1:9091/transmission/rpc";
       TRANSMISSION_USER = "admin";
-      TRANSMISSION_PASS = config.sops.secrets."transmission-rpc-password".path;
     };
   };
 
@@ -202,8 +218,8 @@
   #   7878  # Radarr
   #   9696  # Prowlarr
   #   6767  # Bazarr
-  #   9091  # Transmission (Flood web UI)
-  #   3001  # Flood
+  #   9091  # Transmission RPC
+  #   3001  # Flood web UI
   #   5055  # Jellyseerr
   # ];
 }
