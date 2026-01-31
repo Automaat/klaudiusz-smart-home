@@ -144,28 +144,32 @@
   # Override transmission service to inject password from sops before start
 
   systemd.services.transmission = {
-    preStart = lib.mkAfter ''
-      # Inject RPC password from sops secret into settings.json
-      SETTINGS_FILE="${config.nixarr.stateDir}/transmission/.config/transmission-daemon/settings.json"
-      PASSWORD_FILE="${config.sops.secrets."transmission-rpc-password".path}"
+    serviceConfig.ExecStartPre = [
+      # Run AFTER nixarr's prestart to inject password into generated settings.json
+      (pkgs.writeShellScript "transmission-inject-password" ''
+        set -euo pipefail
 
-      if [ -f "$PASSWORD_FILE" ]; then
-        # Update settings.json using jq (transmission will hash it on next start)
-        # Use --rawfile to avoid exposing password in process args
-        if ${pkgs.jq}/bin/jq --rawfile pass "$PASSWORD_FILE" \
-          '.["rpc-password"] = ($pass | rtrimstr("\n"))' \
-          "$SETTINGS_FILE" > "$SETTINGS_FILE.tmp"; then
-          mv "$SETTINGS_FILE.tmp" "$SETTINGS_FILE"
-          echo "RPC password injected from sops secret"
+        SETTINGS_FILE="${config.nixarr.stateDir}/transmission/.config/transmission-daemon/settings.json"
+        PASSWORD_FILE="${config.sops.secrets."transmission-rpc-password".path}"
+
+        if [ -f "$PASSWORD_FILE" ]; then
+          # Update settings.json using jq (transmission will hash it on next start)
+          # Use --rawfile to avoid exposing password in process args
+          if ${pkgs.jq}/bin/jq --rawfile pass "$PASSWORD_FILE" \
+            '.["rpc-password"] = ($pass | rtrimstr("\n"))' \
+            "$SETTINGS_FILE" > "$SETTINGS_FILE.tmp"; then
+            mv "$SETTINGS_FILE.tmp" "$SETTINGS_FILE"
+            echo "RPC password injected from sops secret"
+          else
+            rm -f "$SETTINGS_FILE.tmp"
+            echo "ERROR: Failed to inject RPC password (jq failure)"
+            exit 1
+          fi
         else
-          rm -f "$SETTINGS_FILE.tmp"
-          echo "ERROR: Failed to inject RPC password (jq failure)"
-          exit 1
+          echo "WARNING: RPC password secret not found at $PASSWORD_FILE"
         fi
-      else
-        echo "WARNING: RPC password secret not found at $PASSWORD_FILE"
-      fi
-    '';
+      '')
+    ];
   };
 
   # ===========================================
