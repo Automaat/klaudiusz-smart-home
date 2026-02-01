@@ -298,7 +298,7 @@ in {
           }
           {
             wait_template = "{{ states('input_text.claude_response') != '' }}";
-            timeout = "00:00:10";
+            timeout = "00:02:00";
             continue_on_timeout = true;
           }
         ];
@@ -323,7 +323,7 @@ in {
                   }
                   {
                     wait_template = "{{ is_state('input_boolean.claude_awaiting_confirmation', 'off') }}";
-                    timeout = "00:00:10";
+                    timeout = "00:02:00";
                     continue_on_timeout = true;
                   }
                 ];
@@ -360,7 +360,7 @@ in {
                   }
                   {
                     wait_template = "{{ is_state('input_boolean.claude_awaiting_confirmation', 'off') }}";
-                    timeout = "00:00:10";
+                    timeout = "00:02:00";
                     continue_on_timeout = true;
                   }
                 ];
