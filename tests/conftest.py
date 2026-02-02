@@ -15,11 +15,3 @@ sys.path.insert(0, str(custom_components_path.parent))
 def reset_imports():
     """Reset imports between tests to avoid state leakage."""
     yield
-
-    # Clean up custom_components imports
-    modules_to_remove = [
-        key for key in sys.modules.keys()
-        if key.startswith("custom_components.deepgram_stt")
-    ]
-    for module in modules_to_remove:
-        sys.modules.pop(module, None)

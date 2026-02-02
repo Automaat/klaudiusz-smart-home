@@ -140,7 +140,7 @@ jobs:
 
       - name: Run pytest
         if: steps.changes.outputs.python == 'true'
-        run: pytest --cov=custom_components/deepgram_stt --cov-report=term --cov-report=xml
+        run: pytest --cov-report=term --cov-report=xml
 
       - name: Upload coverage
         if: steps.changes.outputs.python == 'true'
