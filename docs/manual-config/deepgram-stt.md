@@ -69,12 +69,14 @@ Both providers can coexist - switch anytime via voice assistant config.
 To revert to the original custom Deepgram component:
 
 1. **Edit NixOS config:**
+
    ```bash
    # Uncomment line 362 in hosts/homelab/home-assistant/default.nix
    # Comment out line 553 in hosts/homelab/home-assistant/default.nix
    ```
 
 2. **Rebuild system:**
+
    ```bash
    sudo nixos-rebuild switch --flake .#homelab
    ```
