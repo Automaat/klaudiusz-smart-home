@@ -4,30 +4,22 @@
 
 Deepgram STT integration provides cloud-based speech-to-text using the Deepgram API.
 
-**Current setup uses HACS version** from <https://github.com/Automaat/deepgram-stt>
+**Installed declaratively** from <https://github.com/Automaat/deepgram-stt> (v0.1.0)
 
 ## Installation
 
+### Auto-Installation (Default)
+
+Integration auto-installed via NixOS symlink to custom_components. No HACS needed.
+
 ### Prerequisites
 
-- HACS installed in Home Assistant
 - Deepgram API key from <https://console.deepgram.com/>
 - NixOS: API key in `/run/secrets/deepgram-api-key` (sops-encrypted)
 
-### HACS Installation Steps
+### Configuration Steps
 
-1. **Add custom repository:**
-   - Go to **HACS** > **Integrations** > **⋮** (top right) > **Custom repositories**
-   - Repository: `https://github.com/Automaat/deepgram-stt`
-   - Category: **Integration**
-   - Click **Add**
-
-2. **Install integration:**
-   - Search for "Deepgram Speech-to-Text"
-   - Click **Download**
-   - Restart Home Assistant
-
-3. **Configure integration:**
+1. **Configure integration:**
    - **Settings** > **Devices & Services** > **Add Integration**
    - Search "Deepgram Speech-to-Text"
    - Enter API key (get via SSH: `cat /run/secrets/deepgram-api-key`)
@@ -72,29 +64,17 @@ Deepgram STT integration provides cloud-based speech-to-text using the Deepgram 
 
 Both providers can coexist - switch anytime via voice assistant config.
 
-## Rollback to NixOS Version
-
-If HACS version has issues:
-
-1. Uncomment symlink in `hosts/homelab/home-assistant/default.nix:546`
-2. Uncomment deepgram-sdk in `default.nix:355`
-3. Rebuild: `nixos-rebuild switch --flake .#homelab`
-4. Remove HACS version via HACS UI
-5. Restart Home Assistant
-
-NixOS version auto-configures from sops secret (no UI setup needed).
-
 ## Troubleshooting
 
-### Integration doesn't appear after HACS install
+### Integration doesn't appear in UI
 
-Check HACS installation:
+Verify symlink created:
 
 ```bash
 ssh homelab "ls -la /var/lib/hass/custom_components/deepgram_stt"
 ```
 
-Should show HACS-installed files. If missing, reinstall from HACS.
+Should show symlink to Nix store. If missing, rebuild NixOS.
 
 ### Integration loads but doesn't configure
 
