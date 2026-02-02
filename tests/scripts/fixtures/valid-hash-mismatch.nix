@@ -6,7 +6,7 @@
     repo = "nixpkgs";
     rev = "nixos-unstable";
     # Wrong hash - should be detected and replaced by script
-    hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+    hash = "sha256-kKB3bqYJU5nzYeIROI82Ef9VtTbu4uA3YydSk/Bioa8=";
   };
 
   another_package = fetchFromGitHub {
