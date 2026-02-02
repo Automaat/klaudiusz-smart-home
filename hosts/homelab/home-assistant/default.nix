@@ -550,7 +550,7 @@ in {
       ln -sfn ${openPlantbookSource}/custom_components/openplantbook /var/lib/hass/custom_components/openplantbook
 
       # Create Deepgram STT symlink (HACS version from Automaat/deepgram-stt)
-      ln -sfn ${deepgramSTTSource} /var/lib/hass/custom_components/deepgram_stt
+      ln -sfn ${deepgramSTTSource}/custom_components/deepgram_stt /var/lib/hass/custom_components/deepgram_stt
 
       # Create Plant component symlink
       ln -sfn ${plantComponentSource}/custom_components/plant /var/lib/hass/custom_components/plant
