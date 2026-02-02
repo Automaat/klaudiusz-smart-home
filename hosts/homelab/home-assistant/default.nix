@@ -352,7 +352,8 @@ in {
         customPkgs.json-timeseries # JSON Time Series library
 
         # Deepgram STT integration (custom component)
-        customPkgs.deepgram-sdk # Deepgram SDK
+        # DISABLED: Using HACS version (includes SDK as dependency)
+        # customPkgs.deepgram-sdk # Deepgram SDK
       ];
 
     config = {
@@ -543,7 +544,8 @@ in {
       ln -sfn ${openPlantbookSource}/custom_components/openplantbook /var/lib/hass/custom_components/openplantbook
 
       # Create Deepgram STT symlink
-      ln -sfn ${deepgramSTTSource} /var/lib/hass/custom_components/deepgram_stt
+      # DISABLED: Using HACS version from https://github.com/Automaat/deepgram-stt for testing
+      # ln -sfn ${deepgramSTTSource} /var/lib/hass/custom_components/deepgram_stt
 
       # Create Plant component symlink
       ln -sfn ${plantComponentSource}/custom_components/plant /var/lib/hass/custom_components/plant
