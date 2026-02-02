@@ -4,28 +4,29 @@
 
 Deepgram STT integration provides cloud-based speech-to-text using the Deepgram API.
 
-## Auto-Configuration (Default)
+**Installed declaratively** from <https://github.com/Automaat/deepgram-stt> (v0.1.0)
 
-**The integration auto-configures on first startup** - no manual setup needed.
+## Installation
 
-The integration automatically creates a config entry using the API key from `/run/secrets/deepgram-api-key` (sops-encrypted).
+### Auto-Installation (Default)
 
-**Verify auto-configuration:**
-
-1. Navigate to **Settings** > **Devices & Services**
-2. Look for **Deepgram Speech-to-Text** integration
-3. Should show as "Configured"
-
-## Manual Configuration (If Needed)
-
-If auto-configuration fails or you want to reconfigure:
+Integration auto-installed via NixOS symlink to custom_components. No HACS needed.
 
 ### Prerequisites
 
 - Deepgram API key from <https://console.deepgram.com/>
-- In NixOS setup: API key stored in sops secrets
+- NixOS: API key in `/run/secrets/deepgram-api-key` (sops-encrypted)
 
-### Setup Steps
+### Configuration Steps
+
+1. **Configure integration:**
+   - **Settings** > **Devices & Services** > **Add Integration**
+   - Search "Deepgram Speech-to-Text"
+   - Enter API key (get via SSH: `cat /run/secrets/deepgram-api-key`)
+   - Model: `nova-3` (default)
+   - Language: `pl` (default)
+
+### Manual Reconfiguration Steps
 
 1. **Remove existing integration (if any):**
    - Go to **Settings** > **Devices & Services**
@@ -47,27 +48,67 @@ If auto-configuration fails or you want to reconfigure:
    - Integration should appear in Devices & Services
    - Entity `stt.deepgram_stt` should be available
 
-## Using in Voice Assistant
+## Switching Between STT Providers
 
-1. **Navigate to Settings** > **Voice assistants**
-2. **Select your assistant** (e.g., "Home Assistant")
-3. **Speech-to-text**: Select **Deepgram STT**
-4. **Save**
+**To use Deepgram STT:**
+
+1. **Settings** > **Voice assistants** > Select assistant
+2. **Speech-to-text**: Choose "Deepgram STT"
+3. **Save**
+
+**To use Wyoming Faster Whisper:**
+
+1. **Settings** > **Voice assistants** > Select assistant
+2. **Speech-to-text**: Choose "faster-whisper" (default)
+3. **Save**
+
+Both providers can coexist - switch anytime via voice assistant config.
+
+## Rollback to Custom Component
+
+To revert to the original custom Deepgram component:
+
+1. **Edit NixOS config:**
+
+   ```bash
+   # Uncomment line 362 in hosts/homelab/home-assistant/default.nix
+   # Comment out line 553 in hosts/homelab/home-assistant/default.nix
+   ```
+
+2. **Rebuild system:**
+
+   ```bash
+   sudo nixos-rebuild switch --flake .#homelab
+   ```
+
+3. **Remove HACS version:**
+   - Settings > HACS > Integrations
+   - Find "Deepgram Speech-to-Text"
+   - Click three dots > Remove
+
+4. **Verify:**
+   - Custom component auto-configures on HA restart
+   - Check Devices & Services for Deepgram STT
 
 ## Troubleshooting
 
 ### Integration doesn't appear in UI
 
-Check logs for auto-configuration:
+Verify symlink created:
+
+```bash
+ssh homelab "ls -la /var/lib/hass/custom_components/deepgram_stt"
+```
+
+Should show symlink to Nix store. If missing, rebuild NixOS.
+
+### Integration loads but doesn't configure
+
+Check logs:
 
 ```bash
 ssh homelab "journalctl -u home-assistant | grep -i deepgram"
 ```
-
-Look for:
-
-- "Auto-configuring Deepgram STT from sops secret" (success)
-- "Could not auto-configure from sops secret" (failure)
 
 ### API key errors
 

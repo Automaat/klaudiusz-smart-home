@@ -249,9 +249,15 @@
   };
 
   # ===========================================
-  # Deepgram STT (Custom Component)
+  # Deepgram STT (HACS Integration)
   # ===========================================
-  deepgramSTTSource = ../../../custom_components/deepgram_stt;
+  deepgramSTTSource = pkgs.fetchFromGitHub {
+    owner = "Automaat";
+    repo = "deepgram-stt";
+    # renovate: datasource=github-tags depName=Automaat/deepgram-stt
+    rev = "v0.1.0";
+    hash = "sha256-GbSCPfDHmSK5gbnr0Ov6oju8Y4Q+Jm0SZwWUbGITiKg=";
+  };
 
   # ===========================================
   # Custom ZHA Quirks
@@ -352,7 +358,8 @@ in {
         customPkgs.json-timeseries # JSON Time Series library
 
         # Deepgram STT integration (custom component)
-        customPkgs.deepgram-sdk # Deepgram SDK
+        # DISABLED: Using HACS version (includes SDK as dependency)
+        # customPkgs.deepgram-sdk # Deepgram SDK
       ];
 
     config = {
@@ -542,7 +549,7 @@ in {
       # Create OpenPlantbook integration symlink
       ln -sfn ${openPlantbookSource}/custom_components/openplantbook /var/lib/hass/custom_components/openplantbook
 
-      # Create Deepgram STT symlink
+      # Create Deepgram STT symlink (HACS version from Automaat/deepgram-stt)
       ln -sfn ${deepgramSTTSource} /var/lib/hass/custom_components/deepgram_stt
 
       # Create Plant component symlink
