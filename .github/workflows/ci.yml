@@ -110,49 +110,10 @@ jobs:
         if: steps.changes.outputs.nix == 'true'
         run: nix build .#checks.x86_64-linux.entity-references --show-trace --max-jobs auto
 
-  pytest:
-    name: Python Tests
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
-
-      - name: Check for Python changes
-        uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # v3
-        id: changes
-        with:
-          filters: |
-            python:
-              - 'custom_components/**/*.py'
-              - 'tests/**/*.py'
-              - 'requirements-dev.txt'
-              - 'pytest.ini'
-
-      - name: Set up Python
-        if: steps.changes.outputs.python == 'true'
-        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6
-        with:
-          python-version: '3.13'
-          cache: 'pip'
-
-      - name: Install dependencies
-        if: steps.changes.outputs.python == 'true'
-        run: pip install -r requirements-dev.txt
-
-      - name: Run pytest
-        if: steps.changes.outputs.python == 'true'
-        run: pytest --cov=custom_components/deepgram_stt --cov-report=term --cov-report=xml
-
-      - name: Upload coverage
-        if: steps.changes.outputs.python == 'true'
-        uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5.5.2
-        with:
-          files: ./coverage.xml
-          fail_ci_if_error: false
-
   static-tests:
     name: Static Tests
     runs-on: ubuntu-24.04
-    needs: [format, yaml-lint, markdown-lint, action-lint, shellcheck, shellspec, enhanced-validation-ha-official, enhanced-validation-jinja2, enhanced-validation-entity-references, pytest]
+    needs: [format, yaml-lint, markdown-lint, action-lint, shellcheck, shellspec, enhanced-validation-ha-official, enhanced-validation-jinja2, enhanced-validation-entity-references]
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
 
@@ -330,7 +291,7 @@ jobs:
   integration-tests:
     name: Integration Tests
     runs-on: ubuntu-24.04
-    needs: [format, yaml-lint, markdown-lint, action-lint, shellcheck, shellspec, enhanced-validation-ha-official, enhanced-validation-jinja2, enhanced-validation-entity-references, pytest]
+    needs: [format, yaml-lint, markdown-lint, action-lint, shellcheck, shellspec, enhanced-validation-ha-official, enhanced-validation-jinja2, enhanced-validation-entity-references]
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
 
