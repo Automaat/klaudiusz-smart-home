@@ -358,8 +358,7 @@ in {
         customPkgs.json-timeseries # JSON Time Series library
 
         # Deepgram STT integration (custom component)
-        # DISABLED: Using HACS version (includes SDK as dependency)
-        # customPkgs.deepgram-sdk # Deepgram SDK
+        customPkgs.deepgram-sdk # Deepgram SDK
       ];
 
     config = {
