@@ -100,7 +100,7 @@
     owner = "thomasloven";
     repo = "lovelace-card-mod";
     # renovate: datasource=github-tags depName=thomasloven/lovelace-card-mod
-    rev = "v4.1.0";
+    rev = "v4.2.0";
     hash = "sha256-w2ky3jSHRbIaTzl0b0aJq4pzuCNUV8GqYsI2U/eoGfs=";
   };
 
