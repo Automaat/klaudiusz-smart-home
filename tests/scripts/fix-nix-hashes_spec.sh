@@ -131,6 +131,44 @@ Describe "fix-nix-hashes.sh"
             When run echo "$output"
             The output should not include "tests/scripts/fixtures/test.nix"
         End
+
+        It "should not capture hash from intervening fetchurl blocks"
+            # Test for bug where script captured hash from fetchurl between
+            # fetchFromGitHub owner/repo/rev and hash attributes
+            cat > "$TEST_TMP_DIR/test.nix" <<'EOF'
+{
+  # fetchurl with hash that should NOT be captured
+  buttonCard = pkgs.runCommand "button-card" {} ''
+    mkdir -p $out
+    ln -s ${pkgs.fetchurl {
+      url = "https://example.com/button.js";
+      hash = "sha256-WRONGFETCHURLHASHaaaaaaaaaaaaaaaaaaaaa111=";
+    }} $out/button.js
+  '';
+
+  # fetchFromGitHub should use its own hash, not fetchurl's hash
+  cardMod = pkgs.fetchFromGitHub {
+    owner = "test-owner";
+    repo = "test-repo";
+    rev = "v1.0.0";
+    hash = "sha256-CORRECTFETCHFROMGITHUBHASHbbbbbbbbbbb222=";
+  };
+}
+EOF
+
+            mock_nix_prefetch_url "4444444444444444444444444444444444444444444444444444"
+            mock_nix_hash_convert "sha256-CORRECTFETCHFROMGITHUBHASHbbbbbbbbbbb222="
+
+            cd "$TEST_TMP_DIR" || return
+            output=$(bash "$OLDPWD/$SCRIPT_PATH" 2>&1 || true)
+
+            When run echo "$output"
+            # Should report checking the fetchFromGitHub block with correct hash
+            The output should include "test-owner/test-repo@v1.0.0"
+            The output should include "Current hash: sha256-CORRECTFETCHFROMGITHUBHASHbbbbbbbbbbb222="
+            # Key verification: when checking fetchFromGitHub, should use the CORRECT hash, not the WRONG fetchurl hash
+            # This verifies the bug fix - script should not capture hash from intervening fetchurl blocks
+        End
     End
 
     Describe "Hash replacement verification"
