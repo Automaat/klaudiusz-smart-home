@@ -116,6 +116,21 @@ Describe "fix-nix-hashes.sh"
             When run echo "$output"
             The output should not include ".git/test.nix"
         End
+
+        It "should skip tests/scripts/fixtures directory"
+            mkdir -p "$TEST_TMP_DIR/tests/scripts/fixtures"
+            cp "$FIXTURES_DIR/valid-hash-mismatch.nix" "$TEST_TMP_DIR/tests/scripts/fixtures/test.nix"
+            cp "$FIXTURES_DIR/valid-hash-mismatch.nix" "$TEST_TMP_DIR/valid.nix"
+
+            mock_nix_prefetch_url "3333333333333333333333333333333333333333333333333333"
+            mock_nix_hash_convert "sha256-SKIPFIXTUREHASHXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX="
+
+            cd "$TEST_TMP_DIR" || return
+            output=$(bash "$OLDPWD/$SCRIPT_PATH" 2>&1 || true)
+
+            When run echo "$output"
+            The output should not include "tests/scripts/fixtures/test.nix"
+        End
     End
 
     Describe "Hash replacement verification"

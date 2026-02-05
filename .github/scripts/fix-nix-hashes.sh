@@ -10,7 +10,7 @@ trap 'rm -f "$tmpfile"' EXIT
 echo "Checking for fetchFromGitHub with outdated hashes..."
 
 # Find all .nix files with fetchFromGitHub, ignoring binaries and .git directory
-find . -path './.git' -prune -o -name "*.nix" -type f -exec grep -Il "fetchFromGitHub" {} + | while IFS= read -r file; do
+find . -path './.git' -prune -o -path './tests/scripts/fixtures' -prune -o -name "*.nix" -type f -exec grep -Il "fetchFromGitHub" {} + | while IFS= read -r file; do
     echo "Processing $file..."
 
     # Arrays to collect hash replacements (to avoid modifying file while reading it)
@@ -135,7 +135,7 @@ echo ""
 echo "Checking for fetchurl with outdated hashes..."
 
 # Find all .nix files with fetchurl, ignoring binaries and .git directory
-find . -path './.git' -prune -o -name "*.nix" -type f -exec grep -Il "fetchurl" {} + | while IFS= read -r file; do
+find . -path './.git' -prune -o -path './tests/scripts/fixtures' -prune -o -name "*.nix" -type f -exec grep -Il "fetchurl" {} + | while IFS= read -r file; do
     echo "Processing $file..."
 
     # Arrays to collect hash replacements (to avoid modifying file while reading it)
