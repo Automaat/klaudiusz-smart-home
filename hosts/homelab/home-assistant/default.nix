@@ -53,7 +53,7 @@
     owner = "Clooos";
     repo = "Bubble-Card";
     # renovate: datasource=github-tags depName=Clooos/Bubble-Card
-    rev = "v3.1.0-rc.2";
+    rev = "v3.1.1";
     hash = "sha256-WGe8XAJFYrFxp4KkXefK5ImAnRtgKH9ZhbEC74QRPVY=";
   };
 
