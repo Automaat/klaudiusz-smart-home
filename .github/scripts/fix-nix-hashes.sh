@@ -20,22 +20,32 @@ find . -path './.git' -prune -o -path './tests/scripts/fixtures' -prune -o -name
 
     # Read file content and extract fetchFromGitHub blocks
     owner="" repo="" rev="" current_hash=""
+    in_fetchFromGitHub=false
 
     while IFS= read -r line; do
-        if [[ $line =~ owner[[:space:]]*=[[:space:]]*\"([^\"]+)\" ]]; then
-            owner="${BASH_REMATCH[1]}"
-        fi
-        if [[ $line =~ repo[[:space:]]*=[[:space:]]*\"([^\"]+)\" ]]; then
-            repo="${BASH_REMATCH[1]}"
-        fi
-        if [[ $line =~ rev[[:space:]]*=[[:space:]]*\"([^\"]+)\" ]]; then
-            rev="${BASH_REMATCH[1]}"
-        fi
-        if [[ $line =~ hash[[:space:]]*=[[:space:]]*\"(sha256-[A-Za-z0-9+/=]+)\" ]]; then
-            current_hash="${BASH_REMATCH[1]}"
+        # Detect fetchFromGitHub block start and reset state
+        if [[ $line =~ fetchFromGitHub[[:space:]]*\{ ]]; then
+            in_fetchFromGitHub=true
+            owner="" repo="" rev="" current_hash=""
         fi
 
-        # Check if we have a complete block, process it
+        # Only capture attributes when inside fetchFromGitHub block
+        if [ "$in_fetchFromGitHub" = true ]; then
+            if [[ $line =~ owner[[:space:]]*=[[:space:]]*\"([^\"]+)\" ]]; then
+                owner="${BASH_REMATCH[1]}"
+            fi
+            if [[ $line =~ repo[[:space:]]*=[[:space:]]*\"([^\"]+)\" ]]; then
+                repo="${BASH_REMATCH[1]}"
+            fi
+            if [[ $line =~ rev[[:space:]]*=[[:space:]]*\"([^\"]+)\" ]]; then
+                rev="${BASH_REMATCH[1]}"
+            fi
+            if [[ $line =~ hash[[:space:]]*=[[:space:]]*\"(sha256-[A-Za-z0-9+/=]+)\" ]]; then
+                current_hash="${BASH_REMATCH[1]}"
+            fi
+        fi
+
+        # Check if we have a complete block, process it (BEFORE resetting on closing brace)
         if [ -n "$owner" ] && [ -n "$repo" ] && [ -n "$rev" ] && [ -n "$current_hash" ]; then
                 echo "  Checking $owner/$repo@$rev"
                 echo "    Current hash: $current_hash"
@@ -84,7 +94,14 @@ find . -path './.git' -prune -o -path './tests/scripts/fixtures' -prune -o -name
 
                 # Reset for next block
                 owner="" repo="" rev="" current_hash=""
+                in_fetchFromGitHub=false
             fi
+
+        # Reset state when closing any block (after processing complete blocks)
+        if [[ $line =~ \}\; ]]; then
+            in_fetchFromGitHub=false
+            owner="" repo="" rev="" current_hash=""
+        fi
     done < "$file"
 
     # Apply all hash replacements after reading the file
