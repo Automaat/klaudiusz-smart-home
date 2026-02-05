@@ -3,6 +3,8 @@ name: Renovate - Fix Nix Hashes
 on:
   pull_request:
     types: [opened, synchronize]
+    paths:
+      - '**/*.nix'
 
 jobs:
   fix-nix-hashes:
