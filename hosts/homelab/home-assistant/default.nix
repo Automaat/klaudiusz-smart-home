@@ -145,7 +145,7 @@
     repo = "thewatchman";
     # renovate: datasource=github-tags depName=dummylabs/thewatchman
     rev = "v0.8.3";
-    hash = "sha256-2C94T33axLTJvZ5VYAtXoB4PEAhhVXlEDG3z/cc5UfI=";
+    hash = "sha256-5BXIKh8uPKuxsLbxu0fUbuCR2LYOXk1HpOvrqehg0u0=";
   };
 
   # ===========================================
