@@ -166,7 +166,7 @@
     owner = "michelle-avery";
     repo = "custom-conversation";
     # renovate: datasource=github-tags depName=michelle-avery/custom-conversation
-    rev = "1.4.0";
+    rev = "1.5.0";
     hash = "sha256-y1vOb/hTMMd1iiYazkiKCUT1pBghvtMMwrcrKgs9U1w=";
   };
 
