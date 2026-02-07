@@ -29,6 +29,7 @@ declaratively through NixOS and must be performed manually through web UIs
 - **[Todoist](todoist.md)** - Todo list integration with OAuth setup
 - **[T-Higrow ESPHome](t-higrow-esphome.md)** - LilyGO T-Higrow plant sensor setup
 - **[OpenPlantbook](openplantbook.md)** - Plant species database with API credentials
+- **[Roborock](roborock.md)** - Roborock vacuum with OAuth authentication
 
 ## When to Add New Documentation
 
