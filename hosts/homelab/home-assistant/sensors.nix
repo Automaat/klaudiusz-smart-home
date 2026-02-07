@@ -104,6 +104,73 @@
     }
 
     # -----------------------------------------
+    # Person Location Tracking (Bermuda BLE + mmWave)
+    # -----------------------------------------
+    # NOTE: Update entity IDs after Bermuda GUI configuration
+    # Bermuda device_tracker entity names discovered after setup
+    {
+      trigger = [
+        # { platform = "state"; entity_id = "sensor.bermuda_marcin_iphone_area"; }
+        { platform = "state"; entity_id = "binary_sensor.presence_sensor_presence"; }
+        { platform = "state"; entity_id = "binary_sensor.presence_sensor_fp2_b63f_presence_sensor_2"; }
+      ];
+      sensor = [
+        {
+          name = "Marcin Current Room";
+          unique_id = "marcin_current_room";
+          state = ''
+            {% set bathroom_mmwave = is_state('binary_sensor.presence_sensor_presence', 'on') %}
+            {% set kitchen_mmwave = is_state('binary_sensor.presence_sensor_fp2_b63f_presence_sensor_2', 'on') %}
+            {% if bathroom_mmwave %}bathroom
+            {% elif kitchen_mmwave %}kitchen
+            {% else %}{{ states('sensor.marcin_current_room') }}{% endif %}
+          '';
+          attributes = {
+            confidence = "{{ 'high' if bathroom_mmwave or kitchen_mmwave else 'low' }}";
+            source = "{{ 'mmwave' if bathroom_mmwave or kitchen_mmwave else 'last_known' }}";
+          };
+        }
+        {
+          name = "Ewa Current Room";
+          unique_id = "ewa_current_room";
+          state = ''
+            {% set bathroom_mmwave = is_state('binary_sensor.presence_sensor_presence', 'on') %}
+            {% set kitchen_mmwave = is_state('binary_sensor.presence_sensor_fp2_b63f_presence_sensor_2', 'on') %}
+            {% if bathroom_mmwave %}bathroom
+            {% elif kitchen_mmwave %}kitchen
+            {% else %}{{ states('sensor.ewa_current_room') }}{% endif %}
+          '';
+          attributes = {
+            confidence = "{{ 'high' if bathroom_mmwave or kitchen_mmwave else 'low' }}";
+            source = "{{ 'mmwave' if bathroom_mmwave or kitchen_mmwave else 'last_known' }}";
+          };
+        }
+      ];
+    }
+
+    # Anyone home status (updated after person entities created)
+    {
+      sensor = [
+        {
+          name = "Anyone Home";
+          unique_id = "anyone_home";
+          state = "unknown";
+          # Update after person.marcin and person.ewa created:
+          # state = "{{ is_state('person.marcin', 'home') or is_state('person.ewa', 'home') }}";
+        }
+      ];
+      binary_sensor = [
+        {
+          name = "Anyone Home";
+          unique_id = "anyone_home_binary";
+          state = "off";
+          # Update after person.marcin and person.ewa created:
+          # state = "{{ is_state('person.marcin', 'home') or is_state('person.ewa', 'home') }}";
+        }
+      ];
+    }
+
+    # -----------------------------------------
     # Air Quality Monitoring
     # -----------------------------------------
     {
