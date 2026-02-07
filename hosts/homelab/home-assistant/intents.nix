@@ -342,6 +342,57 @@ in {
         speech.text = "{{ states('input_text.claude_response') }}";
       };
 
+      # -----------------------------------------
+      # Person Location
+      # -----------------------------------------
+      WhereIsPerson = {
+        speech.text = ''
+          {% if slots.person == "marcin" %}
+            {% set raw_room = states('sensor.marcin_current_room') %}
+            {% set confidence = state_attr('sensor.marcin_current_room', 'confidence') %}
+            {% set room_names = {
+              'kitchen': 'kuchni',
+              'bathroom': 'łazience',
+              'bedroom': 'sypialni',
+              'living_room': 'salonie',
+              'hallway': 'przedpokoju',
+              'office': 'biurze',
+              'garderoba': 'garderobie'
+            } %}
+            {% set room = room_names.get(raw_room, raw_room) %}
+            {% if raw_room in ['unknown', 'unavailable', 'none'] or raw_room == "" %}
+              Nie wiem, gdzie teraz jest Marcin.
+            {% elif confidence == 'high' %}
+              Marcin jest w {{ room }}
+            {% else %}
+              Ostatnio widziałem Marcina w {{ room }}
+            {% endif %}
+          {% elif slots.person in ["ewa", "żona"] %}
+            {% set raw_room = states('sensor.ewa_current_room') %}
+            {% set confidence = state_attr('sensor.ewa_current_room', 'confidence') %}
+            {% set room_names = {
+              'kitchen': 'kuchni',
+              'bathroom': 'łazience',
+              'bedroom': 'sypialni',
+              'living_room': 'salonie',
+              'hallway': 'przedpokoju',
+              'office': 'biurze',
+              'garderoba': 'garderobie'
+            } %}
+            {% set room = room_names.get(raw_room, raw_room) %}
+            {% if raw_room in ['unknown', 'unavailable', 'none'] or raw_room == "" %}
+              Nie wiem, gdzie teraz jest Ewa.
+            {% elif confidence == 'high' %}
+              Ewa jest w {{ room }}
+            {% else %}
+              Ostatnio widziałem Ewę w {{ room }}
+            {% endif %}
+          {% else %}
+            Nie wiem, o którą osobę chodzi. Spróbuj zapytać o Marcina albo Ewę.
+          {% endif %}
+        '';
+      };
+
       CancelClaude = {
         action = [
           {

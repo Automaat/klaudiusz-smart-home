@@ -104,6 +104,125 @@
     }
 
     # -----------------------------------------
+    # Person Location Tracking (Bermuda BLE + mmWave)
+    # -----------------------------------------
+    # NOTE: Update entity IDs after Bermuda GUI configuration
+    # Bermuda device_tracker entity names discovered after setup
+    # PHASE 1 LIMITATION: Both persons show same room when mmWave fires
+    # (no BLE differentiation until Bermuda configured)
+    {
+      trigger = [
+        # { platform = "state"; entity_id = "sensor.bermuda_marcin_iphone_area"; }
+        {
+          platform = "state";
+          entity_id = "binary_sensor.presence_sensor_presence";
+        }
+        {
+          platform = "state";
+          entity_id = "binary_sensor.presence_sensor_fp2_b63f_presence_sensor_2";
+        }
+      ];
+      sensor = [
+        {
+          name = "Marcin Current Room";
+          unique_id = "marcin_current_room";
+          state = ''
+            {% set bathroom_mmwave = is_state('binary_sensor.presence_sensor_presence', 'on') %}
+            {% set kitchen_mmwave = is_state('binary_sensor.presence_sensor_fp2_b63f_presence_sensor_2', 'on') %}
+            {% if bathroom_mmwave %}bathroom
+            {% elif kitchen_mmwave %}kitchen
+            {% else %}{{ states('sensor.marcin_current_room') }}{% endif %}
+          '';
+          attributes = {
+            confidence = "{{ 'high' if is_state('binary_sensor.presence_sensor_presence', 'on') or is_state('binary_sensor.presence_sensor_fp2_b63f_presence_sensor_2', 'on') else 'low' }}";
+            source = "{{ 'mmwave' if is_state('binary_sensor.presence_sensor_presence', 'on') or is_state('binary_sensor.presence_sensor_fp2_b63f_presence_sensor_2', 'on') else 'last_known' }}";
+          };
+        }
+        {
+          name = "Ewa Current Room";
+          unique_id = "ewa_current_room";
+          state = ''
+            {% set bathroom_mmwave = is_state('binary_sensor.presence_sensor_presence', 'on') %}
+            {% set kitchen_mmwave = is_state('binary_sensor.presence_sensor_fp2_b63f_presence_sensor_2', 'on') %}
+            {% if bathroom_mmwave %}bathroom
+            {% elif kitchen_mmwave %}kitchen
+            {% else %}{{ states('sensor.ewa_current_room') }}{% endif %}
+          '';
+          attributes = {
+            confidence = "{{ 'high' if is_state('binary_sensor.presence_sensor_presence', 'on') or is_state('binary_sensor.presence_sensor_fp2_b63f_presence_sensor_2', 'on') else 'low' }}";
+            source = "{{ 'mmwave' if is_state('binary_sensor.presence_sensor_presence', 'on') or is_state('binary_sensor.presence_sensor_fp2_b63f_presence_sensor_2', 'on') else 'last_known' }}";
+          };
+        }
+      ];
+    }
+
+    # Anyone home status
+    {
+      sensor = [
+        {
+          name = "Anyone Home";
+          unique_id = "anyone_home";
+          state = ''
+            {% if is_state('person.marcin', 'home') or is_state('person.ewa', 'home') %}
+              home
+            {% else %}
+              not_home
+            {% endif %}
+          '';
+        }
+      ];
+      binary_sensor = [
+        {
+          name = "Anyone Home";
+          unique_id = "anyone_home_binary";
+          state = ''
+            {% if is_state('person.marcin', 'home') or is_state('person.ewa', 'home') %}
+              on
+            {% else %}
+              off
+            {% endif %}
+          '';
+        }
+      ];
+    }
+
+    # -----------------------------------------
+    # Person Preferences - Active
+    # -----------------------------------------
+    {
+      sensor = [
+        {
+          name = "Active Brightness Preference Bathroom";
+          unique_id = "active_brightness_pref_bathroom";
+          state = ''
+            {% set marcin_here = is_state('sensor.marcin_current_room', 'bathroom') %}
+            {% set ewa_here = is_state('sensor.ewa_current_room', 'bathroom') %}
+            {% if marcin_here and ewa_here %}
+              {{ [states('input_number.marcin_brightness_preference'), states('input_number.ewa_brightness_preference')] | map('float') | average | round(0) }}
+            {% elif marcin_here %}{{ states('input_number.marcin_brightness_preference') }}
+            {% elif ewa_here %}{{ states('input_number.ewa_brightness_preference') }}
+            {% else %}{{ states('input_number.default_brightness') }}{% endif %}
+          '';
+          unit_of_measurement = "%";
+        }
+        {
+          name = "Active Brightness Preference Kitchen";
+          unique_id = "active_brightness_pref_kitchen";
+          state = ''
+            {% set marcin_here = is_state('sensor.marcin_current_room', 'kitchen') %}
+            {% set ewa_here = is_state('sensor.ewa_current_room', 'kitchen') %}
+            {% if marcin_here and ewa_here %}
+              {{ [states('input_number.marcin_brightness_preference'), states('input_number.ewa_brightness_preference')] | map('float') | average | round(0) }}
+            {% elif marcin_here %}{{ states('input_number.marcin_brightness_preference') }}
+            {% elif ewa_here %}{{ states('input_number.ewa_brightness_preference') }}
+            {% else %}{{ states('input_number.default_brightness') }}{% endif %}
+          '';
+          unit_of_measurement = "%";
+        }
+      ];
+    }
+
+    # -----------------------------------------
     # Air Quality Monitoring
     # -----------------------------------------
     {

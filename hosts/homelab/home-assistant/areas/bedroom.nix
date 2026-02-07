@@ -86,5 +86,43 @@
       ];
       mode = "single";
     }
+
+    # -----------------------------------------
+    # Sleep Mode - Auto (Person Tracking)
+    # -----------------------------------------
+    # NOTE: Disabled until person tracking sensors updated
+    # {
+    #   id = "sleep_mode_auto_enable";
+    #   alias = "Bedroom - Enable sleep mode when both in bed";
+    #   trigger = [
+    #     { platform = "state"; entity_id = "sensor.marcin_current_room"; to = "bedroom"; for = "00:05:00"; }
+    #     { platform = "state"; entity_id = "sensor.ewa_current_room"; to = "bedroom"; for = "00:05:00"; }
+    #   ];
+    #   condition = [
+    #     { condition = "state"; entity_id = "sensor.marcin_current_room"; state = "bedroom"; }
+    #     { condition = "state"; entity_id = "sensor.ewa_current_room"; state = "bedroom"; }
+    #     { condition = "time"; after = "21:00:00"; before = "06:00:00"; }
+    #   ];
+    #   action = [
+    #     { service = "input_boolean.turn_on"; target.entity_id = "input_boolean.sleep_mode"; }
+    #   ];
+    #   mode = "single";
+    # }
+    #
+    # {
+    #   id = "sleep_mode_auto_disable";
+    #   alias = "Bedroom - Disable sleep mode when anyone leaves";
+    #   trigger = [
+    #     { platform = "state"; entity_id = "sensor.marcin_current_room"; from = "bedroom"; }
+    #     { platform = "state"; entity_id = "sensor.ewa_current_room"; from = "bedroom"; }
+    #   ];
+    #   condition = [
+    #     { condition = "time"; after = "05:00:00"; before = "10:00:00"; }
+    #   ];
+    #   action = [
+    #     { service = "input_boolean.turn_off"; target.entity_id = "input_boolean.sleep_mode"; }
+    #   ];
+    #   mode = "single";
+    # }
   ];
 }

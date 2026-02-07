@@ -49,5 +49,45 @@
       unit_of_measurement = "%";
       icon = "mdi:brightness-6";
     };
+
+    # Person preferences - Marcin
+    marcin_brightness_preference = {
+      name = "Jasność - Marcin";
+      min = 0;
+      max = 100;
+      step = 5;
+      unit_of_measurement = "%";
+      initial = 75;
+      icon = "mdi:brightness-6";
+    };
+    marcin_temp_preference_salon = {
+      name = "Temperatura salon - Marcin";
+      min = 18;
+      max = 24;
+      step = 0.5;
+      unit_of_measurement = "°C";
+      initial = 21;
+      icon = "mdi:thermometer";
+    };
+
+    # Person preferences - Ewa
+    ewa_brightness_preference = {
+      name = "Jasność - Ewa";
+      min = 0;
+      max = 100;
+      step = 5;
+      unit_of_measurement = "%";
+      initial = 60;
+      icon = "mdi:brightness-6";
+    };
+    ewa_temp_preference_salon = {
+      name = "Temperatura salon - Ewa";
+      min = 18;
+      max = 24;
+      step = 0.5;
+      unit_of_measurement = "°C";
+      initial = 20;
+      icon = "mdi:thermometer";
+    };
   };
 }

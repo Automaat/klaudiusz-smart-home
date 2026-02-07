@@ -254,6 +254,17 @@
   customZHAQuirksSource = ./custom_zha_quirks;
 
   # ===========================================
+  # Bermuda BLE Trilateration
+  # ===========================================
+  bermudaSource = pkgs.fetchFromGitHub {
+    owner = "agittins";
+    repo = "bermuda";
+    # renovate: datasource=github-tags depName=agittins/bermuda
+    rev = "v0.8.5";
+    hash = "sha256-y5jD3iNPL99NUD3ae9FdXRlw3mvw4kxReZShc1zyPGM=";
+  };
+
+  # ===========================================
   # Custom Python Packages
   # ===========================================
   # Function that builds custom packages with HA's Python environment
@@ -318,6 +329,11 @@ in {
       "cast" # Google Cast / Chromecast
       "xiaomi_ble" # Xiaomi Bluetooth devices
       "roborock" # Roborock vacuum integration
+
+      # BLE Tracking
+      "bluetooth_adapters" # Required by Bermuda
+      "device_tracker" # Required by Bermuda
+      "private_ble_device" # iOS randomized MAC handling
     ];
 
     extraPackages = ps: let
@@ -545,6 +561,9 @@ in {
 
       # Create Claude Brain component symlink
       ln -sfn ${./custom_components/claude_brain} /var/lib/hass/custom_components/claude_brain
+
+      # Create Bermuda BLE Trilateration symlink
+      ln -sfn ${bermudaSource}/custom_components/bermuda /var/lib/hass/custom_components/bermuda
     '';
 
     # Force derivation update when HA config changes

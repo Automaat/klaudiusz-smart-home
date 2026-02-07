@@ -70,6 +70,33 @@
         }
         {
           choose = [
+            # Person-aware: use preference when not in guest_mode
+            {
+              conditions = [
+                {
+                  condition = "state";
+                  entity_id = "binary_sensor.presence_sensor_presence";
+                  state = "on";
+                }
+                {
+                  condition = "state";
+                  entity_id = "input_boolean.guest_mode";
+                  state = "off";
+                }
+              ];
+              sequence = [
+                {
+                  service = "adaptive_lighting.apply";
+                  data = {
+                    entity_id = "switch.adaptive_lighting_bathroom_lights";
+                    lights = ["light.bathroom"];
+                    turn_on_lights = true;
+                    brightness_pct = "{{ states('sensor.active_brightness_preference_bathroom') | int }}";
+                  };
+                }
+              ];
+            }
+            # Fallback: guest_mode on, use default
             {
               conditions = [
                 {

@@ -231,7 +231,7 @@ in {
     }
 
     # -----------------------------------------
-    # Leaving Home
+    # Leaving Home - Manual
     # -----------------------------------------
     {
       id = "leaving_home";
@@ -281,5 +281,37 @@ in {
       ];
       mode = "single";
     }
+
+    # -----------------------------------------
+    # Away Mode - Auto (Person Tracking)
+    # -----------------------------------------
+    # NOTE: Disabled until person.marcin and person.ewa created
+    # {
+    #   id = "away_mode_auto_enable";
+    #   alias = "System - Enable away mode when both leave";
+    #   trigger = [{
+    #     platform = "state";
+    #     entity_id = "binary_sensor.anyone_home";
+    #     to = "off";
+    #     for = "00:15:00";
+    #   }];
+    #   action = [
+    #     { service = "input_boolean.turn_on"; target.entity_id = "input_boolean.away_mode"; }
+    #     { service = "light.turn_off"; target.entity_id = "all"; }
+    #   ];
+    # }
+    #
+    # {
+    #   id = "away_mode_auto_disable";
+    #   alias = "System - Disable away mode when anyone arrives";
+    #   trigger = [{
+    #     platform = "state";
+    #     entity_id = "binary_sensor.anyone_home";
+    #     to = "on";
+    #   }];
+    #   action = [
+    #     { service = "input_boolean.turn_off"; target.entity_id = "input_boolean.away_mode"; }
+    #   ];
+    # }
   ];
 }
