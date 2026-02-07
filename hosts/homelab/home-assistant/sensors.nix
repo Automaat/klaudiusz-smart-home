@@ -108,6 +108,8 @@
     # -----------------------------------------
     # NOTE: Update entity IDs after Bermuda GUI configuration
     # Bermuda device_tracker entity names discovered after setup
+    # PHASE 1 LIMITATION: Both persons show same room when mmWave fires
+    # (no BLE differentiation until Bermuda configured)
     {
       trigger = [
         # { platform = "state"; entity_id = "sensor.bermuda_marcin_iphone_area"; }
@@ -132,8 +134,8 @@
             {% else %}{{ states('sensor.marcin_current_room') }}{% endif %}
           '';
           attributes = {
-            confidence = "{{ 'high' if bathroom_mmwave or kitchen_mmwave else 'low' }}";
-            source = "{{ 'mmwave' if bathroom_mmwave or kitchen_mmwave else 'last_known' }}";
+            confidence = "{{ 'high' if is_state('binary_sensor.presence_sensor_presence', 'on') or is_state('binary_sensor.presence_sensor_fp2_b63f_presence_sensor_2', 'on') else 'low' }}";
+            source = "{{ 'mmwave' if is_state('binary_sensor.presence_sensor_presence', 'on') or is_state('binary_sensor.presence_sensor_fp2_b63f_presence_sensor_2', 'on') else 'last_known' }}";
           };
         }
         {
@@ -147,31 +149,39 @@
             {% else %}{{ states('sensor.ewa_current_room') }}{% endif %}
           '';
           attributes = {
-            confidence = "{{ 'high' if bathroom_mmwave or kitchen_mmwave else 'low' }}";
-            source = "{{ 'mmwave' if bathroom_mmwave or kitchen_mmwave else 'last_known' }}";
+            confidence = "{{ 'high' if is_state('binary_sensor.presence_sensor_presence', 'on') or is_state('binary_sensor.presence_sensor_fp2_b63f_presence_sensor_2', 'on') else 'low' }}";
+            source = "{{ 'mmwave' if is_state('binary_sensor.presence_sensor_presence', 'on') or is_state('binary_sensor.presence_sensor_fp2_b63f_presence_sensor_2', 'on') else 'last_known' }}";
           };
         }
       ];
     }
 
-    # Anyone home status (updated after person entities created)
+    # Anyone home status
     {
       sensor = [
         {
           name = "Anyone Home";
           unique_id = "anyone_home";
-          state = "unknown";
-          # Update after person.marcin and person.ewa created:
-          # state = "{{ is_state('person.marcin', 'home') or is_state('person.ewa', 'home') }}";
+          state = ''
+            {% if is_state('person.marcin', 'home') or is_state('person.ewa', 'home') %}
+              home
+            {% else %}
+              not_home
+            {% endif %}
+          '';
         }
       ];
       binary_sensor = [
         {
           name = "Anyone Home";
           unique_id = "anyone_home_binary";
-          state = "off";
-          # Update after person.marcin and person.ewa created:
-          # state = "{{ is_state('person.marcin', 'home') or is_state('person.ewa', 'home') }}";
+          state = ''
+            {% if is_state('person.marcin', 'home') or is_state('person.ewa', 'home') %}
+              on
+            {% else %}
+              off
+            {% endif %}
+          '';
         }
       ];
     }
