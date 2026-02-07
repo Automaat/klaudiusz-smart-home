@@ -111,8 +111,14 @@
     {
       trigger = [
         # { platform = "state"; entity_id = "sensor.bermuda_marcin_iphone_area"; }
-        { platform = "state"; entity_id = "binary_sensor.presence_sensor_presence"; }
-        { platform = "state"; entity_id = "binary_sensor.presence_sensor_fp2_b63f_presence_sensor_2"; }
+        {
+          platform = "state";
+          entity_id = "binary_sensor.presence_sensor_presence";
+        }
+        {
+          platform = "state";
+          entity_id = "binary_sensor.presence_sensor_fp2_b63f_presence_sensor_2";
+        }
       ];
       sensor = [
         {

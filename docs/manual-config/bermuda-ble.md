@@ -3,6 +3,7 @@
 ## Why Manual Configuration?
 
 Bermuda BLE requires GUI setup for:
+
 - BLE device discovery (MAC addresses unknown until scanned)
 - iOS Private BLE Device configuration (IRK extraction from HA Companion app)
 - Device tracker entity linking to person entities
@@ -15,6 +16,7 @@ These settings involve runtime device discovery and user-specific credentials th
 ## When to Perform Setup
 
 **Prerequisites:**
+
 1. NixOS deployment complete (Bermuda custom component symlinked)
 2. ESP32 Bluetooth proxies flashed and adopted (if using proxies; see [esphome-bluetooth-proxy.md](esphome-bluetooth-proxy.md))
 3. HA Companion app installed on tracked devices (iPhones/Apple Watches)
@@ -34,6 +36,7 @@ These settings involve runtime device discovery and user-specific credentials th
 4. Bermuda will auto-discover BLE devices in range
 
 **Verification:**
+
 - Integration appears in **Settings → Devices & Services**
 - Bermuda diagnostics page shows detected BLE devices (`sensor.bermuda_*_distance`, `device_tracker.*_area`)
 
@@ -54,6 +57,7 @@ iOS devices use randomized MAC addresses (Private Bluetooth). To track iPhones/A
 6. Repeat for each iOS device
 
 **Verification:**
+
 - `device_tracker.{device}_ble` entity appears
 - Entity state updates when device moves between rooms
 
@@ -70,6 +74,7 @@ iOS devices use randomized MAC addresses (Private Bluetooth). To track iPhones/A
    - Link: `device_tracker.ewa_iphone_ble`, `device_tracker.ewa_watch_ble`
 
 **Verification:**
+
 - Person entities: `person.marcin`, `person.ewa`
 - State shows "home" when BLE in range
 
@@ -84,6 +89,7 @@ After Bermuda creates device_tracker entities, update template sensors:
 Find the person location sensors (around line 105) and update:
 
 ```nix
+
 {
   trigger = [
     { platform = "state"; entity_id = "sensor.bermuda_marcin_iphone_area"; } # Replace with actual entity
@@ -108,11 +114,13 @@ Find the person location sensors (around line 105) and update:
     # Repeat for Ewa
   ];
 }
+
 ```
 
 **Update "Anyone Home" sensors** (around line 145):
 
 ```nix
+
 {
   sensor = [
     {
@@ -129,14 +137,17 @@ Find the person location sensors (around line 105) and update:
     }
   ];
 }
+
 ```
 
 **Rebuild and deploy:**
 
 ```bash
+
 git add hosts/homelab/home-assistant/sensors.nix
 git commit -s -S -m "fix: update Bermuda entity IDs for person tracking"
 git push
+
 ```
 
 CI will test and deploy to production.
@@ -154,6 +165,7 @@ If using Bluetooth proxies, assign them to HA areas for trilateration:
 3. Ensure area names match HA GUI areas (Bermuda uses `area_id()` lookups)
 
 **Verification:**
+
 - Bermuda diagnostics shows area assignments
 - `sensor.bermuda_*_area` entities report correct room names
 
@@ -168,6 +180,7 @@ After person tracking works:
 Uncomment auto away mode automations (around line 287):
 
 ```nix
+
 {
   id = "away_mode_auto_enable";
   alias = "System - Enable away mode when both leave";
@@ -183,6 +196,7 @@ Uncomment auto away mode automations (around line 287):
   ];
 }
 # ... also uncomment away_mode_auto_disable
+
 ```
 
 **File:** `hosts/homelab/home-assistant/areas/bedroom.nix`
@@ -190,12 +204,14 @@ Uncomment auto away mode automations (around line 287):
 Uncomment auto sleep mode automations (around line 95):
 
 ```nix
+
 {
   id = "sleep_mode_auto_enable";
   alias = "Bedroom - Enable sleep mode when both in bed";
   # ... (see bedroom.nix for full config)
 }
 # ... also uncomment sleep_mode_auto_disable
+
 ```
 
 **Rebuild and deploy after uncommenting.**
@@ -227,11 +243,13 @@ Uncomment auto sleep mode automations (around line 95):
 ### Test Auto-Modes (if enabled)
 
 **Away mode:**
+
 1. Both persons leave home (BLE out of range)
 2. Wait 15 minutes
 3. Verify: `input_boolean.away_mode` turns on automatically
 
 **Sleep mode:**
+
 1. Both persons in bedroom after 21:00
 2. Wait 5 minutes
 3. Verify: `input_boolean.sleep_mode` turns on automatically
@@ -245,6 +263,7 @@ Uncomment auto sleep mode automations (around line 95):
 **Symptoms:** Bermuda diagnostics empty, no `device_tracker.*_ble` entities
 
 **Fixes:**
+
 1. Check HA Companion app BLE Transmitter enabled (Settings → Debugging)
 2. Verify BLE range (max ~10m, walls reduce signal)
 3. Check Bluetooth adapter status: `bluetoothctl power on`
@@ -255,6 +274,7 @@ Uncomment auto sleep mode automations (around line 95):
 **Symptoms:** device_tracker entity shows "unavailable" despite phone nearby
 
 **Fixes:**
+
 1. Re-extract IRK from HA Companion app (may change after iOS updates)
 2. Delete old Private BLE Device integration, re-add with new IRK
 3. Verify iPhone Bluetooth Privacy settings (Settings → Bluetooth → device → Forget/Re-pair if needed)
@@ -264,6 +284,7 @@ Uncomment auto sleep mode automations (around line 95):
 **Symptoms:** `sensor.bermuda_*_area` reports wrong room frequently
 
 **Fixes:**
+
 1. Add more ESP32 Bluetooth proxies (aim for 1 per room)
 2. Place proxies at different heights (desk, ceiling, floor variations improve accuracy)
 3. Check for BLE interference (2.4GHz WiFi, microwaves, USB3 devices)
@@ -274,6 +295,7 @@ Uncomment auto sleep mode automations (around line 95):
 **Symptoms:** `person.marcin` stuck at "home" despite leaving
 
 **Fixes:**
+
 1. Check device_tracker entity state (should be "not_home")
 2. Verify person entity linked to correct device_tracker (Settings → People)
 3. Check Bermuda `away_timeout` setting (default 180s)
