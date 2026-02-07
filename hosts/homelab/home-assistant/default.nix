@@ -317,6 +317,7 @@ in {
       "apple_tv" # Apple TV / AirPlay devices
       "cast" # Google Cast / Chromecast
       "xiaomi_ble" # Xiaomi Bluetooth devices
+      "roborock" # Roborock vacuum integration
     ];
 
     extraPackages = ps: let
