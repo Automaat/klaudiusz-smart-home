@@ -15,6 +15,7 @@ Cannot be configured declaratively via NixOS.
 ## About This Integration
 
 **Native Home Assistant integration:**
+
 - Local control with cloud discovery (ports 58867 TCP, 58866 UDP)
 - ~15 entities: vacuum control, battery, consumables, error sensors
 - Rate limiting protection built-in
@@ -39,17 +40,20 @@ Cannot be configured declaratively via NixOS.
 ### 2. Verify Setup
 
 **Check integration status:**
+
 ```bash
 # On homelab server
 journalctl -u home-assistant | grep -i roborock
 ```
 
 **Check entities created:**
+
 1. Developer Tools → States
 2. Filter: `vacuum.`
 3. Verify entity appears (e.g., `vacuum.roborock_q7_max`)
 
 **Test control:**
+
 1. Go to vacuum entity page
 2. Click "Start" - vacuum should begin cleaning
 3. Click "Return to base" - vacuum should dock
@@ -61,16 +65,18 @@ journalctl -u home-assistant | grep -i roborock
 **Symptom:** Browser redirect stuck, integration not added
 
 **Solutions:**
+
 1. Ensure HA Cloud enabled (Settings → Home Assistant Cloud) OR external URL configured
 2. Check browser console for errors
 3. Try incognito mode (clear cookies)
-4. Pre-authenticate at https://roborock.com before starting setup
+4. Pre-authenticate at <https://roborock.com> before starting setup
 
 ### No Devices Shown
 
 **Symptom:** OAuth succeeds but no vacuum listed
 
 **Solutions:**
+
 1. Verify vacuum in Roborock app (same account)
 2. Check vacuum online (not in sleep mode)
 3. Try removing and re-adding vacuum in Roborock app
@@ -81,6 +87,7 @@ journalctl -u home-assistant | grep -i roborock
 **Symptom:** Integration uses cloud API (slower responses)
 
 **Solutions:**
+
 1. Verify ports 58867 (TCP) and 58866 (UDP) accessible
 2. Check vacuum has static IP
 3. Test network connectivity: `ping <vacuum_ip>`
@@ -91,6 +98,7 @@ journalctl -u home-assistant | grep -i roborock
 **Symptom:** "Roborock" doesn't appear in integration search
 
 **Solutions:**
+
 1. Check NixOS config deployed: `systemctl status comin`
 2. Verify extraComponents includes "roborock"
 3. Restart HA after deployment: `sudo systemctl restart home-assistant`
