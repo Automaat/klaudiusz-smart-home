@@ -171,6 +171,42 @@
     }
 
     # -----------------------------------------
+    # Person Preferences - Active
+    # -----------------------------------------
+    {
+      sensor = [
+        {
+          name = "Active Brightness Preference Bathroom";
+          unique_id = "active_brightness_pref_bathroom";
+          state = ''
+            {% set marcin_here = is_state('sensor.marcin_current_room', 'bathroom') %}
+            {% set ewa_here = is_state('sensor.ewa_current_room', 'bathroom') %}
+            {% if marcin_here and ewa_here %}
+              {{ [states('input_number.marcin_brightness_preference'), states('input_number.ewa_brightness_preference')] | map('float') | average | round(0) }}
+            {% elif marcin_here %}{{ states('input_number.marcin_brightness_preference') }}
+            {% elif ewa_here %}{{ states('input_number.ewa_brightness_preference') }}
+            {% else %}{{ states('input_number.default_brightness') }}{% endif %}
+          '';
+          unit_of_measurement = "%";
+        }
+        {
+          name = "Active Brightness Preference Kitchen";
+          unique_id = "active_brightness_pref_kitchen";
+          state = ''
+            {% set marcin_here = is_state('sensor.marcin_current_room', 'kitchen') %}
+            {% set ewa_here = is_state('sensor.ewa_current_room', 'kitchen') %}
+            {% if marcin_here and ewa_here %}
+              {{ [states('input_number.marcin_brightness_preference'), states('input_number.ewa_brightness_preference')] | map('float') | average | round(0) }}
+            {% elif marcin_here %}{{ states('input_number.marcin_brightness_preference') }}
+            {% elif ewa_here %}{{ states('input_number.ewa_brightness_preference') }}
+            {% else %}{{ states('input_number.default_brightness') }}{% endif %}
+          '';
+          unit_of_measurement = "%";
+        }
+      ];
+    }
+
+    # -----------------------------------------
     # Air Quality Monitoring
     # -----------------------------------------
     {
