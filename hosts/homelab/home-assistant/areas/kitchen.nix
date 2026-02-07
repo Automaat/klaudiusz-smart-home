@@ -55,12 +55,19 @@
               ];
               sequence = [
                 {
+                  service = "light.turn_on";
+                  target.entity_id = "light.kitchen";
+                  data = {
+                    brightness_pct = "{{ states('sensor.active_brightness_preference_kitchen') | int }}";
+                  };
+                }
+                {
                   service = "adaptive_lighting.apply";
                   data = {
                     entity_id = "switch.adaptive_lighting_kitchen_lights";
                     lights = ["light.kitchen"];
-                    turn_on_lights = true;
-                    brightness_pct = "{{ states('sensor.active_brightness_preference_kitchen') | int }}";
+                    adapt_brightness = false;
+                    adapt_color = true;
                   };
                 }
               ];
