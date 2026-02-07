@@ -86,12 +86,19 @@
               ];
               sequence = [
                 {
+                  service = "light.turn_on";
+                  target.entity_id = "light.bathroom";
+                  data = {
+                    brightness_pct = "{{ states('sensor.active_brightness_preference_bathroom') | int }}";
+                  };
+                }
+                {
                   service = "adaptive_lighting.apply";
                   data = {
                     entity_id = "switch.adaptive_lighting_bathroom_lights";
                     lights = ["light.bathroom"];
-                    turn_on_lights = true;
-                    brightness_pct = "{{ states('sensor.active_brightness_preference_bathroom') | int }}";
+                    adapt_brightness = false;
+                    adapt_color = true;
                   };
                 }
               ];
