@@ -342,6 +342,25 @@ in {
         speech.text = "{{ states('input_text.claude_response') }}";
       };
 
+      # -----------------------------------------
+      # Person Location
+      # -----------------------------------------
+      WhereIsPerson = {
+        speech.text = ''
+          {% if slots.person == "marcin" %}
+            {% set room = states('sensor.marcin_current_room') %}
+            {% set confidence = state_attr('sensor.marcin_current_room', 'confidence') %}
+            {% if confidence == 'high' %}Marcin jest w {{ room }}
+            {% else %}Ostatnio widziałem Marcina w {{ room }}{% endif %}
+          {% elif slots.person in ["ewa", "żona"] %}
+            {% set room = states('sensor.ewa_current_room') %}
+            {% set confidence = state_attr('sensor.ewa_current_room', 'confidence') %}
+            {% if confidence == 'high' %}Ewa jest w {{ room }}
+            {% else %}Ostatnio widziałem Ewę w {{ room }}{% endif %}
+          {% endif %}
+        '';
+      };
+
       CancelClaude = {
         action = [
           {

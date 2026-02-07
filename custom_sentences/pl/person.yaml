@@ -1,0 +1,15 @@
+language: pl
+intents:
+  WhereIsPerson:
+    data:
+      - required_keywords: [gdzie]
+        sentences:
+          - "gdzie jest {person}"
+          - "gdzie {person}"
+
+lists:
+  person:
+    values:
+      - "marcin"
+      - "ewa"
+      - "żona"
