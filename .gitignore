@@ -25,3 +25,9 @@ result
 # Misc
 *.log
 esphome/secrets.yaml
+
+# Wake word training samples (don't commit recordings)
+samples/
+
+# Claude Code local settings
+.claude/
