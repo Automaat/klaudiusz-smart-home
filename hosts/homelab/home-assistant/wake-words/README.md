@@ -35,13 +35,14 @@
 Place in `customModelsDirectories` for wyoming-openwakeword service:
 
 ```nix
-services.wyoming.openwakeword.servers.default = {
+services.wyoming.openwakeword = {
   enable = true;
   uri = "tcp://127.0.0.1:10400";
   customModelsDirectories = [ ./wake-words ];
-  preloadModels = [ "pl_klaudiusz" ];
 };
 ```
+
+**Note:** wyoming-openwakeword 2.0+ automatically loads all models from `customModelsDirectories`. The `preloadModels` option was removed.
 
 ### Future Improvements
 

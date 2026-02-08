@@ -627,15 +627,11 @@ in {
   # ===========================================
   # Wake Word Detection (openWakeWord)
   # ===========================================
-  services.wyoming.openwakeword.servers.default = {
+  services.wyoming.openwakeword = {
     enable = true;
-    uri = "tcp://127.0.0.1:10400"; # Localhost only for security
+    uri = "tcp://127.0.0.1:10400";
     customModelsDirectories = [
       ./wake-words
-    ];
-    preloadModels = [
-      "ok_nabu"
-      "pl_klaudiusz"
     ];
   };
 }
