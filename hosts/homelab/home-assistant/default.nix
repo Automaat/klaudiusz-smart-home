@@ -623,4 +623,15 @@ in {
     voice = "pl_PL-darkman-medium";
     uri = "tcp://127.0.0.1:10200"; # Localhost only for security
   };
+
+  # ===========================================
+  # Wake Word Detection (openWakeWord)
+  # ===========================================
+  services.wyoming.openwakeword = {
+    enable = true;
+    uri = "tcp://127.0.0.1:10400";
+    customModelsDirectories = [
+      ./wake-words
+    ];
+  };
 }
