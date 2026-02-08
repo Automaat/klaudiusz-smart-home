@@ -631,11 +631,11 @@ in {
     enable = true;
     uri = "tcp://127.0.0.1:10400"; # Localhost only for security
     customModelsDirectories = [
-      ./wake-words # Custom Polish wake word models
+      ./wake-words
     ];
     preloadModels = [
-      "ok_nabu"      # Default English (fallback)
-      "pl_klaudiusz" # Custom Polish wake word
+      "ok_nabu"
+      "pl_klaudiusz"
     ];
   };
 }
