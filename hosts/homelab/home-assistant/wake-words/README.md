@@ -14,7 +14,7 @@
 
 - **Generated with:** piper-sample-generator
 - **Trained with:** openWakeWord v0.5.1
-- **Voices:** 
+- **Voices:**
   - pl_PL-gosia-medium (600 samples, resampled to 16kHz)
   - pl_PL-darkman-medium (600 samples, resampled to 16kHz)
 - **Split:** 90% train (1080 samples) / 10% test (120 samples)
@@ -54,6 +54,6 @@ services.wyoming.openwakeword.servers.default = {
 ### References
 
 - Training guide: `docs/wake-word-training.md`
-- openWakeWord: https://github.com/dscripka/openWakeWord
-- Piper TTS: https://github.com/rhasspy/piper
-- Wyoming protocol: https://github.com/rhasspy/wyoming-openwakeword
+- openWakeWord: <https://github.com/dscripka/openWakeWord>
+- Piper TTS: <https://github.com/rhasspy/piper>
+- Wyoming protocol: <https://github.com/rhasspy/wyoming-openwakeword>
