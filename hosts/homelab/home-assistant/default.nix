@@ -623,4 +623,19 @@ in {
     voice = "pl_PL-darkman-medium";
     uri = "tcp://127.0.0.1:10200"; # Localhost only for security
   };
+
+  # ===========================================
+  # Wake Word Detection (openWakeWord)
+  # ===========================================
+  services.wyoming.openwakeword.servers.default = {
+    enable = true;
+    uri = "tcp://127.0.0.1:10400"; # Localhost only for security
+    customModelsDirectories = [
+      ./wake-words # Custom Polish wake word models
+    ];
+    preloadModels = [
+      "ok_nabu"      # Default English (fallback)
+      "pl_klaudiusz" # Custom Polish wake word
+    ];
+  };
 }
