@@ -125,9 +125,6 @@ in {
     enableOnBoot = true;
   };
 
-  # Add admin user to docker group
-  users.users.admin.extraGroups = ["docker"];
-
   # ===========================================
   # Security
   # ===========================================
