@@ -102,7 +102,8 @@
             value_template = ''
               {% set deploy_time = states('sensor.comin_last_deployment_time') %}
               {% if deploy_time not in ['none', 'unknown', 'unavailable'] %}
-                {{ (now() - as_datetime(deploy_time)).total_seconds() < 120 }}
+                {% set dt = as_datetime(deploy_time) %}
+                {{ dt is not none and (now() - dt).total_seconds() < 120 }}
               {% else %}
                 false
               {% endif %}
@@ -142,7 +143,8 @@
             value_template = ''
               {% set fail_time = states('sensor.comin_last_failed_time') %}
               {% if fail_time not in ['none', 'unknown', 'unavailable'] %}
-                {{ (now() - as_datetime(fail_time)).total_seconds() < 120 }}
+                {% set dt = as_datetime(fail_time) %}
+                {{ dt is not none and (now() - dt).total_seconds() < 120 }}
               {% else %}
                 false
               {% endif %}
