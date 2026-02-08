@@ -111,18 +111,18 @@ in {
   # ===========================================
   users.users.admin = {
     isNormalUser = true;
-    extraGroups = ["wheel" "networkmanager" "dialout" "media"]; # dialout for Zigbee USB, media for Nixarr
+    extraGroups = ["wheel" "networkmanager" "dialout" "media" "docker"]; # dialout for Zigbee USB, media for Nixarr, docker for training
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMnlSO5YSaF10lrs9q4Z6QJ2LZp4oDHgZ5xR9VaaR+cX skalskimarcin33@gmail.com"
     ];
   };
 
   # ===========================================
-  # Docker (Rootless)
+  # Docker
   # ===========================================
-  virtualisation.docker.rootless = {
+  virtualisation.docker = {
     enable = true;
-    setSocketVariable = true;
+    enableOnBoot = true;
   };
 
   # ===========================================
