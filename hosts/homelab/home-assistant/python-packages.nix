@@ -170,4 +170,39 @@
       maintainers = with maintainers; [];
     };
   };
+
+  deepgram-sdk = python3Packages.buildPythonPackage rec {
+    pname = "deepgram-sdk";
+    # renovate: datasource=pypi depName=deepgram-sdk
+    version = "5.3.2";
+    format = "pyproject";
+
+    src = pkgs.fetchurl {
+      url = "https://files.pythonhosted.org/packages/db/03/fe8cf3a3b5fe6d7bfbe8a1230a04e5e057bf391f5747a73aa8c1e8bf96b2/deepgram_sdk-${version}.tar.gz";
+      hash = "sha256-vsbpVstL2atZew6pAD1O4dNk1xSmXcAzcvdpqwd2ELM=";
+    };
+
+    nativeBuildInputs = with python3Packages; [
+      poetry-core
+    ];
+
+    propagatedBuildInputs = with python3Packages; [
+      httpx
+      pydantic
+      pydantic-core
+      typing-extensions
+      websockets
+    ];
+
+    pythonImportsCheck = ["deepgram"];
+
+    doCheck = false;
+
+    meta = with lib; {
+      description = "Deepgram Python SDK for speech recognition";
+      homepage = "https://github.com/deepgram/deepgram-python-sdk";
+      license = licenses.mit;
+      maintainers = with maintainers; [];
+    };
+  };
 }
