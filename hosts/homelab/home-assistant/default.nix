@@ -498,6 +498,8 @@ in {
     "L+ /var/lib/hass/themes/catppuccin - - - - ${catppuccinTheme}/themes"
     "L+ /var/lib/hass/themes/ios - - - - ${iosTheme}/themes"
     "d /var/lib/hass/blueprints 0755 hass hass -"
+    # Custom components directory (parent for component symlinks in preStart)
+    "d /var/lib/hass/custom_components 0755 hass hass -"
     # Create secrets.yaml with correct ownership (written by preStart)
     "f /var/lib/hass/secrets.yaml 0600 hass hass -"
     # Polish custom sentences
