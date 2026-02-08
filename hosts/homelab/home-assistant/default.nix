@@ -171,6 +171,17 @@
   };
 
   # ===========================================
+  # Deepgram STT
+  # ===========================================
+  deepgramSttSource = pkgs.fetchFromGitHub {
+    owner = "Automaat";
+    repo = "deepgram-stt";
+    # renovate: datasource=github-tags depName=Automaat/deepgram-stt
+    rev = "v0.1.0";
+    hash = "sha256-GbSCPfDHmSK5gbnr0Ov6oju8Y4Q+Jm0SZwWUbGITiKg=";
+  };
+
+  # ===========================================
   # Xiaomi Home (Official by Xiaomi)
   # ===========================================
   xiaomiHomeSource = pkgs.fetchFromGitHub {
@@ -362,6 +373,9 @@ in {
         # OpenPlantbook integration (custom component)
         customPkgs.openplantbook-sdk # OpenPlantbook SDK
         customPkgs.json-timeseries # JSON Time Series library
+
+        # Deepgram STT integration (custom component)
+        customPkgs.deepgram-sdk # Deepgram Python SDK
       ];
 
     config = {
@@ -564,6 +578,9 @@ in {
 
       # Create Bermuda BLE Trilateration symlink
       ln -sfn ${bermudaSource}/custom_components/bermuda /var/lib/hass/custom_components/bermuda
+
+      # Create Deepgram STT symlink
+      ln -sfn ${deepgramSttSource}/custom_components/deepgram_stt /var/lib/hass/custom_components/deepgram_stt
     '';
 
     # Force derivation update when HA config changes
