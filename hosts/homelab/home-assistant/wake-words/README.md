@@ -42,7 +42,8 @@ services.wyoming.openwakeword = {
 };
 ```
 
-**Note:** wyoming-openwakeword 2.0+ automatically loads all models from `customModelsDirectories`. The `preloadModels` option was removed.
+**Note:** wyoming-openwakeword 2.0+ automatically loads all models from `customModelsDirectories`.
+The `preloadModels` option was removed.
 
 ### Future Improvements
 
