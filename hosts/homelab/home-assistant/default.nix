@@ -633,5 +633,18 @@ in {
     customModelsDirectories = [
       ./wake-words
     ];
+
+    # Sensitivity tuning for Polish wake word (experimental)
+    # Lower threshold = more sensitive (fewer missed detections, more false positives)
+    # Default: 0.5, Range: 0.0-1.0
+    threshold = 0.35;
+
+    # Activations needed before triggering detection
+    # Lower = easier to trigger
+    # Default: 1
+    triggerLevel = 1;
+
+    # Cooldown period between detections (seconds)
+    refractorySeconds = 3;
   };
 }
