@@ -111,7 +111,7 @@ in {
   # ===========================================
   users.users.admin = {
     isNormalUser = true;
-    extraGroups = ["wheel" "networkmanager" "dialout" "media"]; # dialout for Zigbee USB, media for Nixarr
+    extraGroups = ["wheel" "networkmanager" "dialout" "media" "docker"]; # dialout for Zigbee USB, media for Nixarr, docker for training
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMnlSO5YSaF10lrs9q4Z6QJ2LZp4oDHgZ5xR9VaaR+cX skalskimarcin33@gmail.com"
     ];
@@ -124,9 +124,6 @@ in {
     enable = true;
     enableOnBoot = true;
   };
-
-  # Add admin user to docker group
-  users.users.admin.extraGroups = ["docker"];
 
   # ===========================================
   # Security
