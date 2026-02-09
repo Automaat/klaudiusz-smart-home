@@ -101,7 +101,7 @@
     repo = "lovelace-card-mod";
     # renovate: datasource=github-tags depName=thomasloven/lovelace-card-mod
     rev = "v4.2.1";
-    hash = "sha256-Dvm2i8ll7Fyuw/+7+3a50HJAmWF4PoxnyPcWExP47e8=";
+    hash = "sha256-16aA9VaSuWZ1i9UBGp9vb7N1H5vfcLOiqppjPoqphM0=";
   };
 
   # ===========================================
