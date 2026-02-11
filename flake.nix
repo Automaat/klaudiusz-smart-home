@@ -28,7 +28,28 @@
     nixarr,
   }: let
     system = "x86_64-linux";
-    pkgs = nixpkgs.legacyPackages.${system};
+
+    # Overlay to fix upstream test failure in ash package
+    # https://github.com/Automaat/klaudiusz-smart-home/pull/433
+    overlays = [
+      (final: prev: {
+        python3 = prev.python3.override {
+          packageOverrides = python-final: python-prev: {
+            ash = python-prev.ash.overridePythonAttrs (old: {
+              pytestFlagsArray = (old.pytestFlagsArray or []) ++ [
+                # Skip flaky timeout test that fails in CI
+                "--deselect=tests/test_ash.py::test_ash_end_to_end[FakeTransportOneByteAtATime]"
+              ];
+            });
+          };
+        };
+        python3Packages = final.python3.pkgs;
+      })
+    ];
+
+    pkgs = import nixpkgs {
+      inherit system overlays;
+    };
     homelabConfig = self.nixosConfigurations.homelab;
   in {
     nixosConfigurations = {
@@ -40,6 +61,7 @@
           sops-nix.nixosModules.sops
           nixarr.nixosModules.default
           ./hosts/homelab
+          {nixpkgs.overlays = overlays;}
         ];
       };
     };
