@@ -1,37 +1,36 @@
 # Voice Preview Edition - Custom Wake Word Setup
 
-**Why manual?** Adding custom wake word requires ESPHome config modification and OTA firmware update. The Voice Preview Edition needs to be adopted in ESPHome dashboard to access its configuration.
+**Why manual?** Adding custom wake word requires ESPHome config modification and OTA firmware
+update. The Voice Preview Edition needs to be adopted in ESPHome dashboard to access its
+configuration.
 
-**When to do this:** After Voice Preview Edition is working with default wake word (Okay Nabu), to add custom Polish wake word "Klaudiusz".
+**When to do this:** After Voice Preview Edition is working with default wake word (Okay Nabu),
+to add custom Polish wake word "Klaudiusz".
 
 ## Prerequisites
 
 - Voice Preview Edition connected and working
 - Custom wake word model trained (pl_klaudiusz.tflite)
 - Model files hosted via HA www directory
-- ESPHome addon installed in Home Assistant
+- ESPHome service enabled in NixOS config
 
-## Part 1: Install ESPHome Addon
+## Part 1: Access ESPHome Dashboard
 
-**1. Install addon:**
+**ESPHome runs as NixOS service** (not HA addon - we're on NixOS, not HA OS).
 
-1. Open Home Assistant UI
-2. **Settings** → **Add-ons** → **Add-on Store**
-3. Search for **"ESPHome"**
-4. Click **INSTALL**
-5. Wait for installation (~2-3 minutes)
+**1. Verify service running:**
 
-**2. Start addon:**
+```bash
+ssh homelab "systemctl status esphome"
+```
 
-1. Toggle **"Start on boot"** ON
-2. Toggle **"Watchdog"** ON
-3. Click **START**
-4. Wait for startup (~30 seconds)
+Should show: `active (running)`
 
-**3. Open dashboard:**
+**2. Open dashboard:**
 
-1. Click **"OPEN WEB UI"** button
-2. ESPHome dashboard opens in new tab
+Open in browser: **http://homelab:6052** or **http://192.168.0.241:6052**
+
+ESPHome dashboard should load showing device management interface.
 
 ## Part 2: Adopt Voice Preview Edition
 

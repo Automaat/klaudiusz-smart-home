@@ -262,6 +262,23 @@ in {
   };
 
   # ===========================================
+  # ESPHome - ESP32/ESP8266 Firmware Builder
+  # ===========================================
+  services.esphome = {
+    enable = true;
+    address = "0.0.0.0"; # Listen on all interfaces
+    port = 6052; # Default ESPHome port
+    openFirewall = true;
+    # Allow access to USB/serial devices for flashing
+    allowedDevices = [
+      "/dev/ttyUSB0"
+      "/dev/ttyUSB1"
+      "/dev/ttyACM0"
+      "char-usb_device" # All USB devices
+    ];
+  };
+
+  # ===========================================
   # Monitoring - Prometheus
   # ===========================================
   services.prometheus = {
