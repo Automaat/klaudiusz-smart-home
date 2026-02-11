@@ -123,6 +123,14 @@
       ];
       action = [
         {
+          delay = "00:00:20";
+        }
+        {
+          condition = "state";
+          entity_id = "binary_sensor.presence_sensor_fp2_b63f_presence_sensor_2";
+          state = "off";
+        }
+        {
           service = "light.turn_off";
           target.entity_id = "light.kitchen";
         }
