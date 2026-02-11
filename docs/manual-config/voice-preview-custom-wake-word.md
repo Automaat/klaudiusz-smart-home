@@ -28,7 +28,7 @@ Should show: `active (running)`
 
 **2. Open dashboard:**
 
-Open in browser: **http://homelab:6052** or **http://192.168.0.241:6052**
+Open in browser: **<http://homelab:6052>** or **<http://192.168.0.241:6052>**
 
 ESPHome dashboard should load showing device management interface.
 
