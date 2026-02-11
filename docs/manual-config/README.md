@@ -25,6 +25,7 @@ declaratively through NixOS and must be performed manually through web UIs
 - **[System Monitor](system-monitor.md)** - System resource monitoring
 - **[Wyoming Protocol](wyoming-protocol.md)** - Speech-to-text and text-to-speech services
 - **[Voice Assistant Preview Edition](voice-assistant-preview.md)** - Voice hardware setup
+- **[Voice Preview Custom Wake Word](voice-preview-custom-wake-word.md)** - Add Polish "Klaudiusz" wake word via ESPHome
 - **[LG WebOS TV](lg-webos-tv.md)** - Smart TV integration
 - **[Samsung SmartThings](smartthings.md)** - SmartThings OAuth integration
 - **[MCP Server (Claude Code)](mcp-server.md)** - AI assistant API access
