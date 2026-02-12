@@ -728,7 +728,7 @@ in {
     esphome.serviceConfig = {
       # Ensure state directory with proper permissions for PlatformIO
       StateDirectory = "esphome";
-      StateDirectoryMode = "0755";
+      StateDirectoryMode = lib.mkForce "0755";
       Restart = "on-failure";
       RestartSec = "10s";
     };
