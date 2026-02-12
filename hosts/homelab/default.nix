@@ -724,6 +724,20 @@ in {
     wyoming-faster-whisper-default.serviceConfig.Restart = "on-failure";
     wyoming-piper-default.serviceConfig.Restart = "on-failure";
 
+    # ESPHome - firmware builder
+    esphome.serviceConfig = {
+      # Ensure state directory with proper permissions for PlatformIO
+      StateDirectory = "esphome";
+      StateDirectoryMode = "0755";
+      Restart = "on-failure";
+      RestartSec = "10s";
+    };
+    esphome.unitConfig = {
+      StartLimitBurst = 5;
+      StartLimitIntervalSec = 300;
+      OnFailure = "notify-service-failure@%n.service";
+    };
+
     # Promtail - log shipper hardening
     promtail.serviceConfig = {
       # Create state directory for positions.yaml
