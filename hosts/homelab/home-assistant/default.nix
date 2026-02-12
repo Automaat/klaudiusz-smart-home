@@ -511,8 +511,7 @@ in {
     "f /var/lib/hass/.comin_last_failed_uuid.lock 0600 hass hass -"
     # Wake word models for ESPHome (served via /local/wake-words/)
     "d /var/lib/hass/www 0755 hass hass -"
-    "d /var/lib/hass/www/local 0755 hass hass -"
-    "L+ /var/lib/hass/www/local/wake-words - - - - ${./wake-words}"
+    "L+ /var/lib/hass/www/wake-words - - - - ${./wake-words}"
   ];
 
   # ===========================================

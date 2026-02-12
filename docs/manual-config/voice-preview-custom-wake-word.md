@@ -75,7 +75,7 @@ micro_wake_word:
     - model: okay_nabu
 
     # Custom Polish wake word
-    - model: http://homeassistant.local:8123/local/wake-words/pl_klaudiusz.json
+    - model: http://192.168.0.241:8123/local/wake-words/pl_klaudiusz.json
 ```
 
 **Full example:**
@@ -89,7 +89,7 @@ micro_wake_word:
     - model: okay_nabu
     - model: hey_jarvis
     - model: hey_mycroft
-    - model: http://homeassistant.local:8123/local/wake-words/pl_klaudiusz.json
+    - model: http://192.168.0.241:8123/local/wake-words/pl_klaudiusz.json
 ```
 
 **4. Save config:**
@@ -106,7 +106,7 @@ Click **"SAVE"** (top-right corner)
 
 **If errors appear:**
 
-- Check URL is correct: `http://homeassistant.local:8123/local/wake-words/pl_klaudiusz.json`
+- Check URL is correct: `http://192.168.0.241:8123/local/wake-words/pl_klaudiusz.json`
 - Verify model files are accessible (test URL in browser)
 - Check YAML indentation (use spaces, not tabs)
 
@@ -159,7 +159,7 @@ Click **"SAVE"** (top-right corner)
 
 ```bash
 # Test URL from homelab
-curl http://homeassistant.local:8123/local/wake-words/pl_klaudiusz.json
+curl http://192.168.0.241:8123/local/wake-words/pl_klaudiusz.json
 
 # Should return JSON with model info
 # If 404: model files not deployed, rebuild NixOS

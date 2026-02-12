@@ -3,7 +3,7 @@
   "wake_word": "klaudiusz",
   "author": "Marcin Skalski",
   "website": "https://github.com/Automaat/klaudiusz-smart-home",
-  "model": "http://homeassistant.local:8123/local/wake-words/pl_klaudiusz.tflite",
+  "model": "http://192.168.0.241:8123/local/wake-words/pl_klaudiusz.tflite",
   "trained_languages": ["pl"],
   "version": 2,
   "micro": {
