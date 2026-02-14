@@ -202,6 +202,8 @@
       '');
     };
     environment = {
+      # Set HOME for proper database persistence (prevents NeDB corruption)
+      HOME = "/var/lib/flood";
       # Transmission RPC via nginx proxy
       TRANSMISSION_URL = "http://localhost:9091/transmission/rpc";
       TRANSMISSION_USER = "admin";
