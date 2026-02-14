@@ -144,8 +144,8 @@
     owner = "dummylabs";
     repo = "thewatchman";
     # renovate: datasource=github-tags depName=dummylabs/thewatchman
-    rev = "v0.8.3";
-    hash = "sha256-5BXIKh8uPKuxsLbxu0fUbuCR2LYOXk1HpOvrqehg0u0=";
+    rev = "v0.8.4";
+    hash = "sha256-rLFpdaLkPjLjs6Gd4ky+4lQiwsDJNQw2/g94kod8v9g=";
   };
 
   # ===========================================
