@@ -729,6 +729,8 @@ in {
       # Ensure state directory with proper permissions for PlatformIO
       StateDirectory = "esphome";
       StateDirectoryMode = "0755";
+      # Disable user namespacing - breaks PlatformIO file ownership
+      PrivateUsers = lib.mkForce false;
       Restart = "on-failure";
       RestartSec = "10s";
     };
