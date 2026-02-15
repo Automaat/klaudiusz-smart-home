@@ -15,4 +15,13 @@
   users.users.grafana.extraGroups = [
     "influxdb-readers" # InfluxDB token read access
   ];
+
+  # ESPHome system user (DynamicUser disabled for PlatformIO)
+  users.users.esphome = {
+    isSystemUser = true;
+    group = "esphome";
+    extraGroups = ["dialout"]; # Serial port access for USB flashing
+  };
+
+  users.groups.esphome = {};
 }
