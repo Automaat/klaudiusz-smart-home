@@ -729,6 +729,18 @@ in {
       # Ensure state directory with proper permissions for PlatformIO
       StateDirectory = "esphome";
       StateDirectoryMode = lib.mkForce "0755";
+      # Disable user namespacing - breaks PlatformIO file ownership
+      PrivateUsers = lib.mkForce false;
+      # Allow PlatformIO to create and execute binaries in state directory
+      NoExecPaths = lib.mkForce [];
+      # Disable sandboxing that prevents PlatformIO compilation
+      ProtectSystem = lib.mkForce false;
+      ProtectHome = lib.mkForce false;
+      PrivateTmp = lib.mkForce false;
+      # Allow network access for downloading dependencies
+      PrivateNetwork = lib.mkForce false;
+      # Allow device access for USB flashing
+      PrivateDevices = lib.mkForce false;
       Restart = "on-failure";
       RestartSec = "10s";
     };
