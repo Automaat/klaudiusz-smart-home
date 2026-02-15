@@ -730,6 +730,8 @@ in {
       # DynamicUser applies ProtectSystem=strict, ProtectHome=read-only, PrivateTmp=yes
       # which cannot be fully overridden even with mkForce
       DynamicUser = lib.mkForce false;
+      # Set HOME for uv cache (prevents /var/empty cache errors)
+      Environment = ["HOME=/var/lib/esphome"];
       # Ensure state directory with proper permissions for PlatformIO
       StateDirectory = "esphome";
       StateDirectoryMode = lib.mkForce "0755";
