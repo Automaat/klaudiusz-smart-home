@@ -726,6 +726,10 @@ in {
 
     # ESPHome - firmware builder
     esphome.serviceConfig = {
+      # Disable DynamicUser - it enforces hardening that breaks PlatformIO
+      # DynamicUser applies ProtectSystem=strict, ProtectHome=read-only, PrivateTmp=yes
+      # which cannot be fully overridden even with mkForce
+      DynamicUser = lib.mkForce false;
       # Ensure state directory with proper permissions for PlatformIO
       StateDirectory = "esphome";
       StateDirectoryMode = lib.mkForce "0755";
