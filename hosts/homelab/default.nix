@@ -761,6 +761,8 @@ in {
       StartLimitIntervalSec = 300;
       OnFailure = "notify-service-failure@%n.service";
     };
+    # Add git and patch for PlatformIO component patching
+    esphome.path = with pkgs; [git patch];
 
     # Promtail - log shipper hardening
     promtail.serviceConfig = {
