@@ -741,6 +741,12 @@ in {
       PrivateNetwork = lib.mkForce false;
       # Allow device access for USB flashing
       PrivateDevices = lib.mkForce false;
+      # Allow executing downloaded binaries (PlatformIO tools, uv)
+      MemoryDenyWriteExecute = lib.mkForce false;
+      # Allow creating namespaces (may be needed by PlatformIO)
+      RestrictNamespaces = lib.mkForce false;
+      # Remove address family restrictions (full network access)
+      RestrictAddressFamilies = lib.mkForce [];
       Restart = "on-failure";
       RestartSec = "10s";
     };
