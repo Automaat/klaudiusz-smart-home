@@ -26,6 +26,7 @@
             unit_of_measurement = "°C";
             device_class = "temperature";
             scan_interval = 30;
+            value_template = "{{ value | float(default=none) if value | trim else none }}";
           };
         }
         {
