@@ -45,13 +45,14 @@ in {
             message = "System started at {{ now().strftime('%H:%M') }}";
           };
         }
-        # {
-        #   action = "notify.send_message";
-        #   target.entity_id = "notify.klaudiusz_smart_home_system";
-        #   data = {
-        #     message = "✅ Home Assistant started at {{ now().strftime('%H:%M') }}";
-        #   };
-        # }
+        {
+          action = "notify.send_message";
+          target.entity_id = "notify.klaudiusz_smart_home_system";
+          data = {
+            title = "Klaudiusz rebooted";
+            message = "Home Assistant started at {{ now().strftime('%H:%M') }}";
+          };
+        }
       ];
     }
 
