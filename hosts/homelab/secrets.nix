@@ -69,6 +69,5 @@ in {
       mode = "0400";
       restartUnits = ["cloudflared-tunnel-${cloudflareTunnelId}.service"];
     };
-
   };
 }
