@@ -3,7 +3,7 @@
   lib,
   ...
 }: let
-  claudeServerUrl = "http://100.82.161.69:8742";
+  claudeServerUrl = "http://192.168.20.107:8742";
 in {
   services.home-assistant.config = {
     # ===========================================

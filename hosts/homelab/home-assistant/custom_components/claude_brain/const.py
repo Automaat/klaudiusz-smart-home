@@ -2,7 +2,7 @@
 from typing import Final
 
 DOMAIN: Final = "claude_brain"
-SERVER_URL: Final = "http://localhost:8742"
+SERVER_URL: Final = "http://192.168.20.107:8742"
 TIMEOUT: Final = 10
 
 INPUT_TEXT_SESSION: Final = "input_text.claude_session"
