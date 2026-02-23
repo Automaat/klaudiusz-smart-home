@@ -1,7 +1,6 @@
 {
   config,
   pkgs,
-  lib,
   ...
 }: {
   # ===========================================
@@ -170,43 +169,6 @@
         fi
       '')
     ];
-  };
-
-  # ===========================================
-  # Flood Web UI for Transmission
-  # ===========================================
-  # Transmission 4.x doesn't include built-in web UI
-  # Use Flood as modern alternative
-
-  services.flood = {
-    enable = true;
-    host = "0.0.0.0";
-    port = 3001;
-  };
-
-  systemd.services.flood = {
-    after = ["transmission.service"];
-    serviceConfig = {
-      # Use systemd LoadCredential for secure password injection
-      LoadCredential = "transmission-pass:${config.sops.secrets."transmission-rpc-password".path}";
-      # Wrapper script to inject credential into environment before starting Flood
-      ExecStart = lib.mkForce (pkgs.writeShellScript "flood-start" ''
-        # Read password from systemd credential and export as env var
-        export TRANSMISSION_PASS="$(${pkgs.coreutils}/bin/tr -d '\n' < "$CREDENTIALS_DIRECTORY/transmission-pass")"
-
-        # Start Flood with all environment variables available
-        exec ${pkgs.flood}/bin/flood \
-          --host ${config.services.flood.host} \
-          --port ${toString config.services.flood.port} \
-          --rundir=/var/lib/flood
-      '');
-    };
-    environment = {
-      # Transmission RPC via nginx proxy
-      TRANSMISSION_URL = "http://localhost:9091/transmission/rpc";
-      TRANSMISSION_USER = "admin";
-      # TRANSMISSION_PASS injected by wrapper script from LoadCredential
-    };
   };
 
   # ===========================================
