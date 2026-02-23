@@ -177,8 +177,8 @@
     owner = "Automaat";
     repo = "deepgram-stt";
     # renovate: datasource=github-tags depName=Automaat/deepgram-stt
-    rev = "v0.2.0";
-    hash = "sha256-yrVpZB3wd5CxWNr39iu/kaLgnc8kH0zcqxYLdhq/W5g=";
+    rev = "v0.3.0";
+    hash = "sha256-KegEfhPt0KGeX/6be+ZsTSY/sjGiiJIDsPXmJbOR1/A=";
   };
 
   # ===========================================
