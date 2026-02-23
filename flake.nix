@@ -14,10 +14,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    nixarr = {
-      url = "github:rasmus-kirk/nixarr";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
   outputs = {
@@ -25,7 +21,6 @@
     nixpkgs,
     comin,
     sops-nix,
-    nixarr,
   }: let
     system = "x86_64-linux";
     pkgs = nixpkgs.legacyPackages.${system};
@@ -38,7 +33,6 @@
         modules = [
           comin.nixosModules.comin
           sops-nix.nixosModules.sops
-          nixarr.nixosModules.default
           ./hosts/homelab
         ];
       };
@@ -89,7 +83,7 @@
       };
 
       vmTest = import ./tests/vm-test.nix {
-        inherit pkgs self comin sops-nix nixarr;
+        inherit pkgs self comin sops-nix;
       };
     in {
       # Configuration validation tests
