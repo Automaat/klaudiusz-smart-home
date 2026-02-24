@@ -1,0 +1,14 @@
+#:schema https://klaudiu.sh/schema/v1/config.json
+version = 1
+
+[validators]
+  [validators.secrets]
+    [validators.secrets.secrets]
+      allow_list = ['tests/*']
+
+[overrides]
+  [overrides.entries]
+    [overrides.entries.SEC002]
+      disabled = true
+      disabled_at = '2026-02-24T13:20:58Z'
+      disabled_by = 'cli'
