@@ -6,7 +6,6 @@ declaratively through NixOS and must be performed manually through web UIs
 
 ## Integrations
 
-- **[Nixarr Media Server](nixarr.md)** - Jellyfin, Sonarr, Radarr, Prowlarr, Bazarr, Transmission setup
 - **[Zigbee Home Automation (ZHA)](zha.md)** - Zigbee device pairing and setup
 - **[Aqara FP300 Presence Sensor](aqara-fp300.md)** - mmWave presence sensor with ZHA custom quirk
 - **[Bermuda BLE Trilateration](bermuda-ble.md)** - Room-level person tracking via Bluetooth

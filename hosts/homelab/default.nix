@@ -35,7 +35,6 @@ in {
     ./hardware-configuration.nix
     ./home-assistant
     ./grafana
-    ./arr
     ./secrets.nix
     ./users.nix
   ];
@@ -46,9 +45,6 @@ in {
   system.stateVersion = "24.11";
   nixpkgs.config.allowUnfree = true;
   nix.settings.experimental-features = ["nix-command" "flakes"];
-
-  # Enable WireGuard kernel module
-  networking.wireguard.enable = true;
 
   # ===========================================
   # Boot (adjust for your hardware)
@@ -69,8 +65,6 @@ in {
     hostName = "homelab";
     # Fallback DNS servers (used when Tailscale DNS fails)
     nameservers = ["1.1.1.1" "8.8.8.8"];
-    # Disable IPv6 (required for ProtonVPN NAT-PMP)
-    enableIPv6 = false;
     networkmanager = {
       enable = true;
       dns = "none"; # Let NixOS manage DNS, not NetworkManager
@@ -80,15 +74,7 @@ in {
       allowedTCPPorts = [
         22 # SSH
         3000 # Grafana
-        3001 # Flood (Transmission web UI)
         8123 # Home Assistant
-        8096 # Jellyfin
-        8989 # Sonarr
-        7878 # Radarr
-        9696 # Prowlarr
-        6767 # Bazarr
-        9091 # Transmission RPC
-        5055 # Jellyseerr
       ];
       allowedUDPPorts = [
         config.services.tailscale.port # Tailscale
@@ -111,7 +97,7 @@ in {
   # ===========================================
   users.users.admin = {
     isNormalUser = true;
-    extraGroups = ["wheel" "networkmanager" "dialout" "media" "docker"]; # dialout for Zigbee USB, media for Nixarr, docker for training
+    extraGroups = ["wheel" "networkmanager" "dialout" "docker"]; # dialout for Zigbee USB, docker for training
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMnlSO5YSaF10lrs9q4Z6QJ2LZp4oDHgZ5xR9VaaR+cX skalskimarcin33@gmail.com"
     ];

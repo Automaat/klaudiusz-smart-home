@@ -69,24 +69,5 @@ in {
       mode = "0400";
       restartUnits = ["cloudflared-tunnel-${cloudflareTunnelId}.service"];
     };
-
-    # ProtonVPN WireGuard config
-    "protonvpn-wg-conf" = {
-      format = "binary";
-      sopsFile = ../../secrets/protonvpn-wg.conf;
-      mode = "0400";
-      restartUnits = [
-        "wg-quick-wg0.service"
-        "transmission.service"
-        "transmission-port-forwarding.service"
-      ];
-    };
-
-    # Transmission RPC password
-    "transmission-rpc-password" = {
-      owner = "transmission";
-      mode = "0400";
-      restartUnits = ["transmission.service" "flood.service"];
-    };
   };
 }
