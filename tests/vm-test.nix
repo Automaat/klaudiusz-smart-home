@@ -34,6 +34,7 @@ pkgs.testers.nixosTest {
     services.grafana.settings.security = lib.mkForce {
       admin_user = "admin";
       admin_password = "test-password";
+      secret_key = "test-secret-key";
     };
     services.grafana.provision.datasources.settings.datasources = lib.mkForce [
       {

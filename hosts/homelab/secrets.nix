@@ -28,6 +28,13 @@ in {
       restartUnits = ["grafana.service"];
     };
 
+    # Grafana secret key (signs cookies/sessions)
+    "grafana-secret-key" = {
+      owner = "grafana";
+      mode = "0400";
+      restartUnits = ["grafana.service"];
+    };
+
     # Home Assistant Prometheus token
     "home-assistant-prometheus-token" = {
       owner = "prometheus";
