@@ -54,7 +54,7 @@
     repo = "Bubble-Card";
     # renovate: datasource=github-tags depName=Clooos/Bubble-Card
     rev = "v3.1.2";
-    hash = "sha256-WGe8XAJFYrFxp4KkXefK5ImAnRtgKH9ZhbEC74QRPVY=";
+    hash = "sha256-Q3SI/rPfSXJRn0ZHfuvRxZAWue/buFOZRb+b0nhyCeE=";
   };
 
   # ===========================================
