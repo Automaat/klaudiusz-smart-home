@@ -69,7 +69,7 @@
             if action ? target && action.target ? entity_id
             then extractEntityIds action.target.entity_id
             else [])
-          intent.action)
+          intent.actions)
         else [])
       (config.intent_script or {})
     );
@@ -83,7 +83,7 @@
             if trigger ? entity_id
             then extractEntityIds trigger.entity_id
             else [])
-          auto.trigger)
+          auto.triggers)
         else [])
       config.automation
     );
@@ -97,7 +97,7 @@
             if cond ? entity_id
             then extractEntityIds cond.entity_id
             else [])
-          auto.condition)
+          auto.conditions)
         else [])
       config.automation
     );
@@ -113,7 +113,7 @@
             else if action ? entity_id
             then extractEntityIds action.entity_id
             else [])
-          auto.action)
+          auto.actions)
         else [])
       config.automation
     );

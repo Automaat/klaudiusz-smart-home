@@ -37,7 +37,7 @@
                   else null)
                 action.data
               else [])
-            intent.action
+            intent.actions
           else []
         );
       in
@@ -121,7 +121,7 @@
                 }
               ]
               else [])
-            auto.condition)
+            auto.conditions)
           else [];
         actionTemplates = lib.flatten (
           if auto ? action
@@ -138,7 +138,7 @@
                   else null)
                 action.data
               else [])
-            auto.action
+            auto.actions
           else []
         );
       in
