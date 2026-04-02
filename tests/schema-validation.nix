@@ -126,7 +126,7 @@
     );
     automationServices = lib.flatten (
       builtins.map (auto:
-        lib.flatten (builtins.map (a: a.service or null) auto.action))
+        lib.flatten (builtins.map (a: a.service or null) auto.actions))
       config.automation
     );
   in

@@ -16,7 +16,7 @@
       alias = "Office - Zoom meeting smart plug control";
       description = "Turn on/off office smart plug based on Zoom meeting state via webhook";
       mode = "restart"; # Debounce: restart automation if webhook fires during delay
-      trigger = [
+      triggers = [
         {
           platform = "webhook";
           webhook_id = "zoom_meeting_7cca0951_0a49_4bdc_a8d3_cc46ea7d8980";
@@ -24,7 +24,7 @@
           local_only = true;
         }
       ];
-      action = [
+      actions = [
         {
           delay = "00:00:05"; # Wait 5s - cancelled if new webhook arrives
         }
@@ -81,7 +81,7 @@
       id = "desk_charger_battery_control";
       alias = "Office - Desk charger battery control";
       description = "Control desk charger based on iPhone and AirPods case battery levels";
-      trigger = [
+      triggers = [
         {
           platform = "webhook";
           webhook_id = "desk_charger_battery_a8f3c901_4d2a_4b18_9f7e_8d3c4e7a6b12";
@@ -89,7 +89,7 @@
           local_only = true;
         }
       ];
-      action = [
+      actions = [
         {
           choose = [
             # Start charging: iPhone < 50% OR AirPods case < 20%
@@ -160,6 +160,31 @@
               };
             }
           ];
+        }
+      ];
+    }
+
+    # -----------------------------------------
+    # Key Light Button Toggle
+    # -----------------------------------------
+    {
+      id = "key_light_button_toggle";
+      alias = "Office - Key light button toggle";
+      description = "Toggle key light on/off via Aqara wireless button single press";
+      triggers = [
+        {
+          platform = "event";
+          event_type = "zha_event";
+          event_data = {
+            device_ieee = "54:ef:44:10:00:a8:60:5d";
+            command = "single";
+          };
+        }
+      ];
+      actions = [
+        {
+          action = "switch.toggle";
+          target.entity_id = "switch.sonoff_plug";
         }
       ];
     }

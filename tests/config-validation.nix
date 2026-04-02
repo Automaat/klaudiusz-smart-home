@@ -23,7 +23,7 @@
     );
     automationServices = lib.flatten (
       builtins.map (auto:
-        lib.flatten (builtins.map (a: a.service or a.action or null) auto.action))
+        lib.flatten (builtins.map (a: a.service or a.action or null) auto.actions))
       config.automation
     );
   in
@@ -56,7 +56,7 @@
           if a ? target && a.target ? entity_id
           then extractEntityIds a.target.entity_id
           else [])
-        auto.action))
+        auto.actions))
       config.automation
     );
   in
@@ -141,7 +141,7 @@
     haConfig.intent_script);
 
     automationActions = lib.flatten (builtins.map (auto:
-      lib.flatten (builtins.map checkAction auto.action))
+      lib.flatten (builtins.map checkAction auto.actions))
     haConfig.automation);
   in
     intentActions ++ automationActions;

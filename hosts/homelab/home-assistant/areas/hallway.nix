@@ -13,21 +13,21 @@
       id = "hallway_presence_3_lights_on";
       alias = "Hallway - Turn on lights zone 1 (sensor 3) on presence";
       mode = "restart";
-      trigger = [
+      triggers = [
         {
           platform = "state";
           entity_id = "binary_sensor.presence_sensor_fp2_fac2_presence_sensor_3";
           to = "on";
         }
       ];
-      condition = [
+      conditions = [
         {
           condition = "state";
           entity_id = "input_boolean.away_mode";
           state = "off";
         }
       ];
-      action = [
+      actions = [
         {
           delay = "00:00:02";
         }
@@ -65,7 +65,7 @@
       id = "hallway_presence_3_lights_off";
       alias = "Hallway - Turn off lights zone 1 (sensor 3) on clear";
       mode = "restart";
-      trigger = [
+      triggers = [
         {
           platform = "state";
           entity_id = "binary_sensor.presence_sensor_fp2_fac2_presence_sensor_3";
@@ -73,7 +73,7 @@
           for = "00:00:05";
         }
       ];
-      action = [
+      actions = [
         {
           service = "adaptive_lighting.set_manual_control";
           data = {
@@ -105,21 +105,21 @@
       id = "hallway_presence_2_lights_on";
       alias = "Hallway - Turn on lights zone 2 on presence";
       mode = "restart";
-      trigger = [
+      triggers = [
         {
           platform = "state";
           entity_id = "binary_sensor.presence_sensor_fp2_fac2_presence_sensor_2";
           to = "on";
         }
       ];
-      condition = [
+      conditions = [
         {
           condition = "state";
           entity_id = "input_boolean.away_mode";
           state = "off";
         }
       ];
-      action = [
+      actions = [
         {
           delay = "00:00:02";
         }
@@ -156,7 +156,7 @@
       id = "hallway_presence_2_lights_off";
       alias = "Hallway - Turn off lights zone 2 on clear";
       mode = "restart";
-      trigger = [
+      triggers = [
         {
           platform = "state";
           entity_id = "binary_sensor.presence_sensor_fp2_fac2_presence_sensor_2";
@@ -164,7 +164,7 @@
           for = "00:00:05";
         }
       ];
-      action = [
+      actions = [
         {
           service = "adaptive_lighting.set_manual_control";
           data = {

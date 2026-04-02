@@ -87,7 +87,7 @@ in {
       {
         id = "claude_server_offline_alert";
         alias = "Alert - Claude server offline";
-        trigger = [
+        triggers = [
           {
             platform = "state";
             entity_id = "sensor.claude_server_status";
@@ -95,7 +95,7 @@ in {
             for = "00:02:00";
           }
         ];
-        action = [
+        actions = [
           {
             action = "persistent_notification.create";
             data = {
