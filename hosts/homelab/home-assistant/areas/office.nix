@@ -163,5 +163,30 @@
         }
       ];
     }
+
+    # -----------------------------------------
+    # Key Light Button Toggle
+    # -----------------------------------------
+    {
+      id = "key_light_button_toggle";
+      alias = "Office - Key light button toggle";
+      description = "Toggle key light on/off via Aqara wireless button single press";
+      trigger = [
+        {
+          platform = "event";
+          event_type = "zha_event";
+          event_data = {
+            device_ieee = "54:ef:44:10:00:a8:60:5d";
+            command = "single";
+          };
+        }
+      ];
+      action = [
+        {
+          action = "switch.toggle";
+          target.entity_id = "switch.sonoff_plug";
+        }
+      ];
+    }
   ];
 }
