@@ -11,13 +11,13 @@
     {
       id = "bedroom_temperature_morning";
       alias = "Bedroom - Morning temperature";
-      trigger = [
+      triggers = [
         {
           platform = "time";
           at = "06:00:00";
         }
       ];
-      action = [
+      actions = [
         {
           service = "climate.set_temperature";
           target.entity_id = "climate.bedroom_thermostat";
@@ -29,13 +29,13 @@
     {
       id = "bedroom_temperature_day";
       alias = "Bedroom - Day temperature";
-      trigger = [
+      triggers = [
         {
           platform = "time";
           at = "09:00:00";
         }
       ];
-      action = [
+      actions = [
         {
           service = "climate.set_temperature";
           target.entity_id = "climate.bedroom_thermostat";
@@ -47,13 +47,13 @@
     {
       id = "bedroom_sleep_ventilation";
       alias = "Bedroom - Sleep ventilation reminder";
-      trigger = [
+      triggers = [
         {
           platform = "time";
           at = "21:00:00";
         }
       ];
-      condition = [
+      conditions = [
         {
           condition = "numeric_state";
           entity_id = "climate.bedroom_thermostat";
@@ -74,7 +74,7 @@
           ];
         }
       ];
-      action = [
+      actions = [
         {
           action = "tts.speak";
           target.entity_id = "tts.piper";

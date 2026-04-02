@@ -111,7 +111,7 @@
     # PHASE 1 LIMITATION: Both persons show same room when mmWave fires
     # (no BLE differentiation until Bermuda configured)
     {
-      trigger = [
+      triggers = [
         # { platform = "state"; entity_id = "sensor.bermuda_marcin_iphone_area"; }
         {
           platform = "state";

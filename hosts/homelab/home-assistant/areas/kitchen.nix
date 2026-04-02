@@ -12,14 +12,14 @@
       id = "kitchen_presence_lights_on";
       alias = "Kitchen - Turn on lights on presence";
       mode = "restart";
-      trigger = [
+      triggers = [
         {
           platform = "state";
           entity_id = "binary_sensor.presence_sensor_fp2_b63f_presence_sensor_2";
           to = "on";
         }
       ];
-      action = [
+      actions = [
         {
           delay = "00:00:02";
         }
@@ -114,14 +114,14 @@
     {
       id = "kitchen_presence_lights_off";
       alias = "Kitchen - Turn off lights on clear";
-      trigger = [
+      triggers = [
         {
           platform = "state";
           entity_id = "binary_sensor.presence_sensor_fp2_b63f_presence_sensor_2";
           to = "off";
         }
       ];
-      action = [
+      actions = [
         {
           delay = "00:00:20";
         }

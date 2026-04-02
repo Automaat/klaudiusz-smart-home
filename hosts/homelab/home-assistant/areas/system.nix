@@ -25,13 +25,13 @@ in {
     {
       id = "startup_notification";
       alias = "System - Startup notification";
-      trigger = [
+      triggers = [
         {
           platform = "homeassistant";
           event = "start";
         }
       ];
-      action = [
+      actions = [
         {
           service = "frontend.set_theme";
           data = {
@@ -63,14 +63,14 @@ in {
       id = "sleep_mode_force_hallway_lights_off";
       alias = "System - Force hallway lights off at sleep mode";
       description = "Ensure hallway lights turn off when sleep mode activates, unless presence detected";
-      trigger = [
+      triggers = [
         {
           platform = "state";
           entity_id = "input_boolean.sleep_mode";
           to = "on";
         }
       ];
-      condition = [
+      conditions = [
         {
           condition = "state";
           entity_id = "binary_sensor.presence_sensor_fp2_fac2_presence_sensor_2";
@@ -84,7 +84,7 @@ in {
           for = "00:00:10";
         }
       ];
-      action = [
+      actions = [
         {
           service = "light.turn_off";
           target.entity_id = [
@@ -106,7 +106,7 @@ in {
       id = "adaptive_lighting_enable_sleep_mode";
       alias = "Adaptive Lighting - Enable sleep mode on sleep";
       description = "Enable sleep mode on all adaptive lighting switches when sleep mode is activated";
-      trigger = [
+      triggers = [
         {
           platform = "state";
           entity_id = "input_boolean.sleep_mode";
@@ -114,7 +114,7 @@ in {
           for = "00:01:00";
         }
       ];
-      action = [
+      actions = [
         {
           action = "switch.turn_on";
           target.entity_id = adaptiveLightingSleepModeSwitches;
@@ -126,14 +126,14 @@ in {
       id = "adaptive_lighting_disable_sleep_mode_manual";
       alias = "Adaptive Lighting - Disable sleep mode on wake";
       description = "Disable sleep mode on all adaptive lighting switches when sleep mode is deactivated";
-      trigger = [
+      triggers = [
         {
           platform = "state";
           entity_id = "input_boolean.sleep_mode";
           to = "off";
         }
       ];
-      action = [
+      actions = [
         {
           action = "switch.turn_off";
           target.entity_id = adaptiveLightingSleepModeSwitches;
@@ -144,13 +144,13 @@ in {
     {
       id = "adaptive_lighting_disable_sleep_mode_sunrise";
       alias = "Adaptive Lighting - Disable sleep mode on sunrise";
-      trigger = [
+      triggers = [
         {
           platform = "sun";
           event = "sunrise";
         }
       ];
-      action = [
+      actions = [
         {
           action = "input_boolean.turn_off";
           target.entity_id = "input_boolean.sleep_mode";
@@ -166,13 +166,13 @@ in {
       id = "adaptive_lighting_enable_sleep_mode_23_00";
       alias = "Adaptive Lighting - Enable sleep mode at 23:00";
       description = "Enable sleep mode at 23:00";
-      trigger = [
+      triggers = [
         {
           platform = "time";
           at = "23:00:00";
         }
       ];
-      action = [
+      actions = [
         {
           action = "input_boolean.turn_on";
           target.entity_id = "input_boolean.sleep_mode";
@@ -187,7 +187,7 @@ in {
       id = "hallway_lights_stuck_alert";
       alias = "Alert - Hallway lights stuck on during sleep";
       description = "Notify when hallway lights stay on >5min during sleep mode without presence";
-      trigger = [
+      triggers = [
         {
           platform = "state";
           entity_id = [
@@ -198,7 +198,7 @@ in {
           for = "00:05:00";
         }
       ];
-      condition = [
+      conditions = [
         {
           condition = "state";
           entity_id = "input_boolean.sleep_mode";
@@ -211,7 +211,7 @@ in {
           for = "00:01:00";
         }
       ];
-      action = [
+      actions = [
         {
           service = "persistent_notification.create";
           data = {
@@ -238,7 +238,7 @@ in {
       id = "leaving_home";
       alias = "System - Leaving home";
       description = "Turn off all lights, TV, and smart plugs when leaving home via button or manual toggle.";
-      trigger = [
+      triggers = [
         # Manual toggle
         {
           platform = "state";
@@ -255,7 +255,7 @@ in {
           };
         }
       ];
-      action = [
+      actions = [
         # Ensure away mode is active for all triggers (button + manual)
         {
           action = "input_boolean.turn_on";

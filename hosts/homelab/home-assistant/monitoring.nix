@@ -90,13 +90,13 @@
       {
         id = "notify_comin_deployment_success";
         alias = "Alert - Comin deployment successful";
-        trigger = [
+        triggers = [
           {
             platform = "homeassistant";
             event = "start";
           }
         ];
-        condition = [
+        conditions = [
           {
             condition = "template";
             value_template = ''
@@ -110,7 +110,7 @@
             '';
           }
         ];
-        action = [
+        actions = [
           {
             service = "persistent_notification.create";
             data = {
@@ -131,13 +131,13 @@
       {
         id = "notify_comin_deployment_failed";
         alias = "Alert - Comin deployment failed";
-        trigger = [
+        triggers = [
           {
             platform = "homeassistant";
             event = "start";
           }
         ];
-        condition = [
+        conditions = [
           {
             condition = "template";
             value_template = ''
@@ -151,7 +151,7 @@
             '';
           }
         ];
-        action = [
+        actions = [
           {
             service = "persistent_notification.create";
             data = {
@@ -176,7 +176,7 @@
       {
         id = "grafana_systemd_alert_webhook";
         alias = "Alert - Grafana systemd service alert";
-        trigger = [
+        triggers = [
           {
             platform = "webhook";
             allowed_methods = ["POST"];
@@ -184,7 +184,7 @@
             webhook_id = "grafana_systemd_alerts";
           }
         ];
-        action = [
+        actions = [
           {
             action = "notify.send_message";
             target.entity_id = "notify.klaudiusz_smart_home_system";

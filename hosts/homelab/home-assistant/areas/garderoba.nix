@@ -12,14 +12,14 @@
       id = "garderoba_motion_lights_on";
       alias = "Garderoba - Turn on lights on motion";
       mode = "restart";
-      trigger = [
+      triggers = [
         {
           platform = "state";
           entity_id = "binary_sensor.motion_sensor";
           to = "on";
         }
       ];
-      action = [
+      actions = [
         {
           delay = "00:00:02";
         }
@@ -52,14 +52,14 @@
     {
       id = "garderoba_motion_lights_off";
       alias = "Garderoba - Turn off lights when clear";
-      trigger = [
+      triggers = [
         {
           platform = "state";
           entity_id = "binary_sensor.motion_sensor";
           to = "off";
         }
       ];
-      action = [
+      actions = [
         {
           service = "light.turn_off";
           target.entity_id = "light.garderoba";
