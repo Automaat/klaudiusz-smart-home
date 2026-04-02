@@ -245,7 +245,7 @@
     repo = "homeassistant-plant";
     # renovate: datasource=github-tags depName=Olen/homeassistant-plant
     rev = "v2026.3.2";
-    hash = "sha256-nWZFywMTw3seEAERekzMeLRPceqMl1s7VXujNz0+6zI=";
+    hash = "sha256-na3T60v4HRmdf8NFIqnLdSQjFfg0Jlny0tse5nx21Zs=";
   };
 
   # ===========================================
