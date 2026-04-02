@@ -166,6 +166,9 @@ in {
   services.crowdsec.settings.general.api.server.enable = lib.mkForce true;
   services.crowdsec.settings.lapi.credentialsFile = "/etc/crowdsec/local_api_credentials.yaml";
 
+  # Fix: DynamicUser + ProtectSystem=strict needs StateDirectory to create /var/lib/crowdsec
+  systemd.services.crowdsec.serviceConfig.StateDirectory = "crowdsec";
+
   # CrowdSec firewall bouncer (nftables/iptables integration)
   services.crowdsec-firewall-bouncer = {
     enable = true;
