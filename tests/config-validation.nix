@@ -17,7 +17,7 @@
     intentServices = lib.flatten (
       lib.mapAttrsToList (_: intent:
         if intent ? action
-        then lib.flatten (builtins.map (a: a.service or a.action or null) intent.actions)
+        then lib.flatten (builtins.map (a: a.service or a.action or null) intent.action)
         else [])
       config.intent_script
     );
@@ -46,7 +46,7 @@
             if a ? target && a.target ? entity_id
             then extractEntityIds a.target.entity_id
             else [])
-          intent.actions)
+          intent.action)
         else [])
       config.intent_script
     );
@@ -136,7 +136,7 @@
 
     intentActions = lib.flatten (lib.mapAttrsToList (_: intent:
       if intent ? action
-      then lib.flatten (builtins.map checkAction intent.actions)
+      then lib.flatten (builtins.map checkAction intent.action)
       else [])
     haConfig.intent_script);
 

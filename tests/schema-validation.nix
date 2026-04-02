@@ -70,7 +70,7 @@
             if action ? data
             then lib.attrValues action.data
             else [])
-          intent.actions)
+          intent.action)
         else [])
       config.intent_script
     );
@@ -120,7 +120,7 @@
     intentServices = lib.flatten (
       lib.mapAttrsToList (_: intent:
         if intent ? action
-        then lib.flatten (builtins.map (a: a.service or null) intent.actions)
+        then lib.flatten (builtins.map (a: a.service or null) intent.action)
         else [])
       config.intent_script
     );
@@ -167,7 +167,7 @@
               if action ? data && action.data ? brightness_pct
               then [action.data.brightness_pct]
               else [])
-            intent.actions)
+            intent.action)
           else [])
         config.intent_script
       );

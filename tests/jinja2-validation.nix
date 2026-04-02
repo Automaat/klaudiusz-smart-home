@@ -37,7 +37,7 @@
                   else null)
                 action.data
               else [])
-            intent.actions
+            intent.action
           else []
         );
       in
@@ -110,7 +110,7 @@
       builtins.map (auto: let
         autoId = auto.id or "unknown";
         conditionTemplates =
-          if auto ? condition
+          if auto ? conditions
           then
             lib.flatten (builtins.map (cond:
               if cond ? value_template
@@ -124,7 +124,7 @@
             auto.conditions)
           else [];
         actionTemplates = lib.flatten (
-          if auto ? action
+          if auto ? actions
           then
             builtins.map (action:
               if action ? data

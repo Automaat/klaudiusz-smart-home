@@ -69,7 +69,7 @@
             if action ? target && action.target ? entity_id
             then extractEntityIds action.target.entity_id
             else [])
-          intent.actions)
+          intent.action)
         else [])
       (config.intent_script or {})
     );
@@ -77,7 +77,7 @@
     # From automation triggers
     automationTriggerEntities = lib.flatten (
       builtins.map (auto:
-        if auto ? trigger
+        if auto ? triggers
         then
           lib.flatten (builtins.map (trigger:
             if trigger ? entity_id
@@ -91,7 +91,7 @@
     # From automation conditions
     automationConditionEntities = lib.flatten (
       builtins.map (auto:
-        if auto ? condition
+        if auto ? conditions
         then
           lib.flatten (builtins.map (cond:
             if cond ? entity_id
@@ -105,7 +105,7 @@
     # From automation actions
     automationActionEntities = lib.flatten (
       builtins.map (auto:
-        if auto ? action
+        if auto ? actions
         then
           lib.flatten (builtins.map (action:
             if action ? target && action.target ? entity_id
