@@ -169,6 +169,15 @@ in {
   # Fix: DynamicUser + ProtectSystem=strict needs StateDirectory to create /var/lib/crowdsec
   systemd.services.crowdsec.serviceConfig.StateDirectory = "crowdsec";
 
+  # Fix: bouncer register script calls cscli without -c flag, expects /etc/crowdsec/config.yaml
+  # Upstream bug: crowdsec-firewall-bouncer.nix doesn't pass -c to cscli.
+  environment.etc."crowdsec/config.yaml" = {
+    source = (pkgs.formats.yaml {}).generate "crowdsec.yaml" config.services.crowdsec.settings.general;
+    user = "crowdsec";
+    group = "crowdsec";
+    mode = "0600";
+  };
+
   # CrowdSec firewall bouncer (nftables/iptables integration)
   services.crowdsec-firewall-bouncer = {
     enable = true;
