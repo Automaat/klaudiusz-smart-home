@@ -221,7 +221,7 @@
     mkdir -p $out
     ln -s ${pkgs.fetchurl {
       # renovate: datasource=github-releases depName=kalkih/mini-media-player
-      url = "https://github.com/kalkih/mini-media-player/releases/download/v1.16.10/mini-media-player-bundle.js";
+      url = "https://github.com/kalkih/mini-media-player/releases/download/v1.16.11/mini-media-player-bundle.js";
       hash = "sha256-m9OdXtiCLyGnVXm+hjb7iDJYA81Aa6WymI4LIKmfkiI=";
     }} $out/mini-media-player-bundle.js
   '';
