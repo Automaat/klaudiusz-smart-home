@@ -161,74 +161,95 @@ find . -path './.git' -prune -o -path './tests/scripts/fixtures' -prune -o -name
     declare -a contexts=()  # Store URL for context
 
     # Read file content and extract fetchurl blocks
+    # Track fetchurl blocks to avoid pairing hashes from fetchFromGitHub blocks
     current_url="" current_hash=""
+    in_fetchurl=false
 
     while IFS= read -r line; do
-        # Match URL patterns
-        if [[ $line =~ url[[:space:]]*=[[:space:]]*\"([^\"]+)\" ]]; then
-            current_url="${BASH_REMATCH[1]}"
-        fi
-        # Match hash patterns
-        if [[ $line =~ hash[[:space:]]*=[[:space:]]*\"(sha256-[A-Za-z0-9+/=]+)\" ]]; then
-            current_hash="${BASH_REMATCH[1]}"
+        # Track fetchurl block entry (handles pkgs.fetchurl, builtins.fetchurl, etc.)
+        if [[ $line =~ fetchurl[[:space:]]*\{ ]]; then
+            in_fetchurl=true
+            current_url=""
+            current_hash=""
         fi
 
-        # Check if we have a complete block, process it
+        # Only capture url/hash when inside a fetchurl block
+        if [ "$in_fetchurl" = true ]; then
+            if [[ $line =~ url[[:space:]]*=[[:space:]]*\"([^\"]+)\" ]]; then
+                current_url="${BASH_REMATCH[1]}"
+            fi
+            if [[ $line =~ hash[[:space:]]*=[[:space:]]*\"(sha256-[A-Za-z0-9+/=]+)\" ]]; then
+                current_hash="${BASH_REMATCH[1]}"
+            fi
+        fi
+
+        # Reset on block close when incomplete (handles }; and }} patterns)
+        if [[ $line =~ \}\; ]] || [[ $line =~ \}\} ]]; then
+            if [ "$in_fetchurl" = true ] && { [ -z "$current_url" ] || [ -z "$current_hash" ]; }; then
+                in_fetchurl=false
+                current_url=""
+                current_hash=""
+            fi
+        fi
+
+        # Check if we have a complete fetchurl block, process it
         if [ -n "$current_url" ] && [ -n "$current_hash" ]; then
-                echo "  Checking URL: $current_url"
-                echo "    Current hash: $current_hash"
+            in_fetchurl=false
+            echo "  Checking URL: $current_url"
+            echo "    Current hash: $current_hash"
 
-                # Determine if we need --unpack flag based on file extension
-                unpack_flag=""
-                if [[ "$current_url" =~ \.(tar\.gz|tgz|tar\.bz2|tbz2|tar\.xz|txz|zip)$ ]]; then
-                    unpack_flag="--unpack"
-                fi
+            # Determine if we need --unpack flag based on file extension
+            unpack_flag=""
+            if [[ "$current_url" =~ \.(tar\.gz|tgz|tar\.bz2|tbz2|tar\.xz|txz|zip)$ ]]; then
+                unpack_flag="--unpack"
+            fi
 
-                # Prefetch the correct hash
-                echo "    Fetching: $current_url"
+            # Prefetch the correct hash
+            echo "    Fetching: $current_url"
 
-                # Get hash in base32 format, then convert to SRI
-                if base32_hash=$(nix-prefetch-url $unpack_flag "$current_url" 2>&1 | tail -1); then
-                    echo "    Base32 hash: $base32_hash"
+            # Get hash in base32 format, then convert to SRI
+            if base32_hash=$(nix-prefetch-url $unpack_flag "$current_url" 2>&1 | tail -1); then
+                echo "    Base32 hash: $base32_hash"
 
-                    # Convert to SRI format
-                    if correct_hash=$(nix hash convert --hash-algo sha256 --to sri "$base32_hash" 2>&1); then
-                        echo "    Correct hash: $correct_hash"
+                # Convert to SRI format
+                if correct_hash=$(nix hash convert --hash-algo sha256 --to sri "$base32_hash" 2>&1); then
+                    echo "    Correct hash: $correct_hash"
 
-                        # Validate the format
-                        if [[ ! "$correct_hash" =~ ^sha256-[A-Za-z0-9+/=]+$ ]]; then
-                            echo "  ⚠️  WARNING: Invalid hash format: $correct_hash"
-                            correct_hash=""
-                        fi
-                    else
-                        echo "  ⚠️  WARNING: Failed to convert hash to SRI format: $correct_hash"
+                    # Validate the format
+                    if [[ ! "$correct_hash" =~ ^sha256-[A-Za-z0-9+/=]+$ ]]; then
+                        echo "  ⚠️  WARNING: Invalid hash format: $correct_hash"
                         correct_hash=""
                     fi
                 else
-                    echo "  ⚠️  WARNING: Failed to prefetch: $base32_hash"
+                    echo "  ⚠️  WARNING: Failed to convert hash to SRI format: $correct_hash"
                     correct_hash=""
                 fi
-
-                if [ -z "$correct_hash" ]; then
-                    echo "  ⚠️  Could not prefetch hash for $current_url"
-                elif [ "$current_hash" != "$correct_hash" ]; then
-                    echo "  ❌ Hash mismatch detected!"
-                    echo "    Current:  $current_hash"
-                    echo "    Correct:  $correct_hash"
-
-                    # Store the replacement to apply later
-                    old_hashes+=("$current_hash")
-                    new_hashes+=("$correct_hash")
-                    # Extract filename from URL for context
-                    url_filename=$(basename "$current_url")
-                    contexts+=("$url_filename")
-                else
-                    echo "  ✅ Hash is correct"
-                fi
-
-                # Reset for next block
-                current_url="" current_hash=""
+            else
+                echo "  ⚠️  WARNING: Failed to prefetch: $base32_hash"
+                correct_hash=""
             fi
+
+            if [ -z "$correct_hash" ]; then
+                echo "  ⚠️  Could not prefetch hash for $current_url"
+            elif [ "$current_hash" != "$correct_hash" ]; then
+                echo "  ❌ Hash mismatch detected!"
+                echo "    Current:  $current_hash"
+                echo "    Correct:  $correct_hash"
+
+                # Store the replacement to apply later
+                old_hashes+=("$current_hash")
+                new_hashes+=("$correct_hash")
+                # Extract filename from URL for context
+                url_filename=$(basename "$current_url")
+                contexts+=("$url_filename")
+            else
+                echo "  ✅ Hash is correct"
+            fi
+
+            # Reset for next block
+            current_url=""
+            current_hash=""
+        fi
     done < "$file"
 
     # Apply all hash replacements after reading the file
