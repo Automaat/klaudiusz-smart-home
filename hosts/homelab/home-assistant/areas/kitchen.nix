@@ -55,6 +55,10 @@
               ];
               sequence = [
                 {
+                  service = "switch.turn_off";
+                  target.entity_id = "switch.adaptive_lighting_adapt_brightness_kitchen_lights";
+                }
+                {
                   service = "light.turn_on";
                   target.entity_id = "light.kitchen";
                   data = {
@@ -62,12 +66,11 @@
                   };
                 }
                 {
-                  service = "adaptive_lighting.apply";
+                  service = "adaptive_lighting.set_manual_control";
                   data = {
                     entity_id = "switch.adaptive_lighting_kitchen_lights";
                     lights = ["light.kitchen"];
-                    adapt_brightness = false;
-                    adapt_color = true;
+                    manual_control = false;
                   };
                 }
               ];
@@ -131,8 +134,20 @@
           state = "off";
         }
         {
+          service = "adaptive_lighting.set_manual_control";
+          data = {
+            entity_id = "switch.adaptive_lighting_kitchen_lights";
+            lights = ["light.kitchen"];
+            manual_control = true;
+          };
+        }
+        {
           service = "light.turn_off";
           target.entity_id = "light.kitchen";
+        }
+        {
+          service = "switch.turn_on";
+          target.entity_id = "switch.adaptive_lighting_adapt_brightness_kitchen_lights";
         }
       ];
     }
