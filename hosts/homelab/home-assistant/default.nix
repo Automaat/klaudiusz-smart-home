@@ -222,7 +222,7 @@
     ln -s ${pkgs.fetchurl {
       # renovate: datasource=github-releases depName=kalkih/mini-media-player
       url = "https://github.com/kalkih/mini-media-player/releases/download/v1.16.11/mini-media-player-bundle.js";
-      hash = "sha256-m9OdXtiCLyGnVXm+hjb7iDJYA81Aa6WymI4LIKmfkiI=";
+      hash = "sha256-+Vs4omGEHGTe0c7JyPXp6+H9FDWkuWT7vg+5ZfeFmjY=";
     }} $out/mini-media-player-bundle.js
   '';
 
