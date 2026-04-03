@@ -65,7 +65,7 @@
     ln -s ${pkgs.fetchurl {
       # renovate: datasource=github-releases depName=piitaya/lovelace-mushroom
       url = "https://github.com/piitaya/lovelace-mushroom/releases/download/v5.1.1/mushroom.js";
-      hash = "sha256-RYCS5ne5Vr3Y2VyPeP3Y10fwSBAWDOS/gVSrm8qSLHk=";
+      hash = "sha256-Rp+aSYMIpnUASFVkMj1DRAPO94OvEmrK+nEzXpQMlQ4=";
     }} $out/mushroom.js
   '';
 
