@@ -20,7 +20,7 @@
     owner = "catppuccin";
     repo = "home-assistant";
     # renovate: datasource=github-tags depName=catppuccin/home-assistant
-    rev = "v2.1.2";
+    rev = "v2.1.3";
     hash = "sha256-4knJI+3Bo+uRL+NAVt5JrI3PcsZjANozyXvRRR5aNjM=";
   };
 
