@@ -318,6 +318,25 @@ in {
         static_configs = [{targets = ["localhost:9100"];}];
       }
       {
+        job_name = "home-nas-node";
+        static_configs = [
+          {
+            targets = [
+              "192.168.0.101:9100" # proxmox
+              "192.168.10.222:9100" # infrastructure LXC
+              "192.168.20.106:9100" # custom-workloads VM
+              "192.168.20.191:9100" # jellyfin LXC
+              "192.168.20.192:9100" # media-management LXC
+              "192.168.20.218:9100" # pet-projects LXC
+              "192.168.40.162:9100" # downloads LXC
+            ];
+            labels = {
+              site = "home-nas";
+            };
+          }
+        ];
+      }
+      {
         job_name = "homeassistant";
         static_configs = [{targets = ["localhost:8123"];}];
         metrics_path = "/api/prometheus";
