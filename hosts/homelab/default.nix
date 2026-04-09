@@ -337,6 +337,17 @@ in {
         ];
       }
       {
+        job_name = "home-nas-traefik";
+        static_configs = [
+          {
+            targets = ["192.168.10.222:8080"]; # infrastructure LXC
+            labels = {
+              site = "home-nas";
+            };
+          }
+        ];
+      }
+      {
         job_name = "home-nas-cadvisor";
         # cAdvisor scrape interval bumped to reduce cardinality load.
         scrape_interval = "30s";
