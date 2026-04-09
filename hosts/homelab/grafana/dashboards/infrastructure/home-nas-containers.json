@@ -1,0 +1,373 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {"type": "grafana", "uid": "-- Grafana --"},
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "Fleet-wide container view for home-nas docker hosts. Sourced from cAdvisor.",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [
+    {
+      "asDropdown": false,
+      "icon": "external link",
+      "includeVars": true,
+      "keepTime": true,
+      "tags": [],
+      "targetBlank": true,
+      "title": "Home NAS Overview",
+      "tooltip": "",
+      "type": "link",
+      "url": "/d/home-nas-overview"
+    }
+  ],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [],
+          "thresholds": {"mode": "absolute", "steps": [{"color": "blue", "value": null}]},
+          "color": {"mode": "thresholds"}
+        },
+        "overrides": []
+      },
+      "gridPos": {"h": 4, "w": 24, "x": 0, "y": 0},
+      "id": 1,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false},
+        "textMode": "value_and_name"
+      },
+      "pluginVersion": "11.0.0",
+      "targets": [
+        {
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "expr": "count(container_last_seen{job=\"home-nas-cadvisor\",name!=\"\"}) by (instance)",
+          "legendFormat": "{{instance}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Containers per Host",
+      "type": "stat"
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {"legend": false, "tooltip": false, "viz": false},
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {"type": "linear"},
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {"group": "A", "mode": "none"},
+            "thresholdsStyle": {"mode": "off"}
+          },
+          "mappings": [],
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]},
+          "unit": "percentunit"
+        },
+        "overrides": []
+      },
+      "gridPos": {"h": 10, "w": 12, "x": 0, "y": 4},
+      "id": 2,
+      "options": {
+        "legend": {"calcs": ["mean", "max"], "displayMode": "table", "placement": "right", "showLegend": true},
+        "tooltip": {"mode": "multi", "sort": "desc"}
+      },
+      "targets": [
+        {
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "expr": "topk(15, sum by (name, instance) (rate(container_cpu_usage_seconds_total{job=\"home-nas-cadvisor\",name!=\"\"}[5m])))",
+          "legendFormat": "{{name}} @ {{instance}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Top 15 Containers — CPU",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {"legend": false, "tooltip": false, "viz": false},
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {"type": "linear"},
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {"group": "A", "mode": "none"},
+            "thresholdsStyle": {"mode": "off"}
+          },
+          "mappings": [],
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]},
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {"h": 10, "w": 12, "x": 12, "y": 4},
+      "id": 3,
+      "options": {
+        "legend": {"calcs": ["mean", "max"], "displayMode": "table", "placement": "right", "showLegend": true},
+        "tooltip": {"mode": "multi", "sort": "desc"}
+      },
+      "targets": [
+        {
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "expr": "topk(15, sum by (name, instance) (container_memory_working_set_bytes{job=\"home-nas-cadvisor\",name!=\"\"}))",
+          "legendFormat": "{{name}} @ {{instance}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Top 15 Containers — Memory",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {"legend": false, "tooltip": false, "viz": false},
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {"type": "linear"},
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {"group": "A", "mode": "none"},
+            "thresholdsStyle": {"mode": "off"}
+          },
+          "mappings": [],
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]},
+          "unit": "binBps"
+        },
+        "overrides": []
+      },
+      "gridPos": {"h": 10, "w": 12, "x": 0, "y": 14},
+      "id": 4,
+      "options": {
+        "legend": {"calcs": ["mean", "max"], "displayMode": "table", "placement": "bottom", "showLegend": true},
+        "tooltip": {"mode": "multi", "sort": "desc"}
+      },
+      "targets": [
+        {
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "expr": "topk(10, sum by (name, instance) (rate(container_network_receive_bytes_total{job=\"home-nas-cadvisor\",name!=\"\"}[5m])))",
+          "legendFormat": "{{name}} rx",
+          "refId": "A"
+        },
+        {
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "expr": "topk(10, sum by (name, instance) (rate(container_network_transmit_bytes_total{job=\"home-nas-cadvisor\",name!=\"\"}[5m])))",
+          "legendFormat": "{{name}} tx",
+          "refId": "B"
+        }
+      ],
+      "title": "Top Containers — Network I/O",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {"legend": false, "tooltip": false, "viz": false},
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {"type": "linear"},
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {"group": "A", "mode": "none"},
+            "thresholdsStyle": {"mode": "off"}
+          },
+          "mappings": [],
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]},
+          "unit": "binBps"
+        },
+        "overrides": []
+      },
+      "gridPos": {"h": 10, "w": 12, "x": 12, "y": 14},
+      "id": 5,
+      "options": {
+        "legend": {"calcs": ["mean", "max"], "displayMode": "table", "placement": "bottom", "showLegend": true},
+        "tooltip": {"mode": "multi", "sort": "desc"}
+      },
+      "targets": [
+        {
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "expr": "topk(10, sum by (name, instance) (rate(container_fs_reads_bytes_total{job=\"home-nas-cadvisor\",name!=\"\"}[5m])))",
+          "legendFormat": "{{name}} read",
+          "refId": "A"
+        },
+        {
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "expr": "topk(10, sum by (name, instance) (rate(container_fs_writes_bytes_total{job=\"home-nas-cadvisor\",name!=\"\"}[5m])))",
+          "legendFormat": "{{name}} write",
+          "refId": "B"
+        }
+      ],
+      "title": "Top Containers — Disk I/O",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "thresholds"},
+          "custom": {
+            "align": "auto",
+            "cellOptions": {"type": "auto"},
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]}
+        },
+        "overrides": [
+          {
+            "matcher": {"id": "byName", "options": "CPU"},
+            "properties": [{"id": "unit", "value": "percentunit"}, {"id": "custom.cellOptions", "value": {"mode": "gradient", "type": "gauge"}}, {"id": "max", "value": 2}, {"id": "min", "value": 0}]
+          },
+          {
+            "matcher": {"id": "byName", "options": "Memory"},
+            "properties": [{"id": "unit", "value": "bytes"}]
+          },
+          {
+            "matcher": {"id": "byName", "options": "Uptime"},
+            "properties": [{"id": "unit", "value": "s"}]
+          },
+          {
+            "matcher": {"id": "byName", "options": "Restarts"},
+            "properties": [{"id": "unit", "value": "short"}]
+          }
+        ]
+      },
+      "gridPos": {"h": 12, "w": 24, "x": 0, "y": 24},
+      "id": 6,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {"countRows": false, "fields": "", "reducer": ["sum"], "show": false},
+        "showHeader": true,
+        "sortBy": [{"desc": true, "displayName": "CPU"}]
+      },
+      "pluginVersion": "11.0.0",
+      "targets": [
+        {
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "expr": "sum by (name, instance) (rate(container_cpu_usage_seconds_total{job=\"home-nas-cadvisor\",name!=\"\"}[5m]))",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "CPU",
+          "refId": "A"
+        },
+        {
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "expr": "sum by (name, instance) (container_memory_working_set_bytes{job=\"home-nas-cadvisor\",name!=\"\"})",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "Memory",
+          "refId": "B"
+        },
+        {
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "expr": "time() - container_start_time_seconds{job=\"home-nas-cadvisor\",name!=\"\"}",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "Uptime",
+          "refId": "C"
+        }
+      ],
+      "title": "Container Summary",
+      "transformations": [
+        {
+          "id": "joinByField",
+          "options": {"byField": "name", "mode": "outer"}
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time 1": true, "Time 2": true, "Time 3": true,
+              "job 1": true, "job 2": true, "job 3": true,
+              "instance 2": true, "instance 3": true,
+              "__name__ 1": true, "__name__ 2": true, "__name__ 3": true,
+              "id": true, "image": true,
+              "site 1": true, "site 2": true, "site 3": true
+            },
+            "indexByName": {},
+            "renameByName": {
+              "name": "Container",
+              "instance 1": "Host",
+              "Value #A": "CPU",
+              "Value #B": "Memory",
+              "Value #C": "Uptime"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    }
+  ],
+  "refresh": "30s",
+  "schemaVersion": 39,
+  "tags": ["home-nas", "infrastructure", "containers"],
+  "templating": {"list": []},
+  "time": {"from": "now-6h", "to": "now"},
+  "timepicker": {},
+  "timezone": "",
+  "title": "Home NAS Containers",
+  "uid": "home-nas-containers",
+  "version": 1,
+  "weekStart": ""
+}
