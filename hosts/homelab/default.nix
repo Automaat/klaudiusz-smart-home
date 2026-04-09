@@ -348,6 +348,33 @@ in {
         ];
       }
       {
+        job_name = "home-nas-postgres";
+        static_configs = [
+          {
+            targets = [
+              "192.168.20.106:9187" # nextcloud
+              "192.168.20.106:9188" # paperless
+              "192.168.20.191:9187" # immich
+              "192.168.20.218:9187" # finance-buddy
+            ];
+            labels = {
+              site = "home-nas";
+            };
+          }
+        ];
+      }
+      {
+        job_name = "home-nas-immich";
+        static_configs = [
+          {
+            targets = ["192.168.20.191:8081"]; # immich native telemetry
+            labels = {
+              site = "home-nas";
+            };
+          }
+        ];
+      }
+      {
         job_name = "home-nas-cadvisor";
         # cAdvisor scrape interval bumped to reduce cardinality load.
         scrape_interval = "30s";
