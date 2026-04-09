@@ -375,6 +375,49 @@ in {
         ];
       }
       {
+        job_name = "home-nas-valkey";
+        static_configs = [
+          {
+            targets = [
+              "192.168.20.191:9121" # immich
+              "192.168.20.106:9121" # nextcloud
+              "192.168.20.106:9122" # paperless
+            ];
+            labels = {
+              site = "home-nas";
+            };
+          }
+        ];
+      }
+      {
+        job_name = "home-nas-qbittorrent";
+        static_configs = [
+          {
+            targets = ["192.168.40.162:9102"];
+            labels = {
+              site = "home-nas";
+            };
+          }
+        ];
+      }
+      {
+        job_name = "home-nas-exportarr";
+        static_configs = [
+          {
+            targets = [
+              "192.168.20.192:9707" # sonarr
+              "192.168.20.192:9708" # radarr
+              "192.168.20.192:9709" # lidarr
+              "192.168.20.192:9710" # prowlarr
+              "192.168.20.192:9711" # bazarr
+            ];
+            labels = {
+              site = "home-nas";
+            };
+          }
+        ];
+      }
+      {
         job_name = "home-nas-cadvisor";
         # cAdvisor scrape interval bumped to reduce cardinality load.
         scrape_interval = "30s";
