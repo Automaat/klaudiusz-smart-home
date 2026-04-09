@@ -640,7 +640,11 @@ in {
 
       limits_config = {
         reject_old_samples = true;
-        reject_old_samples_max_age = "168h";
+        # 60 days. Bumped from 168h so promtail on home-nas docker hosts
+        # can catch up on weeks of historical container logs on first run
+        # without 400-spamming. Long-tail safe because the retention period
+        # is 365d anyway.
+        reject_old_samples_max_age = "1440h";
         retention_period = "8760h"; # 365 days
         volume_enabled = true; # Enable log volume API for Grafana histogram
         discover_log_levels = true; # Discover log levels for severity coloring
