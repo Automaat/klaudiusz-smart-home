@@ -88,6 +88,10 @@ in {
         ip saddr { 192.168.0.101, 192.168.10.222, 192.168.20.106, 192.168.20.191, 192.168.20.192, 192.168.20.218, 192.168.40.162 } tcp dport { 3100, 9090 } accept
       '';
     };
+    # Use native nftables backend so firewall.extraInputRules takes effect.
+    # Previously firewall used iptables-nft compat; rules written in nft
+    # syntax were silently dropped.
+    nftables.enable = true;
   };
 
   # ===========================================
