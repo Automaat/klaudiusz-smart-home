@@ -82,6 +82,11 @@ in {
       ];
       # Allow Tailscale traffic
       trustedInterfaces = ["tailscale0"];
+      # Allow home-nas infra to push logs to Loki (3100) and be scraped by
+      # Prometheus (9090). Scoped to home-nas source IPs across VLAN 0/10/20/40.
+      extraInputRules = ''
+        ip saddr { 192.168.0.101, 192.168.10.222, 192.168.20.106, 192.168.20.191, 192.168.20.192, 192.168.20.218, 192.168.40.162 } tcp dport { 3100, 9090 } accept
+      '';
     };
   };
 
@@ -284,6 +289,9 @@ in {
     port = 9090;
     retentionTime = "365d";
     checkConfig = false; # Disable check - bearer_token_file unavailable at build time
+    # Enable remote-write receiver for future push-based ingestion
+    # (home-nas monitoring integration; currently pull-based via scrapeConfigs)
+    extraFlags = ["--web.enable-remote-write-receiver"];
 
     exporters.node = {
       enable = true;
@@ -468,7 +476,7 @@ in {
     enable = true;
     configuration = {
       server.http_listen_port = 3100;
-      server.http_listen_address = "127.0.0.1";
+      server.http_listen_address = "0.0.0.0";
       auth_enabled = false;
 
       ingester = {
