@@ -337,6 +337,26 @@ in {
         ];
       }
       {
+        job_name = "home-nas-cadvisor";
+        # cAdvisor scrape interval bumped to reduce cardinality load.
+        scrape_interval = "30s";
+        static_configs = [
+          {
+            targets = [
+              "192.168.10.222:9101" # infrastructure LXC (traefik + cloudflared)
+              "192.168.20.106:9101" # custom-workloads VM (nextcloud + paperless)
+              "192.168.20.191:9101" # jellyfin LXC (jellyfin + immich + ollama)
+              "192.168.20.192:9101" # media-management LXC (*arr stack)
+              "192.168.20.218:9101" # pet-projects LXC (finance-buddy)
+              "192.168.40.162:9101" # downloads LXC (qbittorrent + gluetun)
+            ];
+            labels = {
+              site = "home-nas";
+            };
+          }
+        ];
+      }
+      {
         job_name = "homeassistant";
         static_configs = [{targets = ["localhost:8123"];}];
         metrics_path = "/api/prometheus";
