@@ -185,11 +185,6 @@ in {
   systemd.services.crowdsec-firewall-bouncer.serviceConfig.DynamicUser = lib.mkForce false;
   systemd.services.crowdsec-firewall-bouncer-register.serviceConfig.DynamicUser = lib.mkForce false;
 
-  # Fix: reset ownership of existing state files from DynamicUser era (uid=65534 → crowdsec)
-  systemd.tmpfiles.rules = [
-    "Z /var/lib/crowdsec 0750 crowdsec crowdsec -"
-  ];
-
   # Fix: bouncer register script calls cscli without -c flag, expects /etc/crowdsec/config.yaml
   # Upstream bug: crowdsec-firewall-bouncer.nix doesn't pass -c to cscli.
   environment.etc."crowdsec/config.yaml" = {
@@ -487,8 +482,10 @@ in {
   # Service Status Exporter (Textfile Collector)
   # ===========================================
   # Creates directory for textfile metrics
+  # Also resets crowdsec state dir ownership from DynamicUser era (uid=65534 → crowdsec)
   systemd.tmpfiles.rules = [
     "d /var/lib/prometheus-node-exporter-text 0755 prometheus prometheus -"
+    "Z /var/lib/crowdsec 0750 crowdsec crowdsec -"
   ];
 
   # Periodic service to export monitored service status
