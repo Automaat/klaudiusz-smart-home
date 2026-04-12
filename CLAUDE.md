@@ -2,9 +2,11 @@
 
 ## Home Lab Documentation
 
-Architecture decisions, service inventory, network topology, and monitoring design are in the local `home-lab-doc` repo at `../home-lab-doc`. Always read from local path — do not query git.
+Architecture decisions, service inventory, network topology, and monitoring design are in
+the local `home-lab-doc` repo at `../home-lab-doc`. Always read from local path — do not query git.
 
 Key references:
+
 - `../home-lab-doc/architecture/overview.md` — host topology, logical diagram
 - `../home-lab-doc/architecture/network.md` — VLANs, IPs, firewall
 - `../home-lab-doc/services/inventory.md` — all services, ports, containers per host
