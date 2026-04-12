@@ -99,6 +99,10 @@ pkgs.testers.nixosTest {
     # Disable CrowdSec firewall bouncer in VM tests (iptables/nftables not available in VM)
     services.crowdsec-firewall-bouncer.enable = lib.mkForce false;
 
+    # Disable github-runner in VM tests (no network to register against github.com,
+    # no real registration token in sops at test time)
+    services.github-runners.home-nas.enable = lib.mkForce false;
+
     # Run InfluxDB init in VM tests with hardcoded credentials
     systemd.services.influxdb2-init = {
       serviceConfig = {
