@@ -7,7 +7,7 @@ Bermuda BLE requires GUI setup for:
 - BLE device discovery (MAC addresses unknown until scanned)
 - iOS Private BLE Device configuration (IRK extraction from HA Companion app)
 - Device tracker entity linking to person entities
-- ESP32 Bluetooth proxy area assignment
+- Bluetooth adapter area assignment (built-in hci0 + any ESP32 proxies)
 
 These settings involve runtime device discovery and user-specific credentials that cannot be declared in NixOS configuration.
 
@@ -154,11 +154,24 @@ CI will test and deploy to production.
 
 ---
 
-### 5. Assign ESP32 Proxies to Areas (Critical)
+### 5. Assign Bluetooth Adapters to Areas (Critical)
 
-If using Bluetooth proxies, assign them to HA areas for trilateration:
+Bermuda requires ALL Bluetooth adapters to have area assignments for trilateration.
 
-1. Navigate to **Settings → Devices → ESPHome**
+**Built-in Bluetooth Adapter (hci0):**
+
+The homelab server's built-in Bluetooth adapter (Blackview MP60 Bluetooth 4.2) must be assigned to the server's physical location:
+
+1. Navigate to **Settings → Devices & Services → Bluetooth**
+2. Click **hci0** device (MAC: 8C:EA:12:99:67:77)
+3. Click **Settings** (pencil/gear icon)
+4. **Assign to Area:** Select room where homelab server is physically located (e.g., "Biuro", "Salon")
+
+**ESP32 Bluetooth Proxies (if using):**
+
+If using ESP32 BLE proxies, assign each to its physical location:
+
+1. Navigate to **Settings → Devices & Services → ESPHome**
 2. For each ESP32 proxy:
    - Click device → **Settings** (gear icon)
    - **Assign to Area:** Select room (e.g., "Salon", "Sypialnia", "Biuro", "Łazienka")
@@ -166,8 +179,9 @@ If using Bluetooth proxies, assign them to HA areas for trilateration:
 
 **Verification:**
 
-- Bermuda diagnostics shows area assignments
+- Bermuda diagnostics shows area assignments for ALL adapters (hci0 + any proxies)
 - `sensor.bermuda_*_area` entities report correct room names
+- No warnings about missing area assignments
 
 ---
 
