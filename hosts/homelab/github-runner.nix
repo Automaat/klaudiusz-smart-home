@@ -5,13 +5,15 @@
   ...
 }: let
   runnerUser = "gh-runner-home-nas";
-  runnerHome = "/var/lib/gh-runner-home-nas";
+  # NixOS github-runners module hardcodes %S/github-runner/<name> in its
+  # configure/unconfigure scripts, so the state path is fixed.
+  runnerHome = "/var/lib/github-runner/home-nas";
 in {
   users.users.${runnerUser} = {
     isSystemUser = true;
     group = runnerUser;
     home = runnerHome;
-    createHome = true;
+    createHome = false;
     shell = pkgs.bashInteractive;
     extraGroups = ["docker"];
   };
@@ -46,7 +48,7 @@ in {
     User = lib.mkForce runnerUser;
     Group = lib.mkForce runnerUser;
     SupplementaryGroups = lib.mkForce ["docker"];
-    StateDirectory = lib.mkForce "gh-runner-home-nas";
+    StateDirectory = lib.mkForce "github-runner/home-nas";
     StateDirectoryMode = lib.mkForce "0750";
     WorkingDirectory = lib.mkForce runnerHome;
     Environment = ["HOME=${runnerHome}"];
@@ -77,6 +79,7 @@ in {
   };
 
   systemd.tmpfiles.rules = [
+    "d ${runnerHome} 0750 ${runnerUser} ${runnerUser} -"
     "d ${runnerHome}/.ssh 0700 ${runnerUser} ${runnerUser} -"
     "d ${runnerHome}/.config 0755 ${runnerUser} ${runnerUser} -"
     "d ${runnerHome}/.config/sops 0755 ${runnerUser} ${runnerUser} -"
