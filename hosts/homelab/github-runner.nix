@@ -6,8 +6,10 @@
 }: let
   runnerUser = "gh-runner-home-nas";
   # NixOS github-runners module hardcodes %S/github-runner/<name> in its
-  # configure/unconfigure scripts, so the state path is fixed.
+  # configure/unconfigure/setup-work-dirs scripts, so the state path is fixed.
   runnerHome = "/var/lib/github-runner/home-nas";
+  ageKeyFile = "/run/secrets/github-runner/home-nas-age-key";
+  sshKeyFile = "/run/secrets/github-runner/home-nas-ssh-key";
 in {
   users.users.${runnerUser} = {
     isSystemUser = true;
@@ -41,6 +43,14 @@ in {
     ];
     user = runnerUser;
     group = runnerUser;
+    extraEnvironment = {
+      # sops decrypt in playbooks: delegate_to: localhost reads SOPS_AGE_KEY_FILE
+      SOPS_AGE_KEY_FILE = ageKeyFile;
+      # ansible-playbook ssh connections: read private key from /run/secrets,
+      # avoids copying it onto disk in $HOME.
+      ANSIBLE_PRIVATE_KEY_FILE = sshKeyFile;
+      ANSIBLE_HOST_KEY_CHECKING = "False";
+    };
   };
 
   systemd.services.github-runner-home-nas.serviceConfig = {
@@ -66,7 +76,6 @@ in {
     mode = "0400";
     owner = runnerUser;
     group = runnerUser;
-    path = "${runnerHome}/.config/sops/age/keys.txt";
     restartUnits = ["github-runner-home-nas.service"];
   };
 
@@ -74,15 +83,6 @@ in {
     mode = "0400";
     owner = runnerUser;
     group = runnerUser;
-    path = "${runnerHome}/.ssh/id_ed25519";
     restartUnits = ["github-runner-home-nas.service"];
   };
-
-  systemd.tmpfiles.rules = [
-    "d ${runnerHome} 0750 ${runnerUser} ${runnerUser} -"
-    "d ${runnerHome}/.ssh 0700 ${runnerUser} ${runnerUser} -"
-    "d ${runnerHome}/.config 0755 ${runnerUser} ${runnerUser} -"
-    "d ${runnerHome}/.config/sops 0755 ${runnerUser} ${runnerUser} -"
-    "d ${runnerHome}/.config/sops/age 0700 ${runnerUser} ${runnerUser} -"
-  ];
 }
