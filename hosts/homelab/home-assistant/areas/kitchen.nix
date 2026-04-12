@@ -66,6 +66,11 @@
                   };
                 }
                 {
+                  # Wait for AL's take_over_control handler to fire first,
+                  # then clear manual_control so continuous color adaptation works.
+                  delay = "00:00:01";
+                }
+                {
                   service = "adaptive_lighting.set_manual_control";
                   data = {
                     entity_id = "switch.adaptive_lighting_kitchen_lights";
