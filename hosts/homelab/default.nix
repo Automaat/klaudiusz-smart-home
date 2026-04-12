@@ -37,6 +37,7 @@ in {
     ./grafana
     ./secrets.nix
     ./users.nix
+    ./github-runner.nix
   ];
 
   # ===========================================
