@@ -178,6 +178,13 @@ in {
   # Fix: DynamicUser + ProtectSystem=strict needs StateDirectory to create /var/lib/crowdsec
   systemd.services.crowdsec.serviceConfig.StateDirectory = "crowdsec";
 
+  # Fix: DynamicUser runs services as UID 65534 (nobody), conflicting with static crowdsec
+  # user (uid=984). All three crowdsec services must use the same UID to share state files.
+  # Force static user so crowdsec, bouncer, and register share the same uid=984.
+  systemd.services.crowdsec.serviceConfig.DynamicUser = lib.mkForce false;
+  systemd.services.crowdsec-firewall-bouncer.serviceConfig.DynamicUser = lib.mkForce false;
+  systemd.services.crowdsec-firewall-bouncer-register.serviceConfig.DynamicUser = lib.mkForce false;
+
   # Fix: bouncer register script calls cscli without -c flag, expects /etc/crowdsec/config.yaml
   # Upstream bug: crowdsec-firewall-bouncer.nix doesn't pass -c to cscli.
   environment.etc."crowdsec/config.yaml" = {
@@ -475,8 +482,10 @@ in {
   # Service Status Exporter (Textfile Collector)
   # ===========================================
   # Creates directory for textfile metrics
+  # Also resets crowdsec state dir ownership from DynamicUser era (uid=65534 → crowdsec)
   systemd.tmpfiles.rules = [
     "d /var/lib/prometheus-node-exporter-text 0755 prometheus prometheus -"
+    "Z /var/lib/crowdsec 0750 crowdsec crowdsec -"
   ];
 
   # Periodic service to export monitored service status
