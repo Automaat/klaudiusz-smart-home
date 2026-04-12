@@ -487,6 +487,7 @@ in {
   systemd.tmpfiles.rules = [
     "d /var/lib/prometheus-node-exporter-text 0755 prometheus prometheus -"
     "Z /var/lib/crowdsec 0750 crowdsec crowdsec -"
+    "Z /var/lib/crowdsec-firewall-bouncer-register 0750 crowdsec crowdsec -"
   ];
 
   # Periodic service to export monitored service status
