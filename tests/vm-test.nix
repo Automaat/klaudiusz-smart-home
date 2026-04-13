@@ -148,8 +148,8 @@ pkgs.testers.nixosTest {
       requires = lib.mkForce [];
     };
 
-    # Override Promtail hardening for VM tests (namespace features not available)
-    systemd.services.promtail.serviceConfig = {
+    # Override Alloy hardening for VM tests (namespace features not available)
+    systemd.services.alloy.serviceConfig = {
       # Disable namespace features causing "status=226/NAMESPACE" failure
       PrivateTmp = lib.mkForce false;
       PrivateDevices = lib.mkForce false;
