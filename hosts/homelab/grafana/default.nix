@@ -273,13 +273,6 @@
                   description = "The crowdsec.service has been inactive for more than 10 minutes. Behavioral intrusion prevention disabled. Check: systemctl status crowdsec";
                 }
                 {
-                  serviceName = "crowdsec_bouncer";
-                  unitName = "crowdsec-firewall-bouncer.service";
-                  title = "CrowdSec Firewall Bouncer Down";
-                  summary = "CrowdSec firewall bouncer is not running";
-                  description = "The crowdsec-firewall-bouncer.service has been inactive for more than 10 minutes. IP bans not enforced. Check: systemctl status crowdsec-firewall-bouncer";
-                }
-                {
                   serviceName = "cloudflared";
                   unitName = "cloudflared-tunnel-c0350983-f7b9-4770-ac96-34b8a5184c91.service";
                   title = "Cloudflared Tunnel Down";
@@ -712,71 +705,157 @@
                 };
                 isPaused = false;
               };
-            in [
-              (mkPromExprAlertRule {
-                uid = "home_nas_node_down";
-                title = "Home NAS Host Down";
-                expr = ''up{job="home-nas-node"}'';
-                thresholdType = "lt";
-                thresholdValue = 1;
-                forDuration = "5m";
-                summary = "A home-nas host is unreachable";
-                description = "node_exporter on a home-nas host has been down for 5+ minutes. Check Proxmox and the affected LXC/VM.";
-                severity = "critical";
-                noDataState = "Alerting";
-              })
-              (mkPromExprAlertRule {
-                uid = "home_nas_cadvisor_down";
-                title = "Home NAS cAdvisor Down";
-                expr = ''up{job="home-nas-cadvisor"}'';
-                thresholdType = "lt";
-                thresholdValue = 1;
-                forDuration = "10m";
-                summary = "cAdvisor on a home-nas docker host is down";
-                description = "Container metrics unavailable from a home-nas host for 10+ minutes. Check the monitoring-agents stack on that host.";
-              })
-              (mkPromExprAlertRule {
-                uid = "home_nas_postgres_down";
-                title = "Home NAS Postgres Down";
-                expr = ''up{job="home-nas-postgres"}'';
-                thresholdType = "lt";
-                thresholdValue = 1;
-                forDuration = "5m";
-                summary = "A postgres-exporter on home-nas is down";
-                description = "Either the exporter or the postgres database itself is unreachable. Affected stack: nextcloud / paperless / immich / finance-buddy.";
-                severity = "critical";
-              })
-              (mkPromExprAlertRule {
-                uid = "home_nas_disk_near_full";
-                title = "Home NAS Root Disk Near Full";
-                expr = ''100 - ((node_filesystem_avail_bytes{job="home-nas-node",fstype!~"tmpfs|overlay|nsfs|squashfs",mountpoint="/"} / node_filesystem_size_bytes{job="home-nas-node",fstype!~"tmpfs|overlay|nsfs|squashfs",mountpoint="/"}) * 100)'';
-                thresholdType = "gt";
-                thresholdValue = 90;
-                forDuration = "15m";
-                summary = "Root filesystem >90% on a home-nas host";
-                description = "Less than 10% of the root filesystem is free on a home-nas host. Investigate before things start failing.";
-              })
-              (mkPromExprAlertRule {
-                uid = "home_nas_memory_pressure";
-                title = "Home NAS Memory Pressure";
-                expr = ''(1 - (node_memory_MemAvailable_bytes{job="home-nas-node"} / node_memory_MemTotal_bytes{job="home-nas-node"})) * 100'';
-                thresholdType = "gt";
-                thresholdValue = 92;
-                forDuration = "15m";
-                summary = "Memory utilisation >92% on a home-nas host";
-                description = "Sustained high memory pressure. OOM killer may start picking off containers soon.";
-              })
-              (mkPromExprAlertRule {
-                uid = "home_nas_traefik_5xx_high";
-                title = "Traefik 5xx Rate High";
-                expr = ''sum(rate(traefik_service_requests_total{code=~"5..",job="home-nas-traefik"}[5m])) / clamp_min(sum(rate(traefik_service_requests_total{job="home-nas-traefik"}[5m])), 1) * 100'';
-                thresholdType = "gt";
-                thresholdValue = 5;
-                forDuration = "10m";
-                summary = "Traefik 5xx rate above 5%";
-                description = "Reverse proxy is returning 5xx errors at >5% for 10+ minutes. Check upstream services routed via Traefik.";
-              })
-            ];
+              perInstanceServices = [
+                {
+                  key = "sonarr";
+                  name = "Sonarr";
+                  instance = "192.168.20.192:9707";
+                  job = "home-nas-exportarr";
+                  severity = "warning";
+                }
+                {
+                  key = "radarr";
+                  name = "Radarr";
+                  instance = "192.168.20.192:9708";
+                  job = "home-nas-exportarr";
+                  severity = "warning";
+                }
+                {
+                  key = "lidarr";
+                  name = "Lidarr";
+                  instance = "192.168.20.192:9709";
+                  job = "home-nas-exportarr";
+                  severity = "warning";
+                }
+                {
+                  key = "prowlarr";
+                  name = "Prowlarr";
+                  instance = "192.168.20.192:9710";
+                  job = "home-nas-exportarr";
+                  severity = "warning";
+                }
+                {
+                  key = "bazarr";
+                  name = "Bazarr";
+                  instance = "192.168.20.192:9711";
+                  job = "home-nas-exportarr";
+                  severity = "warning";
+                }
+                {
+                  key = "qbittorrent";
+                  name = "qBittorrent";
+                  instance = "192.168.40.162:9102";
+                  job = "home-nas-qbittorrent";
+                  severity = "warning";
+                }
+                {
+                  key = "immich_redis";
+                  name = "Immich Redis";
+                  instance = "192.168.20.191:9121";
+                  job = "home-nas-valkey";
+                  severity = "critical";
+                }
+                {
+                  key = "nextcloud_redis";
+                  name = "Nextcloud Redis";
+                  instance = "192.168.20.106:9121";
+                  job = "home-nas-valkey";
+                  severity = "critical";
+                }
+                {
+                  key = "paperless_redis";
+                  name = "Paperless Redis";
+                  instance = "192.168.20.106:9122";
+                  job = "home-nas-valkey";
+                  severity = "critical";
+                }
+                {
+                  key = "immich";
+                  name = "Immich";
+                  instance = "192.168.20.191:8081";
+                  job = "home-nas-immich";
+                  severity = "critical";
+                }
+              ];
+              mkInstanceDownRule = svc:
+                mkPromExprAlertRule {
+                  uid = "home_nas_${svc.key}_down";
+                  title = "Home NAS ${svc.name} Down";
+                  expr = ''up{job="${svc.job}",instance="${svc.instance}"}'';
+                  thresholdType = "lt";
+                  thresholdValue = 1;
+                  forDuration = "5m";
+                  summary = "${svc.name} exporter is down";
+                  description = "${svc.name} exporter (${svc.instance}) has been down for 5+ minutes. Check the service and its container.";
+                  severity = svc.severity;
+                };
+            in
+              [
+                (mkPromExprAlertRule {
+                  uid = "home_nas_node_down";
+                  title = "Home NAS Host Down";
+                  expr = ''up{job="home-nas-node"}'';
+                  thresholdType = "lt";
+                  thresholdValue = 1;
+                  forDuration = "5m";
+                  summary = "A home-nas host is unreachable";
+                  description = "node_exporter on a home-nas host has been down for 5+ minutes. Check Proxmox and the affected LXC/VM.";
+                  severity = "critical";
+                  noDataState = "Alerting";
+                })
+                (mkPromExprAlertRule {
+                  uid = "home_nas_cadvisor_down";
+                  title = "Home NAS cAdvisor Down";
+                  expr = ''up{job="home-nas-cadvisor"}'';
+                  thresholdType = "lt";
+                  thresholdValue = 1;
+                  forDuration = "10m";
+                  summary = "cAdvisor on a home-nas docker host is down";
+                  description = "Container metrics unavailable from a home-nas host for 10+ minutes. Check the monitoring-agents stack on that host.";
+                })
+                (mkPromExprAlertRule {
+                  uid = "home_nas_postgres_down";
+                  title = "Home NAS Postgres Down";
+                  expr = ''up{job="home-nas-postgres"}'';
+                  thresholdType = "lt";
+                  thresholdValue = 1;
+                  forDuration = "5m";
+                  summary = "A postgres-exporter on home-nas is down";
+                  description = "Either the exporter or the postgres database itself is unreachable. Affected stack: nextcloud / paperless / immich / finance-buddy.";
+                  severity = "critical";
+                })
+                (mkPromExprAlertRule {
+                  uid = "home_nas_disk_near_full";
+                  title = "Home NAS Root Disk Near Full";
+                  expr = ''100 - ((node_filesystem_avail_bytes{job="home-nas-node",fstype!~"tmpfs|overlay|nsfs|squashfs",mountpoint="/"} / node_filesystem_size_bytes{job="home-nas-node",fstype!~"tmpfs|overlay|nsfs|squashfs",mountpoint="/"}) * 100)'';
+                  thresholdType = "gt";
+                  thresholdValue = 90;
+                  forDuration = "15m";
+                  summary = "Root filesystem >90% on a home-nas host";
+                  description = "Less than 10% of the root filesystem is free on a home-nas host. Investigate before things start failing.";
+                })
+                (mkPromExprAlertRule {
+                  uid = "home_nas_memory_pressure";
+                  title = "Home NAS Memory Pressure";
+                  expr = ''(1 - (node_memory_MemAvailable_bytes{job="home-nas-node"} / node_memory_MemTotal_bytes{job="home-nas-node"})) * 100'';
+                  thresholdType = "gt";
+                  thresholdValue = 92;
+                  forDuration = "15m";
+                  summary = "Memory utilisation >92% on a home-nas host";
+                  description = "Sustained high memory pressure. OOM killer may start picking off containers soon.";
+                })
+                (mkPromExprAlertRule {
+                  uid = "home_nas_traefik_5xx_high";
+                  title = "Traefik 5xx Rate High";
+                  expr = ''sum(rate(traefik_service_requests_total{code=~"5..",job="home-nas-traefik"}[5m])) / clamp_min(sum(rate(traefik_service_requests_total{job="home-nas-traefik"}[5m])), 1) * 100'';
+                  thresholdType = "gt";
+                  thresholdValue = 5;
+                  forDuration = "10m";
+                  summary = "Traefik 5xx rate above 5%";
+                  description = "Reverse proxy is returning 5xx errors at >5% for 10+ minutes. Check upstream services routed via Traefik.";
+                })
+              ]
+              ++ map mkInstanceDownRule perInstanceServices;
           }
         ];
 
