@@ -907,10 +907,10 @@ in {
     # Add hass group so alloy can read group-readable /var/lib/hass/home-assistant.log.
     alloy.serviceConfig = {
       SupplementaryGroups = ["hass"];
-      # nixpkgs alloy module sets Restart="always"; override to on-failure
-      # so systemd StartLimitBurst actually triggers OnFailure notifications.
+      # nixpkgs alloy module sets Restart="always" + RestartSec defaults;
+      # force on-failure so StartLimitBurst drives OnFailure notifications.
       Restart = lib.mkForce "on-failure";
-      RestartSec = "10s";
+      RestartSec = lib.mkForce "10s";
       ReadOnlyPaths = ["/var/lib/hass"];
     };
     alloy.unitConfig = {
