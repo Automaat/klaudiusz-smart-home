@@ -273,13 +273,6 @@
                   description = "The crowdsec.service has been inactive for more than 10 minutes. Behavioral intrusion prevention disabled. Check: systemctl status crowdsec";
                 }
                 {
-                  serviceName = "crowdsec_bouncer";
-                  unitName = "crowdsec-firewall-bouncer.service";
-                  title = "CrowdSec Firewall Bouncer Down";
-                  summary = "CrowdSec firewall bouncer is not running";
-                  description = "The crowdsec-firewall-bouncer.service has been inactive for more than 10 minutes. IP bans not enforced. Check: systemctl status crowdsec-firewall-bouncer";
-                }
-                {
                   serviceName = "cloudflared";
                   unitName = "cloudflared-tunnel-c0350983-f7b9-4770-ac96-34b8a5184c91.service";
                   title = "Cloudflared Tunnel Down";
