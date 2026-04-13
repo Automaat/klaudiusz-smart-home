@@ -255,7 +255,7 @@
     owner = "Olen";
     repo = "lovelace-flower-card";
     # renovate: datasource=github-tags depName=Olen/lovelace-flower-card
-    rev = "v2026.2.0";
+    rev = "v2026.4.1";
     hash = "sha256-EPahVDglhKjtPwIdu5HfUZ6KhMtTu/9YfY4VdsN+vyc=";
   };
 
