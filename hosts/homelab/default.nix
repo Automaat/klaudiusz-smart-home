@@ -426,6 +426,17 @@ in {
         ];
       }
       {
+        job_name = "home-nas-synapse";
+        static_configs = [
+          {
+            targets = ["192.168.20.219:8080"]; # synapse LXC CT 114
+            labels = {
+              site = "home-nas";
+            };
+          }
+        ];
+      }
+      {
         job_name = "home-nas-cadvisor";
         # cAdvisor scrape interval bumped to reduce cardinality load.
         scrape_interval = "30s";

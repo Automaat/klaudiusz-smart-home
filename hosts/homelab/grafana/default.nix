@@ -699,6 +699,13 @@
                   job = "home-nas-immich";
                   severity = "critical";
                 }
+                {
+                  key = "synapse";
+                  name = "Synapse";
+                  instance = "192.168.20.219:8080";
+                  job = "home-nas-synapse";
+                  severity = "critical";
+                }
               ];
               mkInstanceDownRule = svc:
                 mkPromExprAlertRule {
@@ -776,6 +783,50 @@
                   forDuration = "10m";
                   summary = "Traefik 5xx rate above 5%";
                   description = "Reverse proxy is returning 5xx errors at >5% for 10+ minutes. Check upstream services routed via Traefik.";
+                })
+                (mkPromExprAlertRule {
+                  uid = "home_nas_synapse_provider_unhealthy";
+                  title = "Synapse Provider Unhealthy";
+                  expr = ''min(synapse_provider_healthy{job="home-nas-synapse"})'';
+                  thresholdType = "lt";
+                  thresholdValue = 1;
+                  forDuration = "10m";
+                  summary = "Synapse LLM provider is unhealthy";
+                  description = "One or more Synapse LLM providers have been reporting unhealthy for 10+ minutes. Agent runs may be failing or failing over.";
+                  severity = "warning";
+                })
+                (mkPromExprAlertRule {
+                  uid = "home_nas_synapse_auth_failures";
+                  title = "Synapse Provider Auth Failures";
+                  expr = ''sum(increase(synapse_provider_auth_failures_total{job="home-nas-synapse"}[10m]))'';
+                  thresholdType = "gt";
+                  thresholdValue = 3;
+                  forDuration = "5m";
+                  summary = "Synapse provider auth failures spiking";
+                  description = "More than 3 provider auth failures in the last 10 minutes. API keys may be expired, rotated, or rejected.";
+                  severity = "warning";
+                })
+                (mkPromExprAlertRule {
+                  uid = "home_nas_synapse_agent_failovers";
+                  title = "Synapse Agent Failover Churn";
+                  expr = ''sum(increase(synapse_agent_failovers_total{job="home-nas-synapse"}[1h]))'';
+                  thresholdType = "gt";
+                  thresholdValue = 5;
+                  forDuration = "5m";
+                  summary = "Synapse agents failing over frequently";
+                  description = "More than 5 agent failovers in the last hour. Primary provider or configuration may be unstable.";
+                  severity = "warning";
+                })
+                (mkPromExprAlertRule {
+                  uid = "home_nas_synapse_monitor_stale";
+                  title = "Synapse Monitor Stale";
+                  expr = ''max(synapse_monitor_heartbeat_age_seconds{job="home-nas-synapse"})'';
+                  thresholdType = "gt";
+                  thresholdValue = 600;
+                  forDuration = "5m";
+                  summary = "Synapse monitor heartbeat is stale";
+                  description = "Synapse monitor heartbeat age has exceeded 10 minutes. Orchestrator loop may be stuck or crashed.";
+                  severity = "warning";
                 })
               ]
               ++ map mkInstanceDownRule perInstanceServices;
