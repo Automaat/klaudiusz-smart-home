@@ -673,104 +673,97 @@ in {
   };
 
   # ===========================================
-  # Monitoring - Promtail (Log Collection)
+  # Monitoring - Grafana Alloy (Log Collection)
   # ===========================================
-  # Grant promtail user read access to Home Assistant logs
-  users.users.promtail.extraGroups = ["hass"];
+  # Successor to Promtail (EOL 2025-02). River-format config shipped via
+  # environment.etc; nixos-rebuild switch triggers SIGHUP reload.
 
   # Grant CrowdSec read access to Home Assistant logs and systemd journal
   users.users.crowdsec.extraGroups = ["hass" "systemd-journal"];
 
-  services.promtail = {
+  services.alloy = {
     enable = true;
-    configuration = {
-      server = {
-        http_listen_port = 9080;
-        grpc_listen_port = 0;
-      };
-
-      positions.filename = "/var/lib/promtail/positions.yaml";
-
-      clients = [
-        {url = "http://localhost:3100/loki/api/v1/push";}
-      ];
-
-      scrape_configs = [
-        # Home Assistant logs (standard format parsing)
-        {
-          job_name = "homeassistant";
-          static_configs = [
-            {
-              targets = ["localhost"];
-              labels = {
-                job = "homeassistant";
-                __path__ = "/var/lib/hass/home-assistant.log";
-              };
-            }
-          ];
-          pipeline_stages = [
-            {
-              regex = {
-                expression = "^(?P<timestamp>\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}\\.\\d+) (?P<level>\\w+) \\((?P<thread>\\w+)\\) \\[(?P<logger>[^\\]]+)\\] (?P<message>.*)$";
-              };
-            }
-            {
-              labels = {
-                level = "";
-                logger = "";
-              };
-            }
-            {
-              timestamp = {
-                source = "timestamp";
-                format = "2006-01-02 15:04:05.000";
-                location = "Europe/Warsaw";
-              };
-            }
-          ];
-        }
-        # Systemd journal logs
-        {
-          job_name = "systemd";
-          journal = {
-            max_age = "12h";
-            labels = {
-              job = "systemd";
-            };
-          };
-          relabel_configs = [
-            {
-              source_labels = ["__journal__systemd_unit"];
-              target_label = "unit";
-            }
-            {
-              source_labels = ["__journal_priority"];
-              target_label = "priority";
-            }
-            {
-              source_labels = ["__journal__hostname"];
-              target_label = "hostname";
-            }
-          ];
-          # Filter to critical smart home services
-          pipeline_stages = [
-            {
-              match = {
-                selector = ''{unit=~"(home-assistant|wyoming-.*|prometheus|grafana|postgresql|influxdb2|crowdsec.*)\\.service"}'';
-                stages = [
-                  {
-                    labels = {
-                      service = "";
-                    };
-                  }
-                ];
-              };
-            }
-          ];
-        }
-      ];
-    };
+    # Keep metrics/UI on port 9080 for continuity with old promtail setup.
+    # --disable-reporting avoids phoning home to Grafana Labs usage stats.
+    extraFlags = [
+      "--server.http.listen-addr=127.0.0.1:9080"
+      "--disable-reporting"
+    ];
   };
+
+  environment.etc."alloy/config.alloy".text = ''
+    loki.write "local" {
+      endpoint {
+        url = "http://localhost:3100/loki/api/v1/push"
+      }
+    }
+
+    // Home Assistant log file
+    local.file_match "homeassistant" {
+      path_targets = [
+        {
+          __path__ = "/var/lib/hass/home-assistant.log",
+          job      = "homeassistant",
+        },
+      ]
+    }
+
+    loki.source.file "homeassistant" {
+      targets    = local.file_match.homeassistant.targets
+      forward_to = [loki.process.homeassistant.receiver]
+    }
+
+    loki.process "homeassistant" {
+      forward_to = [loki.write.local.receiver]
+
+      stage.regex {
+        expression = "^(?P<timestamp>\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}\\.\\d+) (?P<level>\\w+) \\((?P<thread>\\w+)\\) \\[(?P<logger>[^\\]]+)\\] (?P<message>.*)$"
+      }
+
+      stage.labels {
+        values = {
+          level  = "",
+          logger = "",
+        }
+      }
+
+      stage.timestamp {
+        source   = "timestamp"
+        format   = "2006-01-02 15:04:05.000"
+        location = "Europe/Warsaw"
+      }
+    }
+
+    // Systemd journal - filter to critical smart home services
+    loki.relabel "journal" {
+      forward_to = []
+
+      rule {
+        source_labels = ["__journal__systemd_unit"]
+        target_label  = "unit"
+      }
+      rule {
+        source_labels = ["__journal_priority"]
+        target_label  = "priority"
+      }
+      rule {
+        source_labels = ["__journal__hostname"]
+        target_label  = "hostname"
+      }
+      rule {
+        source_labels = ["unit"]
+        regex         = "^(home-assistant|wyoming-.*|prometheus|grafana|postgresql|influxdb2|crowdsec.*)\\.service$"
+        action        = "keep"
+      }
+    }
+
+    loki.source.journal "system" {
+      max_age       = "12h"
+      relabel_rules = loki.relabel.journal.rules
+      forward_to    = [loki.write.local.receiver]
+      labels        = { job = "systemd" }
+    }
+  '';
 
   # Grafana restart limits + failure notification
   systemd.services.grafana = {
@@ -835,7 +828,7 @@ in {
       # Allow connecting to PostgreSQL via socket
       SupplementaryGroups = ["postgres"];
       # Bluetooth capabilities auto-added by NixOS module for bluetooth components
-      # UMask for group-readable log files (640) - allows promtail in hass group to read logs
+      # UMask for group-readable log files (640) - allows alloy (via hass group) to read logs
       UMask = lib.mkForce "0027";
       # StateDirectory permissions already configured in home-assistant/default.nix:317
       Restart = "on-failure";
@@ -909,22 +902,18 @@ in {
     # Add git and patch for PlatformIO component patching
     esphome.path = with pkgs; [git patch];
 
-    # Promtail - log shipper hardening
-    promtail.serviceConfig = {
-      # Create state directory for positions.yaml
-      StateDirectory = "promtail";
-      # Allow reading systemd journal
-      SupplementaryGroups = ["systemd-journal"];
-      # Restart on failure (resilient to missing log files at startup)
-      Restart = "on-failure";
-      RestartSec = "10s";
-      # Override hardening that blocks journal access
-      PrivateMounts = lib.mkForce false;
-      MountFlags = lib.mkForce "";
-      # Allow reading Home Assistant log file
+    # Alloy - log shipper hardening
+    # Runs as DynamicUser; journal access auto-configured by nixpkgs module.
+    # Add hass group so alloy can read group-readable /var/lib/hass/home-assistant.log.
+    alloy.serviceConfig = {
+      SupplementaryGroups = ["hass"];
+      # nixpkgs alloy module sets Restart="always" + RestartSec defaults;
+      # force on-failure so StartLimitBurst drives OnFailure notifications.
+      Restart = lib.mkForce "on-failure";
+      RestartSec = lib.mkForce "10s";
       ReadOnlyPaths = ["/var/lib/hass"];
     };
-    promtail.unitConfig = {
+    alloy.unitConfig = {
       StartLimitBurst = 5;
       StartLimitIntervalSec = 300;
       OnFailure = "notify-service-failure@%n.service";

@@ -39,23 +39,23 @@ except Exception as e:
     print(homelab.succeed("systemctl status loki.service --no-pager"))
     raise
 
-# Promtail (Log Shipper)
+# Alloy (Log Shipper - successor to Promtail)
 try:
-    homelab.wait_for_unit("promtail.service")
+    homelab.wait_for_unit("alloy.service")
     homelab.wait_for_open_port(9080)
 
-    # Check Promtail ready endpoint
-    homelab.succeed("curl -f http://localhost:9080/ready")
+    # Check Alloy ready endpoint
+    homelab.succeed("curl -f http://localhost:9080/-/ready")
 
-    # Check Promtail metrics (validates scrape configs loaded)
+    # Check Alloy metrics (validates components loaded)
     homelab.succeed("curl -sf http://localhost:9080/metrics > /dev/null")
 
-    print("✅ Promtail service healthy")
+    print("✅ Alloy service healthy")
 
 except Exception as e:
-    print(f"Promtail failed: {e}")
-    print(homelab.succeed("journalctl -u promtail.service -n 100 --no-pager"))
-    print(homelab.succeed("systemctl status promtail.service --no-pager"))
+    print(f"Alloy failed: {e}")
+    print(homelab.succeed("journalctl -u alloy.service -n 100 --no-pager"))
+    print(homelab.succeed("systemctl status alloy.service --no-pager"))
     raise
 
 # Grafana
