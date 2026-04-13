@@ -705,6 +705,90 @@
                 };
                 isPaused = false;
               };
+              perInstanceServices = [
+                {
+                  key = "sonarr";
+                  name = "Sonarr";
+                  instance = "192.168.20.192:9707";
+                  job = "home-nas-exportarr";
+                  severity = "warning";
+                }
+                {
+                  key = "radarr";
+                  name = "Radarr";
+                  instance = "192.168.20.192:9708";
+                  job = "home-nas-exportarr";
+                  severity = "warning";
+                }
+                {
+                  key = "lidarr";
+                  name = "Lidarr";
+                  instance = "192.168.20.192:9709";
+                  job = "home-nas-exportarr";
+                  severity = "warning";
+                }
+                {
+                  key = "prowlarr";
+                  name = "Prowlarr";
+                  instance = "192.168.20.192:9710";
+                  job = "home-nas-exportarr";
+                  severity = "warning";
+                }
+                {
+                  key = "bazarr";
+                  name = "Bazarr";
+                  instance = "192.168.20.192:9711";
+                  job = "home-nas-exportarr";
+                  severity = "warning";
+                }
+                {
+                  key = "qbittorrent";
+                  name = "qBittorrent";
+                  instance = "192.168.40.162:9102";
+                  job = "home-nas-qbittorrent";
+                  severity = "warning";
+                }
+                {
+                  key = "immich_redis";
+                  name = "Immich Redis";
+                  instance = "192.168.20.191:9121";
+                  job = "home-nas-valkey";
+                  severity = "critical";
+                }
+                {
+                  key = "nextcloud_redis";
+                  name = "Nextcloud Redis";
+                  instance = "192.168.20.106:9121";
+                  job = "home-nas-valkey";
+                  severity = "critical";
+                }
+                {
+                  key = "paperless_redis";
+                  name = "Paperless Redis";
+                  instance = "192.168.20.106:9122";
+                  job = "home-nas-valkey";
+                  severity = "critical";
+                }
+                {
+                  key = "immich";
+                  name = "Immich";
+                  instance = "192.168.20.191:8081";
+                  job = "home-nas-immich";
+                  severity = "critical";
+                }
+              ];
+              mkInstanceDownRule = svc:
+                mkPromExprAlertRule {
+                  uid = "home_nas_${svc.key}_down";
+                  title = "Home NAS ${svc.name} Down";
+                  expr = ''up{job="${svc.job}",instance="${svc.instance}"}'';
+                  thresholdType = "lt";
+                  thresholdValue = 1;
+                  forDuration = "5m";
+                  summary = "${svc.name} exporter is down";
+                  description = "${svc.name} exporter (${svc.instance}) has been down for 5+ minutes. Check the service and its container.";
+                  severity = svc.severity;
+                };
             in [
               (mkPromExprAlertRule {
                 uid = "home_nas_node_down";
@@ -769,7 +853,7 @@
                 summary = "Traefik 5xx rate above 5%";
                 description = "Reverse proxy is returning 5xx errors at >5% for 10+ minutes. Check upstream services routed via Traefik.";
               })
-            ];
+            ] ++ map mkInstanceDownRule perInstanceServices;
           }
         ];
 
