@@ -426,10 +426,10 @@ in {
         ];
       }
       {
-        job_name = "home-nas-synapse";
+        job_name = "home-nas-sybra";
         static_configs = [
           {
-            targets = ["192.168.20.219:8080"]; # synapse LXC CT 114
+            targets = ["192.168.20.219:8080"]; # sybra LXC CT 114
             labels = {
               site = "home-nas";
             };
