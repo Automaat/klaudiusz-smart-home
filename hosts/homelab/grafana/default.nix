@@ -700,10 +700,10 @@
                   severity = "critical";
                 }
                 {
-                  key = "synapse";
-                  name = "Synapse";
+                  key = "sybra";
+                  name = "Sybra";
                   instance = "192.168.20.219:8080";
-                  job = "home-nas-synapse";
+                  job = "home-nas-sybra";
                   severity = "critical";
                 }
               ];
@@ -785,47 +785,47 @@
                   description = "Reverse proxy is returning 5xx errors at >5% for 10+ minutes. Check upstream services routed via Traefik.";
                 })
                 (mkPromExprAlertRule {
-                  uid = "home_nas_synapse_provider_unhealthy";
-                  title = "Synapse Provider Unhealthy";
-                  expr = ''min(synapse_provider_healthy{job="home-nas-synapse"})'';
+                  uid = "home_nas_sybra_provider_unhealthy";
+                  title = "Sybra Provider Unhealthy";
+                  expr = ''min(sybra_provider_healthy{job="home-nas-sybra"})'';
                   thresholdType = "lt";
                   thresholdValue = 1;
                   forDuration = "10m";
-                  summary = "Synapse LLM provider is unhealthy";
-                  description = "One or more Synapse LLM providers have been reporting unhealthy for 10+ minutes. Agent runs may be failing or failing over.";
+                  summary = "Sybra LLM provider is unhealthy";
+                  description = "One or more Sybra LLM providers have been reporting unhealthy for 10+ minutes. Agent runs may be failing or failing over.";
                   severity = "warning";
                 })
                 (mkPromExprAlertRule {
-                  uid = "home_nas_synapse_auth_failures";
-                  title = "Synapse Provider Auth Failures";
-                  expr = ''sum(increase(synapse_provider_auth_failures_total{job="home-nas-synapse"}[10m]))'';
+                  uid = "home_nas_sybra_auth_failures";
+                  title = "Sybra Provider Auth Failures";
+                  expr = ''sum(increase(sybra_provider_auth_failures_total{job="home-nas-sybra"}[10m]))'';
                   thresholdType = "gt";
                   thresholdValue = 3;
                   forDuration = "5m";
-                  summary = "Synapse provider auth failures spiking";
+                  summary = "Sybra provider auth failures spiking";
                   description = "More than 3 provider auth failures in the last 10 minutes. API keys may be expired, rotated, or rejected.";
                   severity = "warning";
                 })
                 (mkPromExprAlertRule {
-                  uid = "home_nas_synapse_agent_failovers";
-                  title = "Synapse Agent Failover Churn";
-                  expr = ''sum(increase(synapse_agent_failovers_total{job="home-nas-synapse"}[1h]))'';
+                  uid = "home_nas_sybra_agent_failovers";
+                  title = "Sybra Agent Failover Churn";
+                  expr = ''sum(increase(sybra_agent_failovers_total{job="home-nas-sybra"}[1h]))'';
                   thresholdType = "gt";
                   thresholdValue = 5;
                   forDuration = "5m";
-                  summary = "Synapse agents failing over frequently";
+                  summary = "Sybra agents failing over frequently";
                   description = "More than 5 agent failovers in the last hour. Primary provider or configuration may be unstable.";
                   severity = "warning";
                 })
                 (mkPromExprAlertRule {
-                  uid = "home_nas_synapse_monitor_stale";
-                  title = "Synapse Monitor Stale";
-                  expr = ''max(synapse_monitor_heartbeat_age_seconds{job="home-nas-synapse"})'';
+                  uid = "home_nas_sybra_monitor_stale";
+                  title = "Sybra Monitor Stale";
+                  expr = ''max(sybra_monitor_heartbeat_age_seconds{job="home-nas-sybra"})'';
                   thresholdType = "gt";
                   thresholdValue = 600;
                   forDuration = "5m";
-                  summary = "Synapse monitor heartbeat is stale";
-                  description = "Synapse monitor heartbeat age has exceeded 10 minutes. Orchestrator loop may be stuck or crashed.";
+                  summary = "Sybra monitor heartbeat is stale";
+                  description = "Sybra monitor heartbeat age has exceeded 10 minutes. Orchestrator loop may be stuck or crashed.";
                   severity = "warning";
                 })
               ]
