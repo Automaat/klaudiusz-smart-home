@@ -156,7 +156,7 @@
     repo = "homeassistant-powercalc";
     # renovate: datasource=github-tags depName=bramstroker/homeassistant-powercalc
     rev = "v1.20.13";
-    hash = "sha256-kOxY/7JjDHbQC7adfcRDgDJnvU2TRyaKYXxfmo/cXPQ=";
+    hash = "sha256-Vg/hqDo0dW88VUKEXZcaRMwOAzm8EmbKGwV/xIfB5lQ=";
   };
 
   # ===========================================
